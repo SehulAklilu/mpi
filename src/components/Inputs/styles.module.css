@@ -1,0 +1,19 @@
+.PhoneInputInput {
+  width: 100%;
+  background: inherit;
+  outline: none;
+  border: none;
+}
+.PhoneInputInput input {
+  width: 100%;
+  background: inherit;
+  outline: none;
+  border: none;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+.PhoneInputInput input::placeholder {
+  color: rgba(0, 0, 0, 0.5);
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
