@@ -48,7 +48,7 @@ const ContactInfo = () => {
         Contact Information
       </h3>
       <form>
-        <div className="grid grid-cols-2 gap-10 phone:flex phone:flex-col phone:gap-3 phone:justify-center phone:items-center xs-phone:flex xs-phone:flex-col xs-phone:gap-3 xs-phone:justify-center xs-phone:items-center">
+        <div className="grid grid-cols-2 gap-10 tablet:flex tablet:flex-col tablet:gap-4 phone:flex phone:flex-col phone:gap-3 phone:justify-center phone:items-center xs-phone:flex xs-phone:flex-col xs-phone:gap-3 xs-phone:justify-center xs-phone:items-center">
           <DropdownCountry
             label={"Country"}
             options={countryData}

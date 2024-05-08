@@ -15,6 +15,7 @@ module.exports = withMT({
       screens: {
         phone: { max: "640px" },
         "xs-phone": { max: "400px" },
+        tablet: { max: "1000px" },
       },
     },
   },

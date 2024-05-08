@@ -45,7 +45,7 @@ const Role = () => {
         >
           What are you?
         </h3>
-        <div className="flex flex-row phone:grid phone:grid-cols-2  phone:gap-6  xs-phone:grid-cols-2  xs-phone:gap-6 justify-between gap-14">
+        <div className="flex flex-row tablet:grid tablet:grid-cols-2 tablet:gap-10 phone:grid phone:grid-cols-2  phone:gap-6  xs-phone:grid-cols-2  xs-phone:gap-6 justify-between gap-14">
           {roles.map((role) => (
             <button
               onClick={() => handleSelected(role.value)}
