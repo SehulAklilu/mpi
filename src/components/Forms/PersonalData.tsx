@@ -2,8 +2,8 @@ import { useForm } from "react-hook-form";
 import BasicInputLabel from "../Inputs/BasicInputLabel";
 import Dropdown from "../Inputs/Dropdown";
 import { useState } from "react";
-import { SelectSingleEventHandler } from "react-day-picker";
-import DatePicker from "../Inputs/CalendarInput";
+// import { SelectSingleEventHandler } from "react-day-picker";
+// import DatePicker from "../Inputs/CalendarInput";
 import { Country } from "country-state-city";
 
 const gender = [{ name: "Male" }, { name: "Female" }, { name: "Other" }];
@@ -14,9 +14,9 @@ const PersonalData = () => {
   const countryData = Country.getAllCountries();
   const [selectCountry, setSelectCountry] = useState("");
 
-  const [date, setDate] = useState<
-    SelectSingleEventHandler | undefined | Date
-  >();
+  // const [date, setDate] = useState<
+  //   SelectSingleEventHandler | undefined | Date
+  // >();
 
   const onSubmit = (data: any) => {
     console.log(data);
@@ -62,7 +62,7 @@ const PersonalData = () => {
             iconName="person"
             outline
           />
-          <DatePicker
+          {/* <DatePicker
             label="Date of Birth"
             date={date}
             setDate={setDate}
@@ -70,7 +70,7 @@ const PersonalData = () => {
             iconName="calendar_month"
             outline
             containerStyles="z-50"
-          />
+          /> */}
           <Dropdown
             label={"Place of Birth"}
             options={countryData}
