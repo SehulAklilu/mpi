@@ -1,3 +1,5 @@
+import axios from "axios";
+import { useRole } from "../RoleContext.js";
 import { useState } from "react";
 import MaterialIcon from "../components/Icon/MaterialIcon";
 
@@ -29,13 +31,59 @@ const roles = [
 ];
 
 const Role = () => {
+  const {role, setRole } = useRole();
   const [selected, setSelected] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   const handleSelected = (value: string) => {
     setSelected(value);
+    setRole(value);
   };
 
-  console.log(selected);
+  const handleSubmit = async () => {
+    if (!selected) {
+      setError("Please select a role");
+      return;
+    }
+  
+    const data = {
+      role: selected,
+      // Add other required fields here
+      // password: "asdfasdff",
+      // avatar: "{{$randomAvatarImage}}",
+      // dateOfBirth: "{{$randomDatePast}}",
+      // gender: "{{Gender}}",
+      // phoneNumber: "{{$randomPhoneNumber}}",
+      // phoneNumberCountryCode: "{{$randomCountryCode}}",
+      // streetAddress: "{{$randomStreetAddress}}",
+      // city: "{{$randomCity}}",
+      // stateProvince: "{{$randomCity}}",
+      // country: "{{$randomCountry}}",
+      // emailNotificationEnabled: false,
+      // zipCode: "1000"
+    };
+  
+    try {
+      const response = await axios.post('http://116.203.117.190:5000/api/role', data);
+  
+      if (response.status === 201) {
+        setSuccess("Role selected successfully");
+        setError(null);
+      } else {
+        setError("Role selection failed");
+        setSuccess(null);
+      }
+    } catch (error) {
+      if (error.response) {
+        setError(error.response.data.message || "Role selection failed");
+      } else {
+        setError("Network error");
+      }
+      setSuccess(null);
+    }
+  };
+  
 
   return (
     <div className="">
@@ -45,6 +93,8 @@ const Role = () => {
         >
           What are you?
         </h3>
+        {error && <div className="text-red-500">{error}</div>}
+        {success && <div className="text-green-500">{success}</div>}
         <div className="flex flex-row tablet:grid tablet:grid-cols-2 tablet:gap-10 phone:grid phone:grid-cols-2  phone:gap-6  xs-phone:grid-cols-2  xs-phone:gap-6 justify-between gap-14">
           {roles.map((role) => (
             <button
@@ -72,6 +122,14 @@ const Role = () => {
               </h3>
             </button>
           ))}
+        </div>
+        <div className="w-full flex items-center justify-center mt-5">
+          <button
+            onClick={handleSubmit}
+            className="bg-primary text-white py-2 px-4 rounded-xl"
+          >
+            Submit
+          </button>
         </div>
       </div>
       <div></div>

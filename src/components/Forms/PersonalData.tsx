@@ -2,24 +2,77 @@ import { useForm } from "react-hook-form";
 import BasicInputLabel from "../Inputs/BasicInputLabel";
 import Dropdown from "../Inputs/Dropdown";
 import { useState } from "react";
+import axios from "axios";
 // import { SelectSingleEventHandler } from "react-day-picker";
 // import DatePicker from "../Inputs/CalendarInput";
 import { Country } from "country-state-city";
+import { useRole } from "../RoleContext";
 
 const gender = [{ name: "Male" }, { name: "Female" }, { name: "Other" }];
 
 const PersonalData = () => {
   const { register, handleSubmit } = useForm();
+  const [selectedGender, setSelectedGender] = useState("");
+  
   const [selected, setSelected] = useState("");
   const countryData = Country.getAllCountries();
-  const [selectCountry, setSelectCountry] = useState("");
+  const [selectedCountry, setSelectedCountry] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const { role, setPersonalData } = useRole();
 
   // const [date, setDate] = useState<
   //   SelectSingleEventHandler | undefined | Date
   // >();
 
-  const onSubmit = (data: any) => {
-    console.log(data);
+  const onSubmit = async (data: any) => {
+    // const formData = {
+    //   role,
+    //   firstName: data.firstName,
+    //   lastName: data.lastName,
+    //   gender: selectedGender,
+    //   country: selectedCountry,
+    //   password: "asdfasdff",
+    //   avatar: "{{$randomAvatarImage}}",
+    //   dateOfBirth: "{{$randomDatePast}}",
+    //   phoneNumber: "{{$randomPhoneNumber}}",
+    //   phoneNumberCountryCode: "{{$randomCountryCode}}",
+    //   streetAddress: "{{$randomStreetAddress}}",
+    //   city: "{{$randomCity}}",
+    //   stateProvince: "{{$randomCity}}",
+    //   emailNotificationEnabled: false,
+    //   zipCode: "1000",
+    // };
+
+    // try {
+    //   const accessToken = localStorage.getItem('accessToken');
+    //   const response = await axios.post('http://116.203.117.190:5000/api/profile', formData, {
+    //     headers: { Authorization: `Bearer ${accessToken}` }
+    //   });
+
+    //   if (response.status === 201) {
+    //     setSuccess("Profile updated successfully");
+    //     setError(null);
+    //   } else {
+    //     setError("Profile update failed");
+    //     setSuccess(null);
+    //   }
+    // } catch (error) {
+    //   if (error.response) {
+    //     setError(error.response.data.message || "Profile update failed");
+    //   } else {
+    //     setError("Network error");
+    //   }
+    //   setSuccess(null);
+    // }
+    const personalData = {
+      firstName: data.firstName,
+      lastName: data.lastName,
+      gender: selectedGender,
+      country: selectedCountry,
+    };
+
+    setPersonalData(personalData);
   };
 
   return (
@@ -30,6 +83,8 @@ const PersonalData = () => {
         >
           Personal Data
         </h3>
+        {error && <div className="text-red-500">{error}</div>}
+        {success && <div className="text-green-500">{success}</div>}
         <div className="grid grid-cols-2 gap-10 tablet:flex tablet:flex-col tablet:gap-4 phone:flex phone:flex-col phone:gap-3 phone:justify-center phone:items-center  xs-phone:flex xs-phone:flex-col xs-phone:gap-3 xs-phone:justify-center xs-phone:items-center">
           <BasicInputLabel
             label="First Name"

@@ -1,3 +1,5 @@
+import axios from 'axios';
+import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/mpi_logo.png";
 import Or from "../components/Additionals/Or";
@@ -9,10 +11,30 @@ import { useForm } from "react-hook-form";
 const Login = () => {
   const { register, handleSubmit } = useForm();
   const navigate = useNavigate();
+  const [error, setError] = useState('');
 
-  const onSubmit = (data: any) => {
-    console.log(data);
+
+  const onSubmit = async (data: any) => {
+    try {
+      const response = await axios.post('http://116.203.117.190:5000/api/login', data);
+  
+      if (response.status === 200) {
+        setError('');
+        const token = response.data.token;
+        localStorage.setItem('token', token); // Store token in localStorage
+        navigate('/dashboard'); // Redirect to dashboard or home page
+      } else {
+        setError('Login failed');
+      }
+    } catch (error) {
+      if (error.response) {
+        setError(error.response.data.message || 'Login failed');
+      } else {
+        setError('Network error');
+      }
+    }
   };
+  
 
   return (
     <div className="bg-backgroundColor w-full h-screen flex items-center justify-center">
@@ -26,6 +48,7 @@ const Login = () => {
           >
             Log In
           </h3>
+          {error && <div className="text-red-500">{error}</div>}
           <form
             onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col gap-4"

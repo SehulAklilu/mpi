@@ -1,3 +1,5 @@
+import axios from "axios";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/mpi_logo.png";
 import Or from "../components/Additionals/Or";
@@ -9,9 +11,29 @@ import { useForm } from "react-hook-form";
 const SignUp = () => {
   const { register, handleSubmit } = useForm();
   const navigate = useNavigate();
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
-  const onSubmit = (data: any) => {
-    console.log(data);
+  const onSubmit = async (data: any) => {
+    try {
+      const response = await axios.post('http://116.203.117.190:5000/api/register', data);
+
+      if (response.status === 201) {
+        setSuccess('Registration successful!');
+        setError('');
+        navigate('/login'); // Redirect to login page
+      } else {
+        setError('Registration failed');
+        setSuccess('');
+      }
+    } catch (error) {
+      if (error.response) {
+        setError(error.response.data.message || 'Registration failed');
+      } else {
+        setError('Network error');
+      }
+      setSuccess(null);
+    }
   };
 
   return (
@@ -26,6 +48,8 @@ const SignUp = () => {
           >
             Register
           </h3>
+          {error && <div className="text-red-500">{error}</div>}
+          {success && <div className="text-green-500">{success}</div>}
           <form
             onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col gap-5"

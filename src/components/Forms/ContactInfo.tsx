@@ -12,6 +12,8 @@ import DropdownCountry from "../Inputs/DropdownCountry";
 import DropdownState from "../Inputs/DropdownState";
 import DropdownCity from "../Inputs/DropdownCity";
 import BasicInputLabel from "../Inputs/BasicInputLabel";
+import { useRole } from "../RoleContext";
+import axios from "axios";
 
 const ContactInfo = () => {
   const countryData = Country.getAllCountries();
@@ -20,7 +22,8 @@ const ContactInfo = () => {
   const [selectCountry, setSelectCountry] = useState<ICountry>();
   const [state, setState] = useState<IState>();
   const [city, setCity] = useState<ICity>();
-  const { register } = useForm();
+  const { register, handleSubmit  } = useForm();
+  const { role, personalData, setContactInfo, contactInfo } = useRole();
 
   useEffect(() => {
     setStateData(State.getStatesOfCountry(selectCountry?.isoCode));
@@ -40,6 +43,19 @@ const ContactInfo = () => {
     cityData && setCity(cityData[0]);
   }, [cityData]);
 
+  const onSubmit = async (data) => {
+    const contactInfoData = {
+      country: selectCountry.name,
+      state: state.name,
+      city: city.name,
+      streetAddress1: data.streetAddress1,
+      streetAddress2: data.streetAddress2,
+    };
+
+    setContactInfo(contactInfoData);
+  };
+
+  
   return (
     <div className="flex flex-col gap-10 items-center justify-center">
       <h3
@@ -47,7 +63,7 @@ const ContactInfo = () => {
       >
         Contact Information
       </h3>
-      <form>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid grid-cols-2 gap-10 tablet:flex tablet:flex-col tablet:gap-4 phone:flex phone:flex-col phone:gap-3 phone:justify-center phone:items-center xs-phone:flex xs-phone:flex-col xs-phone:gap-3 xs-phone:justify-center xs-phone:items-center">
           <DropdownCountry
             label={"Country"}
