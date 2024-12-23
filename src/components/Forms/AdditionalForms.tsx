@@ -4,10 +4,18 @@ import "react-phone-number-input/style.css";
 import { useState } from "react";
 import PhoneNumberInput from "../Inputs/PhoneNumberInput";
 import { E164Number } from "libphonenumber-js/core";
-import { useRole } from "../RoleContext";
+import { useRole } from "../../RoleContext";
 import axios from "axios";
 
-const AdditionalForms = () => {
+interface AdditionalFormsProps {
+  onUpdate: (data: {
+    itn: string;
+    phoneNumber1: E164Number | undefined;
+    phoneNumber2?: E164Number;
+  }) => void;
+}
+
+const AdditionalForms: React.FC<AdditionalFormsProps> = ({ onUpdate }) => {
   const { register, handleSubmit } = useForm();
   const [phoneNumber, setPhoneNumber] = useState<E164Number | undefined>();
   const [phoneNumber2, setPhoneNumber2] = useState<E164Number | undefined>();
@@ -21,6 +29,7 @@ const AdditionalForms = () => {
     };
 
     setAdditionalInfo(additionalInfoData);
+    onUpdate(additionalInfoData);
 
     const formData = {
       ...personalData,
@@ -47,7 +56,7 @@ const AdditionalForms = () => {
       } else {
         console.error("Profile update failed");
       }
-    } catch (error) {
+    } catch (error : any) {
       console.error(error.response?.data.message || "Profile update failed");
     }
   };

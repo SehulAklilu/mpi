@@ -1,3 +1,4 @@
+import axios from "axios";
 import logo from "../assets/mpi_logo.png";
 import { Stepper, Step } from "@material-tailwind/react";
 import Role from "./Role";
@@ -13,6 +14,10 @@ const CreateProfile = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [isLastStep, setIsLastStep] = useState(false);
   const [isFirstStep, setIsFirstStep] = useState(false);
+  const [roleData, setRoleData] = useState<string | null>(null);
+  const [personalData, setPersonalData] = useState({});
+  const [contactInfo, setContactInfo] = useState({});
+  const [additionalInfo, setAdditionalInfo] = useState({});
   const navigate = useNavigate();
 
   const handleNext = () => {
@@ -22,6 +27,22 @@ const CreateProfile = () => {
     });
   };
   const handlePrev = () => !isFirstStep && setActiveStep((cur) => cur - 1);
+
+  const handleFinish = async () => {
+    const profileData = { roleData, personalData, contactInfo, additionalInfo };
+
+    try {
+      const response = await axios.post("http://your-backend-url.com/api/profile", profileData);
+      if (response.status === 200) {
+        toast.success("Profile created successfully!");
+        navigate("/invite-organization");
+      } else {
+        toast.error("Failed to create profile. Please try again.");
+      }
+    } catch (error) {
+      toast.error("An error occurred while creating the profile.");
+    }
+  };
 
   return (
     <div className="bg-backgroundColor xs-phone:h-full  w-full h-screen py-12">
@@ -37,13 +58,13 @@ const CreateProfile = () => {
           </h3>
           <div className="">
             {activeStep === 0 ? (
-              <Role />
+              <Role onUpdate={(data) => setRoleData(data)} />
             ) : activeStep === 1 ? (
-              <PersonalData />
+              <PersonalData  onUpdate={(data) => setPersonalData(data)} />
             ) : activeStep === 2 ? (
-              <ContactInfo />
+              <ContactInfo  onUpdate={(data) => setContactInfo(data)} />
             ) : activeStep === 3 ? (
-              <AdditionalForms />
+              <AdditionalForms onUpdate={(data) => setAdditionalInfo(data)} />
             ) : (
               ""
             )}
@@ -120,7 +141,7 @@ const CreateProfile = () => {
                   type={"button"}
                   buttonText={"Finish"}
                   backgroundStyleOn={true}
-                  onclick={() => navigate("/invite-organization")}
+                  onclick={handleFinish}
                   disabled={false} // Adjust disabled state as needed
                   small
                 />

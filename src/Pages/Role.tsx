@@ -3,6 +3,10 @@ import { useRole } from "../RoleContext.js";
 import { useState } from "react";
 import MaterialIcon from "../components/Icon/MaterialIcon";
 
+interface RoleProps {
+  onUpdate: (role: string) => void;
+}
+
 const roles = [
   {
     id: 1,
@@ -30,7 +34,7 @@ const roles = [
   },
 ];
 
-const Role = () => {
+const Role: React.FC<RoleProps> = ({ onUpdate }) => {
   const {role, setRole } = useRole();
   const [selected, setSelected] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -39,6 +43,7 @@ const Role = () => {
   const handleSelected = (value: string) => {
     setSelected(value);
     setRole(value);
+    onUpdate(value);
   };
 
   const handleSubmit = async () => {
@@ -74,7 +79,7 @@ const Role = () => {
         setError("Role selection failed");
         setSuccess(null);
       }
-    } catch (error) {
+    } catch (error : any) {
       if (error.response) {
         setError(error.response.data.message || "Role selection failed");
       } else {

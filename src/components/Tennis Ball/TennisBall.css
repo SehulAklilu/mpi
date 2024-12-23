@@ -1,0 +1,43 @@
+.curved-line {
+    position: absolute;
+    width: 2px;
+    height: 40px;
+    background-color: #ffc107;
+    border-radius: 2px;
+    opacity: 0;
+  }
+  
+  .left-line {
+    animation: drawLeftLine 0.5s forwards;
+  }
+  
+  .right-line {
+    animation: drawRightLine 0.5s forwards;
+  }
+  
+  @keyframes drawLeftLine {
+    from {
+      height: 0;
+      opacity: 0;
+      transform: translateX(-10px);
+    }
+    to {
+      height: 40px;
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  @keyframes drawRightLine {
+    from {
+      height: 0;
+      opacity: 0;
+      transform: translateX(10px);
+    }
+    to {
+      height: 40px;
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  

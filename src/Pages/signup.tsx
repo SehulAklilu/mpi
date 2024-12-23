@@ -26,7 +26,7 @@ const SignUp = () => {
         setError('Registration failed');
         setSuccess('');
       }
-    } catch (error) {
+    } catch (error : any) {
       if (error.response) {
         setError(error.response.data.message || 'Registration failed');
       } else {

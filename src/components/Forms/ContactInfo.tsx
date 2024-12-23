@@ -12,10 +12,20 @@ import DropdownCountry from "../Inputs/DropdownCountry";
 import DropdownState from "../Inputs/DropdownState";
 import DropdownCity from "../Inputs/DropdownCity";
 import BasicInputLabel from "../Inputs/BasicInputLabel";
-import { useRole } from "../RoleContext";
+import { useRole } from "../../RoleContext";
 import axios from "axios";
 
-const ContactInfo = () => {
+interface ContactInfoProps {
+  onUpdate: (data: {
+    country: string;
+    state: string;
+    city: string;
+    streetAddress1: string;
+    streetAddress2?: string;
+  }) => void;
+}
+
+const ContactInfo: React.FC<ContactInfoProps> = ({ onUpdate }) => {
   const countryData = Country.getAllCountries();
   const [stateData, setStateData] = useState<IState[]>();
   const [cityData, setCityData] = useState<ICity[]>();
@@ -43,16 +53,17 @@ const ContactInfo = () => {
     cityData && setCity(cityData[0]);
   }, [cityData]);
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data : any) => {
     const contactInfoData = {
-      country: selectCountry.name,
-      state: state.name,
-      city: city.name,
+      country: selectCountry.name || "",
+      state: state.name || "",
+      city: city.name || "",
       streetAddress1: data.streetAddress1,
       streetAddress2: data.streetAddress2,
     };
 
     setContactInfo(contactInfoData);
+    onUpdate(contactInfoData);
   };
 
   
