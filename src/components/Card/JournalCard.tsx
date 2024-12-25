@@ -48,13 +48,9 @@ const JournalCard: React.FC<JournalCardProps> = ({ title, content, date }) => {
       }] w-[22%] px-4 py-4 rounded-lg flex flex-col gap-7 justify-between`}
     >
       <h2 className="font-semibold text-black-75">{title}</h2>
-      <p>
-        {content}
-      </p>
+      <p>{content}</p>
       <div className="flex flex-row justify-between">
-        <p className="my-auto text-xs text-black-65 font-semibold ">
-          {date}
-        </p>
+        <p className="my-auto text-xs text-black-65 font-semibold ">{date}</p>
         <div className="flex flex-row gap-4 items-center relative ">
           <div className="relative ">
             <div className="my-auto flex justify-center items-center">
@@ -68,7 +64,7 @@ const JournalCard: React.FC<JournalCardProps> = ({ title, content, date }) => {
             </div>
             {openPalette && (
               <CloseClickOutside onClose={() => setOpenPalette(false)}>
-                <div className="absolute top-8 left-0 z-20 bg-backgroundColor w-52 h-11 p-2 rounded-xl shadow-md flex flex-row gap-3 ">
+                <div className="absolute top-8 left-0 z-20 bg-background w-52 h-11 p-2 rounded-xl shadow-md flex flex-row gap-3 ">
                   {colors.map((color) => (
                     <>
                       <div

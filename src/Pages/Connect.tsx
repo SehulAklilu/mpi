@@ -15,13 +15,15 @@ const Connect = () => {
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const response = await fetch("http://194.5.159.228:3000/api/v1/messages");
+        const response = await fetch(
+          "http://194.5.159.228:3000/api/v1/messages"
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch messages");
         }
         const data = await response.json();
         setMessages(data);
-      } catch (err : any) {
+      } catch (err: any) {
         setError(err.message);
       }
     };
@@ -30,7 +32,7 @@ const Connect = () => {
   }, []);
 
   return (
-    <div className="bg-backgroundColor h-screen flex flex-row font-raleway ">
+    <div className="bg-background h-screen flex flex-row font-raleway ">
       <ChatSidebar register={register} />
       <div className="w-full">
         {error ? <p>{error}</p> : <OpenedChat messages={messages} />}

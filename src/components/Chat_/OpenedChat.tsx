@@ -105,7 +105,7 @@ const OpenedChat: FC<OpenedChatProps> = ({ messages }) => {
           </div>
         </div>
         <div className="flex-grow overflow-y-auto  p-4 flex-col-reverse flex gap-0 ">
-        {messages.map((msg) => (
+          {messages.map((msg) => (
             <div
               key={msg.id}
               className={`flex ${
@@ -113,7 +113,7 @@ const OpenedChat: FC<OpenedChatProps> = ({ messages }) => {
               }`}
             >
               <Chat color="primary" message={msg.content} />
-              </div>
+            </div>
           ))}
         </div>
         <div className="bg-white h-16 flex flex-row gap-1 items-center px-5 py-2">
@@ -165,7 +165,7 @@ const OpenedChat: FC<OpenedChatProps> = ({ messages }) => {
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between">
               <div className="flex flex-row gap-2">
-                <div className="h-14 w-14 bg-backgroundColor flex justify-center items-center font-semibold text-xl">
+                <div className="h-14 w-14 bg-background flex justify-center items-center font-semibold text-xl">
                   F
                 </div>
                 <div className="flex flex-col my-auto">
@@ -191,7 +191,7 @@ const OpenedChat: FC<OpenedChatProps> = ({ messages }) => {
           <div className="flex flex-col gap-2">
             <div className="flex flex-row justify-between">
               <div className="flex flex-row gap-2">
-                <div className="h-14 w-14 bg-backgroundColor flex justify-center items-center font-semibold text-xl">
+                <div className="h-14 w-14 bg-background flex justify-center items-center font-semibold text-xl">
                   F
                 </div>
                 <div className="flex flex-col my-auto">

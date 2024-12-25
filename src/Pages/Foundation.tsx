@@ -9,7 +9,7 @@ import Tabs from "../components/Tabs/Tabs";
 
 const Foundation = () => {
   return (
-    <div className="bg-backgroundColor h-screen font-raleway">
+    <div className="bg-background h-screen font-raleway">
       <Navbar common={true} commonHeader={"Foundation"} />
       <div className="flex flex-row justify-between px-7">
         <div className=" w-[55%] flex flex-col gap-5">

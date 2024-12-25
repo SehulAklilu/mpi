@@ -11,33 +11,36 @@ import { useForm } from "react-hook-form";
 const SignUp = () => {
   const { register, handleSubmit } = useForm();
   const navigate = useNavigate();
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const onSubmit = async (data: any) => {
     try {
-      const response = await axios.post('http://116.203.117.190:5000/api/register', data);
+      const response = await axios.post(
+        "http://116.203.117.190:5000/api/register",
+        data
+      );
 
       if (response.status === 201) {
-        setSuccess('Registration successful!');
-        setError('');
-        navigate('/login'); // Redirect to login page
+        setSuccess("Registration successful!");
+        setError("");
+        navigate("/login"); // Redirect to login page
       } else {
-        setError('Registration failed');
-        setSuccess('');
+        setError("Registration failed");
+        setSuccess("");
       }
-    } catch (error : any) {
+    } catch (error: any) {
       if (error.response) {
-        setError(error.response.data.message || 'Registration failed');
+        setError(error.response.data.message || "Registration failed");
       } else {
-        setError('Network error');
+        setError("Network error");
       }
       setSuccess(null);
     }
   };
 
   return (
-    <div className="bg-backgroundColor h-screen flex items-center justify-center">
+    <div className="bg-background h-screen flex items-center justify-center">
       <div className="flex flex-col w-1/2 items-center phone:w-full xs-phone:w-full justify-center gap-10">
         <div className="w-56 xs-phone:w-44 ">
           <img src={logo} alt="mpi logo" />
