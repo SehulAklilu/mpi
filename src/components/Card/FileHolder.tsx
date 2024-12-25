@@ -16,7 +16,7 @@ const FileHolder: FC<FileHolderProps> = ({
   return (
     <div className="flex flex-row justify-between items-center pr-7">
       <div className="flex flex-row gap-2">
-        <div className="flex justify-center items-center bg-red-500 text-white p-5">
+        <div className="w-[5rem] h-[4.5rem] flex justify-center items-center bg-red-500 text-white p-5">
           {fileType}
         </div>
         <div className="flex flex-col justify-center">

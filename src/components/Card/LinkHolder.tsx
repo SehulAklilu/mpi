@@ -13,8 +13,8 @@ const LinkHolder: FC<LinkHolderProps> = ({ linkTitle, linkURL, onClick }) => {
       className="flex flex-row justify-between items-center pr-7"
     >
       <div className="flex flex-row gap-2">
-        <div className="flex justify-center items-center bg-blue text-white p-5">
-          <MaterialIcon className="" icon="link" />
+        <div className="w-[5rem] h-[4.5rem] flex justify-center items-center bg-blue text-white p-5">
+          <MaterialIcon className="text-blue-700" icon="link" />
         </div>
         <div className="flex flex-col justify-center">
           <p className="font-semibold">{linkTitle}</p>

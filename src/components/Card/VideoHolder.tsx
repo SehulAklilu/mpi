@@ -1,6 +1,6 @@
 import { FC } from "react";
 import MaterialIcon from "../Icon/MaterialIcon";
-import user from "../../assets/googleIcon.png";
+import thumbnail from "../../assets/images/video_tumnail.png";
 
 interface VideoHolderProps {
   thumbnail: string;
@@ -9,16 +9,26 @@ interface VideoHolderProps {
   onClick: () => void;
 }
 const VideoHolder: FC<VideoHolderProps> = ({
-  thumbnail,
+  // thumbnail,
   videoTitle,
   videoSize,
   onClick,
 }) => {
   return (
-    <div className="flex flex-row justify-between items-center pr-7">
+    <div className="flex hover:bg-gray-100  flex-row justify-between items-center pr-7">
       <div className="flex flex-row gap-2">
-        <div className="">
-          <img className="w-[4.5rem] h-[4.5rem]" src={thumbnail ?? ""} alt="" />
+        <div className="relative">
+          <div className="rounded-lg absolute top-0 left-0 w-full h-full bg-black/20" />
+          <MaterialIcon
+            className="text-white absolute z-30 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-2xl"
+            icon="play_circle"
+          />
+
+          <img
+            className="w-[5rem] h-[4.5rem] rounded-lg"
+            src={thumbnail ?? ""}
+            alt=""
+          />
         </div>
         <div className="flex flex-col justify-center">
           <p className="font-semibold">{videoTitle}</p>

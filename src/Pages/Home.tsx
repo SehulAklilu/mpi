@@ -44,7 +44,7 @@ const Home = () => {
   const headerDecider = selected === 1 ? false : true;
 
   return (
-    <div className="flex flex-row bg-backgroundColor font-raleway">
+    <div className="flex flex-row bg-background font-raleway">
       <div className="h-screen fixed bg-white rounded-tr-lg rounded-br-lg px-4 py-6 shadow-md w-[22%] flex flex-col gap-10">
         <div className="flex justify-center items-center">
           <img className="w-52 " src={logo} alt="Mpi logo" />

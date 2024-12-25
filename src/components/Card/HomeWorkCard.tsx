@@ -15,7 +15,7 @@ const HomeWorkCard: FC<HomeWorkCardProps> = ({
   return (
     <div
       onClick={onClick}
-      className="bg-backgroundColor p-3 rounded-lg shadow-md flex flex-row justify-between"
+      className="bg-background p-3 rounded-lg shadow-md flex flex-row justify-between"
     >
       <p>{title}</p>
       {homeworkDone ? (

@@ -32,7 +32,10 @@ const CreateProfile = () => {
     const profileData = { roleData, personalData, contactInfo, additionalInfo };
 
     try {
-      const response = await axios.post("http://your-backend-url.com/api/profile", profileData);
+      const response = await axios.post(
+        "http://your-backend-url.com/api/profile",
+        profileData
+      );
       if (response.status === 200) {
         toast.success("Profile created successfully!");
         navigate("/invite-organization");
@@ -45,7 +48,7 @@ const CreateProfile = () => {
   };
 
   return (
-    <div className="bg-backgroundColor xs-phone:h-full  w-full h-screen py-12">
+    <div className="bg-background xs-phone:h-full  w-full h-screen py-12">
       <div className="flex flex-col gap-5 items-center justify-center xs-phone:w-full">
         <div className="w-56 2xl:w-64 xs-phone:w-44">
           <img src={logo} alt="mpi logo" />
@@ -60,9 +63,9 @@ const CreateProfile = () => {
             {activeStep === 0 ? (
               <Role onUpdate={(data) => setRoleData(data)} />
             ) : activeStep === 1 ? (
-              <PersonalData  onUpdate={(data) => setPersonalData(data)} />
+              <PersonalData onUpdate={(data) => setPersonalData(data)} />
             ) : activeStep === 2 ? (
-              <ContactInfo  onUpdate={(data) => setContactInfo(data)} />
+              <ContactInfo onUpdate={(data) => setContactInfo(data)} />
             ) : activeStep === 3 ? (
               <AdditionalForms onUpdate={(data) => setAdditionalInfo(data)} />
             ) : (

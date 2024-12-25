@@ -32,7 +32,7 @@ const Navbar: FC<NavbarProps> = ({ common, commonHeader, commonColor }) => {
         </p>
       )}
 
-      <div className="flex flex-row gap-14 relative items-center">
+      <div className="flex flex-row gap-10 relative items-center">
         <div className="relative">
           <NotificationIcon
             notificationNumber={200}
@@ -82,7 +82,7 @@ const Navbar: FC<NavbarProps> = ({ common, commonHeader, commonColor }) => {
               <img className="h-11 w-11 rounded-full" src={user} alt="User" />
             </div>
           </div>
-        </div>''
+        </div>
       </div>
     </div>
   );

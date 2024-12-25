@@ -33,7 +33,7 @@ const Tabs: FC<TabsProps> = ({
   };
 
   return (
-    <div className="flex flex-col w-full gap-4  ">
+    <div className="flex flex-col w-full gap-4  h-fit">
       <div
         className={`text-sm font-semibold text-center text-black ${
           variant === "default" && "border-b-2"

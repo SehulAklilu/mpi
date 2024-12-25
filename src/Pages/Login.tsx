@@ -1,5 +1,5 @@
-import axios from 'axios';
-import { useState } from 'react';
+import axios from "axios";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie"; // Import js-cookie
 import logo from "../assets/mpi_logo.png";
@@ -12,46 +12,49 @@ import { useForm } from "react-hook-form";
 const Login = () => {
   const { register, handleSubmit } = useForm();
   const navigate = useNavigate();
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const onSubmit = async (data: any) => {
     try {
-      const response = await axios.post('http://194.5.159.228:3000/auth/login', data);
+      const response = await axios.post(
+        "http://194.5.159.228:3000/auth/login",
+        data
+      );
 
       if (response.status === 200) {
-        setError('');
+        setError("");
         const { tokens, user } = response.data;
 
         // Save the tokens to cookies
-        Cookies.set('accessToken', tokens.accessToken, { expires: 1 }); // Expires in 1 day
-        Cookies.set('refreshToken', tokens.refreshToken, { expires: 7 }); // Expires in 7 days
+        Cookies.set("accessToken", tokens.accessToken, { expires: 1 }); // Expires in 1 day
+        Cookies.set("refreshToken", tokens.refreshToken, { expires: 7 }); // Expires in 7 days
 
         // Optional: Save additional user data if needed
-        Cookies.set('userEmail', user.emailAddress.email, { expires: 1 });
-        Cookies.set('userId', user.id, { expires: 1 });
+        Cookies.set("userEmail", user.emailAddress.email, { expires: 1 });
+        Cookies.set("userId", user.id, { expires: 1 });
 
         if (user.role === "coach" && user.players.length >= 2) {
-          Cookies.set('coachPlayer1', user.players[0], { expires: 1 });
-          Cookies.set('coachPlayer2', user.players[1], { expires: 1 });
-          Cookies.set('coachJwt', tokens.accessToken, { expires: 1 });
+          Cookies.set("coachPlayer1", user.players[0], { expires: 1 });
+          Cookies.set("coachPlayer2", user.players[1], { expires: 1 });
+          Cookies.set("coachJwt", tokens.accessToken, { expires: 1 });
         }
 
-        console.log('Access token saved to cookies:', tokens.accessToken);
-        navigate('/'); // Redirect to dashboard or home page
+        console.log("Access token saved to cookies:", tokens.accessToken);
+        navigate("/"); // Redirect to dashboard or home page
       } else {
-        setError('Login failed');
+        setError("Login failed");
       }
     } catch (error: any) {
       if (error.response) {
-        setError(error.response.data.message || 'Login failed');
+        setError(error.response.data.message || "Login failed");
       } else {
-        setError('Network error');
+        setError("Network error");
       }
     }
   };
 
   return (
-    <div className="bg-backgroundColor w-full h-screen flex items-center justify-center">
+    <div className="bg-background w-full h-screen flex items-center justify-center">
       <div className="flex flex-col w-1/2 phone:w-full xs-phone:w-full items-center justify-center gap-10">
         <div className="w-56 xs-phone:w-48">
           <img src={logo} alt="mpi logo" />

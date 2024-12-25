@@ -3,7 +3,7 @@ import Button from "../components/Button/Button";
 
 const TakeShortQuiz = () => {
   return (
-    <div className="bg-backgroundColor h-screen py-12">
+    <div className="bg-background h-screen py-12">
       <div className="flex flex-col gap-5 items-center justify-center">
         <div className="w-56  ">
           <img src={logo} alt="mpi logo" />
