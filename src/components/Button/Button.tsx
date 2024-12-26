@@ -28,7 +28,7 @@ const Button: FC<ButtonProps> = ({
         onClick={onclick}
         className={` ${
           backgroundStyleOn
-            ? `${buttonStyle} border py-[0.5rem] phone:px-2 phone:py-[0.6rem] xs-phone:py-[0.4rem] xs-phone:px-3 px-2  ${
+            ? ` border py-[0.5rem] phone:px-2 phone:py-[0.6rem] xs-phone:py-[0.4rem] xs-phone:px-3 px-2  ${
                 small
                   ? "w-24 font-medium xs-phone:w-16 xs-phone:text-xs"
                   : "w-44 phone:w-36  xs-phone:w-36 text-base xs-phone:text-sm"
@@ -36,7 +36,7 @@ const Button: FC<ButtonProps> = ({
                 disabled ? "bg-black-35" : "bg-primary"
               }   text-white font-medium text-sm outline-none rounded-md`
             : `text-[#F2851C] text-sm xs-phone:text-xs `
-        } `}
+        } ${buttonStyle}`}
       >
         {buttonText}
       </button>

@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import AssignmentCard from "../components/Card/AssignmentCard";
 import IncourseAssignment from "../components/Card/IncourseAssignment";
 import IncourseCard from "../components/Card/IncourseCard";
@@ -8,6 +9,7 @@ import Navbar from "../components/Navbar/Navbar";
 import Tabs from "../components/Tabs/Tabs";
 
 const Foundation = () => {
+  const navigate = useNavigate();
   return (
     <div className="bg-background h-screen font-raleway">
       <Navbar common={true} commonHeader={"Foundation"} />
@@ -27,10 +29,22 @@ const Foundation = () => {
           </div>
           <div className="flex flex-col gap-5 pb-12">
             <p className="text-lg font-semibold">Lesson</p>
-            <IncourseCard />
-            <IncourseCard />
+            <IncourseCard
+              onClick={() => {
+                navigate("/course/1/video/1");
+              }}
+            />
+            <IncourseCard
+              onClick={() => {
+                navigate("/course/1/video/2");
+              }}
+            />
             <IncourseAssignment />
-            <IncourseCard />
+            <IncourseCard
+              onClick={() => {
+                navigate("/course/1/video/3");
+              }}
+            />
           </div>
         </div>
         <div className=" lg:w-[45%] pb-20">

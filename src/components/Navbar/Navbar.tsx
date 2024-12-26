@@ -17,7 +17,7 @@ const Navbar: FC<NavbarProps> = ({ common, commonHeader, commonColor }) => {
   const navigate = useNavigate();
 
   return (
-    <div className="w-full py-5 px-7 flex flex-row justify-between items-center">
+    <div className="sticky top-0 z-10 bg-[#FFF8F5] w-ful py-5 px-7 flex flex-row justify-between items-center">
       {common ? (
         <p
           className={`text-3xl ${
