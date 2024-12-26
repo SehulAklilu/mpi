@@ -18,6 +18,7 @@ import LearnLesson from "./components/Learn/LearnLesson.tsx";
 import Progress from "./Pages/Progress.tsx";
 import Reminders from "./Pages/Reminders.tsx";
 import Profile from "./Pages/Profile.tsx";
+import Settings from "./Pages/Settings.tsx";
 
 const router = createBrowserRouter([
   {
@@ -42,7 +43,7 @@ const router = createBrowserRouter([
       },
       {
         path: "settings",
-        element: "",
+        element: <Settings />,
       },
       {
         path: "newJournal",
