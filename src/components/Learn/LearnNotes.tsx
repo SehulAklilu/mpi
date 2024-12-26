@@ -3,19 +3,38 @@ import CloseClickOutside from "../Additionals/ClickOutside";
 import IconButton from "../Button/IconButton";
 import BasicInput from "../Inputs/BasicInput";
 import NotesCard from "../Card/NotesCard";
+import { useState } from "react";
+import { Input } from "../ui/input";
+
+interface NoteInf {
+  title: string;
+  desc: string;
+}
+
+const notesTemp = [
+  {
+    title: "First Title",
+    desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nulla cum voluptatem ex quod Aliquid, ea",
+  },
+  {
+    title: "Second Title",
+    desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nulla cum voluptatem ex quod Aliquid, ea",
+  },
+];
 
 const LearnNotes = () => {
   const { register, handleSubmit } = useForm();
-
+  // const [notes, setNotes] = useState<NoteInf[]>(notesTemp);
+  // const [search, setSearch] = useState(notesTemp);
   return (
     <div className="flex flex-col gap-5">
       <div className="flex flex-row gap-3 my-auto relative justify-end">
         <BasicInput
           iconName={"search"}
           outline={true}
-          inputType={"email"}
+          inputType={"string"}
           placeholder={"Search for your notes"}
-          name="email"
+          name="search"
           register={register}
         />
         <div className="relative">
