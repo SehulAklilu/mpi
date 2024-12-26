@@ -1,9 +1,16 @@
 import sampleThumbnail from "../../assets/user_1.jpg";
 import MaterialIcon from "../Icon/MaterialIcon";
 
-const IncourseCard = () => {
+interface IncourseCardProps {
+  onClick: () => void;
+}
+
+const IncourseCard = ({ onClick }: IncourseCardProps) => {
   return (
-    <div className="hover:bg-gray-100 duration-300 hover:shadow-md cursor-pointer rounded-md">
+    <div
+      onClick={onClick}
+      className="hover:bg-gray-100 duration-300 hover:shadow-md cursor-pointer rounded-md"
+    >
       <div className="flex max-sm:flex-col gap-5">
         {/* Make sure the parent has a fixed height */}
         <div className="rounded-lg max-sm:w-full  max-sm:h-[200px] h-[100px]  w-[200px] z-50 relative">

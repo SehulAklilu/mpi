@@ -8,15 +8,22 @@ interface VideoData {
   title: string;
   description: string;
   thumbnail: string;
-  url: string; 
+  url: string;
 }
-  
+
 interface VideoCardProps {
-  courseId: string;   // The course ID to fetch the video
+  courseId: string; // The course ID to fetch the video
 }
 
 const VideoCard: React.FC<VideoCardProps> = ({ courseId }) => {
-  const [videoData, setVideoData] = useState<VideoData | null>(null); 
+  const [videoData, setVideoData] = useState<VideoData | null>({
+    id: "1",
+    title: "How to Find a Tennis Grip",
+    description:
+      "This video provides a detailed explanation of various tennis grips.",
+    url: "https://www.youtube.com/watch?v=Hr2f8dmiwpU",
+    thumbnail: "https://img.youtube.com/vi/Hr2f8dmiwpU/0.jpg",
+  });
 
   useEffect(() => {
     const fetchVideoData = async () => {
@@ -37,9 +44,9 @@ const VideoCard: React.FC<VideoCardProps> = ({ courseId }) => {
           }
         );
 
-         // Find the specific course and video data by courseId
-         const course = response.data.courses?.find(
-          (course) => course.courseId.id === courseId
+        // Find the specific course and video data by courseId
+        const course = response.data.courses?.find(
+          (course: any) => course.courseId.id === courseId
         );
 
         // Assuming the response contains video data under `response.data.videos[0]`
@@ -92,9 +99,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ courseId }) => {
       </div>
       <div className="flex flex-col justify-center gap-2">
         <p className="text-base font-semibold">{videoData.title}</p>
-        <p className="text-xs font-extralight">
-          {videoData.description}
-        </p>
+        <p className="text-xs font-extralight">{videoData.description}</p>
         <a
           href={videoData.url}
           target="_blank"

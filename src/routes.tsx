@@ -12,7 +12,7 @@ import Connect from "./Pages/Connect.tsx";
 import Home from "./Pages/Home.tsx";
 import Journal from "./Pages/Journal.tsx";
 import NewJournal from "./components/Notes/NewJournal.tsx";
-import Learn from "./Pages/Learn.tsx";
+import Learn from "./Pages/Learn/Learn.tsx";
 import Foundation from "./Pages/Foundation.tsx";
 import LearnLesson from "./components/Learn/LearnLesson.tsx";
 import Progress from "./Pages/Progress.tsx";
@@ -63,7 +63,7 @@ const router = createBrowserRouter([
     element: <Foundation />,
   },
   {
-    path: "foundation-video-one",
+    path: "course/:course_id/video/:video_id",
     element: <LearnLesson />,
   },
   {

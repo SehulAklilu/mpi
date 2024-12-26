@@ -73,7 +73,7 @@ const Home = () => {
           <div></div>
         </div>
       </div>
-      <div className=" pl-[22%] pt-3 w-full">
+      <div className=" pl-[22%] w-full">
         <Navbar common={headerDecider} commonHeader={selectedName} />
         <div className=" pl-[2%] ">
           <p>

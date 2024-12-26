@@ -16,7 +16,15 @@ const TennisBall: React.FC<TennisBallProps> = ({
   position,
 }) => {
   return (
-    <div className={` w-20 flex flex-col gap-4 items-center justify-center ${position === "left" ? "mr-auto" : "ml-auto"}`}>
+    <div
+      className={` w-20 flex flex-col gap-4 items-center justify-center ${
+        position === "left"
+          ? "mr-auto"
+          : position === "right"
+          ? "ml-auto"
+          : "mx-auto"
+      }`}
+    >
       <div className="flex flex-col items-center justify-center">
         <MaterialIcon
           className={`text-[550%] ${
