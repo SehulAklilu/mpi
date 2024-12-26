@@ -53,7 +53,7 @@ const Learn = () => {
       courseId: "662e17020ac8163154d7ba98",
     },
     {
-      isActive: true,
+      isActive: false,
       title: "Basics",
       position: "center",
       courseId: "662e17020ac8163154d7ba99",
@@ -161,7 +161,7 @@ const Learn = () => {
 
   return (
     <div className="flex flex-row font-raleway ">
-      <div className="w-2/3 flex flex-col items-center gap-10 relative h-[88vh] overflow-y-scroll overflow-x-hidden custom-scrollbar sm:px-4 md:px-20 lg:px-40">
+      <div className="w-2/3 flex flex-col items-center gap-5 relative h-[88vh] overflow-y-scroll overflow-x-hidden custom-scrollbar sm:px-4 md:px-20 lg:px-40">
         {/* Render TennisBall components */}
         {tennisBalls.map((ball, index) => (
           <TennisBall
