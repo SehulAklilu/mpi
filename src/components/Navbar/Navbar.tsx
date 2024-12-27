@@ -14,7 +14,6 @@ interface NavbarProps {
 
 const Navbar: FC<NavbarProps> = ({ common, commonHeader, commonColor }) => {
   const [openNotification, setOpenNotification] = useState<boolean>(false);
-  const [openProfile, setOpenProfile] = useState<boolean>(false);
   const navigate = useNavigate();
 
   return (
