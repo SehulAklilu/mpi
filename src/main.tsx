@@ -8,14 +8,17 @@ import { RoleProvider } from "./RoleContext.tsx";
 
 import router from "./routes.tsx";
 import Providers from "./providers/providers.tsx";
+import { SidebarToggleProvider } from "./context/SidebarToggleContext.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <RoleProvider>
-      <Providers>
-        <ToastContainer />
-        <RouterProvider router={router} />
-      </Providers>
+      <SidebarToggleProvider>
+        <Providers>
+          <ToastContainer />
+          <RouterProvider router={router} />
+        </Providers>
+      </SidebarToggleProvider>
     </RoleProvider>
   </React.StrictMode>
 );
