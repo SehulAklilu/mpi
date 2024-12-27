@@ -4,6 +4,7 @@ import user from "../../assets/user.jpeg";
 import { useNavigate } from "react-router-dom";
 import { FC, useState } from "react";
 import CloseClickOutside from "../Additionals/ClickOutside";
+import { SheetMenu } from "../Sidebar/sheet-menu";
 
 interface NavbarProps {
   common: boolean;
@@ -18,6 +19,7 @@ const Navbar: FC<NavbarProps> = ({ common, commonHeader, commonColor }) => {
 
   return (
     <div className="sticky top-0 z-10 bg-[#FFF8F5] w-ful py-5 px-7 flex flex-row justify-between items-center">
+      <SheetMenu />
       {common ? (
         <p
           className={`text-3xl ${

@@ -13,12 +13,12 @@ import { SidebarToggleProvider } from "./context/SidebarToggleContext.tsx";
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <RoleProvider>
-      {/* <SidebarToggleProvider> */}
-      <Providers>
-        <ToastContainer />
-        <RouterProvider router={router} />
-      </Providers>
-      {/* </SidebarToggleProvider> */}
+      <SidebarToggleProvider>
+        <Providers>
+          <ToastContainer />
+          <RouterProvider router={router} />
+        </Providers>
+      </SidebarToggleProvider>
     </RoleProvider>
   </React.StrictMode>
 );

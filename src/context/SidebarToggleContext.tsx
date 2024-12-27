@@ -1,13 +1,12 @@
-// context/SidebarToggleContext.tsx
 import React, { createContext, useContext, useState, ReactNode } from "react";
 
-// Define the shape of the context
+// Define the context structure
 interface SidebarToggleContextProps {
   isOpen: boolean;
-  toggleSidebar: () => void;
+  setIsOpen: () => void;
 }
 
-// Create the context with a default value
+// Create the context
 const SidebarToggleContext = createContext<
   SidebarToggleContextProps | undefined
 >(undefined);
@@ -18,28 +17,26 @@ export const SidebarToggleProvider = ({
 }: {
   children: ReactNode;
 }) => {
-  const [isOpen, setIsOpen] = useState<boolean>(true);
+  const [isOpen, setIsOpenState] = useState<boolean>(true);
 
-  const toggleSidebar = () => {
-    setIsOpen((prev) => !prev);
+  const setIsOpen = () => {
+    setIsOpenState((prev) => !prev);
   };
 
   return (
-    <SidebarToggleContext.Provider value={{ isOpen, toggleSidebar }}>
+    <SidebarToggleContext.Provider value={{ isOpen, setIsOpen }}>
       {children}
     </SidebarToggleContext.Provider>
   );
 };
 
-// Custom hook to use the context
-export const useSidebarToggle = () => {
+// Hook to use the sidebar context
+export const useSidebarToggle = (): SidebarToggleContextProps => {
   const context = useContext(SidebarToggleContext);
-
   if (!context) {
     throw new Error(
       "useSidebarToggle must be used within a SidebarToggleProvider"
     );
   }
-
   return context;
 };
