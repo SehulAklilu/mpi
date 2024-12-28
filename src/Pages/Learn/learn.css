@@ -21,3 +21,12 @@
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background-color: #d97412;
 }
+
+.custom-scrollbar-two {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.custom-scrollbar-two::-webkit-scrollbar {
+  display: none;
+}

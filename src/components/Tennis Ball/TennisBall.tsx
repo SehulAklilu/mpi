@@ -4,6 +4,7 @@ import "./TennisBall.css";
 
 interface TennisBallProps {
   isActive: boolean;
+  isCompleted: boolean;
   onclick: () => void;
   title: string;
   position: string;
@@ -11,13 +12,15 @@ interface TennisBallProps {
 
 const TennisBall: React.FC<TennisBallProps> = ({
   isActive,
+  isCompleted,
   onclick,
   title,
   position,
 }) => {
   return (
     <div
-      className={` w-20 flex flex-col gap-4 items-center justify-center ${
+      onClick={() => onclick()}
+      className={` w-40 flex flex-col gap-4 items-center justify-center ${
         position === "left"
           ? "mr-auto"
           : position === "right"
@@ -28,7 +31,9 @@ const TennisBall: React.FC<TennisBallProps> = ({
       <div className="flex flex-col items-center justify-center">
         <MaterialIcon
           className={`text-[550%] ${
-            isActive
+            isCompleted
+              ? "text-green-500 motion-safe:animate-slowBounce cursor-pointer rotate-2"
+              : isActive
               ? "text-primary motion-safe:animate-slowBounce cursor-pointer rotate-2"
               : "text-[#c4c4c4]"
           }  `}
@@ -44,9 +49,7 @@ const TennisBall: React.FC<TennisBallProps> = ({
       </div>
       {isActive && (
         <div>
-          <p className="font-normal text-primary text-center text-lg">
-            {title}
-          </p>
+          <p className="font-bold text-primary text-center text-sm">{title}</p>
         </div>
       )}
       {/* Curved line div to animate line between balls */}

@@ -8,50 +8,71 @@ import Button from "../components/Button/Button";
 import SignInWithGoogle from "../components/Button/SignInWithGoogle";
 import BasicInput from "../components/Inputs/BasicInput";
 import { useForm } from "react-hook-form";
+import { useMutation } from "react-query";
+import { login } from "@/api/auth.api";
+import { toast } from "react-toastify";
+import { getAxiosErrorMessage } from "@/api/axios";
 
 const Login = () => {
   const { register, handleSubmit } = useForm();
   const navigate = useNavigate();
   const [error, setError] = useState("");
 
-  const onSubmit = async (data: any) => {
-    try {
-      const response = await axios.post(
-        "http://194.5.159.228:3000/auth/login",
-        data
-      );
+  const mutation = useMutation(login, {
+    onSuccess: () => {
+      navigate("/");
+    },
+    onError: (error: any) => {
+      const message = getAxiosErrorMessage(error);
+      toast.error(message);
+    },
+  });
 
-      if (response.status === 200) {
-        setError("");
-        const { tokens, user } = response.data;
-
-        // Save the tokens to cookies
-        Cookies.set("accessToken", tokens.accessToken, { expires: 1 }); // Expires in 1 day
-        Cookies.set("refreshToken", tokens.refreshToken, { expires: 7 }); // Expires in 7 days
-
-        // Optional: Save additional user data if needed
-        Cookies.set("userEmail", user.emailAddress.email, { expires: 1 });
-        Cookies.set("userId", user.id, { expires: 1 });
-
-        if (user.role === "coach" && user.players.length >= 2) {
-          Cookies.set("coachPlayer1", user.players[0], { expires: 1 });
-          Cookies.set("coachPlayer2", user.players[1], { expires: 1 });
-          Cookies.set("coachJwt", tokens.accessToken, { expires: 1 });
-        }
-
-        console.log("Access token saved to cookies:", tokens.accessToken);
-        navigate("/"); // Redirect to dashboard or home page
-      } else {
-        setError("Login failed");
-      }
-    } catch (error: any) {
-      if (error.response) {
-        setError(error.response.data.message || "Login failed");
-      } else {
-        setError("Network error");
-      }
-    }
+  const onSubmit = (data: any) => {
+    mutation.mutate({
+      email: data.email,
+      password: data.password,
+    });
   };
+
+  // const onSubmit = async (data: any) => {
+  //   try {
+  //     const response = await axios.post(
+  //       "http://194.5.159.228:3000/auth/login",
+  //       data
+  //     );
+
+  //     if (response.status === 200) {
+  //       setError("");
+  //       const { tokens, user } = response.data;
+
+  //       // Save the tokens to cookies
+  //       Cookies.set("accessToken", tokens.accessToken, { expires: 1 }); // Expires in 1 day
+  //       Cookies.set("refreshToken", tokens.refreshToken, { expires: 7 }); // Expires in 7 days
+
+  //       // Optional: Save additional user data if needed
+  //       Cookies.set("userEmail", user.emailAddress.email, { expires: 1 });
+  //       Cookies.set("userId", user.id, { expires: 1 });
+
+  //       if (user.role === "coach" && user.players.length >= 2) {
+  //         Cookies.set("coachPlayer1", user.players[0], { expires: 1 });
+  //         Cookies.set("coachPlayer2", user.players[1], { expires: 1 });
+  //         Cookies.set("coachJwt", tokens.accessToken, { expires: 1 });
+  //       }
+
+  //       console.log("Access token saved to cookies:", tokens.accessToken);
+  //       navigate("/"); // Redirect to dashboard or home page
+  //     } else {
+  //       setError("Login failed");
+  //     }
+  //   } catch (error: any) {
+  //     if (error.response) {
+  //       setError(error.response.data.message || "Login failed");
+  //     } else {
+  //       setError("Network error");
+  //     }
+  //   }
+  // };
 
   return (
     <div className="bg-background w-full h-screen flex items-center justify-center">
