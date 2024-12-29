@@ -126,6 +126,10 @@ const Learn = () => {
     };
   }, []);
 
+  if (isLoading || isError) {
+    return <>Loading</>;
+  }
+
   return (
     <div className="grid grid-cols-6 font-raleway">
       <div
