@@ -60,7 +60,7 @@ const router = createBrowserRouter([
     element: <Login />,
   },
   {
-    path: "foundation",
+    path: "course/:course_id",
     element: <Foundation />,
   },
   {

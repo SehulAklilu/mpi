@@ -50,7 +50,7 @@ const Learn = () => {
                 backgroundStyleOn={true}
                 buttonStyle={"bottom-2 z-10 "}
                 onclick={() => {
-                  navigate("/foundation");
+                  navigate(`/course/${selectedCourse.courseId.id}`);
                 }}
                 small
               />
@@ -65,7 +65,7 @@ const Learn = () => {
           <p className="text-lg font-semibold ">Lesson</p>
           {selectedCourse.courseId.videos.length > 0 ? (
             selectedCourse.courseId.videos.map((video) => (
-              <div key={video._id} className="video-container">
+              <div key={video._id}>
                 <VideoCard video={video} />
                 {video.hasAssessmentNext && <AssignmentCard />}
               </div>
@@ -80,7 +80,7 @@ const Learn = () => {
               backgroundStyleOn={true}
               buttonStyle={"w-full sticky bottom-2 z-10"}
               onclick={() => {
-                navigate("/foundation");
+                navigate(`/course/${selectedCourse.courseId.id}`);
               }}
             />
           )}
