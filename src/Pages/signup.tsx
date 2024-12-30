@@ -17,7 +17,7 @@ const SignUp = () => {
   const onSubmit = async (data: any) => {
     try {
       const response = await axios.post(
-        "http://116.203.117.190:5000/api/register",
+        "https://mpiglobal.org/api/register",
         data
       );
 
