@@ -12,6 +12,21 @@ export interface LoginResponse {
   tokens: Tokens;
 }
 
+export interface OtpPayload {
+  email: string;
+}
+
+export interface VerifyOtpPayload {
+  email: string;
+  opt: string;
+}
+
+export interface OtpResponse {
+  message: string;
+  otp: string;
+  status: number;
+}
+
 export const login = async (
   credentials: LoginPayload
 ): Promise<LoginResponse> => {
@@ -27,4 +42,17 @@ export const login = async (
 
 export const logout = () => {
   Cookies.remove("authToken");
+};
+
+export const sendOpt = async (payload: OtpPayload): Promise<OtpResponse> => {
+  const response = await axiosInstance.post<OtpResponse>(
+    "/auth/generateotp",
+    payload
+  );
+  return response.data;
+};
+
+export const verifyOTP = async (payload: VerifyOtpPayload) => {
+  const response = await axiosInstance.post<any>("/auth/verifyOTP", payload);
+  return response.data;
 };
