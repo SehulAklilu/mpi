@@ -19,7 +19,7 @@ import Progress from "./Pages/Progress.tsx";
 import Reminders from "./Pages/Reminders.tsx";
 import Profile from "./Pages/Profile.tsx";
 import Settings from "./Pages/Settings.tsx";
-import NewSignup from "./Pages/newSignup.tsx";
+import NewSignup from "./Pages/NewSignup.tsx";
 
 const router = createBrowserRouter([
   {
