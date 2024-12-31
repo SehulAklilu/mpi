@@ -21,6 +21,7 @@ const FormSchema = z.object({
   profile_img: z.string(),
 });
 import { LuImagePlus } from "react-icons/lu";
+import { cn } from "@/lib/utils";
 
 function Profile() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -96,8 +97,8 @@ function Profile() {
                       <Input
                         type="text"
                         id="full_name"
-                        placeholder="Enter your password"
-                        className={"rounded-3xl shadow bg-[#F0F0FF] "}
+                        placeholder="First Name"
+                        className={"!rounded-3xl shadow !bg-[#F0F0FF]"}
                         {...field}
                       />
                     </FormControl>
@@ -115,8 +116,8 @@ function Profile() {
                       <Input
                         type="text"
                         id="last_name"
-                        placeholder="Confirm your password "
-                        className={"rounded-3xl  shadow bg-[#F0F0FF]"}
+                        placeholder="Last Name "
+                        className={"!rounded-3xl  shadow !bg-[#F0F0FF]"}
                         {...field}
                       />
                     </FormControl>

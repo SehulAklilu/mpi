@@ -57,7 +57,7 @@ function CreatePassword() {
                           type={showPassword ? "text" : "password"}
                           id="full_name"
                           placeholder="Enter your password"
-                          className={"rounded-3xl shadow bg-[#F0F0FF] "}
+                          className={"!rounded-3xl shadow !bg-[#F0F0FF] "}
                           {...field}
                         />
                         <Button
@@ -99,7 +99,7 @@ function CreatePassword() {
                           type={showConfirmPassword ? "text" : "password"}
                           id="last_name"
                           placeholder="Confirm your password "
-                          className={"rounded-3xl  shadow bg-[#F0F0FF]"}
+                          className={"!rounded-3xl  shadow !bg-[#F0F0FF]"}
                           {...field}
                         />
                         <Button
