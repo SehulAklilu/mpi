@@ -20,6 +20,7 @@ import Reminders from "./Pages/Reminders.tsx";
 import Profile from "./Pages/Profile.tsx";
 import Settings from "./Pages/Settings.tsx";
 import NewSignup from "./Pages/NewSignup.tsx";
+import NewLogin from "./Pages/NewLogin.tsx";
 
 const router = createBrowserRouter([
   {
@@ -58,6 +59,10 @@ const router = createBrowserRouter([
   },
   {
     path: "/login",
+    element: <NewLogin />,
+  },
+  {
+    path: "/login/old",
     element: <Login />,
   },
   {
