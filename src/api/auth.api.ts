@@ -18,13 +18,23 @@ export interface OtpPayload {
 
 export interface VerifyOtpPayload {
   email: string;
-  opt: string;
+  otp: string;
 }
 
 export interface OtpResponse {
   message: string;
   otp: string;
   status: number;
+}
+
+export interface RegisterPayload {
+  email: string;
+  otp: string;
+  role: string;
+  firstName?: string;
+  lastName?: string;
+  password: string;
+  avatar?: string;
 }
 
 export const login = async (
@@ -44,7 +54,7 @@ export const logout = () => {
   Cookies.remove("authToken");
 };
 
-export const sendOpt = async (payload: OtpPayload): Promise<OtpResponse> => {
+export const sendOtp = async (payload: OtpPayload): Promise<OtpResponse> => {
   const response = await axiosInstance.post<OtpResponse>(
     "/auth/generateotp",
     payload
@@ -54,5 +64,10 @@ export const sendOpt = async (payload: OtpPayload): Promise<OtpResponse> => {
 
 export const verifyOTP = async (payload: VerifyOtpPayload) => {
   const response = await axiosInstance.post<any>("/auth/verifyOTP", payload);
+  return response.data;
+};
+
+export const register = async (payload: any): Promise<any> => {
+  const response = await axiosInstance.post<any>("/auth/register", payload);
   return response.data;
 };

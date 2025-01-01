@@ -13,7 +13,7 @@ const NewSignup = () => {
   const [curr, setCurr] = useState(0);
   return (
     <AuthWrapper>
-      {curr == 0 && <InputOTPForm setCurr={setCurr} />}
+      {curr == 0 && <PhoneNumber setCurr={setCurr} />}
       {curr == 1 && <InputOTPForm setCurr={setCurr} />}
       {curr == 2 && <CreatePassword setCurr={setCurr} />}
       {curr == 3 && <Profile setCurr={setCurr} />}

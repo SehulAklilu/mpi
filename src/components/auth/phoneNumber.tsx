@@ -16,7 +16,11 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation, useQuery } from "react-query";
-import { OtpPayload, sendOpt } from "@/api/auth.api";
+import { OtpPayload, sendOtp } from "@/api/auth.api";
+import { useSignupContext } from "@/context/SignupContext";
+import { getAxiosErrorMessage } from "@/api/axios";
+import { toast } from "react-toastify";
+import { LoaderCircle } from "lucide-react";
 
 const FormSchema = z.object({
   email: z.string({ required_error: "Email is Required!" }).email(),
@@ -26,18 +30,24 @@ const PhoneNumber = ({ setCurr }: any) => {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   });
+  const signupCon = useSignupContext();
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    sendOptMutuation.mutate(data);
-  }
-
-  const sendOptMutuation = useMutation({
+  const { mutate, isLoading } = useMutation({
     mutationKey: ["sendOpt"],
-    mutationFn: (payload: OtpPayload) => sendOpt(payload),
+    mutationFn: (payload: OtpPayload) => sendOtp(payload),
     onSuccess: () => {
       setCurr((c: number) => c + 1);
     },
+    onError: (error: any) => {
+      const message = getAxiosErrorMessage(error);
+      toast.error(message);
+    },
   });
+
+  function onSubmit(data: z.infer<typeof FormSchema>) {
+    mutate(data);
+    signupCon.setUserInfo({ email: data.email });
+  }
   return (
     <>
       <img className="w-52 mx-auto" src={logo} alt="" />
@@ -73,8 +83,18 @@ const PhoneNumber = ({ setCurr }: any) => {
               )}
             />
 
-            <Button className=" px-7 py-2 shadow rounded-3xl mt-2 bg-primary text-white  ">
-              Get Started
+            <Button className="flex items-center justify-center px-7 py-2 shadow rounded-3xl mt-2 bg-primary text-white  ">
+              {isLoading ? (
+                <LoaderCircle
+                  style={{
+                    animation: "spin 1s linear infinite",
+                    fontSize: "2rem",
+                    color: "#FFFFFF",
+                  }}
+                />
+              ) : (
+                "Get Started"
+              )}
             </Button>
             <Button className="flex py-2 shadow rounded-3xl items-center justify-center gap-2 bg-white text-gray-800 border border-gray-300 hover:bg-gray-100">
               <FcGoogle size={22} className="text-red-500" />

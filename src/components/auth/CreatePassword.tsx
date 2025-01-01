@@ -16,11 +16,17 @@ import { z } from "zod";
 import { Input } from "@/components/ui/input";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Button } from "../ui/button";
+import { useSignupContext } from "@/context/SignupContext";
 
-const FormSchema = z.object({
-  password: z.string(),
-  confirm_password: z.string(),
-});
+const FormSchema = z
+  .object({
+    password: z.string().min(6, "Password must be at least 6 characters long"),
+    confirm_password: z.string(),
+  })
+  .refine((data) => data.password === data.confirm_password, {
+    message: "Password must mutch",
+    path: ["confirm_password"],
+  });
 
 function CreatePassword({ setCurr }: any) {
   const [showPassword, setShowPassword] = useState(false);
@@ -29,8 +35,11 @@ function CreatePassword({ setCurr }: any) {
     resolver: zodResolver(FormSchema),
   });
 
+  const signupCon = useSignupContext();
+
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log("sssssss", data);
+    signupCon.setUserInfo({ password: data.password });
+    setCurr((c: number) => c + 1);
   }
   return (
     <div>
@@ -68,13 +77,13 @@ function CreatePassword({ setCurr }: any) {
                       >
                         {showPassword ? (
                           <FaEye
-                            className="h-6 w-6"
+                            className="h-4 w-4"
                             aria-hidden="true"
                             color="#A1A9B5"
                           />
                         ) : (
                           <FaEyeSlash
-                            className="h-6 w-6"
+                            className="h-4 w-4"
                             aria-hidden="true"
                             color="#A1A9B5"
                           />
@@ -110,13 +119,13 @@ function CreatePassword({ setCurr }: any) {
                       >
                         {showConfirmPassword ? (
                           <FaEye
-                            className="h-6 w-6 "
+                            className="h-4 w-4 "
                             aria-hidden="true"
                             color="#A1A9B5"
                           />
                         ) : (
                           <FaEyeSlash
-                            className="h-6 w-6"
+                            className="h-4 w-4"
                             aria-hidden="true"
                             color="#A1A9B5"
                           />
@@ -128,10 +137,7 @@ function CreatePassword({ setCurr }: any) {
                 </FormItem>
               )}
             />
-            <Button
-              onClick={() => setCurr(3)}
-              className=" px-7 py-2 mt-4 shadow rounded-3xl bg-primary text-white  "
-            >
+            <Button className=" px-7 py-2 mt-4 shadow rounded-3xl bg-primary text-white  ">
               Get Started
             </Button>
           </div>

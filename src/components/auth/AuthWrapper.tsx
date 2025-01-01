@@ -1,3 +1,4 @@
+import { SignupContextProvider } from "@/context/SignupContext";
 import bg from "../../assets/bg.png";
 
 const AuthWrapper = ({ children }: any) => {
@@ -8,7 +9,7 @@ const AuthWrapper = ({ children }: any) => {
         <img className="w-full h-screen z-10" src={bg} alt="" />
       </div>
       <div className="w-[90%] md:w-[65%]  p-10 z-50 relative min-h-[85vh] m-auto bg-white rounded-xl flex flex-col">
-        {children}
+        <SignupContextProvider>{children}</SignupContextProvider>
       </div>
     </div>
   );

@@ -1,4 +1,3 @@
-import AuthWrapper from "./AuthWrapper";
 import logo from "../../assets/logo/new-logo.svg";
 import {
   Form,
@@ -14,14 +13,13 @@ import { z } from "zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "../ui/button";
 import { useState } from "react";
-import { FaImage } from "react-icons/fa";
 const FormSchema = z.object({
   first_name: z.string(),
   last_name: z.string(),
-  profile_img: z.string(),
+  profile_img: z.any(),
 });
 import { LuImagePlus } from "react-icons/lu";
-import { cn } from "@/lib/utils";
+import { useSignupContext } from "@/context/SignupContext";
 
 function Profile({ setCurr }: any) {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -29,8 +27,15 @@ function Profile({ setCurr }: any) {
     resolver: zodResolver(FormSchema),
   });
 
+  const signupCon = useSignupContext();
+
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log("sssssss", data);
+    signupCon.setUserInfo({
+      firstName: data.first_name,
+      lastName: data.last_name,
+      avatar: previewImage ? previewImage : undefined,
+    });
+    setCurr((c: number) => c + 1);
   }
   return (
     <div>
@@ -82,7 +87,7 @@ function Profile({ setCurr }: any) {
                       />
                     </div>
                   </FormControl>
-                  {/* <FormMessage /> */}
+                  <FormMessage className="!text-center" />
                 </FormItem>
               )}
             />
@@ -124,14 +129,11 @@ function Profile({ setCurr }: any) {
                 </FormItem>
               )}
             />
-            <Button
-              onClick={() => setCurr(4)}
-              className=" px-7 py-2 mt-4 shadow rounded-3xl bg-primary text-white "
-            >
+            <Button className=" px-7 py-2 mt-4 shadow rounded-3xl bg-primary text-white ">
               Get Started
             </Button>
             <Button
-              onClick={() => setCurr(4)}
+              onClick={() => setCurr((c: number) => c + 1)}
               className=" px-7  border-none rounded-3x bg-transparent text-black hover:bg-gray-200 hover:sahdow hover:rounded-3xl "
             >
               Skip

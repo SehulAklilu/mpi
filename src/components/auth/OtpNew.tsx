@@ -19,10 +19,21 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
+import { useSignupContext } from "@/context/SignupContext";
+import { useMutation } from "react-query";
+import {
+  OtpPayload,
+  sendOtp,
+  verifyOTP,
+  VerifyOtpPayload,
+} from "@/api/auth.api";
+import { getAxiosErrorMessage } from "@/api/axios";
+import { toast } from "react-toastify";
+import { LoaderCircle } from "lucide-react";
 
 const FormSchema = z.object({
-  pin: z.string().min(6, {
-    message: "Your one-time password must be 6 characters.",
+  otp: z.string().min(6, {
+    message: "Yout OTP must be 6 characters.",
   }),
 });
 
@@ -30,13 +41,42 @@ export function InputOTPForm({ setCurr }: any) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      pin: "",
+      otp: "",
+    },
+  });
+  const signupCon = useSignupContext();
+
+  const { mutate, isLoading } = useMutation({
+    mutationKey: ["verifyOtp"],
+    mutationFn: (payload: VerifyOtpPayload) => verifyOTP(payload),
+    onSuccess: () => {
+      signupCon.setUserInfo({ otp: form.getValues("otp") });
+      setCurr((c: number) => c + 1);
+    },
+    onError: (error: any) => {
+      const message = getAxiosErrorMessage(error);
+      toast.error(message);
     },
   });
 
+  const { mutate: reSend, isLoading: isLoading2 } = useMutation({
+    mutationKey: ["sendOpt"],
+    mutationFn: (payload: OtpPayload) => sendOtp(payload),
+  });
+
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log("ddddddd", data);
+    signupCon?.userInfo?.email &&
+      mutate({
+        otp: data.otp.toString(),
+        email: signupCon.userInfo.email,
+      });
   }
+
+  const resendOtp = () => {
+    if (signupCon?.userInfo?.email) {
+      reSend({ email: signupCon.userInfo.email });
+    }
+  };
 
   return (
     <div>
@@ -46,14 +86,14 @@ export function InputOTPForm({ setCurr }: any) {
         <div className="text-center  mt-2 max-w-lg text-gray-600">
           Enter the 4 digits code sent to you at
         </div>
-        <div className="text-center">+12 345 678 999</div>
+        <div className="text-center">{signupCon?.userInfo?.email}</div>
       </div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="flex flex-col gap-2 max-w-[270px] mx-auto mt-6 ">
             <FormField
               control={form.control}
-              name="pin"
+              name="otp"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>OTP</FormLabel>
@@ -75,21 +115,34 @@ export function InputOTPForm({ setCurr }: any) {
             />
 
             {/* <Button type="submit">Submit</Button> */}
-            <Button
-              onClick={() => setCurr(3)}
-              className=" px-7 py-2 mt-4 shadow rounded-3xl bg-primary text-white  "
-            >
-              Verify
+            <Button className=" flex items-center justify-center px-7 py-2 mt-4 shadow rounded-3xl bg-primary text-white  ">
+              {isLoading ? (
+                <LoaderCircle
+                  style={{
+                    animation: "spin 1s linear infinite",
+                    fontSize: "2rem",
+                    color: "#FFFFFF",
+                  }}
+                />
+              ) : (
+                "Verify"
+              )}
             </Button>
           </div>
           <div className="text-sm flex gap-2 justify-center w-full mx-auto mt-4">
             <div>Didn’t receive the code?</div>
-            <div
-              role="button"
-              onClick={() => setCurr((c: number) => c - 1)}
-              className="text-primary"
-            >
-              Resend code
+            <div onClick={resendOtp} role="button" className="text-primary">
+              {isLoading2 ? (
+                <LoaderCircle
+                  style={{
+                    animation: "spin 1s linear infinite",
+                    fontSize: "2rem",
+                    color: "#FFFFFF",
+                  }}
+                />
+              ) : (
+                "Resend Code"
+              )}
             </div>
           </div>
         </form>
