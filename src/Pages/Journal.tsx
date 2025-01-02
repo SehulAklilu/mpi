@@ -1,39 +1,64 @@
-import { useState, useEffect  } from "react";
-import axios from "axios";
+import { useState, useEffect } from "react";
 import IconAndButton from "../components/Button/IconAndButton";
 import IconButton from "../components/Button/IconButton";
 import BasicInput from "../components/Inputs/BasicInput";
 import { useForm } from "react-hook-form";
 import CloseClickOutside from "../components/Additionals/ClickOutside";
-import JournalCard from "../components/Card/JournalCard";
+import JournalCard, { JournalCardProps } from "../components/Card/JournalCard";
 import { useNavigate } from "react-router-dom";
+import axios from "@/api/axios.ts";
+import { useMutation, useQuery } from "react-query";
+import { toast } from "react-toastify";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Input } from "@/components/ui/input";
 
-interface JournalEntry {
-  id: string;
-  title: string;
-  content: string;
-  date: string;
+interface FilterInf {
+  search: string | null;
   // Add more properties here if your backend provides more fields
 }
 
 const Journal = () => {
   const [filterOn, setFilterOn] = useState<boolean>(false);
-  const [journals, setJournals] = useState<JournalEntry[]>([]);
-  const { register, handleSubmit } = useForm();
+  const [journals, setJournals] = useState<JournalCardProps[]>([]);
+  // const { register, handleSubmit } = useForm();
+  const [filters, setFilters] = useState<FilterInf>({
+    search: null,
+  });
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchJournals = async () => {
-      try {
-        const response = await axios.get("http://194.5.159.228:3000/api/v1/journals");
-        setJournals(response.data); // Assuming the API response directly returns the list of journals
-      } catch (error) {
-        console.error("Error fetching journals:", error);
-      }
-    };
+  const { isLoading, data: result } = useQuery(
+    "journals",
+    () => axios.get("/api/v1/journals"),
+    {
+      onSuccess(data) {
+        console.log(data, "Journals");
+        setJournals(data.data || []);
+      },
+      onError(err: any) {
+        toast.error(
+          typeof err.response.data === "string"
+            ? err.response.data
+            : "Error loading journals"
+        );
+      },
+    }
+  );
 
-    fetchJournals();
-  }, []);
+  useEffect(() => {
+    function filterData() {
+      if (!result) return;
+      if (!filters.search || filters.search.length < 1) {
+        setJournals(result.data);
+      }
+      const filteredData = result.data.filter((d: JournalCardProps) =>
+        d.title
+          .toLowerCase()
+          .includes(filters.search ? filters.search.toLowerCase() : "")
+      );
+      setJournals(filteredData);
+    }
+    filterData();
+  }, [filters]);
 
   return (
     <div className="flex flex-col gap-11 relative font-raleway ">
@@ -48,14 +73,13 @@ const Journal = () => {
           outlined
           bgcolor="primary"
         />
-        <div className="flex flex-row gap-3 my-auto relative">
-          <BasicInput
-            iconName={"search"}
-            outline={true}
-            inputType={"email"}
-            placeholder={"Search for your notes"}
-            name="email"
-            register={register}
+        <div className="flex pt-1 flex-row gap-3 my-auto relative mt5">
+          <Input
+            className=""
+            onChange={({ target }) =>
+              setFilters((fil) => ({ ...fil, search: target.value }))
+            }
+            placeholder="Search with title..."
           />
           <div className="relative">
             <IconButton
@@ -77,10 +101,14 @@ const Journal = () => {
           </div>
         </div>
       </div>
-      <div>
+      <div className="grid grid-cols-3 max-lg:grid-cols-2 max-md:grid-cols-1 gap-3 ">
         {journals.map((journal) => (
-          <JournalCard key={journal.id} title={journal.title} content={journal.content} date={journal.date} />
+          <JournalCard key={journal._id} journal={journal} />
         ))}
+        {isLoading &&
+          [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2].map(() => {
+            return <Skeleton className="h-32 bg-primary" />;
+          })}
       </div>
     </div>
   );

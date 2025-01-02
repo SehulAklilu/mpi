@@ -3,14 +3,23 @@ import IconButton from "../Button/IconButton";
 import IconButton2 from "../Button/IconButton2";
 import CloseClickOutside from "../Additionals/ClickOutside";
 import MaterialIcon from "../Icon/MaterialIcon";
+import EditNote from "../Notes/EditNote";
+import DeleteNote from "../Notes/DeleteNote";
+import EditColor from "../Notes/EditColor";
 
-interface JournalCardProps {
+export interface JournalCardProps {
+  _id: string;
+  userId: string;
   title: string;
   content: string;
-  date: string;
+  isFavorite: boolean;
+  color: number;
+  document: string;
+  createdAt: string; // ISO 8601 date string
+  updatedAt: string; // ISO 8601 date string
 }
 
-const colors = [
+export const journalColors = [
   {
     id: 1,
     color: "#F4A578",
@@ -37,35 +46,41 @@ const colors = [
   },
 ];
 
-const JournalCard: React.FC<JournalCardProps> = ({ title, content, date }) => {
+const JournalCard = ({ journal }: { journal: JournalCardProps }) => {
   const [openPalette, setOpenPalette] = useState<boolean>(false);
-  const [bgColor, setBgColor] = useState<string>(colors[0].color);
+  const [bgColor, setBgColor] = useState<string>(journalColors[0].color);
 
   return (
     <div
-      className={`bg-[${
-        bgColor ?? "#F4A578"
-      }] w-[22%] px-4 py-4 rounded-lg flex flex-col gap-7 justify-between`}
+      style={{
+        backgroundColor: journalColors[journal.color].color,
+      }}
+      className={`w-full px-4 py-4 rounded-lg flex flex-col gap-7 justify-between`}
     >
-      <h2 className="font-semibold text-black-75">{title}</h2>
-      <p>{content}</p>
+      <h2 className="font-semibold text-black-75">{journal.title}</h2>
+      <p>{journal.content}</p>
       <div className="flex flex-row justify-between">
-        <p className="my-auto text-xs text-black-65 font-semibold ">{date}</p>
+        <p className="my-auto text-xs text-black-65 font-semibold ">
+          {journal.createdAt}
+        </p>
         <div className="flex flex-row gap-4 items-center relative ">
-          <div className="relative ">
-            <div className="my-auto flex justify-center items-center">
-              <IconButton
+          <div className="relative  ">
+            <div className="my-auto flex gap-3 justify-center items-center">
+              <EditNote note={journal} />
+              {/* <IconButton
                 type={"button"}
                 buttonText={"palette"}
                 backgroundStyleOn={false}
                 onclick={() => setOpenPalette(true)}
                 iconColor="black"
-              />
+              /> */}
+              {/* <EditColor note={journal} /> */}
+              <DeleteNote note={journal} />
             </div>
-            {openPalette && (
+            {/* {openPalette && (
               <CloseClickOutside onClose={() => setOpenPalette(false)}>
                 <div className="absolute top-8 left-0 z-20 bg-background w-52 h-11 p-2 rounded-xl shadow-md flex flex-row gap-3 ">
-                  {colors.map((color) => (
+                  {journalColors.map((color) => (
                     <>
                       <div
                         onClick={() => setBgColor(color.color)}
@@ -76,16 +91,8 @@ const JournalCard: React.FC<JournalCardProps> = ({ title, content, date }) => {
                   ))}
                 </div>
               </CloseClickOutside>
-            )}
+            )} */}
           </div>
-          <IconButton2
-            type={"button"}
-            buttonText={"edit"}
-            backgroundStyleOn={false}
-            onclick={() => {}}
-            bgColor="black"
-            iconColor="white"
-          />
         </div>
       </div>
     </div>

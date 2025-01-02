@@ -1,55 +1,103 @@
 import React, { useState } from "react";
-import axios from "axios";
+import { useMutation, useQuery } from "react-query";
+import { toast } from "react-toastify";
+import axios from "@/api/axios.ts";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import { FaArrowLeft } from "react-icons/fa6";
+import { LoaderCircle } from "lucide-react";
+import { Link } from "react-router-dom";
+import { journalColors } from "@/components/Card/JournalCard";
+
+interface NewJournalInf {
+  title: string;
+  content: string;
+  color: string;
+}
 
 const NewJournal: React.FC = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-
-  const handleSave = async () => {
-    try {
-      const response = await axios.post("http://194.5.159.228:3000/api/v1/journals", {
-        title,
-        content,
-      });
-      if (response.status === 200) {
-        alert("Journal entry saved successfully!");
-        setTitle("");
+  const [color, setColor] = useState(0);
+  const { isLoading, mutate } = useMutation(
+    (data: NewJournalInf) => axios.post("/api/v1/journals", data),
+    {
+      onSuccess(data) {
+        console.log(data, "Journals");
+        toast.success("Journal Added Successfuly");
         setContent("");
-      } else {
-        alert("Failed to save journal entry.");
-      }
-    } catch (error) {
-      console.error("Error saving journal entry:", error);
-      alert("An error occurred. Please try again.");
+        setTitle("");
+      },
+      onError(err: any) {
+        toast.error(
+          typeof err.response.data === "string"
+            ? err.response.data
+            : "Error adding journal"
+        );
+      },
     }
+  );
+  const handleSave = async () => {
+    mutate({
+      title,
+      content,
+      color : color.toString(),
+    });
   };
 
   return (
-    <div className="flex flex-col gap-4 p-4 max-w-lg mx-auto font-raleway">
-      <label className="text-sm font-semibold text-gray-700">Title</label>
-      <input
-        type="text"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        className="border border-gray-300 rounded-lg p-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-        placeholder="Enter title here"
-      />
-      
-      <label className="text-sm font-semibold text-gray-700">Content</label>
-      <textarea
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-        className="border border-gray-300 rounded-lg p-2 text-sm h-40 resize-none focus:outline-none focus:ring-2 focus:ring-primary"
-        placeholder="Write your journal entry here"
-      />
+    <div className="flex gap-2 w-full">
+      <Link
+        to={"/journal"}
+        className=" bg-primary my-5 w-8 h-8 rounded-full flex"
+      >
+        <FaArrowLeft className="m-auto text-white" />
+      </Link>
+      <div className="flex-1 flex flex-col gap-4 p-4 max-w-xl  font-raleway">
+        <input
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          className="p-2 text-xl font-semibold placeholder-gray-600 placeholder:font-bold appearance-none bg-transparent border-none focus:outline-none"
+          placeholder="Title..."
+        />
 
-      <div className="flex justify-end mt-4">
-        <button
-          onClick={handleSave}
-          className="bg-primary text-white rounded-lg px-4 py-2 hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50"
+        <textarea
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          className="p-2 text-lg appearance-none bg-transparent border-none w-full focus:outline-none"
+          placeholder="Write your journal entry here"
+        />
+        <div className="mt-5 mb-12">
+          <div className="flex gap-4">
+            {journalColors.map((col, ind) => (
+              <div
+                role="button"
+                onClick={() => setColor(ind)}
+                style={{ backgroundColor: col.color }}
+                className={`w-6 h-6 rounded-full ${
+                  color == ind && "border-2 border-primary"
+                }`}
+              ></div>
+            ))}
+          </div>
+        </div>
+
+        <Button
+          // disabled={title.trim().length > 1 && content.trim().length > 1}
+          onClick={() => handleSave()}
+          className="flex max-w-32 bg-primary py-2 shadow rounded-3xl items-center justify-center gap-2  text-white border border-gray-300 "
         >
-          Save
-        </button>
+          {isLoading ? (
+            <LoaderCircle
+              style={{
+                animation: "spin 1s linear infinite",
+              }}
+            />
+          ) : (
+            "Submit"
+          )}
+        </Button>
       </div>
     </div>
   );
