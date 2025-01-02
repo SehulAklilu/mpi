@@ -16,11 +16,12 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation, useQuery } from "react-query";
-import { OtpPayload, sendOtp } from "@/api/auth.api";
+import { sendOtp } from "@/api/auth.api";
 import { useSignupContext } from "@/context/SignupContext";
-import { getAxiosErrorMessage } from "@/api/axios";
+import { getAxiosErrorMessage, getAxiosSuccessMessage } from "@/api/axios";
 import { toast } from "react-toastify";
 import { LoaderCircle } from "lucide-react";
+import { OtpPayload } from "@/types/auth.type";
 
 const FormSchema = z.object({
   email: z.string({ required_error: "Email is Required!" }).email(),
@@ -35,8 +36,10 @@ const PhoneNumber = ({ setCurr }: any) => {
   const { mutate, isLoading } = useMutation({
     mutationKey: ["sendOpt"],
     mutationFn: (payload: OtpPayload) => sendOtp(payload),
-    onSuccess: () => {
+    onSuccess: (response) => {
       setCurr((c: number) => c + 1);
+      const message = getAxiosSuccessMessage(response);
+      toast.success(message);
     },
     onError: (error: any) => {
       const message = getAxiosErrorMessage(error);

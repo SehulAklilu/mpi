@@ -25,4 +25,12 @@ export const getAxiosErrorMessage = (error: unknown): string => {
   return "An unexpected error occurred.";
 };
 
+export const getAxiosSuccessMessage = <T>(response: T): string => {
+  if (response && typeof response === "object" && "data" in response) {
+    const data = (response as any).data;
+    return data?.message || "Request was successful.";
+  }
+  return "Request completed successfully.";
+};
+
 export default axiosInstance;

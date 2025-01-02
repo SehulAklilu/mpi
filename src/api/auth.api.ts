@@ -1,41 +1,13 @@
-import { Tokens, User } from "@/types/user.types";
 import axiosInstance from "./axios";
 import Cookies from "js-cookie";
-
-export interface LoginPayload {
-  email: string;
-  password: string;
-}
-
-export interface LoginResponse {
-  user: User;
-  tokens: Tokens;
-}
-
-export interface OtpPayload {
-  email: string;
-}
-
-export interface VerifyOtpPayload {
-  email: string;
-  otp: string;
-}
-
-export interface OtpResponse {
-  message: string;
-  otp: string;
-  status: number;
-}
-
-export interface RegisterPayload {
-  email: string;
-  otp: string;
-  role: string;
-  firstName?: string;
-  lastName?: string;
-  password: string;
-  avatar?: string;
-}
+import {
+  LoginPayload,
+  LoginResponse,
+  OtpPayload,
+  OtpResponse,
+  RegisterPayload,
+  VerifyOtpPayload,
+} from "@/types/auth.type";
 
 export const login = async (
   credentials: LoginPayload
@@ -67,7 +39,10 @@ export const verifyOTP = async (payload: VerifyOtpPayload) => {
   return response.data;
 };
 
-export const register = async (payload: any): Promise<any> => {
-  const response = await axiosInstance.post<any>("/auth/register", payload);
+export const register = async (payload: RegisterPayload): Promise<any> => {
+  const response = await axiosInstance.post<RegisterPayload>(
+    "/auth/register",
+    payload
+  );
   return response.data;
 };
