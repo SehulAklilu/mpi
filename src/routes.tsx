@@ -21,6 +21,7 @@ import Profile from "./Pages/Profile.tsx";
 import Settings from "./Pages/Settings.tsx";
 import NewSignup from "./Pages/NewSignup.tsx";
 import NewLogin from "./Pages/NewLogin.tsx";
+import NewLearn from "./Pages/Learn/NewLearn.tsx";
 
 const router = createBrowserRouter([
   {
@@ -29,7 +30,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <Learn />,
+        element: <NewLearn />,
       },
       {
         path: "journal",
