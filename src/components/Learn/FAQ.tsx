@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Accordion,
   AccordionContent,
@@ -6,15 +5,15 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
-type FAQItem = {
-  question: string;
-  answer: string;
-};
+// type FAQItem = {
+//   question: string;
+//   answer: string;
+// };
 
-type FAQProps = {
-  title: string;
-  faqs: FAQItem[];
-};
+// type FAQProps = {
+//   title: string;
+//   faqs: FAQItem[];
+// };
 
 const faqs = [
   {

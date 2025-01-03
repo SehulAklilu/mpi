@@ -1,5 +1,5 @@
 import road from "../../assets/svg/road.svg";
-import tennis from "../../assets/tennis.jpg";
+import user from "../../assets/user.jpeg";
 import {
   FaStar,
   FaUserAlt,
@@ -23,7 +23,6 @@ import DetailCard from "@/components/Learn/DetailCard";
 import { IoBriefcase } from "react-icons/io5";
 import ReadMore from "@/components/common/ReadMore";
 import InstructorCard from "@/components/Learn/InstructorCard";
-import ReactPlayer from "react-player";
 
 interface CardProps {
   image: string; // URL of the image
@@ -176,7 +175,7 @@ function NewLearn() {
             <InstructorCard
               name="Damian"
               role="Instructor"
-              image={tennis}
+              image={user}
               rating={5}
               students={40000}
               duration="2 Hrs 15Min"

@@ -1,18 +1,11 @@
 import { getCourse } from "@/api/course.api";
 import { useQuery } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
-import tennis from "../../assets/tennis.jpg";
-import {
-  FaMicrophone,
-  FaPlayCircle,
-  FaStar,
-  FaStarHalf,
-  FaUserAlt,
-} from "react-icons/fa";
+import user_image from "../../assets/user_1.jpg";
+import { FaMicrophone, FaPlayCircle, FaUserAlt } from "react-icons/fa";
 import { IoBriefcase } from "react-icons/io5";
 import ReadMore from "../common/ReadMore";
 
-import { Progress } from "@/components/ui/progress";
 import { ReviewCard } from "./ReviewCard";
 import profileImage from "../../assets/user.jpeg";
 import InstructorCard from "./InstructorCard";
@@ -88,7 +81,7 @@ function CourseDetail() {
           <InstructorCard
             name="Damian"
             role="Instructor"
-            image={tennis}
+            image={user_image}
             rating={5}
             students={40000}
             duration="2 Hrs 15Min"

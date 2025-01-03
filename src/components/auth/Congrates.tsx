@@ -21,7 +21,7 @@ function Congrats({ ind, setCurr }: { ind: number; setCurr: any }) {
       button_label: "Setup Profile",
     },
     {
-      title: "Congrates",
+      title: "Congrats",
       message: "You have successfully registered on MindSight!",
       message2:
         "We would prepared a minor assessment to help you start right from where you belong.",
