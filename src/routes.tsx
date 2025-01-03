@@ -22,6 +22,8 @@ import Settings from "./Pages/Settings.tsx";
 import NewSignup from "./Pages/NewSignup.tsx";
 import NewLogin from "./Pages/NewLogin.tsx";
 import NewLearn from "./Pages/Learn/NewLearn.tsx";
+import CourseDetail from "./components/Learn/CourseDetail.tsx";
+import LessonDetail from "./components/Learn/LessonDetail.tsx";
 
 const router = createBrowserRouter([
   {
@@ -31,6 +33,14 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <NewLearn />,
+      },
+      {
+        path: "course/:course_id",
+        element: <CourseDetail />,
+      },
+      {
+        path: "course/:course_id/video/:video_id",
+        element: <LessonDetail />,
       },
       {
         path: "journal",
@@ -66,14 +76,14 @@ const router = createBrowserRouter([
     path: "/login/old",
     element: <Login />,
   },
-  {
-    path: "course/:course_id",
-    element: <Foundation />,
-  },
-  {
-    path: "course/:course_id/video/:video_id",
-    element: <LearnLesson />,
-  },
+  // {
+  //   path: "course/:course_id",
+  //   element: <LessonDetail />,
+  // },
+  // {
+  //   path: "course/:course_id/video/:video_id",
+  //   element: <LearnLesson />,
+  // },
   {
     path: "/signup",
     element: <NewSignup />,
