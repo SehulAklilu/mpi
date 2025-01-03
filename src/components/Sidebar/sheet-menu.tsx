@@ -1,4 +1,5 @@
 import { MenuIcon, PanelsTopLeft } from "lucide-react";
+import new_logo from "../../assets/logo/new-logo.svg";
 
 import { Button } from "@/components/ui/button";
 import Menu from "./menu";
@@ -20,13 +21,12 @@ export function SheetMenu() {
       <SheetContent className="sm:w-72 px-3 h-full flex flex-col" side="left">
         <SheetHeader>
           <Button
-            className="flex justify-center items-center pb-2 pt-1"
+            className="flex justify-center items-center  pt-1"
             variant="link"
             asChild
           >
-            <a href="/dashboard" className="flex items-center gap-2">
-              <PanelsTopLeft className="w-6 h-6 mr-1" />
-              <h1 className="font-bold text-lg">Brand</h1>
+            <a href="/" className="flex items-center">
+              <img src={new_logo} alt="new logo" className="w-52" />
             </a>
           </Button>
         </SheetHeader>

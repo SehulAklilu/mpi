@@ -10,13 +10,12 @@ import {
   TooltipProvider,
 } from "@/components/ui/tooltip";
 import { Link, useLocation } from "react-router-dom";
-import {
-  Settings,
-  BookOpen,
-  ChartNoAxesColumn,
-  AlignLeft,
-  CalendarPlus2,
-} from "lucide-react";
+import { Settings, BookOpen } from "lucide-react";
+import { GoHome } from "react-icons/go";
+import { FiPieChart } from "react-icons/fi";
+import { RiGroupLine } from "react-icons/ri";
+import { IoCalendarNumberOutline } from "react-icons/io5";
+import nightMode from "../../assets/sidebar_svg/night-mode.svg";
 
 interface MenuProps {
   isOpen: boolean | undefined;
@@ -30,30 +29,37 @@ function Menu({ isOpen }: MenuProps) {
       menus: [
         {
           href: "/",
-          label: "Learn",
-          active: location.pathname.includes("/larn"),
-          icon: BookOpen,
+          label: "Home",
+          active: location.pathname === "/",
+          icon: GoHome,
           submenus: [],
         },
         {
           href: "/journal",
           label: "Journal",
           active: location.pathname.includes("/journal"),
-          icon: AlignLeft,
+          icon: BookOpen,
           submenus: [],
         },
         {
           href: "/progress",
           label: "Progress",
           active: location.pathname.includes("/progress"),
-          icon: ChartNoAxesColumn,
+          icon: FiPieChart,
           submenus: [],
         },
         {
           href: "/calendar",
           label: "Calendar",
           active: location.pathname.includes("/calendar"),
-          icon: CalendarPlus2,
+          icon: IoCalendarNumberOutline,
+          submenus: [],
+        },
+        {
+          href: "/chat",
+          label: "People",
+          active: location.pathname.includes("/chat"),
+          icon: RiGroupLine,
           submenus: [],
         },
         {
@@ -69,11 +75,7 @@ function Menu({ isOpen }: MenuProps) {
 
   return (
     <ScrollArea className="[&gt;div&gt;div[style]]:!block">
-      <nav
-        className={cn(
-          isOpen === false ? "mt-8 h-full w-[55%]" : "mt-8 h-full "
-        )}
-      >
+      <nav className={cn(isOpen === false ? "h-full w-[55%]" : "h-full mt-4")}>
         <ul className="flex flex-col min-h-[calc(100vh-48px-36px-16px-32px)] lg:min-h-[calc(100vh-32px-40px-32px)] items-start space-y-1 px-2">
           {menuList.map(({ groupLabel, menus }, index) => (
             <li className={cn("w-full", groupLabel ? "pt-5" : "")} key={index}>
@@ -153,7 +155,9 @@ function Menu({ isOpen }: MenuProps) {
             </li>
           ))}
           <li className="w-full grow flex items-end">
-            <TooltipProvider disableHoverableContent>
+            <img src={nightMode} alt="night mode" className="w-12" />
+
+            {/* <TooltipProvider disableHoverableContent>
               <Tooltip delayDuration={100}>
                 <TooltipTrigger asChild>
                   <Button
@@ -182,7 +186,7 @@ function Menu({ isOpen }: MenuProps) {
                   <TooltipContent side="right">Sign out</TooltipContent>
                 )}
               </Tooltip>
-            </TooltipProvider>
+            </TooltipProvider> */}
           </li>
         </ul>
       </nav>
