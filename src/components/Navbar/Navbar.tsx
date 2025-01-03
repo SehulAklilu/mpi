@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { FC, useState } from "react";
 import CloseClickOutside from "../Additionals/ClickOutside";
 import { SheetMenu } from "../Sidebar/sheet-menu";
-import { IoArrowBackCircleOutline } from "react-icons/io5";
+import { FaArrowLeft } from "react-icons/fa";
 
 interface NavbarProps {
   common: boolean;
@@ -22,11 +22,11 @@ const Navbar: FC<NavbarProps> = ({ common, commonHeader, commonColor }) => {
       <SheetMenu />
       {common ? (
         <p
-          className={`text-3xl flex items-center gap-1 ${
+          className={`text-3xl flex items-center gap-x-4 ${
             commonColor ? "text-primary" : "text-black text-xl"
           }  font-semibold`}
         >
-          <IoArrowBackCircleOutline
+          <FaArrowLeft
             className="cursor-pointer "
             onClick={() => navigate(-1)}
           />

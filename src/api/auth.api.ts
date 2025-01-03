@@ -18,7 +18,7 @@ export const login = async (
   );
   const token = response.data.tokens.accessToken;
 
-  Cookies.set("authToken", token, { expires: 1 });
+  Cookies.set("authToken", token, { expires: 10 });
   return response.data;
 };
 
