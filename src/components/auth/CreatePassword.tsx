@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import logo from "../../assets/logo/new-logo.svg";
 import {
   Form,
@@ -39,6 +39,13 @@ function CreatePassword({ setCurr }: any) {
     signupCon.setUserInfo({ password: data.password });
     setCurr((c: number) => c + 1);
   }
+
+  useEffect(() => {
+    if (signupCon.userInfo.password) {
+      form.setValue("password", signupCon.userInfo.password);
+      form.setValue("confirm_password", signupCon.userInfo.password);
+    }
+  }, []);
   return (
     <div>
       <img className="w-52 mx-auto" src={logo} alt="" />

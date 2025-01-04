@@ -1,5 +1,5 @@
 import { Button } from "../ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { HiOutlineBuildingOffice2, HiOutlineUserGroup } from "react-icons/hi2";
 import { RiGraduationCapLine } from "react-icons/ri";
 import { FaRegUser } from "react-icons/fa";
@@ -16,6 +16,9 @@ function Role({ setCurr }: any) {
     signupCon.setUserInfo({ role: selectedRole });
     setCurr((c: number) => c + 1);
   };
+  useEffect(() => {
+    signupCon.userInfo.role && setSelectedRole(signupCon.userInfo.role);
+  }, []);
 
   return (
     <div>

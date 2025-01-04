@@ -24,6 +24,7 @@ import { getAxiosErrorMessage, getAxiosSuccessMessage } from "@/api/axios";
 import { toast } from "react-toastify";
 import { LoaderCircle } from "lucide-react";
 import { OtpPayload, VerifyOtpPayload } from "@/types/auth.type";
+import { useEffect } from "react";
 
 const FormSchema = z.object({
   otp: z.string().min(6, {
@@ -73,6 +74,12 @@ export function InputOTPForm({ setCurr }: any) {
       reSend({ email: signupCon.userInfo.email });
     }
   };
+
+  useEffect(() => {
+    if (signupCon.userInfo.otp) {
+      form.setValue("otp", signupCon.userInfo.otp);
+    }
+  }, []);
 
   return (
     <div>

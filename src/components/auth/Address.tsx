@@ -106,6 +106,7 @@ function Address({ setCurr }: any) {
     }
     mutate(signupCon.userInfo);
   }
+  useEffect(() => {}, []);
   return (
     <div>
       <div className="flex flex-col items-center my-4">

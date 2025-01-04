@@ -11,7 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "../ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { LuImagePlus } from "react-icons/lu";
 import { useSignupContext } from "@/context/SignupContext";
@@ -90,6 +90,26 @@ function Profile({ setCurr }: any) {
       }
     }
   };
+  useEffect(() => {
+    signupCon.userInfo.firstName &&
+      form.setValue("firstName", signupCon.userInfo.firstName);
+    signupCon.userInfo.lastName &&
+      form.setValue("lastName", signupCon.userInfo.lastName);
+    signupCon.userInfo.gender && form.setValue("gender", "male");
+    signupCon.userInfo.dateOfBirth &&
+      form.setValue("dateOfBirth", new Date(signupCon.userInfo.dateOfBirth));
+    signupCon.userInfo.avatar &&
+      form.setValue("avatar", signupCon.userInfo.avatar);
+    signupCon.userInfo.phoneNumber &&
+      form.setValue("phoneNumber", signupCon.userInfo.phoneNumber);
+    signupCon.userInfo.phoneNumberCountryCode &&
+      form.setValue(
+        "phoneNumberCountryCode",
+        signupCon.userInfo.phoneNumberCountryCode
+      );
+    signupCon.userInfo.country &&
+      form.setValue("country", signupCon.userInfo.country);
+  }, []);
   return (
     <div>
       <div className="flex flex-col items-center my-4">
@@ -188,10 +208,7 @@ function Profile({ setCurr }: any) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Gender</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <SelectTrigger
                         className={
                           "!rounded-3xl  shadow !h-10 !py-4 !px-4 !bg-[#F0F0FF]"
@@ -263,7 +280,7 @@ function Profile({ setCurr }: any) {
                       onValueChange={(value) => {
                         field.onChange(value);
                       }}
-                      defaultValue={field.value}
+                      value={field.value}
                     >
                       <SelectTrigger
                         className={

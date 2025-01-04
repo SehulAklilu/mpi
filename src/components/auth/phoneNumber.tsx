@@ -22,6 +22,7 @@ import { getAxiosErrorMessage, getAxiosSuccessMessage } from "@/api/axios";
 import { toast } from "react-toastify";
 import { LoaderCircle } from "lucide-react";
 import { OtpPayload } from "@/types/auth.type";
+import { useEffect } from "react";
 
 const FormSchema = z.object({
   email: z.string({ required_error: "Email is Required!" }).email(),
@@ -51,6 +52,12 @@ const PhoneNumber = ({ setCurr }: any) => {
     mutate(data);
     signupCon.setUserInfo({ email: data.email });
   }
+
+  useEffect(() => {
+    if (signupCon.userInfo.email) {
+      form.setValue("email", signupCon.userInfo.email);
+    }
+  }, []);
   return (
     <>
       <img className="w-52 mx-auto" src={logo} alt="" />
