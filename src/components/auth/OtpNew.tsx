@@ -3,12 +3,10 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import otp from "../../assets/otp.svg";
 
-// import { toast } from "@/components/hooks/use-toast"
 import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -21,15 +19,11 @@ import {
 } from "@/components/ui/input-otp";
 import { useSignupContext } from "@/context/SignupContext";
 import { useMutation } from "react-query";
-import {
-  OtpPayload,
-  sendOtp,
-  verifyOTP,
-  VerifyOtpPayload,
-} from "@/api/auth.api";
-import { getAxiosErrorMessage } from "@/api/axios";
+import { sendOtp, verifyOTP } from "@/api/auth.api";
+import { getAxiosErrorMessage, getAxiosSuccessMessage } from "@/api/axios";
 import { toast } from "react-toastify";
 import { LoaderCircle } from "lucide-react";
+import { OtpPayload, VerifyOtpPayload } from "@/types/auth.type";
 
 const FormSchema = z.object({
   otp: z.string().min(6, {
@@ -49,9 +43,11 @@ export function InputOTPForm({ setCurr }: any) {
   const { mutate, isLoading } = useMutation({
     mutationKey: ["verifyOtp"],
     mutationFn: (payload: VerifyOtpPayload) => verifyOTP(payload),
-    onSuccess: () => {
+    onSuccess: (response) => {
       signupCon.setUserInfo({ otp: form.getValues("otp") });
       setCurr((c: number) => c + 1);
+      const message = getAxiosSuccessMessage(response);
+      toast.success(message);
     },
     onError: (error: any) => {
       const message = getAxiosErrorMessage(error);

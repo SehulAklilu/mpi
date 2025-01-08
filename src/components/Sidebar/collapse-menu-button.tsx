@@ -31,7 +31,7 @@ type Submenu = {
 };
 
 interface CollapseMenuButtonProps {
-  icon: LucideIcon;
+  icon: any;
   label: string;
   active: boolean;
   submenus: Submenu[];

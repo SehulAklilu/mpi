@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import AuthWrapper from "./AuthWrapper";
+import { useState } from "react";
 import logo from "../../assets/logo/new-logo.svg";
 import {
   Form,
@@ -12,7 +11,6 @@ import {
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-// import { Input } from "../ui/input";
 import { Input } from "@/components/ui/input";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Button } from "../ui/button";

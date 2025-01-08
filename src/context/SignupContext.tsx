@@ -8,6 +8,17 @@ interface UserInfo {
   password?: string;
   avatar?: string;
   role?: string;
+  dateOfBirth?: string;
+  gender?: string;
+  phoneNumber?: string;
+  phoneNumberCountryCode?: string;
+  streetAddress?: string;
+  city?: string;
+  stateProvince?: string;
+  country?: string;
+  zipCode?: string;
+  pushNotificationType?: string[];
+  avater?: string;
 }
 
 interface SignupContextProps {

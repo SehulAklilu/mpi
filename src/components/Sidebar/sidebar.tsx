@@ -4,11 +4,10 @@ import { Button } from "@/components/ui/button";
 import Menu from "./menu";
 import { useSidebarToggle } from "@/context/SidebarToggleContext";
 import { SidebarToggle } from "./sidebar-toggler";
-import logo from "../../assets/mpi_logo.png";
+import new_logo from "../../assets/logo/new-logo.svg";
 
 export function Sidebar() {
   const sidebar = useStore(() => useSidebarToggle());
-  console.log("dddddddddd", sidebar);
 
   if (!sidebar) return null;
 
@@ -16,11 +15,11 @@ export function Sidebar() {
     <aside
       className={cn(
         "fixed top-0 left-0 z-20 h-screen -translate-x-full bg-white lg:translate-x-0 transition-[width] ease-in-out duration-300",
-        sidebar?.isOpen === false ? "w-[100px]" : "w-72"
+        sidebar?.isOpen === false ? "w-[100px] bg-white " : "w-72 bg-white "
       )}
     >
       <SidebarToggle isOpen={sidebar?.isOpen} setIsOpen={sidebar?.setIsOpen} />
-      <div className="relative h-full flex flex-col px-3 py-4 overflow-y-auto shadow-md dark:shadow-zinc-800">
+      <div className="relative h-full bg-white flex flex-col px-3 py-4 overflow-y-auto shadow-md dark:shadow-zinc-800">
         <Button
           className={cn(
             "transition-transform ease-in-out duration-300 mb-1",
@@ -29,8 +28,11 @@ export function Sidebar() {
           variant="link"
           asChild
         >
-          <a href="/dashboard" className="flex items-center gap-2">
-            <img className="w-52 " src={logo} alt="Mpi logo" />
+          <a
+            href="/dashboard"
+            className="flex items-center justify-center gap-2"
+          >
+            <img className="w-52 " src={new_logo} alt="Mpi logo" />
 
             {/* <PanelsTopLeft className="w-6 h-6 mr-1" />
             <h1
