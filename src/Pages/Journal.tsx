@@ -4,14 +4,15 @@ import IconButton from "../components/Button/IconButton";
 import BasicInput from "../components/Inputs/BasicInput";
 import { useForm } from "react-hook-form";
 import CloseClickOutside from "../components/Additionals/ClickOutside";
-import JournalCard, { JournalCardProps } from "../components/Card/JournalCard";
-import { useNavigate } from "react-router-dom";
+import JournalCard, { JournalCardProps } from "../components/Notes/JournalCard";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "@/api/axios.ts";
 import { useMutation, useQuery } from "react-query";
 import { toast } from "react-toastify";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
-
+import { Button } from "@/components/ui/button";
+import { CiEdit } from "react-icons/ci";
 interface FilterInf {
   search: string | null;
   // Add more properties here if your backend provides more fields
@@ -61,8 +62,8 @@ const Journal = () => {
   }, [filters]);
 
   return (
-    <div className="flex flex-col gap-11 relative font-raleway ">
-      <div className="flex flex-row justify-between pr-7 relative ">
+    <div className="flex flex-col  px-2 pt-1 gap-11  font-raleway ">
+      {/* <div className="flex flex-row justify-between pr-7 relative ">
         <IconAndButton
           type={"button"}
           buttonText={"edit"}
@@ -100,14 +101,24 @@ const Journal = () => {
             )}
           </div>
         </div>
-      </div>
-      <div className="grid grid-cols-3 max-lg:grid-cols-2 max-md:grid-cols-1 gap-3 ">
+      </div> */}
+      <Link
+        to="/newJournal"
+        className="bg-gradient-to-b z-20 hover:scale-105 duration-200 from-[#F8B672] to-[#F2851C] rounded-full shadow-lg shadow-primary p-5 w-fit fixed bottom-0 right-0 mb-12 mr-12"
+      >
+        <CiEdit className="text-white text-2xl" />
+      </Link>
+      <div className="grid grid-cols-3 max-lg:grid-cols-2 max-md:grid-cols-1 gap-3 pb-32">
         {journals.map((journal) => (
           <JournalCard key={journal._id} journal={journal} />
         ))}
         {isLoading &&
           [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2].map(() => {
-            return <Skeleton className="h-32 bg-primary" />;
+            return (
+              <Skeleton className="h-[40vh] z-10 rounded-xl bg-white">
+                <Skeleton className="w-full h-[10vh] rounded-t-xl bg-primary " />
+              </Skeleton>
+            );
           })}
       </div>
     </div>

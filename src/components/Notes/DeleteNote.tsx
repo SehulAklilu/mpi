@@ -10,7 +10,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { JournalCardProps } from "../Card/JournalCard";
+import { JournalCardProps } from "./JournalCard";
 import { MdDelete } from "react-icons/md";
 import { useMutation, useQueryClient } from "react-query";
 import { useState } from "react";
@@ -49,10 +49,13 @@ function DeleteNote({ note }: { note: JournalCardProps }) {
     <AlertDialog open={open}>
       <AlertDialogTrigger asChild>
         <Button
-          className="bg-black p-1 rounded-xl"
-          onClick={() => setOpen(true)}
+          className="text-semibold p-1 rounded-xl"
+          onClick={(event) => {
+            setOpen(true);
+            event.stopPropagation();
+          }}
         >
-          <MdDelete className="text-white text-lg" />
+          Delete
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
@@ -65,13 +68,19 @@ function DeleteNote({ note }: { note: JournalCardProps }) {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel
-            onClick={() => setOpen(false)}
+            onClick={(event) => {
+              setOpen(false);
+              event.stopPropagation();
+            }}
             className="px-3 py-1 rounded bg-gray-400"
           >
             Cancel
           </AlertDialogCancel>
           <AlertDialogAction
-            onClick={onSubmit}
+            onClick={(event) => {
+              onSubmit();
+              event.stopPropagation();
+            }}
             className="px-3 py-1 rounded bg-red-500 text-white"
           >
             {isLoading ? (

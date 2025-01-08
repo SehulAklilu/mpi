@@ -15,7 +15,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { CiEdit } from "react-icons/ci";
-import { JournalCardProps, journalColors } from "../Card/JournalCard";
+import { JournalCardProps, journalColors } from "./JournalCard";
 import { LoaderCircle } from "lucide-react";
 import { useMutation, useQueryClient } from "react-query";
 import { toast } from "react-toastify";
@@ -23,21 +23,17 @@ import axios from "@/api/axios.ts";
 import { useState } from "react";
 import { IoCloseSharp } from "react-icons/io5";
 
-const EditNoteSchema = z.object({
-  title: z.string({ required_error: "Title is required" }).min(1),
-  content: z.string({ required_error: "Content is required" }).min(1),
-});
+// const EditNoteSchema = z.object({
+//   title: z.string({ required_error: "Title is required" }).min(1),
+//   content: z.string({ required_error: "Content is required" }).min(1),
+// });
+
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 const EditNote = ({ note }: { note: JournalCardProps }) => {
-  const form = useForm<z.infer<typeof EditNoteSchema>>({
-    resolver: zodResolver(EditNoteSchema),
-    defaultValues: {
-      title: note.title,
-      content: note.content,
-    },
-  });
-
-  const [color, setColor] = useState(note.color);
+  const [title, setTitle] = useState(note.title);
+  const [content, setContent] = useState(note.content);
 
   const queryClient = useQueryClient();
 
@@ -62,26 +58,33 @@ const EditNote = ({ note }: { note: JournalCardProps }) => {
     }
   );
 
-  const onSubmit = (data: any) => {
-    console.log(color);
-    mutate({ ...data, color: color.toString() });
+  const handleSave = () => {
+    mutate({ title, content });
   };
 
   return (
     <AlertDialog open={open}>
       <AlertDialogTrigger asChild>
         <Button
-          className="bg-black p-1 rounded-xl"
-          onClick={() => setOpen(true)}
+          className="text-semibold p-1 rounded-xl"
+          onClick={(event) => {
+            setOpen(true);
+            event.stopPropagation();
+          }}
         >
-          <CiEdit className="text-white text-lg" />
+          Edit
         </Button>
       </AlertDialogTrigger>
-      <AlertDialogContent className="min-h-[70vh]">
+      <AlertDialogContent className="min-h-[90vh] bg-gray-100 h-[90vh] min-w-[70%] overflow-auto">
         <AlertDialogHeader>
           <div className="flex justify-between w-full">
             <AlertDialogTitle>Edit Your Note</AlertDialogTitle>
-            <Button onClick={() => setOpen(false)}>
+            <Button
+              onClick={(event) => {
+                setOpen(false);
+                event.stopPropagation();
+              }}
+            >
               <IoCloseSharp />
             </Button>
           </div>
@@ -89,73 +92,37 @@ const EditNote = ({ note }: { note: JournalCardProps }) => {
             Modify the details of your note and save your changes.
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="title" className="block text-sm font-medium">
-                Title
-              </label>
-              <Input
-                id="title"
-                placeholder="Enter title"
-                {...form.register("title")}
-              />
-              {form.formState.errors.title && (
-                <p className="text-red-500 text-sm">
-                  {form.formState.errors.title.message}
-                </p>
-              )}
-            </div>
-            <div>
-              <label htmlFor="content" className="block text-sm font-medium">
-                Content
-              </label>
-              <textarea
-                id="content"
-                placeholder="Enter content"
-                rows={8}
-                className="w-full border rounded-md p-2"
-                {...form.register("content")}
-              />
-              {form.formState.errors.content && (
-                <p className="text-red-500 text-sm">
-                  {form.formState.errors.content.message}
-                </p>
-              )}
-            </div>
-            <div className="flex gap-4">
-              {journalColors.map((col, ind) => (
-                <div
-                  role="button"
-                  onClick={() => {
-                    setColor(ind);
+        <div className="bg-white  rounded-xl shadow-xl">
+          <div className="py-3 px-4 w-full flex justify-between">
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="p-2 text-xl font-semibold placeholder-gray-600 placeholder:font-bold appearance-none bg-transparent border-none focus:outline-none"
+              placeholder="Title..."
+            />
+            <Button
+              onClick={() => handleSave()}
+              className="font-bold text-primary"
+            >
+              {isLoading ? (
+                <LoaderCircle
+                  style={{
+                    animation: "spin 1s linear infinite",
                   }}
-                  style={{ backgroundColor: col.color }}
-                  className={`${
-                    ind == color && "border-2 border-black"
-                  } w-6 h-6 rounded-full my-3`}
-                ></div>
-              ))}
-            </div>
+                />
+              ) : (
+                "Safe"
+              )}
+            </Button>
           </div>
-          <Button
-            type="submit"
-            className="flex max-w-32 bg-primary py-2 shadow rounded-3xl px-12 items-center justify-center gap-2  text-white border border-gray-300 "
-          >
-            {isLoading ? (
-              <LoaderCircle
-                style={{
-                  animation: "spin 1s linear infinite",
-                }}
-              />
-            ) : (
-              "Submit"
-            )}
-          </Button>
-          {/* <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-          </AlertDialogFooter> */}
-        </form>
+          <ReactQuill
+            className="h-[66vh]  border-none"
+            theme="snow"
+            value={content}
+            onChange={setContent}
+          />
+        </div>
       </AlertDialogContent>
     </AlertDialog>
   );

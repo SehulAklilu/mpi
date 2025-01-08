@@ -11,7 +11,10 @@ import { Button } from "../ui/button";
 import { FaArrowLeft } from "react-icons/fa6";
 import { LoaderCircle } from "lucide-react";
 import { Link } from "react-router-dom";
-import { JournalCardProps, journalColors } from "@/components/Card/JournalCard";
+import {
+  JournalCardProps,
+  journalColors,
+} from "@/components/Notes/JournalCard";
 import { useState } from "react";
 
 const EditColor = ({ note }: { note: JournalCardProps }) => {
@@ -34,7 +37,7 @@ const EditColor = ({ note }: { note: JournalCardProps }) => {
       },
     }
   );
-  const handleSave = async (num : any) => {
+  const handleSave = async (num: any) => {
     mutate({
       color: num.toString(),
     });
