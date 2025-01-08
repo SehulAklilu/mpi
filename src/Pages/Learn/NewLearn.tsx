@@ -23,19 +23,15 @@ import DetailCard from "@/components/Learn/DetailCard";
 import { IoBriefcase } from "react-icons/io5";
 import ReadMore from "@/components/common/ReadMore";
 import InstructorCard from "@/components/Learn/InstructorCard";
-
-interface CardProps {
-  image: string; // URL of the image
-  courseName: string;
-  title: string;
-  rating: number; // e.g., 5.0
-  people: number; // e.g., 4000
-  duration: string; // e.g., "2Hrs 25 Min"
-}
+import { CardContainer } from "@/components/Learn/RoadCard";
+import { UserCourseProgress } from "@/types/course.types";
 
 function NewLearn() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+  const [course, setCourse] = useState<UserCourseProgress | undefined>(
+    undefined
+  );
 
   const {
     data: allCourses,
@@ -46,50 +42,6 @@ function NewLearn() {
     queryFn: getUserCourses,
   });
 
-  const CardContainer: React.FC<CardProps> = ({
-    image,
-    courseName,
-    title,
-    rating,
-    people,
-    duration,
-  }) => {
-    return (
-      <Card
-        onClick={() => setOpen(true)}
-        className="border rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 p-1 hover:cursor-pointer "
-      >
-        <CardContent className="flex justify-center">
-          <img
-            src={image}
-            alt={courseName}
-            className="w-52 sm:w-96 sm:h-44 rounded-sm object-cover shadow-md"
-          />
-        </CardContent>
-        <CardFooter>
-          <div className="pl-1">
-            <p className="">{courseName}</p>
-            <p className="text-gray-600">{title}</p>
-          </div>
-          <div className="flex justify-between items-center text-sm text-gray-500">
-            <div className="flex items-center gap-1">
-              <FaStar className="text-[#ff9328]" />
-              <p className="font-medium">{rating.toFixed(1)}</p>
-            </div>
-            <div className="flex items-center gap-1">
-              <FaUserAlt className="text-[#ff9328]" />
-              <p className="font-medium">{people}</p>
-            </div>
-            <div className="flex items-center gap-1">
-              <FaClock className="text-[#ff9328]" />
-              <p className="font-medium">{duration}</p>
-            </div>
-          </div>
-        </CardFooter>
-      </Card>
-    );
-  };
-
   const details = [
     { icon: <FaUserAlt />, label: "Introduction" },
     { icon: <FaMicrophone />, label: "English" },
@@ -98,32 +50,31 @@ function NewLearn() {
   ];
 
   return (
-    <div className="flex flex-col items-center justify-center lg:pr-24 py-4">
+    <div className="flex flex-col items-center justify-center  pl-20 md:pl-0 lg:pr-24 py-4">
       <div className="w-72">
         {allCourses?.courses.map((course, index) => (
           <div key={index} className="relative w-64">
             {/* card container */}
             <div
-              className={`absolute  ${
+              className={`absolute hidden sm:block ${
                 index % 2 !== 0
-                  ? "top-0 -left-20 sm:-left-72"
-                  : "top-0 -right-44 sm:-right-[27rem]"
+                  ? "top-0 -left-24 md:-left-72"
+                  : "top-0 -right-12 md:-right-[27rem]"
               }`}
             >
               <CardContainer
-                image={course.courseId.videos[1]?.thumbnail}
-                courseName={"Course  0" + (index + 1)}
-                title="title"
-                rating={5.0}
-                people={4000}
-                duration="2Hrs 25 Min"
+                course={course}
+                onclick={() => {
+                  setOpen(true);
+                  setCourse(course);
+                }}
               />
             </div>
 
             {/* Road SVG */}
             <img
-              className={`w-64 ${
-                index % 2 !== 0 ? "rotate-180 ml-[8.7rem]" : ""
+              className={`w-32 md:w-64 ${
+                index % 2 !== 0 ? "rotate-180 ml-[4.35rem] md:ml-[8.7rem]" : ""
               }`}
               src={road}
               alt="Road"
@@ -132,17 +83,29 @@ function NewLearn() {
             {/* Step indicator */}
             {index === 0 ? (
               <div
+                onClick={() => {
+                  setOpen(true);
+                  setCourse(course);
+                }}
                 className={`absolute ${
-                  index % 2 === 0 ? "left-10" : "-right-24"
-                } top-1/2 transform -translate-y-1/2 w-16 h-16 rounded-full text-2xl border-2 border-[#ff9328] bg-gradient-to-b from-[#F8B16A] to-[#F28A26] flex items-center justify-center font-bold text-white shadow-xl shadow-[#F28A26]`}
+                  index % 2 === 0
+                    ? "left-5 md:left-10"
+                    : "-right-12 md:-right-24"
+                } top-1/2 cursor-pointer transform -translate-y-1/2 w-8 h-8 md:w-16 md:h-16 rounded-full text-xl md:text-2xl border-2 border-[#ff9328] bg-gradient-to-b from-[#F8B16A] to-[#F28A26] flex items-center justify-center font-bold text-white shadow-xl shadow-[#F28A26]`}
               >
                 {index + 1}
               </div>
             ) : (
               <div
+                onClick={() => {
+                  setOpen(true);
+                  setCourse(course);
+                }}
                 className={`absolute ${
-                  index % 2 === 0 ? "left-10" : "-right-24"
-                } top-1/2 transform -translate-y-1/2 w-16 h-16 rounded-full text-2xl border-2 border-gray-500 bg-gray-400 flex items-center justify-center font-bold text-white shadow-lg shadow-gray-200/50`}
+                  index % 2 === 0
+                    ? "left-5 md:left-10"
+                    : "right-[5rem] md:-right-24"
+                } top-1/2 cursor-pointer transform -translate-y-1/2 w-8 h-8 md:w-16 md:h-16 rounded-full text-xl md:text-2xl border-2 border-gray-500 bg-gray-400 flex items-center justify-center font-bold text-white shadow-lg shadow-gray-200/50`}
               >
                 {index + 1}
               </div>
@@ -167,9 +130,7 @@ function NewLearn() {
             /> */}
           </CardHeader>
           <CardContent className="text-[#1c1d47]">
-            <h1 className="text-2xl font-semibold">
-              Introductionto Professional Tennis
-            </h1>
+            <h1 className="text-2xl font-semibold">{course?.courseId.title}</h1>
 
             {/* instructor */}
             <InstructorCard
@@ -185,10 +146,7 @@ function NewLearn() {
             <div>
               <h1 className="text-lg font-semibold">Introduction</h1>
               <ReadMore
-                text=" Lorem ipsum dolor sit amet, consectetur adipisicing elit. Labore
-                saepe assumenda odio voluptates dolore accusamus, delectus illum
-                eligendi dolor voluptatum quis suscipit rerum dolores,
-                cupiditate cum repellat architecto? Perferendis, dignissimos."
+                text={course?.courseId.description ?? ""}
                 previewLength={100}
               />
             </div>
@@ -210,7 +168,7 @@ function NewLearn() {
 
           <CardFooter className="flex justify-center">
             <Button
-              onClick={() => navigate("course/662e17510ac8163154d7bae2")}
+              onClick={() => navigate(`course/${course?.courseId.id}`)}
               className=" px-10 py-2 mt-6 shadow rounded-3xl bg-primary text-white !w-full "
             >
               Explore

@@ -21,52 +21,10 @@ import NewLogin from "./Pages/NewLogin.tsx";
 import CourseDetail from "./components/Learn/CourseDetail.tsx";
 import LessonDetail from "./components/Learn/LessonDetail.tsx";
 import AssessmentComponent from "./components/Assessment/assessment.tsx";
-import { Assessment } from "./types/course.types.ts";
+import { assesment } from "./types/course.types.ts";
 import NewLearn from "./Pages/Learn/NewLearn.tsx";
+import Assessment from "./Pages/Assessment.tsx";
 
-const assesment: Assessment = {
-  assessmentType: "quiz",
-  title: "Small Soft Ball",
-  description: "accusantium quidem enim",
-  timeLimit: 5,
-  attemptsAllowed: 3,
-  connectedWithVideo: true,
-  questions: [
-    {
-      questionType: "multiple-choice",
-      question:
-        "Mindfulness is a concept that is found in multiple cultures and religions.",
-      choices: ["True", "False"],
-      correctAnswer: "True",
-      _id: "662e17020ac8163154d7ba9e",
-      id: "662e17020ac8163154d7ba9e",
-    },
-    {
-      questionType: "multiple-choice",
-      question:
-        "How many essential elements of mindfulness are typically identified by experts?",
-      choices: ["2", "3", "4", "5"],
-      correctAnswer: "5",
-      _id: "662e17020ac8163154d7ba9f",
-      id: "662e17020ac8163154d7ba9f",
-    },
-    {
-      questionType: "multiple-choice",
-      question: "How does mindfulness help in terms of attention management?",
-      choices: [
-        "It encourages constant mind-wandering",
-        "It minimizes attention to the present moment",
-        "It helps deploy attention where you want it",
-        "It increases judgmental thinking",
-      ],
-      correctAnswer: "It helps deploy attention where you want it",
-      _id: "662e17020ac8163154d7baa1",
-      id: "662e17020ac8163154d7baa1",
-    },
-  ],
-  _id: "662e17020ac8163154d7ba9d",
-  connectedVideoId: "662e17020ac8163154d7ba9b",
-};
 const router = createBrowserRouter([
   {
     path: "/",
@@ -83,6 +41,10 @@ const router = createBrowserRouter([
       {
         path: "course/:course_id/video/:video_id",
         element: <LessonDetail />,
+      },
+      {
+        path: "course/:course_id/assesment/:assesment_id",
+        element: <Assessment />,
       },
       {
         path: "journal",
@@ -149,6 +111,16 @@ const router = createBrowserRouter([
   {
     path: "/connect",
     element: <Connect />,
+  },
+  {
+    path: "/assessment",
+    element: (
+      <AssessmentComponent
+        assessment={assesment}
+        assessmentPage={true}
+        onContinue={() => console.log("")}
+      />
+    ),
   },
 ]);
 

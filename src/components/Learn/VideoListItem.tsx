@@ -17,6 +17,7 @@ const VideoListItem: FC<VideoListItemProps> = ({
   onPlay,
   active,
 }) => {
+  // console.log("333333333333", active);
   return (
     <div
       onClick={onPlay}
