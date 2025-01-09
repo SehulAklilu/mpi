@@ -21,8 +21,8 @@ const VideoListItem: FC<VideoListItemProps> = ({
   return (
     <div
       onClick={onPlay}
-      className={`bg-white flex justify-between items-center cursor-pointer rounded-xl my-2 p-2 hover:bg-[#ff9328] ${
-        active ? "bg-[#ff9328]" : ""
+      className={`white flex justify-between items-center cursor-pointer rounded-xl my-2 p-2 hover:bg-[#ff9328] ${
+        active ? "bg-[#ff9328]" : "bg-white"
       }`}
     >
       <div className="flex items-center gap-2">

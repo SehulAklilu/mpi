@@ -58,7 +58,7 @@ export interface UserAssessment {
 
 export interface UserVideo {
   videoId: string;
-  status: "newVideo" | "finished" | "inProgress";
+  status: "newVideo" | "finished" | "unfinished" | "locked";
   _id: string;
 }
 
@@ -88,7 +88,7 @@ export interface UserCourseProgress {
   videosFinished: boolean;
   assessmentsFinished: boolean;
   canView: boolean;
-  status: "unlocked" | "started" | "completed";
+  status: "unlocked" | "started" | "finished" | "locked";
   _id: string;
 }
 

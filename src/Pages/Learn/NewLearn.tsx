@@ -1,18 +1,7 @@
 import road from "../../assets/svg/road.svg";
 import user from "../../assets/user.jpeg";
-import {
-  FaStar,
-  FaUserAlt,
-  FaClock,
-  FaMicrophone,
-  FaPlayCircle,
-} from "react-icons/fa";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
+import { FaUserAlt, FaMicrophone, FaPlayCircle } from "react-icons/fa";
+import { CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { getUserCourses, UserCoursesResponse } from "@/api/course.api";
 import { useQuery } from "react-query";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -25,6 +14,7 @@ import ReadMore from "@/components/common/ReadMore";
 import InstructorCard from "@/components/Learn/InstructorCard";
 import { CardContainer } from "@/components/Learn/RoadCard";
 import { UserCourseProgress } from "@/types/course.types";
+import NewLearnSkeleton from "./NewLearnSkeleton";
 
 function NewLearn() {
   const [open, setOpen] = useState(false);
@@ -48,6 +38,23 @@ function NewLearn() {
     { icon: <FaPlayCircle />, label: "4 Lessons (1Hr 30Min)" },
     { icon: <IoBriefcase />, label: "2 Additional resources" },
   ];
+
+  if (isLoading) {
+    return <NewLearnSkeleton />;
+  }
+
+  const getStatusStyles = (status: string) => {
+    switch (status) {
+      case "finished":
+        return "border-green-500 bg-green-400 shadow-green-400";
+      case "locked":
+        return "border-gray-500 bg-gray-400 shadow-gray-200/50";
+      case "unlocked":
+      case "started":
+      default:
+        return "border-[#ff9328] bg-gradient-to-b from-[#F8B16A] to-[#F28A26] shadow-[#F28A26]";
+    }
+  };
 
   return (
     <div className="flex flex-col items-center justify-center  pl-20 md:pl-0 lg:pr-24 py-4">
@@ -81,35 +88,22 @@ function NewLearn() {
             />
 
             {/* Step indicator */}
-            {index === 0 ? (
-              <div
-                onClick={() => {
-                  setOpen(true);
-                  setCourse(course);
-                }}
-                className={`absolute ${
-                  index % 2 === 0
-                    ? "left-5 md:left-10"
-                    : "-right-12 md:-right-24"
-                } top-1/2 cursor-pointer transform -translate-y-1/2 w-8 h-8 md:w-16 md:h-16 rounded-full text-xl md:text-2xl border-2 border-[#ff9328] bg-gradient-to-b from-[#F8B16A] to-[#F28A26] flex items-center justify-center font-bold text-white shadow-xl shadow-[#F28A26]`}
-              >
-                {index + 1}
-              </div>
-            ) : (
-              <div
-                onClick={() => {
-                  setOpen(true);
-                  setCourse(course);
-                }}
-                className={`absolute ${
-                  index % 2 === 0
-                    ? "left-5 md:left-10"
-                    : "right-[5rem] md:-right-24"
-                } top-1/2 cursor-pointer transform -translate-y-1/2 w-8 h-8 md:w-16 md:h-16 rounded-full text-xl md:text-2xl border-2 border-gray-500 bg-gray-400 flex items-center justify-center font-bold text-white shadow-lg shadow-gray-200/50`}
-              >
-                {index + 1}
-              </div>
-            )}
+            <div
+              onClick={() => {
+                setOpen(true);
+                setCourse(course);
+              }}
+              className={`absolute ${
+                index % 2 === 0
+                  ? "left-5 md:left-10"
+                  : "right-[5rem] md:-right-24"
+              } top-1/2 cursor-pointer transform -translate-y-1/2 w-8 h-8 md:w-16 md:h-16 rounded-full text-xl md:text-2xl border-2 border-gray-500 bg-gray-400 flex items-center justify-center font-bold text-white shadow-lg shadow-gray-200/50 ${getStatusStyles(
+                course.status
+              )}`}
+            >
+              {index + 1}
+            </div>
+            {/* )} */}
           </div>
         ))}
       </div>
@@ -168,8 +162,14 @@ function NewLearn() {
 
           <CardFooter className="flex justify-center">
             <Button
-              onClick={() => navigate(`course/${course?.courseId.id}`)}
-              className=" px-10 py-2 mt-6 shadow rounded-3xl bg-primary text-white !w-full "
+              onClick={() =>
+                course &&
+                course.status !== "locked" &&
+                navigate(`course/${course?.courseId.id}`)
+              }
+              className={` px-10 py-2 mt-6 shadow rounded-3xl bg-primary text-white !w-full disabled:${
+                course?.status === "locked"
+              }`}
             >
               Explore
             </Button>

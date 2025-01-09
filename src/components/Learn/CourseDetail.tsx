@@ -13,6 +13,8 @@ import DetailCard from "./DetailCard";
 import FAQ from "./FAQ";
 import { Review } from "./Review";
 import VideoListItem from "./VideoListItem";
+import CourseDetailSkeleton from "./CourseDetailSkeleton";
+import { string } from "zod";
 
 function CourseDetail() {
   const navigate = useNavigate();
@@ -61,7 +63,7 @@ function CourseDetail() {
   ];
 
   if (isLoading || isError) {
-    return <>Loading</>;
+    return <CourseDetailSkeleton />;
   }
   return (
     <div className="px-2 bg-white">
@@ -172,6 +174,9 @@ function CourseDetail() {
                   duration={video.duration}
                   identifier={"0" + (index + 1)}
                   onPlay={() =>
+                    selectedCourse?.course.videos.find(
+                      (vid) => vid.videoId === video._id
+                    )?.status !== "locked" &&
                     navigate(
                       `/course/${selectedCourse.course.courseId.id}/video/${video._id}`
                     )
@@ -181,7 +186,17 @@ function CourseDetail() {
                   <VideoListItem
                     label={assessment.title?.slice(0, 30)}
                     duration={assessment.timeLimit}
-                    onPlay={() => console.log(`Playing video: ${video.title}`)}
+                    onPlay={() => {
+                      const isFinished =
+                        selectedCourse?.course.assessments.find(
+                          (asses) => asses.assessmentId === assessment._id
+                        )?.status !== "locked";
+
+                      isFinished &&
+                        navigate(
+                          `/course/${selectedCourse.course.courseId.id}/assessment/${assessment._id}`
+                        );
+                    }}
                   />
                 )}
               </div>

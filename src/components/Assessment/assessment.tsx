@@ -1,25 +1,34 @@
 import React, { useState } from "react";
-import { motion } from "framer-motion"; // For animations
+import { motion } from "framer-motion";
 import { Progress } from "@/components/ui/progress"; // Assuming you're using shadcn/ui
 import { Checkbox } from "@/components/ui/checkbox"; // Import Checkbox from shadcn
 import { Assessment } from "@/types/course.types";
 import Congrats from "../auth/Congrates";
+import { LoaderCircle } from "lucide-react";
+
+interface Question {
+  questionId: string;
+  userAnswer: string | null;
+}
 
 interface AssessmentProps {
   assessment: Assessment;
-  onContinue: () => void;
+  onContinue: (answer: Question[]) => void;
   assessmentPage?: boolean;
+  isLoading?: boolean;
 }
 
 const AssessmentComponent: React.FC<AssessmentProps> = ({
   assessment,
   onContinue,
   assessmentPage,
+  isLoading,
 }) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [answers, setAnswers] = useState<Question[]>([]);
   const [isFinished, setIsFinished] = useState(false);
   const [showCongratulations, setShowCongratulations] = useState(false);
+
   if (!assessment) {
     return null;
   }
@@ -40,33 +49,57 @@ const AssessmentComponent: React.FC<AssessmentProps> = ({
     } else if (isFinished) {
       setIsFinished(false);
       setCurrentQuestionIndex(0);
-      setAnswers({});
+      setAnswers([]);
     }
   };
 
   const handleAnswerChange = (choice: string) => {
-    setAnswers({
-      ...answers,
-      [currentQuestion.id]: choice,
-    });
+    const existingAnswerIndex = answers.findIndex(
+      (answer) => answer.questionId === currentQuestion.id
+    );
+
+    if (existingAnswerIndex !== -1) {
+      // Update the existing answer
+      const updatedAnswers = [...answers];
+      updatedAnswers[existingAnswerIndex] = {
+        questionId: currentQuestion.id,
+        userAnswer: choice,
+      };
+      setAnswers(updatedAnswers);
+    } else {
+      // Add a new answer
+      setAnswers([
+        ...answers,
+        { questionId: currentQuestion.id, userAnswer: choice },
+      ]);
+    }
   };
 
   const handleContinue = () => {
     if (assessmentPage) {
       setShowCongratulations(true);
     } else {
-      onContinue();
+      onContinue(answers);
     }
+  };
+
+  const handleRetake = () => {
+    const clearedAnswers = assessment.questions.map((question) => ({
+      questionId: question.id,
+      userAnswer: null,
+    }));
+    setAnswers(clearedAnswers);
+    setCurrentQuestionIndex(0);
+    setIsFinished(false); // Reset the exam state if needed
   };
 
   return (
     <div
-      className={`flex justify-center items-start pt-4 ${
-        assessmentPage ? "pt-24" : ""
+      className={`flex justify-center items-start ${
+        assessmentPage ? "pt-24" : "pt-4"
       }`}
     >
-      {/* Main Content Wrapper */}
-      <div className="p-4 space-y-6 w-full max-w-4xl mx-auto rounded-lg ">
+      <div className="p-4 space-y-6 w-full max-w-4xl mx-auto rounded-lg">
         {!showCongratulations ? (
           <div className="w-full">
             <div className="flex items-center justify-center flex-col">
@@ -86,7 +119,6 @@ const AssessmentComponent: React.FC<AssessmentProps> = ({
                 </div>
               )}
             </div>
-            {/* Questions or Results */}
             {!isFinished ? (
               <motion.div
                 key={currentQuestionIndex}
@@ -108,7 +140,11 @@ const AssessmentComponent: React.FC<AssessmentProps> = ({
                     >
                       <Checkbox
                         id={choice}
-                        checked={answers[currentQuestion.id] === choice}
+                        checked={
+                          answers.find(
+                            (answer) => answer.questionId === currentQuestion.id
+                          )?.userAnswer === choice
+                        }
                         onCheckedChange={() => handleAnswerChange(choice)}
                       />
                       <label
@@ -119,6 +155,60 @@ const AssessmentComponent: React.FC<AssessmentProps> = ({
                       </label>
                     </div>
                   ))}
+                </div>
+              </motion.div>
+            ) : !assessmentPage && isFinished ? (
+              <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="space-y-4"
+              >
+                <div className="text-center mb-4">
+                  <h2 className="text-lg font-medium py-4">
+                    You have answered{" "}
+                    {
+                      assessment.questions.filter((question) =>
+                        answers.some(
+                          (answer) =>
+                            answer.questionId === question.id &&
+                            answer.userAnswer === question.correctAnswer
+                        )
+                      ).length
+                    }{" "}
+                    out of {assessment.questions.length} questions correctly.
+                  </h2>
+                  {answers.every((answer) =>
+                    assessment.questions.some(
+                      (question) =>
+                        question.id === answer.questionId &&
+                        answer.userAnswer === question.correctAnswer
+                    )
+                  ) ? (
+                    <button
+                      onClick={handleContinue}
+                      className="mt-4 px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 ml-4"
+                    >
+                      {isLoading ? (
+                        <LoaderCircle
+                          style={{
+                            animation: "spin 1s linear infinite",
+                            fontSize: "2rem",
+                            color: "#FFFFFF",
+                          }}
+                        />
+                      ) : (
+                        "Continue"
+                      )}
+                    </button>
+                  ) : (
+                    <button
+                      onClick={handleRetake}
+                      className="mt-4 px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600"
+                    >
+                      Retake Exam
+                    </button>
+                  )}
                 </div>
               </motion.div>
             ) : (
@@ -138,7 +228,9 @@ const AssessmentComponent: React.FC<AssessmentProps> = ({
                     </h2>
                     <p className="text-sm">
                       <strong>Your Answer:</strong>{" "}
-                      {answers[question.id] || "Not Answered"}
+                      {answers.find(
+                        (answer) => answer.questionId === question.id
+                      )?.userAnswer || "Not Answered"}
                     </p>
                     <p className="text-sm">
                       <strong>Correct Answer:</strong> {question.correctAnswer}
@@ -148,35 +240,36 @@ const AssessmentComponent: React.FC<AssessmentProps> = ({
               </motion.div>
             )}
             <div className="flex items-center justify-center pt-4">
-              {
-                /* Previous Button */
-                currentQuestionIndex > 0 && (
-                  <button
-                    onClick={handleBack}
-                    className="mt-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-                  >
-                    Previous
-                  </button>
-                )
-              }
+              {currentQuestionIndex > 0 && !isFinished ? (
+                <button
+                  onClick={handleBack}
+                  className="mt-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+                >
+                  Previous
+                </button>
+              ) : null}
               {!isFinished ? (
                 <button
                   onClick={handleNext}
-                  disabled={!answers[currentQuestion.id]}
+                  disabled={
+                    !answers.find(
+                      (answer) => answer.questionId === currentQuestion.id
+                    )
+                  }
                   className="mt-4 px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 disabled:bg-gray-400 ml-4"
                 >
                   {currentQuestionIndex < assessment.questions.length - 1
                     ? "Next"
                     : "Finish"}
                 </button>
-              ) : (
+              ) : assessmentPage ? (
                 <button
                   onClick={handleContinue}
                   className="mt-4 px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 ml-4"
                 >
                   Continue
                 </button>
-              )}
+              ) : null}
             </div>
           </div>
         ) : (

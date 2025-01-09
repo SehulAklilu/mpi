@@ -18,7 +18,7 @@ const Navbar: FC<NavbarProps> = ({ common, commonHeader, commonColor }) => {
   const navigate = useNavigate();
 
   return (
-    <div className="sticky h-20 top-0 z-10 bg-[#FFF8F5] w-ful py-5 px-7 flex flex-row justify-between items-center">
+    <div className="sticky h-20 top-0 z-20 bg-[#FFF8F5] w-ful py-5 px-7 flex flex-row justify-between items-center ">
       <SheetMenu />
       {common ? (
         <p
@@ -27,10 +27,10 @@ const Navbar: FC<NavbarProps> = ({ common, commonHeader, commonColor }) => {
           }  font-semibold`}
         >
           <FaArrowLeft
-            className="cursor-pointer "
+            className="cursor-pointer text-[#F1861B]"
             onClick={() => navigate(-1)}
           />
-          {commonHeader}
+          {/* {commonHeader} */}
         </p>
       ) : (
         <p className="text-black font-semibold text-xl max-w-1/2">
