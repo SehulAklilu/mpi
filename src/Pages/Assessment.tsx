@@ -16,6 +16,7 @@ import { useMutation, useQuery } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import instructor from "../assets/user.jpeg";
 import { TbReload } from "react-icons/tb";
+import LessonDetailSkeleton from "@/components/Learn/LessonDetailSkeleton";
 
 const AssessmentSummary = ({
   assessment,
@@ -90,9 +91,6 @@ function Assessment() {
     },
   });
 
-  if (isLoading || isError) {
-    return <>Loading</>;
-  }
   const handleNext = (answers: Question[]) => {
     if (course_id && assessment_id) {
       const params = { course_id, assessment_id };
@@ -126,6 +124,10 @@ function Assessment() {
       console.log("No connected video for this assessment");
     }
   };
+
+  if (isLoading) {
+    return <LessonDetailSkeleton />;
+  }
 
   return (
     <div>

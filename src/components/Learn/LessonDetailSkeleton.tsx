@@ -3,7 +3,7 @@ import { Skeleton } from "../ui/skeleton";
 function LessonDetailSkeleton() {
   return (
     <div>
-      <div className="relative w-full h-[70vh] bg-black group">
+      <div className="relative w-full h-[60vh] bg-white group">
         <Skeleton className="w-full h-full" />
       </div>
 
