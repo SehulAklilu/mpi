@@ -158,7 +158,9 @@ function LessonDetail() {
       </div>
       <div className="grid  grid-cols-6 py-2 p-2 text-[#1c1d47] gap-10">
         <div className="col-span-6 lg:col-span-4 order-2 lg:order-1">
-          <h1 className="text-2xl font-semibold">{selectedVideo?.title}</h1>
+          <h1 className="text-2xl font-semibold">
+            {selected_course?.course.courseId.title}
+          </h1>
           {/* instructor */}
           <InstructorCard
             name="Damian"
@@ -227,6 +229,16 @@ function LessonDetail() {
                 )
               : null;
 
+            const videoExists = selected_course?.course.videos.find(
+              (vid) => vid.videoId === video._id
+            );
+
+            const assessmentExists = assessment
+              ? selected_course?.course.assessments.find(
+                  (asses) => asses.assessmentId === assessment._id
+                )
+              : undefined;
+
             return (
               <div key={video._id}>
                 <VideoListItem
@@ -234,6 +246,7 @@ function LessonDetail() {
                   duration={video.duration}
                   active={video._id === video_id}
                   identifier={"0" + (index + 1)}
+                  locked={videoExists && videoExists.status == "locked"}
                   onPlay={() => {
                     const videoExists = selected_course?.course.videos.find(
                       (vid) => vid.videoId === video._id
@@ -250,12 +263,10 @@ function LessonDetail() {
                   <VideoListItem
                     label={assessment.title?.slice(0, 30)}
                     duration={assessment.timeLimit}
+                    locked={
+                      assessmentExists && assessmentExists.status == "locked"
+                    }
                     onPlay={() => {
-                      const assessmentExists =
-                        selected_course?.course.assessments.find(
-                          (asses) => asses.assessmentId === assessment._id
-                        );
-
                       if (
                         assessmentExists &&
                         assessmentExists.status !== "locked"

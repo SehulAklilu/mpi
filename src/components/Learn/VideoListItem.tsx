@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { FaPlayCircle } from "react-icons/fa";
+import { FaPlayCircle, FaLock } from "react-icons/fa";
 import { GoGoal } from "react-icons/go";
 
 interface VideoListItemProps {
@@ -8,6 +8,7 @@ interface VideoListItemProps {
   identifier?: string;
   onPlay: () => void;
   active?: boolean;
+  locked: boolean | undefined;
 }
 
 const VideoListItem: FC<VideoListItemProps> = ({
@@ -16,6 +17,7 @@ const VideoListItem: FC<VideoListItemProps> = ({
   identifier,
   onPlay,
   active,
+  locked,
 }) => {
   // console.log("333333333333", active);
   return (
@@ -34,11 +36,15 @@ const VideoListItem: FC<VideoListItemProps> = ({
           <p className="text-xs">{duration} Min</p>
         </div>
       </div>
-      <FaPlayCircle
-        className="text-[#ff9328]"
-        size={24}
-        style={{ cursor: "pointer" }}
-      />
+      {locked ? (
+        <FaLock size={24} />
+      ) : (
+        <FaPlayCircle
+          className="text-[#ff9328]"
+          size={24}
+          style={{ cursor: "pointer" }}
+        />
+      )}
     </div>
   );
 };

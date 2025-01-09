@@ -167,12 +167,23 @@ function CourseDetail() {
                 )
               : null;
 
+            const videoExists = selectedCourse?.course.videos.find(
+              (vid) => vid.videoId === video._id
+            );
+
+            const assessmentExists = assessment
+              ? selectedCourse?.course.assessments.find(
+                  (asses) => asses.assessmentId === assessment._id
+                )
+              : undefined;
+
             return (
               <div key={video._id}>
                 <VideoListItem
                   label={video.title}
                   duration={video.duration}
                   identifier={"0" + (index + 1)}
+                  locked={videoExists && videoExists.status == "locked"}
                   onPlay={() =>
                     selectedCourse?.course.videos.find(
                       (vid) => vid.videoId === video._id
@@ -186,6 +197,9 @@ function CourseDetail() {
                   <VideoListItem
                     label={assessment.title?.slice(0, 30)}
                     duration={assessment.timeLimit}
+                    locked={
+                      assessmentExists && assessmentExists.status == "locked"
+                    }
                     onPlay={() => {
                       const isFinished =
                         selectedCourse?.course.assessments.find(
