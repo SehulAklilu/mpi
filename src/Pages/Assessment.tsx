@@ -4,15 +4,13 @@ import ReadMore from "@/components/common/ReadMore";
 import InstructorCard from "@/components/Learn/InstructorCard";
 import VideoListItem from "@/components/Learn/VideoListItem";
 import { Assessment as AssessmentProps } from "@/types/course.types";
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import {
-  FaBook,
   FaClock,
   FaDownload,
   FaFilePdf,
   FaLink,
   FaQuestion,
-  FaTimes,
 } from "react-icons/fa";
 import { useMutation, useQuery } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
