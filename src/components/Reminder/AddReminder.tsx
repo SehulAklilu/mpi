@@ -16,6 +16,8 @@ import { LoaderCircle } from "lucide-react";
 import { useMutation, useQueryClient } from "react-query";
 import { toast } from "react-toastify";
 import axios from "@/api/axios";
+import { useEffect, useRef } from "react";
+import { FaX } from "react-icons/fa6";
 
 const AddReminderSchema = z.object({
   title: z.string({ required_error: "Title is required" }).min(1),
@@ -27,17 +29,25 @@ const AddReminderSchema = z.object({
 
 type AddReminderForm = z.infer<typeof AddReminderSchema>;
 
-const AddReminder = () => {
+const AddReminder = ({
+  date,
+  setDate,
+  ref,
+}: {
+  date: string;
+  setDate: Function;
+  ref: any;
+}) => {
   const form = useForm<AddReminderForm>({
     resolver: zodResolver(AddReminderSchema),
     defaultValues: {
-      date: "",
+      date,
       type: "reminder",
     },
   });
 
   const queryClient = useQueryClient();
-  const types = ["reminder", "match", "training", "goal"];
+  const types = ["reminder", "goal"];
 
   const { isLoading, mutate } = useMutation(
     (data: AddReminderForm) => axios.post("/api/v1/reminders", data),
@@ -45,6 +55,7 @@ const AddReminder = () => {
       onSuccess() {
         toast.success("Reminder added successfully");
         queryClient.invalidateQueries("reminders");
+        setDate("");
       },
       onError(err: any) {
         toast.error(
@@ -58,12 +69,42 @@ const AddReminder = () => {
 
   const onSubmit = (data: AddReminderForm) => {
     mutate(data);
+    // alert("working...");
   };
 
+  useEffect(() => {
+    function fun() {
+      form.setValue("date", date);
+    }
+    fun();
+
+    return () => {};
+  }, [date]);
+
   return (
-    <form className="text-sm" onSubmit={form.handleSubmit(onSubmit)}>
+    <form
+      className={`text-sm border rounded-lg m-1 px-2 py-1 ${
+        date.length > 0 &&
+        "shadow-lg shadow-primary duration-200 border border-primary"
+      } `}
+      onSubmit={(e) => {
+        onSubmit(form.getValues());
+        e.preventDefault();
+      }}
+    >
       <div className="space-y-4">
-        <div className=""></div>
+        <div className="flex w-full justify-between">
+          <div ref={ref} className="pb-2 font-semibold mt-2">
+            Create Schedule {date.length > 0 && date}
+          </div>
+          <div
+            onClick={() => setDate(null)}
+            role="button"
+            className="rounded-full h-fit w-fit my-auto p-1 bg-gray-200"
+          >
+            <FaX size={10} className="text" />
+          </div>
+        </div>
         <div>
           <label htmlFor="title" className="block text-sm font-medium">
             Title
@@ -71,6 +112,7 @@ const AddReminder = () => {
           <Input
             id="title"
             placeholder="Enter title"
+            className="bg-white"
             {...form.register("title")}
           />
           {form.formState.errors.title && (
@@ -121,25 +163,50 @@ const AddReminder = () => {
             </p>
           )}
         </div>
-        <div>
-          <label htmlFor="timezone" className="block text-sm font-medium">
-            Timezone
-          </label>
-          <Input
-            id="timezone"
-            placeholder="Enter timezone"
-            {...form.register("timezone")}
-          />
-          {form.formState.errors.timezone && (
-            <p className="text-red-500 text-sm">
-              {form.formState.errors.timezone.message}
-            </p>
+        <div className={`grid grid-cols-${date.length > 0 ? "1" : "2"} gap-2`}>
+          <div>
+            <label htmlFor="timezone" className="block text-sm font-medium">
+              Timezone
+            </label>
+            <Input
+              id="timezone"
+              placeholder="Enter timezone"
+              className="bg-white"
+              {...form.register("timezone")}
+            />
+            {form.formState.errors.timezone && (
+              <p className="text-red-500 text-sm">
+                {form.formState.errors.timezone.message}
+              </p>
+            )}
+          </div>
+          {date.length > 0 ? (
+            <></>
+          ) : (
+            <div>
+              <label htmlFor="date" className="block text-sm font-medium">
+                Due Date
+              </label>
+              <Input
+                id="date"
+                type="date"
+                placeholder="Enter date"
+                {...form.register("date")}
+              />
+              {form.formState.errors.date && (
+                <p className="text-red-500 text-sm">
+                  {form.formState.errors.date.message}
+                </p>
+              )}
+            </div>
           )}
         </div>
       </div>
+
       <Button
         type="submit"
-        className="flex mt-3 max-w-32 bg-primary py-2 shadow rounded-3xl px-12 items-center justify-center gap-2 text-white border border-gray-300"
+        onClick={() => {}}
+        className="flex my-5  w-full bg-primary py-2 shadow rounded-3xl px-12 items-center justify-center gap-2 text-white border border-gray-300"
       >
         {isLoading ? (
           <LoaderCircle
@@ -148,7 +215,7 @@ const AddReminder = () => {
             }}
           />
         ) : (
-          "Submit"
+          "Create Schedule"
         )}
       </Button>
     </form>
