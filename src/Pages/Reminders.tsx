@@ -29,13 +29,20 @@ export interface ReminderInf {
 const Reminders = () => {
   const today = new Date();
   const tomorrow = new Date();
+  const dateChecker = (date1: Date, date2: Date) => {
+    return (
+      date1.getDate() === date2.getDate() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getFullYear() === date2.getFullYear()
+    );
+  };
 
   tomorrow.setDate(tomorrow.getDate() + 1);
 
   const [date, setDate] = useState<string | null>(null);
   const [dateFilter, setDateFilter] = useState<Date>(new Date());
 
-  const [open, setOpen] = useState<null | string>(null);
+  const [search, setSearch] = useState<string>("");
   const [reminders, setReminders] = useState<ReminderInf[]>([]);
   const [allReminders, setAllReminder] = useState<ReminderInf[]>([]);
   const {
@@ -59,14 +66,16 @@ const Reminders = () => {
     const fun = () => {
       if (!result || typeof result !== "object") return;
       const a = allReminders.filter((d: any) => {
-        return new Date(d.date).getDate() == dateFilter.getDate();
+        return search.length > 0
+          ? d.title.toLowerCase().includes(search.toLowerCase())
+          : new Date(d.date).getDate() == dateFilter.getDate();
       });
       setReminders(a);
       ref && ref.current?.scrollIntoView({ behavior: "smooth" });
     };
     fun();
     return () => {};
-  }, [dateFilter, allReminders]);
+  }, [dateFilter, allReminders, search]);
 
   const ref = useRef<any>(null);
   const reminderWithTime: any = [];
@@ -93,14 +102,26 @@ const Reminders = () => {
 
   return (
     <div className="  font-raleway bg-white  overflow-auto   min-h-[80vh] flex-1 ">
+      <div className="w-full px-2">
+        <Input
+          value={search}
+          onChange={({ target }) => setSearch(target.value)}
+          className="bg-white mx-auto w-[10%] mt-4"
+          placeholder="search here"
+        />
+      </div>
       <WeekShow dateFilter={dateFilter} setDateFilter={setDateFilter} />
       <div className="flex px-1 rounded-xl">
         <div className="basis-2/3 border rounded-xl  p-1">
           <div className="flex justify-between p-1 py-2 border-b">
             <div className="flex flex-col">
               <div className="text-sm font-semibold">
-                Schedules for {dateFilter.getFullYear()}-
-                {dateFilter.getMonth() + 1}-{dateFilter.getDate()}
+                Schedules for{" "}
+                {dateChecker(dateFilter, new Date())
+                  ? "Today"
+                  : `${dateFilter.getFullYear()}-${
+                      dateFilter.getMonth() + 1
+                    }-${dateFilter.getDate()}`}
               </div>
               <div className="text-xs">
                 Create and complete tasks using boards
@@ -131,11 +152,11 @@ const Reminders = () => {
             />
           </div>
           {date == null ? (
-            <div
-              onClick={() => setDate("")}
-              className="min-h-[30vh] w-full flex"
-            >
-              <div className="bg-gradient-to-b text-white z-20 hover:scale-105 duration-200 from-[#F8B672] to-[#F2851C] rounded-full shadow-lg shadow-primary p-5 w-fit fixed bottom-0 right-0 mb-12 mr-12">
+            <div className="min-h-[30vh] w-full flex">
+              <div
+                onClick={() => setDate("")}
+                className="bg-gradient-to-b text-white z-20 hover:scale-105 duration-200 from-[#F8B672] to-[#F2851C] rounded-full shadow-lg shadow-primary p-5 w-fit fixed bottom-0 right-0 mb-12 mr-12"
+              >
                 <FaCalendar />
               </div>
             </div>
@@ -205,8 +226,7 @@ const WeekShow = ({
     return curr.getDate() === dateFilter.getDate();
   };
   return (
-    <div className="w-full  flex-col pt-7 px-1  relative  flex">
-      <Input className="w-full bg-white" placeholder="search here" />
+    <div className="w-full  flex-col  px-1  relative  flex">
       <div className="relative flex w-fullflex gap-5 my-2 bg-[#FFF8F4]">
         <button
           className="absolute left-5 top-1/2 transform -translate-y-1/2"
@@ -290,6 +310,8 @@ const ReminderCard = ({
 }) => {
   const queryClient = useQueryClient();
   const date = new Date(reminder.date);
+  const [open, setOpen] = useState(false);
+
   const { isLoading, mutate } = useMutation(
     () =>
       axios.patch(`/api/v1/reminders/${reminder._id}`, {
@@ -356,7 +378,25 @@ const ReminderCard = ({
               </div>
             </Button>
           )}
-          <Editreminder initialValue={reminder} />
+          <Button
+            onClick={(event) => {
+              setOpen(true);
+              event.stopPropagation();
+            }}
+            className="px-3 py-2 bg-white text-blue-500 flex gap-2 rounded "
+          >
+            <div className="w-5 h-5 rounded-full flex">
+              <FaEdit className="m-auto" />
+            </div>
+            <div className="my-auto">Edit</div>
+          </Button>
+          {open && (
+            <Editreminder
+              initialValue={reminder}
+              open={open}
+              setOpen={setOpen}
+            />
+          )}
           <DeleteReminder id={reminder._id ?? ""} />
         </div>
       </div>

@@ -33,18 +33,24 @@ import { FaEdit } from "react-icons/fa";
 const EditreminderSchema = z.object({
   title: z.string({ required_error: "Title is required" }).min(1),
   description: z.string({ required_error: "Description is required" }).min(1),
-  date: z.string({ required_error: "Date is required" }).min(1),
-  type: z.string({ required_error: "Type is required" }),
-  timezone: z.string({ required_error: "Timezone is required" }).min(1),
+  // date: z.string({ required_error: "Date is required" }).min(1),
+  // type: z.string({ required_error: "Type is required" }),
+  // timezone: z.string({ required_error: "Timezone is required" }).min(1),
 });
 
 type EditreminderForm = z.infer<typeof EditreminderSchema>;
 
-const Editreminder = ({ initialValue }: any) => {
-  const [open, setOpen] = useState(false);
-  let defaultValues = { ...initialValue };
-  delete defaultValues["_id"];
-  delete defaultValues["timezone"];
+const Editreminder = ({ initialValue, open, setOpen }: any) => {
+  let defaultValues = {
+    title: initialValue["title"],
+    description: initialValue["description"],
+  };
+  // delete defaultValues["_id"];
+  // delete defaultValues["timezone"];
+  // delete defaultValues["type"];
+  // delete defaultValues["userId"];
+  // defaultValues["date"] = new Date(defaultValues["date"]);
+  console.log(defaultValues);
   const form = useForm<EditreminderForm>({
     resolver: zodResolver(EditreminderSchema),
     defaultValues,
@@ -58,8 +64,10 @@ const Editreminder = ({ initialValue }: any) => {
       axios.patch(`/api/v1/reminders/${initialValue._id}`, data),
     {
       onSuccess() {
+        form.reset();
         toast.success("Reminder Updated successfully");
         queryClient.invalidateQueries("reminders");
+        setOpen(false);
       },
       onError(err: any) {
         toast.error(
@@ -78,20 +86,9 @@ const Editreminder = ({ initialValue }: any) => {
 
   return (
     <AlertDialog open={open}>
-      <AlertDialogTrigger asChild>
-        <Button
-          onClick={(event) => {
-            setOpen(true);
-            event.stopPropagation();
-          }}
-          className="px-3 py-2 bg-white text-blue-500 flex gap-2 rounded "
-        >
-          <div className="w-5 h-5 rounded-full flex">
-            <FaEdit className="m-auto" />
-          </div>
-          <div className="my-auto">Edit</div>
-        </Button>
-      </AlertDialogTrigger>
+      {/* <AlertDialogTrigger asChild>
+        
+      </AlertDialogTrigger> */}
       <AlertDialogContent className=" bg-gray-100  overflow-auto">
         <AlertDialogHeader>
           <div className="flex justify-between w-full">
@@ -122,6 +119,7 @@ const Editreminder = ({ initialValue }: any) => {
                 <Input
                   id="title"
                   placeholder="Enter title"
+                  className="bg-white"
                   {...form.register("title")}
                 />
                 {form.formState.errors.title && (
@@ -150,7 +148,7 @@ const Editreminder = ({ initialValue }: any) => {
                   </p>
                 )}
               </div>
-              <div>
+              {/* <div>
                 <label htmlFor="type" className="block text-sm font-medium">
                   Type
                 </label>
@@ -174,7 +172,7 @@ const Editreminder = ({ initialValue }: any) => {
                     {form.formState.errors.type.message}
                   </p>
                 )}
-              </div>
+              </div> */}
               {/* <div>
                 <label htmlFor="timezone" className="block text-sm font-medium">
                   Timezone
@@ -190,7 +188,7 @@ const Editreminder = ({ initialValue }: any) => {
                   </p>
                 )}
               </div> */}
-              <div>
+              {/* <div>
                 <label htmlFor="date" className="block text-sm font-medium">
                   Due Date
                 </label>
@@ -206,6 +204,7 @@ const Editreminder = ({ initialValue }: any) => {
                   </p>
                 )}
               </div>
+              */}
             </div>
 
             <Button
