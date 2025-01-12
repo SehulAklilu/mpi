@@ -76,7 +76,7 @@ function GroupChat() {
             <GroupChatMessages />
           </ScrollArea>
 
-          <ChatInput />
+          <ChatInput reciverId="" chatId="" />
         </div>
       </div>
     </div>

@@ -2,16 +2,16 @@ import React from "react";
 import { MdDoneAll } from "react-icons/md";
 
 export interface ChatItemProps {
-  id: string;
+  id?: string;
   name: string;
   avatarUrl: string;
   status: "online" | "offline";
   message: string;
   time: string;
   unreadCount: number;
-  onClick: () => void;
-  active: boolean;
-  isRead: boolean;
+  onClick?: () => void;
+  active?: boolean;
+  isRead?: boolean;
 }
 
 const ChatItem: React.FC<ChatItemProps> = ({
