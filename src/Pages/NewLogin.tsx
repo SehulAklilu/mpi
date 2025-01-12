@@ -22,6 +22,7 @@ import { toast } from "react-toastify";
 import { LoaderCircle } from "lucide-react";
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import Cookies from "js-cookie";
 
 const FormSchema = z.object({
   email: z.string({ required_error: "Email is Required!" }).email(),
@@ -38,7 +39,8 @@ function NewLogin() {
   const navigate = useNavigate();
 
   const { mutate, isLoading } = useMutation(login, {
-    onSuccess: () => {
+    onSuccess: (data) => {
+      Cookies.set("user_id", data.user.id);
       navigate("/");
     },
     onError: (error: any) => {

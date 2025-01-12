@@ -24,6 +24,7 @@ import AssessmentComponent from "./components/Assessment/assessment.tsx";
 import { assesment } from "./types/course.types.ts";
 import NewLearn from "./Pages/Learn/NewLearn.tsx";
 import Assessment from "./Pages/Assessment.tsx";
+import Chat from "./Pages/Chat.tsx";
 
 const router = createBrowserRouter([
   {
@@ -69,6 +70,10 @@ const router = createBrowserRouter([
       {
         path: "profile",
         element: <Profile />,
+      },
+      {
+        path: "chat",
+        element: <Chat />,
       },
     ],
   },

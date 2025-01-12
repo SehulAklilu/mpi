@@ -17,8 +17,10 @@ export const login = async (
     credentials
   );
   const token = response.data.tokens.accessToken;
+  const refresh_token = response.data.tokens.refreshToken;
 
-  Cookies.set("authToken", token, { expires: 10 });
+  Cookies.set("authToken", token);
+  Cookies.set("refreshToken", refresh_token);
   return response.data;
 };
 
