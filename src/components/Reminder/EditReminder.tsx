@@ -44,6 +44,7 @@ const Editreminder = ({ initialValue, open, setOpen }: any) => {
   let defaultValues = {
     title: initialValue["title"],
     description: initialValue["description"],
+    date: initialValue["date"],
   };
   // delete defaultValues["_id"];
   // delete defaultValues["timezone"];

@@ -24,6 +24,7 @@ export interface ReminderInf {
   date: string; // The date in YYYY-MM-DD format
   type: "reminder" | "match"; // The type of the reminder (can be "reminder" or "match")
   timezone: string; // The timezone or time in HH:mm format
+  time: string; // The timezone or time in HH:mm format
 }
 
 const Reminders = () => {
@@ -51,7 +52,8 @@ const Reminders = () => {
     isSuccess,
   } = useQuery("reminders", () => axios.get("/api/v1/reminders"), {
     onSuccess(data) {
-      setAllReminder(data.data || []);
+      const m = data.data.map((a: any) => ({ ...a, time: "4AM" }));
+      setAllReminder(m);
     },
     onError(err: any) {
       toast.error(
@@ -79,25 +81,35 @@ const Reminders = () => {
 
   const ref = useRef<any>(null);
   const reminderWithTime: any = [];
-  [0, 1, 2].map((val) =>
-    reminderWithTime.push(
-      <TimeShow time={`${val} AM`} setDate={setDate} date={dateFilter} />
-    )
+  const timeMap: any = {};
+
+  [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(
+    (val) =>
+      (timeMap[val + "AM"] = [
+        <TimeShow time={`${val}AM`} setDate={setDate} date={dateFilter} />,
+      ])
   );
-  reminders.map((reminder, ind) =>
-    reminderWithTime.push(
-      <ReminderCard ind={ind} setDate={setDate} reminder={reminder} />
-    )
+  [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(
+    (val) =>
+      (timeMap[val + "PM"] = [
+        <TimeShow time={`${val}PM`} setDate={setDate} date={dateFilter} />,
+      ])
   );
-  [3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((val) =>
-    reminderWithTime.push(
-      <TimeShow time={`${val} AM`} setDate={setDate} date={dateFilter} />
-    )
-  );
-  [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((val) =>
-    reminderWithTime.push(
-      <TimeShow time={`${val} PM`} setDate={setDate} date={dateFilter} />
-    )
+  // <TimeShow time={`${val} AM`} setDate={setDate} date={dateFilter} />
+  // [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,12].map((val) =>
+  //   reminderWithTime.push(
+  //     <TimeShow time={`${val} PM`} setDate={setDate} date={dateFilter} />
+  //   )
+  // );
+
+  reminders.map(
+    (reminder, ind) =>
+      timeMap[reminder.time].push(
+        <ReminderCard ind={ind} setDate={setDate} reminder={reminder} />
+      )
+    // reminderWithTime.push(
+    //   <ReminderCard ind={ind} setDate={setDate} reminder={reminder} />
+    // )
   );
 
   return (
@@ -131,7 +143,12 @@ const Reminders = () => {
           </div>
           <div>
             <div className="w-full flex-1 flex flex-col gap-4 mt-8 px-4 ">
-              {isSuccess && reminderWithTime}
+              {isSuccess &&
+                Object.keys(timeMap).map((k) => {
+                  return  timeMap[k].map((rem: any,ind : number) => {
+                    return search.length > 0 && ind == 0 ? <></> : rem
+                  });
+                })}
               {isLoading &&
                 [1, 2, 3, 4, 4, 4, 4, 4, 4, 4].map(() => {
                   return <Skeleton className="w-full py-12 h-44 bg-primary" />;
@@ -286,13 +303,15 @@ const TimeShow = ({
       <div className="w-[10%] text-sm capitalize">{time}</div>
       <div className="flex w-[90%]">
         <div className="w-full border-b my-auto"></div>
-        <div
-          role="button"
-          onClick={() => setDate(getDateString())}
-          className="text-gray-500 border rounded-full min-w-5 max-w-5 min-h-5 max-h-5  flex"
-        >
-          <FaPlus className="m-auto p-1" />
-        </div>
+        { 
+          <div
+            role="button"
+            onClick={() => setDate(getDateString())}
+            className="text-gray-500 border rounded-full min-w-5 max-w-5 min-h-5 max-h-5  flex"
+          >
+            <FaPlus className="m-auto p-1" />
+          </div>
+        }
         <div className="w-full border-b my-auto"></div>
       </div>
     </div>
@@ -309,7 +328,7 @@ const ReminderCard = ({
   ind: number;
 }) => {
   const queryClient = useQueryClient();
-  const date = new Date(reminder.date);
+  const  date  = new Date(reminder.date);
   const [open, setOpen] = useState(false);
 
   const { isLoading, mutate } = useMutation(
@@ -334,7 +353,13 @@ const ReminderCard = ({
   return (
     <>
       <div className="w-[90%] ml-auto text-sm px-2 py-3 rounded-lg bg-blue-100/20  hover:shadow duration-200 border border-gray-200 flex flex-col">
+        <div className="flex justify-between">
+
         <div className="font-semibold">{reminder.title}</div>
+        <div className="text-xs">
+        {date.getMonth() + 1  }-{date.getDate()}-{date.getFullYear()}
+        </div>
+        </div>
         <div className="mt-1 ">{reminder.description}</div>
         <div className="flex gap-3 mt-4 font-[500]">
           {reminder.isCompleted ? (

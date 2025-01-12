@@ -159,40 +159,40 @@ const ReminderTd = ({
   );
 };
 
-const NormalTd = ({
-  day,
-  handleDateClick,
-}: {
-  day: number;
-  handleDateClick: Function;
-}) => {
-  return (
-    <td
-      onClick={() => handleDateClick(day)}
-      className={`cursor-pointer hover:bg-primary/10 relative py-3 px-2 md:px-3 text-center text-gray-800 `}
-    >
-      <span className={`p-1 text-gray-800`}>{day}</span>
-    </td>
-  );
-};
+// const NormalTd = ({
+//   day,
+//   handleDateClick,
+// }: {
+//   day: number;
+//   handleDateClick: Function;
+// }) => {
+//   return (
+//     <td
+//       onClick={() => handleDateClick(day)}
+//       className={`cursor-pointer hover:bg-primary/10 relative py-3 px-2 md:px-3 text-center text-gray-800 `}
+//     >
+//       <span className={`p-1 text-gray-800`}>{day}</span>
+//     </td>
+//   );
+// };
 
-const TodayTd = ({
-  day,
-  handleDateClick,
-}: {
-  day: number;
-  handleDateClick: Function;
-}) => {
-  return (
-    <td
-      onClick={() => handleDateClick(day)}
-      className={`cursor-pointer hover:bg-primary/10 relative py-1 px-2  text-center  text-white `}
-    >
-      <div className="w-full flex-1 py-1 text-center flex relative bg-primary rounded-md shadow">
-        <span className={`p-1 m-auto mb-1`}>{day}</span>
-      </div>
-    </td>
-  );
-};
+// const TodayTd = ({
+//   day,
+//   handleDateClick,
+// }: {
+//   day: number;
+//   handleDateClick: Function;
+// }) => {
+//   return (
+//     <td
+//       onClick={() => handleDateClick(day)}
+//       className={`cursor-pointer hover:bg-primary/10 relative py-1 px-2  text-center  text-white `}
+//     >
+//       <div className="w-full flex-1 py-1 text-center flex relative bg-primary rounded-md shadow">
+//         <span className={`p-1 m-auto mb-1`}>{day}</span>
+//       </div>
+//     </td>
+//   );
+// };
 
 export default CalendarRow;

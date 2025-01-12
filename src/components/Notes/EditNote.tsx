@@ -112,7 +112,7 @@ const EditNote = ({ note }: { note: JournalCardProps }) => {
                   }}
                 />
               ) : (
-                "Safe"
+                "Save"
               )}
             </Button>
           </div>

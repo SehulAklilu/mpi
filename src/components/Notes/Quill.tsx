@@ -59,7 +59,7 @@ const QuillEditor = () => {
               }}
             />
           ) : (
-            "Safe"
+            "Save"
           )}
         </Button>
       </div>

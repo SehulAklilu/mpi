@@ -111,6 +111,7 @@ const AddReminder = ({
           </label>
           <Input
             id="title"
+            autoFocus
             placeholder="Enter title"
             className="bg-white"
             {...form.register("title")}
