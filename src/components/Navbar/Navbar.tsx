@@ -18,7 +18,7 @@ const Navbar: FC<NavbarProps> = ({ common, commonHeader, commonColor }) => {
   const navigate = useNavigate();
 
   return (
-    <div className="sticky h-20 top-0 z-20 bg-[#FFF8F5] w-ful py-5 px-7 flex flex-row justify-between items-center ">
+    <div className="sticky h-20 top-0 z-10 bg-gray-200 w-ful py-5 px-7 flex flex-row justify-between items-center">
       <SheetMenu />
       {common ? (
         <p

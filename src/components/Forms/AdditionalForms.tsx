@@ -21,7 +21,7 @@ const AdditionalForms: React.FC<AdditionalFormsProps> = ({ onUpdate }) => {
   const [phoneNumber2, setPhoneNumber2] = useState<E164Number | undefined>();
   const { role, personalData, contactInfo, setAdditionalInfo, additionalInfo } = useRole();
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data : any) => {
     const additionalInfoData = {
       itn: data.itn,
       phoneNumber1: phoneNumber,

@@ -33,7 +33,7 @@ const Connect = () => {
 
   return (
     <div className="bg-background h-screen flex flex-row font-raleway ">
-      <ChatSidebar register={register} />
+      <ChatSidebar  />
       <div className="w-full">
         {error ? <p>{error}</p> : <OpenedChat messages={messages} />}
       </div>

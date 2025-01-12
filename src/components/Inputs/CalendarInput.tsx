@@ -55,7 +55,7 @@ const DatePicker: FC<DatePickerPros> = ({
           <DayPicker
             mode="single"
             selected={date}
-            onSelect={setDate}
+            onSelect={setDate as any}
             showOutsideDays
             className="border-0"
             classNames={{

@@ -7,9 +7,10 @@ interface ContentLayoutProps {
 
 export function ContentLayout({ title, children }: ContentLayoutProps) {
   return (
-    <div>
+    <div className="">
       <Navbar common={true} commonHeader={title} />
       <div className="pb-8 px-2 ">{children}</div>
     </div>
+    // <>{children}</>
   );
 }

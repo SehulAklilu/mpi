@@ -35,7 +35,7 @@ const SignUp = () => {
       } else {
         setError("Network error");
       }
-      setSuccess(null);
+      setSuccess("");
     }
   };
 
