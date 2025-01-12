@@ -8,6 +8,7 @@ import { FriendDataResponse } from "@/types/chat.type";
 import { useQuery } from "react-query";
 import { getFriends } from "@/api/chat.api";
 import Cookies from "js-cookie";
+import PeopleSkeleton from "./PeopleSkeleton";
 export interface ProfileDataInterface {
   user_id: string;
   friendship_id: string;
@@ -63,7 +64,7 @@ const PeopleComponent: React.FC<PeopleComponentProps> = ({ setActiveTab }) => {
     return users;
   }
   if (isLoading) {
-    return <>Loading</>;
+    return <PeopleSkeleton />
   }
 
   if (isError) {

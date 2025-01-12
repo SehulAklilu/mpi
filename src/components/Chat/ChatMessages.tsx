@@ -1,8 +1,10 @@
 import { getMessages } from "@/api/chat.api";
 import { Message } from "@/types/chat.type";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQuery } from "react-query";
 import Cookies from "js-cookie";
+import ChatMessagesSkeleton from "./ChatMessagesSkeleton";
+import styles from './ChatMessage.module.css'
 
 type ExtractedMessage = {
   id: string;
@@ -13,8 +15,9 @@ type ExtractedMessage = {
   isSender: boolean;
 };
 
-const ChatMessages = ({ chatId }: { chatId: string }) => {
+const ChatMessages = ({ chatId  }: { chatId: string}) => {
   const [user_id, setUserId] = useState<string | undefined>(undefined);
+  const scrollAreaRef = useRef<HTMLDivElement | null>(null)
 
   const {
     data: message_datas,
@@ -28,10 +31,11 @@ const ChatMessages = ({ chatId }: { chatId: string }) => {
       setUserId(Cookies.get("user_id"));
     },
   });
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+ useEffect(() => {
+    if (scrollAreaRef.current) {
+      scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
+    }
+  }, [message_datas]);
 
   if (isError) {
     return <div>Error loading messages.</div>;
@@ -60,9 +64,11 @@ const ChatMessages = ({ chatId }: { chatId: string }) => {
       : undefined;
 
   return (
-    <div className="flex flex-col gap-4">
-      {messages
-        ? messages.reverse().map((message) => (
+    <div className={`flex flex-col-reverse gap-4 border ${styles.customScrollbar}`}
+      ref={scrollAreaRef}
+      style={{ height: "350px" }}  >
+      {isLoading ? <ChatMessagesSkeleton /> : messages
+        ? messages.map((message) => (
             <div
               key={message.id}
               className={`flex ${

@@ -11,6 +11,7 @@ import Cookies from "js-cookie";
 import { useState } from "react";
 import { ChatInterface } from "@/types/chat.type";
 import NoMessage from "./NoMessage";
+import ChatItemSkeleton from "./ChatItemSkeleton";
 
 export interface ChatItems {
   id: string;
@@ -31,6 +32,8 @@ function ChatComponent() {
   const [selectedChat, setSelectedChat] = useState<ChatItems | undefined>(
     undefined
   );
+
+  const [scrollToBottom, setScrollToBottom] = useState(false)
 
   const {
     data: chats_data,
@@ -85,8 +88,8 @@ function ChatComponent() {
         };
       });
   };
-  if (isLoading && isError) {
-    return "loading or error";
+  if (isError) {
+    return "Error Page";
   }
 
   const chats =
@@ -123,7 +126,7 @@ function ChatComponent() {
               />
             </div>
             <div>
-              {filteredChats && filteredChats.length > 0
+              {isLoading ?  Array.from({length: 3}).map(() => <ChatItemSkeleton /> ): filteredChats && filteredChats.length > 0
                 ? filteredChats.map((chat) => (
                     <ChatItem
                       key={chat.id}
@@ -137,7 +140,7 @@ function ChatComponent() {
                       }}
                     />
                   ))
-                : "No Chat"}
+                : <p className="text-center p-1 border border-[#9092A1] rounded-md text-[#9092A1]">No Chat</p>}
             </div>
           </ScrollArea>
         </div>
