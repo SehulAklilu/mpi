@@ -64,9 +64,9 @@ const ChatMessages = ({ chatId  }: { chatId: string}) => {
       : undefined;
 
   return (
-    <div className={`flex flex-col-reverse gap-4 border ${styles.customScrollbar}`}
+    <div className={`flex flex-col-reverse gap-4 ${styles.customScrollbar}`}
       ref={scrollAreaRef}
-      style={{ height: "350px" }}  >
+      style={{ height: "370px" }}  >
       {isLoading ? <ChatMessagesSkeleton /> : messages
         ? messages.map((message) => (
             <div
