@@ -9,6 +9,7 @@ export interface CongratesProps {
   message2: string;
   button_label: string;
   showSkip?: boolean;
+  onclick?: () => void;
 }
 
 function Congrats({ ind, setCurr }: { ind: number; setCurr: any }) {
@@ -26,6 +27,16 @@ function Congrats({ ind, setCurr }: { ind: number; setCurr: any }) {
       message2:
         "We would prepared a minor assessment to help you start right from where you belong.",
       button_label: "Take Assessment",
+      showSkip: true,
+      onclick: () => navigate("/assessment"),
+    },
+    {
+      title: "Ace!",
+      message: "We have identified your current level as a Ace!",
+      message2:
+        "It is recommended you start at Course 3: Advanced Professional Tennis Training",
+      button_label: "Continue",
+      onclick: () => navigate("/"),
       showSkip: true,
     },
   ];
@@ -45,7 +56,11 @@ function Congrats({ ind, setCurr }: { ind: number; setCurr: any }) {
           {selectedValue.message2}
         </div>
         <Button
-          onClick={() => setCurr((c: number) => c + 1)}
+          onClick={() =>
+            selectedValue?.onclick
+              ? selectedValue.onclick()
+              : setCurr((c: number) => c + 1)
+          }
           className=" px-10 py-2 mt-6 shadow rounded-3xl bg-primary text-white "
         >
           {selectedValue.button_label}

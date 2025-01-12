@@ -1,28 +1,65 @@
-import {
-  getCourse,
-  UpdateVideoParams,
-  UpdateVideoPayload,
-  updateVideoStatus,
-} from "@/api/course.api";
-import { Video } from "@/types/course.types";
+import { getCourse, Question, updateAssessmentStatus } from "@/api/course.api";
+import AssessmentComponent from "@/components/Assessment/assessment";
+import ReadMore from "@/components/common/ReadMore";
+import InstructorCard from "@/components/Learn/InstructorCard";
+import VideoListItem from "@/components/Learn/VideoListItem";
+import { Assessment as AssessmentProps } from "@/types/course.types";
 import { useState } from "react";
-import ReactPlayer from "react-player";
+import {
+  FaClock,
+  FaDownload,
+  FaFilePdf,
+  FaLink,
+  FaQuestion,
+} from "react-icons/fa";
 import { useMutation, useQuery } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
-import VideoListItem from "./VideoListItem";
-import InstructorCard from "./InstructorCard";
-import instructor from "../../assets/user.jpeg";
-import ReadMore from "../common/ReadMore";
-import { FaDownload, FaFilePdf, FaLink, FaPlayCircle } from "react-icons/fa";
-import { MdSkipPrevious, MdSkipNext } from "react-icons/md";
-import LessonDetailSkeleton from "./LessonDetailSkeleton";
+import instructor from "../assets/user.jpeg";
+import { TbReload } from "react-icons/tb";
+import LessonDetailSkeleton from "@/components/Learn/LessonDetailSkeleton";
 
-function LessonDetail() {
-  const { course_id, video_id } = useParams();
-  const navigate = useNavigate();
-  const [selectedVideo, setSelectedVideo] = useState<Video | undefined>(
-    undefined
+const AssessmentSummary = ({
+  assessment,
+}: {
+  assessment: AssessmentProps | undefined;
+}) => {
+  if (!assessment) {
+    return null;
+  }
+  return (
+    <div>
+      <div
+        key={assessment._id}
+        className="grid grid-cols-2 gap-2 text-gray-800 "
+      >
+        {/* <div className="flex items-center w-fit gap-2">
+          <FaBook color="#ff9328" />
+          <span className="">{assessment.title}</span>
+        </div> */}
+        <div className="flex items-center gap-2">
+          <FaQuestion color="#ff9328" />
+          <span className="">{assessment.questions.length} Questions</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <FaClock className="text-[#ff9328]" />
+          <span className="">{assessment.timeLimit} minutes</span>
+        </div>
+        <div className="flex items-center gap-2 ">
+          <TbReload color="#ff9328" />
+          <span className=""> {assessment.attemptsAllowed} Attempt</span>
+        </div>
+      </div>
+    </div>
   );
+};
+
+function Assessment() {
+  const { course_id, assessment_id } = useParams();
+  const [selectedAssessment, setSelectedAssessment] = useState<
+    AssessmentProps | undefined
+  >(undefined);
+  const navigate = useNavigate();
+
   const {
     data: selected_course,
     isLoading,
@@ -30,135 +67,85 @@ function LessonDetail() {
   } = useQuery({
     queryKey: ["course", course_id],
     queryFn: () => getCourse(course_id!),
-    onSuccess: () =>
-      setSelectedVideo(() =>
-        selected_course?.course.courseId.videos.find(
-          (video) => video._id === video_id
+    onSuccess: (data) =>
+      setSelectedAssessment(() =>
+        data?.course.courseId.assessments.find(
+          (assessment) => assessment._id == assessment_id
         )
       ),
   });
+  interface MutationVariables {
+    params: {
+      course_id: string;
+      assessment_id: string;
+    };
+    payload: Question[];
+  }
 
-  const {
-    mutate: update_video_status,
-    isLoading: update_video_loading,
-    isError: update_video_error,
-  } = useMutation<
-    any,
-    Error,
-    { params: UpdateVideoParams; payload: UpdateVideoPayload }
-  >({
-    mutationKey: ["updateVideoStatus", course_id, video_id],
-    mutationFn: ({ params, payload }) => updateVideoStatus(params, payload),
+  const updateAssessment = useMutation({
+    mutationKey: ["update-assessment"],
+    mutationFn: ({ params, payload }: MutationVariables) =>
+      updateAssessmentStatus(params, payload),
     onSuccess: () => {
-      handleNext();
-    },
-    onError: (error: Error) => {
-      console.error("Error updating video status:", error);
+      goToNext();
     },
   });
 
-  const videoSummarys: { min: string; description: string }[] = [
-    { min: "00:20", description: "average atomic mass" },
-    { min: "04:56", description: "average atomic mass" },
-    { min: "09:20", description: "average atomic mass" },
-    { min: "12:45", description: "average atomic mass" },
-    { min: "20:20", description: "average atomic mass" },
-  ];
-
-  const handlePrevious = () => {
-    const course = selected_course?.course.courseId;
-    if (!selectedVideo || !course) return;
-
-    const currentIndex = course.videos.findIndex(
-      (video) => video._id === selectedVideo._id
-    );
-
-    if (currentIndex > 0) {
-      const prevVideo = course.videos[currentIndex - 1];
-      navigate(`/course/${course.id}/video/${prevVideo._id}`);
-    } else if (course?.prevCourse) {
-      navigate(
-        `/course/${course.prevCourse}/video/${
-          course.videos[course.videos.length - 1]._id
-        }`
-      );
-    } else {
-      console.log("No previous video or course");
+  const handleNext = (answers: Question[]) => {
+    if (course_id && assessment_id) {
+      const params = { course_id, assessment_id };
+      updateAssessment.mutate({ params, payload: answers });
     }
   };
 
-  const handleNext = () => {
+  const goToNext = () => {
     const course = selected_course?.course.courseId;
 
-    if (!selectedVideo || !course) return;
+    if (!selectedAssessment || !course) return;
 
-    const videoStatus = selected_course.course.videos.find(
-      (video) => video.videoId === selectedVideo._id
+    const connectedVideo = course.videos.find(
+      (video) => video._id === selectedAssessment.connectedVideoId
     );
 
-    if (
-      selectedVideo.hasAssessmentNext &&
-      videoStatus &&
-      videoStatus.status !== "locked"
-    ) {
-      navigate(`/course/${course.id}/assessment/${selectedVideo.assessmentId}`);
-    } else {
+    if (connectedVideo) {
       const currentIndex = course.videos.findIndex(
-        (video) => video._id === selectedVideo._id
+        (video) => video._id === connectedVideo._id
       );
 
       if (currentIndex < course.videos.length - 1) {
         const nextVideo = course.videos[currentIndex + 1];
         navigate(`/course/${course.id}/video/${nextVideo._id}`);
-      } else if (
-        course.nextCourse &&
-        selected_course.course.status !== "locked"
-      ) {
+      } else if (course.nextCourse) {
         navigate(`/course/${course.nextCourse}`);
       } else {
         console.log("No next video or course");
       }
-    }
-  };
-  const handleVideoEnd = () => {
-    if (course_id && video_id) {
-      const params = { course_id, video_id };
-      const payload = { status: "finished" };
-
-      update_video_status({ params, payload });
+    } else {
+      console.log("No connected video for this assessment");
     }
   };
 
-  if (isLoading || update_video_loading) {
+  if (isLoading) {
     return <LessonDetailSkeleton />;
   }
 
   return (
     <div>
-      <div className="relative w-full h-[70vh] bg-black group">
-        <ReactPlayer
-          url="https://www.youtube.com/watch?v=Hr2f8dmiwpU"
-          controls={true}
-          width="100%"
-          height="100%"
-          onEnded={handleVideoEnd}
-        />
-        {/* <button
-          onClick={handlePrevious}
-          className="absolute left-1/2 top-1/2 transform -translate-x-[240%] -translate-y-1/2 flex items-center justify-center w-12 h-12  text-white rounded-full hover:bg-gray-700 pointer-events-auto z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-        >
-          <MdSkipPrevious size={24} />
-        </button>
-        <button
-          onClick={handleNext}
-          className="absolute left-1/2 top-1/2 transform translate-x-[140%] -translate-y-1/2 flex items-center justify-center w-12 h-12  text-white rounded-full hover:bg-gray-700 pointer-events-auto z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-        >
-          <MdSkipNext size={24} />
-        </button> */}
+      <div className="relative w-full min-h-[50vh] bg-white">
+        {selectedAssessment ? (
+          <AssessmentComponent
+            assessment={selectedAssessment}
+            onContinue={(answers) => handleNext(answers)}
+            assessmentPage={false}
+            isLoading={updateAssessment.isLoading}
+          />
+        ) : null}
       </div>
-      <div className="grid  grid-cols-6 py-2 p-2 text-[#1c1d47] gap-10">
+      <div className="grid grid-cols-6 py-2 p-2 text-[#1c1d47] gap-10">
         <div className="col-span-6 lg:col-span-4 order-2 lg:order-1">
-          <h1 className="text-2xl font-semibold">{selectedVideo?.title}</h1>
+          <h1 className="text-2xl font-semibold">
+            {selectedAssessment?.title}
+          </h1>
           {/* instructor */}
           <InstructorCard
             name="Damian"
@@ -172,18 +159,12 @@ function LessonDetail() {
           <div className="pt-2 ">
             <h1 className="text-lg">Summary</h1>
             <div className="grid grid-cols-2 gap-x-10 my-2 gap-y-4">
-              {videoSummarys.map((videoSummary) => (
-                <div className="flex gap-2 text-gray-800">
-                  <FaPlayCircle color="#FFAC64" />{" "}
-                  <span>{videoSummary.min}</span> -{" "}
-                  <span>{videoSummary.description}</span>
-                </div>
-              ))}
+              <AssessmentSummary assessment={selectedAssessment} />
             </div>
           </div>
           <div className="pt-2 ">
             <ReadMore
-              text={selectedVideo?.description ?? ""}
+              text={selectedAssessment?.description ?? ""}
               previewLength={300}
             />
           </div>
@@ -232,7 +213,6 @@ function LessonDetail() {
                 <VideoListItem
                   label={video.title}
                   duration={video.duration}
-                  active={video._id === video_id}
                   identifier={"0" + (index + 1)}
                   onPlay={() => {
                     const videoExists = selected_course?.course.videos.find(
@@ -250,6 +230,7 @@ function LessonDetail() {
                   <VideoListItem
                     label={assessment.title?.slice(0, 30)}
                     duration={assessment.timeLimit}
+                    active={assessment._id === assessment_id}
                     onPlay={() => {
                       const assessmentExists =
                         selected_course?.course.assessments.find(
@@ -276,4 +257,4 @@ function LessonDetail() {
   );
 }
 
-export default LessonDetail;
+export default Assessment;

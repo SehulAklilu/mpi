@@ -12,14 +12,14 @@ const NewSignup = () => {
   const [curr, setCurr] = useState(0);
   return (
     <AuthWrapper setCurr={setCurr} curr={curr}>
-      {curr == 0 && <PhoneNumber setCurr={setCurr} />}
+      {/* {curr == 0 && <PhoneNumber setCurr={setCurr} />}
       {curr == 1 && <InputOTPForm setCurr={setCurr} />}
       {curr == 2 && <CreatePassword setCurr={setCurr} />}
       {curr == 3 && <Congrats setCurr={setCurr} ind={0} />}
       {curr == 4 && <Role setCurr={setCurr} />}
       {curr == 5 && <Profile setCurr={setCurr} />}
-      {curr == 6 && <Address setCurr={setCurr} />}
-      {curr == 7 && <Congrats setCurr={setCurr} ind={1} />}
+      {curr == 6 && <Address setCurr={setCurr} />} */}
+      {curr == 0 && <Congrats setCurr={setCurr} ind={1} />}
     </AuthWrapper>
   );
 };

@@ -27,10 +27,10 @@ const Navbar: FC<NavbarProps> = ({ common, commonHeader, commonColor }) => {
           }  font-semibold`}
         >
           <FaArrowLeft
-            className="cursor-pointer "
+            className="cursor-pointer text-[#F1861B]"
             onClick={() => navigate(-1)}
           />
-          {commonHeader}
+          {/* {commonHeader} */}
         </p>
       ) : (
         <p className="text-black font-semibold text-xl max-w-1/2">

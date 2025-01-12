@@ -58,7 +58,7 @@ export interface UserAssessment {
 
 export interface UserVideo {
   videoId: string;
-  status: "newVideo" | "finished" | "inProgress";
+  status: "newVideo" | "finished" | "unfinished" | "locked";
   _id: string;
 }
 
@@ -88,6 +88,50 @@ export interface UserCourseProgress {
   videosFinished: boolean;
   assessmentsFinished: boolean;
   canView: boolean;
-  status: "unlocked" | "started" | "completed";
+  status: "unlocked" | "started" | "finished" | "locked";
   _id: string;
 }
+
+export const assesment: Assessment = {
+  assessmentType: "quiz",
+  title: "Small Soft Ball",
+  description: "accusantium quidem enim",
+  timeLimit: 5,
+  attemptsAllowed: 3,
+  connectedWithVideo: true,
+  questions: [
+    {
+      questionType: "multiple-choice",
+      question:
+        "Mindfulness is a concept that is found in multiple cultures and religions.",
+      choices: ["True", "False"],
+      correctAnswer: "True",
+      _id: "662e17020ac8163154d7ba9e",
+      id: "662e17020ac8163154d7ba9e",
+    },
+    {
+      questionType: "multiple-choice",
+      question:
+        "How many essential elements of mindfulness are typically identified by experts?",
+      choices: ["2", "3", "4", "5"],
+      correctAnswer: "5",
+      _id: "662e17020ac8163154d7ba9f",
+      id: "662e17020ac8163154d7ba9f",
+    },
+    {
+      questionType: "multiple-choice",
+      question: "How does mindfulness help in terms of attention management?",
+      choices: [
+        "It encourages constant mind-wandering",
+        "It minimizes attention to the present moment",
+        "It helps deploy attention where you want it",
+        "It increases judgmental thinking",
+      ],
+      correctAnswer: "It helps deploy attention where you want it",
+      _id: "662e17020ac8163154d7baa1",
+      id: "662e17020ac8163154d7baa1",
+    },
+  ],
+  _id: "662e17020ac8163154d7ba9d",
+  connectedVideoId: "662e17020ac8163154d7ba9b",
+};

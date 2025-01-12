@@ -12,18 +12,18 @@ import Connect from "./Pages/Connect.tsx";
 import Home from "./Pages/Home.tsx";
 import Journal from "./Pages/Journal.tsx";
 import NewJournal from "./components/Notes/NewJournal.tsx";
-import Learn from "./Pages/Learn/Learn.tsx";
-import Foundation from "./Pages/Foundation.tsx";
-import LearnLesson from "./components/Learn/LearnLesson.tsx";
 import Progress from "./Pages/Progress.tsx";
 import Reminders from "./Pages/Reminders.tsx";
 import Profile from "./Pages/Profile.tsx";
 import Settings from "./Pages/Settings.tsx";
 import NewSignup from "./Pages/NewSignup.tsx";
 import NewLogin from "./Pages/NewLogin.tsx";
-import NewLearn from "./Pages/Learn/NewLearn.tsx";
 import CourseDetail from "./components/Learn/CourseDetail.tsx";
 import LessonDetail from "./components/Learn/LessonDetail.tsx";
+import AssessmentComponent from "./components/Assessment/assessment.tsx";
+import { assesment } from "./types/course.types.ts";
+import NewLearn from "./Pages/Learn/NewLearn.tsx";
+import Assessment from "./Pages/Assessment.tsx";
 
 const router = createBrowserRouter([
   {
@@ -41,6 +41,10 @@ const router = createBrowserRouter([
       {
         path: "course/:course_id/video/:video_id",
         element: <LessonDetail />,
+      },
+      {
+        path: "course/:course_id/assessment/:assessment_id",
+        element: <Assessment />,
       },
       {
         path: "journal",
@@ -107,6 +111,16 @@ const router = createBrowserRouter([
   {
     path: "/connect",
     element: <Connect />,
+  },
+  {
+    path: "/assessment",
+    element: (
+      <AssessmentComponent
+        assessment={assesment}
+        assessmentPage={true}
+        onContinue={() => console.log("")}
+      />
+    ),
   },
 ]);
 

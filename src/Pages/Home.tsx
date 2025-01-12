@@ -11,6 +11,14 @@ function Home() {
     const authToken = Cookies.get("authToken");
     if (!authToken) {
       navigate("/login");
+    } else {
+      const tokenExpiryTime = 10 * 60 * 1000;
+      const timeout = setTimeout(() => {
+        Cookies.remove("authToken");
+        navigate("/login");
+      }, tokenExpiryTime);
+
+      return () => clearTimeout(timeout);
     }
   }, [navigate]);
 
