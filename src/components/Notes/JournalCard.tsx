@@ -76,7 +76,7 @@ const JournalCard = ({ journal }: { journal: JournalCardProps }) => {
           ></div>
           <div className="flex flex-row justify-between mt-auto ">
             <p className="my-auto text-xs text-black-65 font-semibold ">
-              {date.getDay()}-{date.getUTCDay()}-{date.getFullYear()}
+              {date.getMonth() + 1}-{date.getDate()}-{date.getFullYear()}
             </p>
             <JournalOptions journal={journal} />
           </div>

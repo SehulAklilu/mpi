@@ -80,16 +80,15 @@ const Reminders = () => {
   }, [dateFilter, allReminders, search]);
 
   const ref = useRef<any>(null);
-  const reminderWithTime: any = [];
   const timeMap: any = {};
 
-  [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(
+  [12,1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(
     (val) =>
       (timeMap[val + "AM"] = [
         <TimeShow time={`${val}AM`} setDate={setDate} date={dateFilter} />,
       ])
   );
-  [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(
+  [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(
     (val) =>
       (timeMap[val + "PM"] = [
         <TimeShow time={`${val}PM`} setDate={setDate} date={dateFilter} />,

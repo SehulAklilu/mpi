@@ -55,9 +55,9 @@ const ContactInfo: React.FC<ContactInfoProps> = ({ onUpdate }) => {
 
   const onSubmit = async (data : any) => {
     const contactInfoData = {
-      country: selectCountry.name || "",
-      state: state.name || "",
-      city: city.name || "",
+      country: selectCountry?.name || "",
+      state: state?.name || "",
+      city: city?.name || "",
       streetAddress1: data.streetAddress1,
       streetAddress2: data.streetAddress2,
     };
