@@ -24,17 +24,14 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // Check for 401 error and ensure the request hasn't already been retried
     if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true; // Mark the request to avoid infinite retries
-
+      originalRequest._retry = true; 
       try {
         const refreshToken = Cookies.get("refreshToken");
         if (!refreshToken) {
           throw new Error("Refresh token not available");
         }
 
-        // Request a new access token
         const refreshResponse = await axios.post(
           "https://mpiglobal.org/auth/refresh",
           {
@@ -49,7 +46,6 @@ axiosInstance.interceptors.response.use(
 
         originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
 
-        // Retry the original request with the new token
         return axiosInstance(originalRequest);
       } catch (refreshError) {
         console.error("Failed to refresh token:", refreshError);
