@@ -13,6 +13,22 @@ import { Dialog, DialogContent, DialogTitle } from "../ui/dialog";
 import { PiFilePdfBold, PiFileDocBold } from "react-icons/pi";
 import { TbFileTypeDocx } from "react-icons/tb";
 
+// is mobile hook
+const useIsMobile = (): boolean => {
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  return isMobile;
+};
+
 const ChatInput = ({
   chatId,
   reciverId,
@@ -29,13 +45,14 @@ const ChatInput = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [fileExtension, setFileExtension] = useState("");
   const [fileSize, setFileSize] = useState("");
-  const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
   const docInputRef = useRef<HTMLInputElement | null>(null);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
 
   const [showOptions, setShowOptions] = useState(false);
 
   const queryClient = useQueryClient();
+
+  const isMobile = useIsMobile();
 
   const handleSend = () => {
     if (message.trim() === "" && !previewImage) return;
@@ -122,17 +139,9 @@ const ChatInput = ({
 
   return (
     <>
-      <div className="bg-gradient-to-b from-[#F8B36D] to-[#F28822] px-12 py-2 shadow-md sticky bottom-0 z-10">
-        <div className="flex items-center gap-2 px-2 bg-white rounded-full py-1 relative">
-          <div>
-            <button
-              type="button"
-              className="text-gray-500 hover:text-gray-700"
-              onClick={() => console.log("")}
-            >
-              <IoMdMic size={24} className="text-black" />
-            </button>
-          </div>
+      <div className="bg-gradient-to-b from-[#F8B36D] to-[#F28822] px-4 py-2 shadow-md sticky bottom-0 z-10 md:px-12 w-full ">
+        <div className="flex items-center gap-2 px-2 bg-white rounded-full py-1  w-full">
+          {/* Input Field */}
           <input
             type="text"
             value={message}
@@ -143,82 +152,87 @@ const ChatInput = ({
               }
             }}
             placeholder="Type a message..."
-            className="flex-1 p-2 border-none outline-none border-gray-300"
+            className="flex-1 p-2 border-none rounded outline-none text-sm md:text-base w-0"
           />
-          <button
-            type="button"
-            className="text-gray-500 hover:text-gray-700"
-            onClick={() => setShowEmojiPicker((prev) => !prev)}
-          >
-            <FaRegSmile size={16} className="text-black" />
-          </button>
-          {showEmojiPicker && (
+
+          {/* Emoji Picker Button */}
+          {!isMobile && (
+            <button
+              type="button"
+              className="text-gray-500 hover:text-gray-700"
+              onClick={() => {
+                setShowEmojiPicker((pre) => !pre);
+              }}
+            >
+              <FaRegSmile size={18} className="text-black" />
+            </button>
+          )}
+          {showEmojiPicker && !isMobile && (
             <div
               ref={emojiPickerRef}
-              className="absolute bottom-12 left-0 z-20"
+              className="absolute bottom-16 left-0 z-40 bg-white shadow-lg rounded-md sm:max-w-[90vw]  overflow-auto"
             >
               <EmojiPicker onEmojiClick={handleEmojiClick} />
             </div>
           )}
 
+          {/* Attachment Options */}
           <div className="relative">
-            <div>
-              {/* Paperclip Icon */}
-              <button
-                type="button"
-                onClick={() => setShowOptions((prev) => !prev)}
-                className="text-gray-500 hover:text-gray-700 mx-2"
+            <button
+              type="button"
+              onClick={() => setShowOptions((prev) => !prev)}
+              className="text-gray-500 hover:text-gray-700 mx-2"
+            >
+              <AiOutlinePaperClip size={18} className="text-black" />
+            </button>
+
+            {showOptions && (
+              <div
+                className="absolute bottom-14  z-40 right-0 bg-white shadow-lg rounded p-3"
+                ref={filePickerRef}
               >
-                <AiOutlinePaperClip size={20} className="text-black" />
-              </button>
-
-              {showOptions && (
-                <div
-                  className="absolute bottom-10 mt-2 bg-white shadow-lg rounded p-3 "
-                  ref={filePickerRef}
+                <button
+                  type="button"
+                  onClick={() =>
+                    imageInputRef?.current && imageInputRef.current.click()
+                  }
+                  className="flex gap-2 items-center justify-center mb-2"
                 >
-                  <button
-                    type="button"
-                    onClick={() =>
-                      imageInputRef?.current && imageInputRef.current.click()
-                    }
-                    className="flex gap-2 items-center justify-center mb-1"
-                  >
-                    <FaRegImage size={12} className="text-[#F1851B]" />
-                    <span className="text-sm text-[#F1851B]">Photo</span>
-                  </button>
-                  <input
-                    type="file"
-                    ref={imageInputRef}
-                    onChange={handleFileUpload}
-                    accept="image/*"
-                    className="hidden"
-                  />
+                  <FaRegImage size={12} className="text-[#F1851B]" />
+                  <span className="text-sm text-[#F1851B]">Photo</span>
+                </button>
+                <input
+                  type="file"
+                  ref={imageInputRef}
+                  onChange={handleFileUpload}
+                  accept="image/*"
+                  className="hidden"
+                />
 
-                  <button
-                    type="button"
-                    onClick={() =>
-                      docInputRef?.current && docInputRef.current.click()
-                    }
-                    className="flex gap-2 items-center justify-center"
-                  >
-                    <GrDocumentText size={12} className="text-[#F1851B]" />
-                    <span className="text-sm text-[#F1851B]">Document</span>
-                  </button>
-                  <input
-                    type="file"
-                    ref={docInputRef}
-                    onChange={handleFileUpload}
-                    accept=".pdf,.doc,.docx"
-                    className="hidden"
-                  />
-                </div>
-              )}
-            </div>
+                <button
+                  type="button"
+                  onClick={() =>
+                    docInputRef?.current && docInputRef.current.click()
+                  }
+                  className="flex gap-2 items-center justify-center"
+                >
+                  <GrDocumentText size={12} className="text-[#F1851B]" />
+                  <span className="text-sm text-[#F1851B]">Document</span>
+                </button>
+                <input
+                  type="file"
+                  ref={docInputRef}
+                  onChange={handleFileUpload}
+                  accept=".pdf,.doc,.docx"
+                  className="hidden"
+                />
+              </div>
+            )}
           </div>
 
+          {/* Send Button */}
           <button type="button" onClick={handleSend}>
-            <div className="w-10 h-10 rounded-full bg-gradient-to-b from-[#F8B36D] to-[#F28822] flex items-center justify-center">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-b from-[#F8B36D] to-[#F28822] flex items-center justify-center">
               {createMessageMutation.isLoading ? (
                 <LoaderCircle
                   style={{
@@ -228,12 +242,13 @@ const ChatInput = ({
                   }}
                 />
               ) : (
-                <LuSendHorizontal size={24} className="text-white" />
+                <LuSendHorizontal size={20} className="text-white" />
               )}
             </div>
           </button>
         </div>
       </div>
+
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="sm:max-w-[425px] sm:max-h-[400px]">
           <DialogTitle className="text-lg">

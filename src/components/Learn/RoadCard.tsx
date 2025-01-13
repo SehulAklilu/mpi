@@ -30,7 +30,9 @@ export const CardContainer: React.FC<CardProps> = ({ course, onclick }) => {
         <div className="px-4 hidden md:block">
           {/* <p className="">{course.}</p> */}
           <p className="text-[#1c1d47] font-bold py-1">
-            {course.courseId.title}
+            {course.courseId.title?.length > 35
+              ? course.courseId.title.slice(0, 35) + "..."
+              : course.courseId.title}
           </p>
         </div>
         <div className="flex justify-between px-4 items-center text-[#1c1d47] font-bold">

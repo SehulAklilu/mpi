@@ -1,3 +1,4 @@
+import { SheetMenu } from "../Sidebar/sheet-menu";
 import Navbar from "../Navbar/Navbar";
 
 interface ContentLayoutProps {
@@ -8,7 +9,10 @@ interface ContentLayoutProps {
 export function ContentLayout({ title, children }: ContentLayoutProps) {
   return (
     <div className="">
-      <Navbar common={true} commonHeader={title} />
+      <div className="px-2">
+        <SheetMenu />
+      </div>
+
       <div className="pb-8 px-2 ">{children}</div>
     </div>
     // <>{children}</>

@@ -32,7 +32,7 @@ function LearnLesson() {
 
   return (
     <div className="bg-background h-screen font-raleway">
-      <Navbar common={true} commonHeader={selectedVideo?.title} />
+      {/* <Navbar common={true} commonHeader={selectedVideo?.title} /> */}
       <div className="grid grid-cols-4 gap-10 px-7">
         <div className="col-span-4 md:col-span-3 flex-col gap-5">
           <div className="relative w-full h-[70vh] bg-black">

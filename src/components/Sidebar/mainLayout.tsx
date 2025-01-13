@@ -13,11 +13,11 @@ export default function AdminPanelLayout({
   if (!sidebar) return null;
 
   return (
-    <div className="bg-gray-200">
+    <div className="">
       <Sidebar />
       <main
         className={cn(
-          "min-h-[calc(100vh_-_56px)] transition-[margin-left] ease-in-out duration-300 ",
+          "min-h-[calc(100vh)] transition-[margin-left] ease-in-out duration-300 ",
           sidebar.isOpen === false ? "lg:ml-[120px] " : "lg:ml-[300px] "
         )}
       >
