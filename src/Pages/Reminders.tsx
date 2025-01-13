@@ -82,7 +82,7 @@ const Reminders = () => {
   const ref = useRef<any>(null);
   const timeMap: any = {};
 
-  [12,1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(
+  [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(
     (val) =>
       (timeMap[val + "AM"] = [
         <TimeShow time={`${val}AM`} setDate={setDate} date={dateFilter} />,
@@ -94,21 +94,11 @@ const Reminders = () => {
         <TimeShow time={`${val}PM`} setDate={setDate} date={dateFilter} />,
       ])
   );
-  // <TimeShow time={`${val} AM`} setDate={setDate} date={dateFilter} />
-  // [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,12].map((val) =>
-  //   reminderWithTime.push(
-  //     <TimeShow time={`${val} PM`} setDate={setDate} date={dateFilter} />
-  //   )
-  // );
 
-  reminders.map(
-    (reminder, ind) =>
-      timeMap[reminder.time].push(
-        <ReminderCard ind={ind} setDate={setDate} reminder={reminder} />
-      )
-    // reminderWithTime.push(
-    //   <ReminderCard ind={ind} setDate={setDate} reminder={reminder} />
-    // )
+  reminders.map((reminder, ind) =>
+    timeMap[reminder.time].push(
+      <ReminderCard ind={ind} setDate={setDate} reminder={reminder} />
+    )
   );
 
   return (
@@ -122,8 +112,8 @@ const Reminders = () => {
         />
       </div>
       <WeekShow dateFilter={dateFilter} setDateFilter={setDateFilter} />
-      <div className="flex px-1 rounded-xl">
-        <div className="basis-2/3 border rounded-xl  p-1">
+      <div className="flex max-md:flex-col-reverse px-1 rounded-xl">
+        <div className="md:basis-5/6 border rounded-xl  p-1 ">
           <div className="flex justify-between p-1 py-2 border-b">
             <div className="flex flex-col">
               <div className="text-sm font-semibold">
@@ -144,8 +134,8 @@ const Reminders = () => {
             <div className="w-full flex-1 flex flex-col gap-4 mt-8 px-4 ">
               {isSuccess &&
                 Object.keys(timeMap).map((k) => {
-                  return  timeMap[k].map((rem: any,ind : number) => {
-                    return search.length > 0 && ind == 0 ? <></> : rem
+                  return timeMap[k].map((rem: any, ind: number) => {
+                    return search.length > 0 && ind == 0 ? <></> : rem;
                   });
                 })}
               {isLoading &&
@@ -155,8 +145,8 @@ const Reminders = () => {
             </div>
           </div>
         </div>
-        <div className="basis-1/3 p-2 flex flex-col ">
-          <div className="w-full px-2 mb-5">
+        <div className={`md:basis-1/6 max-md:py-2 max-md:my-5 p-2 flex flex-col max-md:${search.length > 0 && "hidden"}  `}>
+          <div className="w-full bg--300 md:px-2 md:mb-5 ">
             <Calendar
               // onChange={(date: any) => setDate(date.toString())}
               // className="mx-auto"
@@ -168,7 +158,7 @@ const Reminders = () => {
             />
           </div>
           {date == null ? (
-            <div className="min-h-[30vh] w-full flex">
+            <div className="md:min-h-[30vh] w-full flex">
               <div
                 onClick={() => setDate("")}
                 className="bg-gradient-to-b text-white z-20 hover:scale-105 duration-200 from-[#F8B672] to-[#F2851C] rounded-full shadow-lg shadow-primary p-5 w-fit fixed bottom-0 right-0 mb-12 mr-12"
@@ -245,19 +235,14 @@ const WeekShow = ({
     <div className="w-full  flex-col  px-1  relative  flex">
       <div className="relative flex w-fullflex gap-5 my-2 bg-[#FFF8F4]">
         <button
-          className="absolute left-5 top-1/2 transform -translate-y-1/2"
+          className="ml-auto"
+          // className="absolute left-5 top-1/2 transform -translate-y-1/2"
           onClick={handlePrevWeek}
         >
           <IoIosArrowForward className="rotate-180" />
         </button>
-        <button
-          className="absolute right-5 top-1/2 transform -translate-y-1/2"
-          onClick={handleNextWeek}
-        >
-          <IoIosArrowForward />
-        </button>
 
-        <div className="flex gap-5 mx-auto">
+        <div className="flex flex- gap-5 max-md:gap-1 overflow-auto mx-auto">
           {weekDates.map((date, index) => (
             <div
               role="button"
@@ -279,6 +264,13 @@ const WeekShow = ({
             </div>
           ))}
         </div>
+        <button
+          className="me-auto"
+          // className="absolute right-5 top-1/2 transform -translate-y-1/2"
+          onClick={handleNextWeek}
+        >
+          <IoIosArrowForward />
+        </button>
       </div>
     </div>
   );
@@ -302,7 +294,7 @@ const TimeShow = ({
       <div className="w-[10%] text-sm capitalize">{time}</div>
       <div className="flex w-[90%]">
         <div className="w-full border-b my-auto"></div>
-        { 
+        {
           <div
             role="button"
             onClick={() => setDate(getDateString())}
@@ -327,7 +319,7 @@ const ReminderCard = ({
   ind: number;
 }) => {
   const queryClient = useQueryClient();
-  const  date  = new Date(reminder.date);
+  const date = new Date(reminder.date);
   const [open, setOpen] = useState(false);
 
   const { isLoading, mutate } = useMutation(
@@ -351,13 +343,12 @@ const ReminderCard = ({
   );
   return (
     <>
-      <div className="w-[90%] ml-auto text-sm px-2 py-3 rounded-lg bg-blue-100/20  hover:shadow duration-200 border border-gray-200 flex flex-col">
+      <div className={`md:w-[90%] ml-auto text-sm px-2 py-3 rounded-lg bg-blue-100/20  hover:shadow duration-200 border border-gray-200 flex flex-col`}>
         <div className="flex justify-between">
-
-        <div className="font-semibold">{reminder.title}</div>
-        <div className="text-xs">
-        {date.getMonth() + 1  }-{date.getDate()}-{date.getFullYear()}
-        </div>
+          <div className="font-semibold">{reminder.title}</div>
+          <div className="text-xs">
+            {date.getMonth() + 1}-{date.getDate()}-{date.getFullYear()}
+          </div>
         </div>
         <div className="mt-1 ">{reminder.description}</div>
         <div className="flex gap-3 mt-4 font-[500]">
