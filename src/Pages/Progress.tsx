@@ -6,6 +6,7 @@ import DataTable, { TableColumn } from "react-data-table-component";
 import user from "../assets/user.jpeg";
 import { Doughnut } from "react-chartjs-2";
 import { Chart, ArcElement } from "chart.js";
+import { ContentLayout } from "@/components/Sidebar/contenet-layout";
 Chart.register(ArcElement);
 
 const Progress = () => {
@@ -131,58 +132,60 @@ const Progress = () => {
   ];
 
   return (
-    <div className="font-raleway flex flex-row w-full h-full pb-4 gap-5 ">
-      <div className="w-2/3 flex flex-col gap-10 ">
-        <div className="flex flex-row justify-between gap-10">
-          <DashboardCard cardTitle={"Last 5 streaks"} cardIcon={"work"}>
-            <div className=" flex flex-row justify-between gap-2 py-7 items-center ">
-              <Streak_ball taskDone={true} day={"S"} />
-              <Streak_ball taskDone={true} day={"M"} />
-              <Streak_ball taskDone={true} day={"T"} />
-              <Streak_ball taskDone={false} day={"W"} />
-              <Streak_ball taskDone={false} day={"T"} />
-              <Streak_ball taskDone={false} day={"F"} />
-              <Streak_ball taskDone={false} day={"S"} />
-            </div>
-          </DashboardCard>
-          <DashboardCard cardTitle={"Home Work"} cardIcon={"menu_book"}>
-            <div className="flex flex-col gap-4 py-2">
-              <HomeWorkCard
-                onClick={() => {}}
-                title="Title"
-                homeworkDone={true}
-              />
-              <HomeWorkCard
-                title="Title"
-                homeworkDone={false}
-                onClick={() => {}}
-              />
-            </div>
-          </DashboardCard>
-        </div>
-        <div>
-          <DashboardCard cardTitle="Performance" cardIcon="analytics">
-            <ProgressChart data={data} />
-          </DashboardCard>
-        </div>
-      </div>
-      <div className="flex flex-col gap-10 w-[31%]">
-        <div className="w-[92%]">
-          <DashboardCard cardTitle="Serve Accuracy">
-            <div className="flex justify-center items-center py-4">
-              <div className="w-[75%]  ">
-                <Doughnut data={data_3} />
+    <ContentLayout>
+      <div className="font-raleway flex flex-row w-full h-full pb-4 gap-5 ">
+        <div className="w-2/3 flex flex-col gap-10 ">
+          <div className="flex flex-row justify-between gap-10">
+            <DashboardCard cardTitle={"Last 5 streaks"} cardIcon={"work"}>
+              <div className=" flex flex-row justify-between gap-2 py-7 items-center ">
+                <Streak_ball taskDone={true} day={"S"} />
+                <Streak_ball taskDone={true} day={"M"} />
+                <Streak_ball taskDone={true} day={"T"} />
+                <Streak_ball taskDone={false} day={"W"} />
+                <Streak_ball taskDone={false} day={"T"} />
+                <Streak_ball taskDone={false} day={"F"} />
+                <Streak_ball taskDone={false} day={"S"} />
               </div>
-            </div>
-          </DashboardCard>
+            </DashboardCard>
+            <DashboardCard cardTitle={"Home Work"} cardIcon={"menu_book"}>
+              <div className="flex flex-col gap-4 py-2">
+                <HomeWorkCard
+                  onClick={() => {}}
+                  title="Title"
+                  homeworkDone={true}
+                />
+                <HomeWorkCard
+                  title="Title"
+                  homeworkDone={false}
+                  onClick={() => {}}
+                />
+              </div>
+            </DashboardCard>
+          </div>
+          <div>
+            <DashboardCard cardTitle="Performance" cardIcon="analytics">
+              <ProgressChart data={data} />
+            </DashboardCard>
+          </div>
         </div>
-        <div className="w-[92%]">
-          <DashboardCard cardTitle="Last Matches" cardIcon="sports_baseball">
-            <DataTable columns={columns} data={data_2} />
-          </DashboardCard>
+        <div className="flex flex-col gap-10 w-[31%]">
+          <div className="w-[92%]">
+            <DashboardCard cardTitle="Serve Accuracy">
+              <div className="flex justify-center items-center py-4">
+                <div className="w-[75%]  ">
+                  <Doughnut data={data_3} />
+                </div>
+              </div>
+            </DashboardCard>
+          </div>
+          <div className="w-[92%]">
+            <DashboardCard cardTitle="Last Matches" cardIcon="sports_baseball">
+              <DataTable columns={columns} data={data_2} />
+            </DashboardCard>
+          </div>
         </div>
       </div>
-    </div>
+    </ContentLayout>
   );
 };
 

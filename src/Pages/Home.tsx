@@ -15,9 +15,7 @@ function Home() {
   }, [navigate]);
   return (
     <AdminPanelLayout>
-      <ContentLayout title="Foundation">
-        <Outlet />
-      </ContentLayout>
+      <Outlet />
     </AdminPanelLayout>
   );
 }

@@ -1,20 +1,35 @@
 import { SheetMenu } from "../Sidebar/sheet-menu";
-import Navbar from "../Navbar/Navbar";
+import { useLocation, useNavigate } from "react-router-dom";
+import { FaCircleChevronLeft } from "react-icons/fa6";
 
 interface ContentLayoutProps {
-  title: string;
   children: React.ReactNode;
 }
 
-export function ContentLayout({ title, children }: ContentLayoutProps) {
-  return (
-    <div className="">
-      <div className="px-2">
-        <SheetMenu />
-      </div>
+export function ContentLayout({ children }: ContentLayoutProps) {
+  const navigate = useNavigate();
+  const location = useLocation();
 
-      <div className="pb-8 px-2 ">{children}</div>
+  const isChildRoute = () => {
+    const segments = location.pathname.split("/").filter(Boolean);
+    return segments.length > 1;
+  };
+  return (
+    <div className="relative">
+      <SheetMenu />
+      {isChildRoute() && (
+        <div
+          className="absolute z-50 bg-white rounded-full p-[1px] top-2 cursor-pointer"
+          onClick={() => navigate(-1)}
+        >
+          <FaCircleChevronLeft
+            size={34}
+            className="text-[rgb(255,159,63)] hover:text-[#F1861B]"
+          />
+        </div>
+      )}
+
+      <div className="pb-8 p-2">{children}</div>
     </div>
-    // <>{children}</>
   );
 }

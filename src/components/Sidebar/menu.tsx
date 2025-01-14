@@ -16,6 +16,7 @@ import { FiPieChart } from "react-icons/fi";
 import { RiGroupLine } from "react-icons/ri";
 import { IoCalendarNumberOutline } from "react-icons/io5";
 import nightMode from "../../assets/sidebar_svg/night-mode.svg";
+import notification from "../../assets/svg/notification.svg";
 
 interface MenuProps {
   isOpen: boolean | undefined;
@@ -57,7 +58,7 @@ function Menu({ isOpen }: MenuProps) {
         },
         {
           href: "/chat",
-          label: "People",
+          label: "Connect",
           active: location.pathname.includes("/chat"),
           icon: RiGroupLine,
           submenus: [],
@@ -102,7 +103,7 @@ function Menu({ isOpen }: MenuProps) {
               {menus.map(
                 ({ href, label, icon: Icon, active, submenus }, index) =>
                   submenus.length === 0 ? (
-                    <div className="w-full" key={index}>
+                    <div className="w-full" key={label}>
                       <TooltipProvider disableHoverableContent>
                         <Tooltip delayDuration={100}>
                           <TooltipTrigger asChild>
@@ -155,7 +156,14 @@ function Menu({ isOpen }: MenuProps) {
             </li>
           ))}
           <li className="w-full grow flex items-end">
-            <img src={nightMode} alt="night mode" className="w-12" />
+            <div className="space-y-2">
+              <div className="flex items-center gap-1 cursor-pointer">
+                <img src={notification} alt="night mode" className="w-12" />
+                {isOpen ? <p>10 Notification</p> : null}
+              </div>
+
+              <img src={nightMode} alt="night mode" className="w-12" />
+            </div>
 
             {/* <TooltipProvider disableHoverableContent>
               <Tooltip delayDuration={100}>

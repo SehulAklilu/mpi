@@ -17,6 +17,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import instructor from "../assets/user.jpeg";
 import { TbReload } from "react-icons/tb";
 import LessonDetailSkeleton from "@/components/Learn/LessonDetailSkeleton";
+import { ContentLayout } from "@/components/Sidebar/contenet-layout";
 
 const AssessmentSummary = ({
   assessment,
@@ -130,134 +131,138 @@ function Assessment() {
   }
 
   return (
-    <div>
-      <div className="relative w-full min-h-[50vh] bg-white">
-        {selectedAssessment ? (
-          <AssessmentComponent
-            assessment={selectedAssessment}
-            onContinue={(answers) => handleNext(answers)}
-            assessmentPage={false}
-            isLoading={updateAssessment.isLoading}
-          />
-        ) : null}
-      </div>
-      <div className="grid grid-cols-6 py-2 p-2 text-[#1c1d47] gap-10">
-        <div className="col-span-6 lg:col-span-4 order-2 lg:order-1">
-          <h1 className="text-2xl font-semibold">
-            {selected_course?.course.courseId.title}
-          </h1>
-          {/* instructor */}
-          <InstructorCard
-            name="Damian"
-            role="Instructor"
-            image={instructor}
-            rating={5}
-            students={40000}
-            duration="2 Hrs 15Min"
-          />
-          {/* course summary */}
-          <div className="pt-2 ">
-            <h1 className="text-lg">Summary</h1>
-            <div className="grid grid-cols-2 gap-x-10 my-2 gap-y-4">
-              <AssessmentSummary assessment={selectedAssessment} />
-            </div>
-          </div>
-          <div className="pt-2 ">
-            <ReadMore
-              text={selectedAssessment?.description ?? ""}
-              previewLength={300}
+    <ContentLayout>
+      <div>
+        <div className="relative w-full min-h-[50vh] bg-white">
+          {selectedAssessment ? (
+            <AssessmentComponent
+              assessment={selectedAssessment}
+              onContinue={(answers) => handleNext(answers)}
+              assessmentPage={false}
+              isLoading={updateAssessment.isLoading}
             />
-          </div>
-          {/* resources */}
-
-          <div className="my-2">
-            <h1 className="text-lg">Resources</h1>
-            <div className="w-fit text-gray-800">
-              <div className="flex gap-x-10 py-1 cursor-pointer">
-                <div className="flex gap-x-1">
-                  <FaFilePdf color="#FFAC64" />
-                  <span>Note-1</span>
-                </div>
-                <FaDownload />
-              </div>
-              <div className="flex gap-x-10 py-1 cursor-pointer">
-                <div className="flex gap-x-1">
-                  <FaFilePdf color="#FFAC64" />
-                  <span>Slide-1</span>
-                </div>
-                <FaDownload />
-              </div>
-              <div className="flex gap-x-2 py-1 cursor-pointer">
-                <FaLink color="#FFAC64" />
-                <span className="underline">Link to a webpage/blog</span>
-              </div>
-            </div>
-          </div>
+          ) : null}
         </div>
-        <div className="col-span-6 lg:col-span-2 order-1 lg:order-2 p-2 bg-[#F8F9FA] rounded-lg">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 flex items-center justify-center rounded-full text-white font-semibold bg-[#ff9328]">
-              01
+        <div className="grid grid-cols-6 py-2 p-2 text-[#1c1d47] gap-10">
+          <div className="col-span-6 lg:col-span-4 order-2 lg:order-1">
+            <h1 className="text-2xl font-semibold">
+              {selected_course?.course.courseId.title}
+            </h1>
+            {/* instructor */}
+            <InstructorCard
+              name="Damian"
+              role="Instructor"
+              image={instructor}
+              rating={5}
+              students={40000}
+              duration="2 Hrs 15Min"
+            />
+            {/* course summary */}
+            <div className="pt-2 ">
+              <h1 className="text-lg">Summary</h1>
+              <div className="grid grid-cols-2 gap-x-10 my-2 gap-y-4">
+                <AssessmentSummary assessment={selectedAssessment} />
+              </div>
             </div>
-            <p className="text-[#152946] text-xl font-semibold">Introduction</p>
+            <div className="pt-2 ">
+              <ReadMore
+                text={selectedAssessment?.description ?? ""}
+                previewLength={300}
+              />
+            </div>
+            {/* resources */}
+
+            <div className="my-2">
+              <h1 className="text-lg">Resources</h1>
+              <div className="w-fit text-gray-800">
+                <div className="flex gap-x-10 py-1 cursor-pointer">
+                  <div className="flex gap-x-1">
+                    <FaFilePdf color="#FFAC64" />
+                    <span>Note-1</span>
+                  </div>
+                  <FaDownload />
+                </div>
+                <div className="flex gap-x-10 py-1 cursor-pointer">
+                  <div className="flex gap-x-1">
+                    <FaFilePdf color="#FFAC64" />
+                    <span>Slide-1</span>
+                  </div>
+                  <FaDownload />
+                </div>
+                <div className="flex gap-x-2 py-1 cursor-pointer">
+                  <FaLink color="#FFAC64" />
+                  <span className="underline">Link to a webpage/blog</span>
+                </div>
+              </div>
+            </div>
           </div>
-          {selected_course?.course.courseId.videos.map((video, index) => {
-            const assessment = video.hasAssessmentNext
-              ? selected_course.course.courseId.assessments.find(
-                  (a) => a._id === video.assessmentId
-                )
-              : null;
-            const videoExists = selected_course?.course.videos.find(
-              (vid) => vid.videoId === video._id
-            );
+          <div className="col-span-6 lg:col-span-2 order-1 lg:order-2 p-2 bg-[#F8F9FA] rounded-lg">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 flex items-center justify-center rounded-full text-white font-semibold bg-[#ff9328]">
+                01
+              </div>
+              <p className="text-[#152946] text-xl font-semibold">
+                Introduction
+              </p>
+            </div>
+            {selected_course?.course.courseId.videos.map((video, index) => {
+              const assessment = video.hasAssessmentNext
+                ? selected_course.course.courseId.assessments.find(
+                    (a) => a._id === video.assessmentId
+                  )
+                : null;
+              const videoExists = selected_course?.course.videos.find(
+                (vid) => vid.videoId === video._id
+              );
 
-            const assessmentExists = assessment
-              ? selected_course?.course.assessments.find(
-                  (asses) => asses.assessmentId === assessment._id
-                )
-              : undefined;
+              const assessmentExists = assessment
+                ? selected_course?.course.assessments.find(
+                    (asses) => asses.assessmentId === assessment._id
+                  )
+                : undefined;
 
-            return (
-              <div key={video._id}>
-                <VideoListItem
-                  label={video.title}
-                  duration={video.duration}
-                  identifier={"0" + (index + 1)}
-                  locked={videoExists && videoExists.status == "locked"}
-                  onPlay={() => {
-                    if (videoExists && videoExists.status !== "locked") {
-                      navigate(
-                        `/course/${selected_course.course.courseId.id}/video/${video._id}`
-                      );
-                    }
-                  }}
-                />
-                {video.hasAssessmentNext && assessment && (
+              return (
+                <div key={video._id}>
                   <VideoListItem
-                    label={assessment.title?.slice(0, 30)}
-                    duration={assessment.timeLimit}
-                    active={assessment._id === assessment_id}
-                    locked={
-                      assessmentExists && assessmentExists.status == "locked"
-                    }
+                    label={video.title}
+                    duration={video.duration}
+                    identifier={"0" + (index + 1)}
+                    locked={videoExists && videoExists.status == "locked"}
                     onPlay={() => {
-                      if (
-                        assessmentExists &&
-                        assessmentExists.status !== "locked"
-                      ) {
+                      if (videoExists && videoExists.status !== "locked") {
                         navigate(
-                          `/course/${selected_course.course.courseId.id}/assessment/${assessment._id}`
+                          `/course/${selected_course.course.courseId.id}/video/${video._id}`
                         );
                       }
                     }}
                   />
-                )}
-              </div>
-            );
-          })}
+                  {video.hasAssessmentNext && assessment && (
+                    <VideoListItem
+                      label={assessment.title?.slice(0, 30)}
+                      duration={assessment.timeLimit}
+                      active={assessment._id === assessment_id}
+                      locked={
+                        assessmentExists && assessmentExists.status == "locked"
+                      }
+                      onPlay={() => {
+                        if (
+                          assessmentExists &&
+                          assessmentExists.status !== "locked"
+                        ) {
+                          navigate(
+                            `/course/${selected_course.course.courseId.id}/assessment/${assessment._id}`
+                          );
+                        }
+                      }}
+                    />
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
-    </div>
+    </ContentLayout>
   );
 }
 
