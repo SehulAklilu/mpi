@@ -52,7 +52,7 @@ const Reminders = () => {
     isSuccess,
   } = useQuery("reminders", () => axios.get("/api/v1/reminders"), {
     onSuccess(data) {
-      const m = data.data.map((a: any) => ({ ...a, time: "4AM" }));
+      const m = data.data.map((a: any) => ({ ...a, time: "12AM" }));
       setAllReminder(m);
     },
     onError(err: any) {
@@ -103,12 +103,13 @@ const Reminders = () => {
 
   return (
     <div className="  font-raleway bg-white  overflow-auto   min-h-[80vh] flex-1 ">
-      <div className="w-full px-2">
+      <div className="w-full px-2 pt-3 ">
         <Input
           value={search}
           onChange={({ target }) => setSearch(target.value)}
           className="bg-white mx-auto w-[10%] mt-4"
           placeholder="search here"
+          type="search"
         />
       </div>
       <WeekShow dateFilter={dateFilter} setDateFilter={setDateFilter} />
@@ -145,7 +146,11 @@ const Reminders = () => {
             </div>
           </div>
         </div>
-        <div className={`md:basis-1/6 max-md:py-2 max-md:my-5 p-2 flex flex-col max-md:${search.length > 0 && "hidden"}  `}>
+        <div
+          className={`md:basis-1/6 max-md:py-2 max-md:my-5 p-2 flex flex-col max-md:${
+            search.length > 0 && "hidden"
+          }  `}
+        >
           <div className="w-full bg--300 md:px-2 md:mb-5 ">
             <Calendar
               // onChange={(date: any) => setDate(date.toString())}
@@ -157,11 +162,14 @@ const Reminders = () => {
               dateFilter={dateFilter}
             />
           </div>
+          {/* <div className="hidden">
+            <AddReminderAlert setDate={setDate} date={date} />
+          </div> */}
           {date == null ? (
             <div className="md:min-h-[30vh] w-full flex">
               <div
                 onClick={() => setDate("")}
-                className="bg-gradient-to-b text-white z-20 hover:scale-105 duration-200 from-[#F8B672] to-[#F2851C] rounded-full shadow-lg shadow-primary p-5 w-fit fixed bottom-0 right-0 mb-12 mr-12"
+                className=" bg-gradient-to-b text-white z-20 hover:scale-105 duration-200 from-[#F8B672] to-[#F2851C] rounded-full shadow-lg shadow-primary p-5 w-fit fixed bottom-0 right-0 mb-12 mr-12"
               >
                 <FaCalendar />
               </div>
@@ -289,12 +297,15 @@ const TimeShow = ({
     return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
     // const date = new Date(`${currentYear}-${currentMonth + 1}-${day}`);
   }
+  const isValid = (): boolean => {
+    return new Date() < date;
+  };
   return (
     <div className="w-full flex my-2">
       <div className="w-[10%] text-sm capitalize">{time}</div>
       <div className="flex w-[90%]">
         <div className="w-full border-b my-auto"></div>
-        {
+        {isValid() && (
           <div
             role="button"
             onClick={() => setDate(getDateString())}
@@ -302,7 +313,7 @@ const TimeShow = ({
           >
             <FaPlus className="m-auto p-1" />
           </div>
-        }
+        )}
         <div className="w-full border-b my-auto"></div>
       </div>
     </div>
@@ -343,7 +354,9 @@ const ReminderCard = ({
   );
   return (
     <>
-      <div className={`md:w-[90%] ml-auto text-sm px-2 py-3 rounded-lg bg-blue-100/20  hover:shadow duration-200 border border-gray-200 flex flex-col`}>
+      <div
+        className={`max-md:w-full w-[90%] ml-auto text-sm px-2 py-3 rounded-lg bg-blue-100/20  hover:shadow duration-200 border border-gray-200 flex flex-col`}
+      >
         <div className="flex justify-between">
           <div className="font-semibold">{reminder.title}</div>
           <div className="text-xs">
@@ -351,11 +364,11 @@ const ReminderCard = ({
           </div>
         </div>
         <div className="mt-1 ">{reminder.description}</div>
-        <div className="flex gap-3 mt-4 font-[500]">
+        <div className="flex text-sm flex-wrap gap-3 mt-4 font-[500]">
           {reminder.isCompleted ? (
             <Button
               onClick={() => mutate()}
-              className="px-3 py-2 bg-primary/70 flex gap-2 rounded text-white"
+              className="px-3 py-2 max-md:px-2 max-md:py-1 max-md:gap-1 bg-primary/70 flex gap-2 rounded text-white"
             >
               <div className="bg-primary  w-5 h-5 rounded-full flex">
                 <FaCheck className="m-auto" />
@@ -375,7 +388,7 @@ const ReminderCard = ({
           ) : (
             <Button
               onClick={() => mutate()}
-              className="px-3 py-2 bg-primary/10 flex gap-2 rounded text-primary"
+              className="px-3 py-2 max-md:px-2 max-md:py-1 max-md:gap-1 bg-primary/10 flex gap-2 rounded text-primary"
             >
               <div className=" w-5 h-5 rounded-full flex">
                 <FaCheck className="m-auto" />
@@ -398,7 +411,7 @@ const ReminderCard = ({
               setOpen(true);
               event.stopPropagation();
             }}
-            className="px-3 py-2 bg-white text-blue-500 flex gap-2 rounded "
+            className="px-3 py-2 max-md:px-2 max-md:py-1 max-md:gap-1 bg-white text-blue-500 flex gap-2 rounded "
           >
             <div className="w-5 h-5 rounded-full flex">
               <FaEdit className="m-auto" />

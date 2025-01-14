@@ -108,6 +108,9 @@ const Journal = () => {
       >
         <CiEdit className="text-white text-2xl" />
       </Link>
+      <div className="text-xl font-semibold pt-4">
+        Journals
+      </div>
       <div className="grid grid-cols-3 max-md:grid-cols-1 gap-3 pb-32">
         {journals.map((journal) => (
           <JournalCard key={journal._id} journal={journal} />

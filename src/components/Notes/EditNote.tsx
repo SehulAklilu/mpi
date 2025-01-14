@@ -117,7 +117,7 @@ const EditNote = ({ note }: { note: JournalCardProps }) => {
             </Button>
           </div>
           <ReactQuill
-            className="h-[66vh]  border-none"
+            className="h-[66vh]  border-none  overflow-auto"
             theme="snow"
             value={content}
             onChange={setContent}
