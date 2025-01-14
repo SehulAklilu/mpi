@@ -41,7 +41,7 @@ const Calendar: React.FC<CalendarProps> = ({
   const td = new Date();
 
   return (
-    <div className="text-sm md:rounded p-4 bg-white dark:bg-gray-700 md:w-96 mx-4 md:mx-auto ">
+    <div className="text-sm md:rounded md:p-4  bg-white dark:bg-gray-700 md:w-96 mx-4 md:mx-auto ">
       <div className="w-full rounded">
         <div className="flex items-center justify-between mb-4">
           <div className="text-left  text-xl text-black dark:text-white">
