@@ -73,10 +73,10 @@ const AddReminder = ({
   };
 
   useEffect(() => {
-    function fun() {
+    function func() {
       form.setValue("date", date);
     }
-    fun();
+    func();
 
     return () => {};
   }, [date]);
