@@ -112,8 +112,10 @@ const Reminders = () => {
           type="search"
         />
       </div>
-      <WeekShow dateFilter={dateFilter} setDateFilter={setDateFilter} />
-      <div className="flex max-md:flex-col-reverse px-1 rounded-xl">
+      <div className={`${search.length > 0 && "hidden"}`} >
+        <WeekShow dateFilter={dateFilter} setDateFilter={setDateFilter} />
+      </div>
+      <div className="flex max-md:flex-col-reverse px-1 mt-1 rounded-xl">
         <div className="md:basis-5/6 border rounded-xl  p-1 ">
           <div className="flex justify-between p-1 py-2 border-b">
             <div className="flex flex-col">
@@ -132,7 +134,7 @@ const Reminders = () => {
             <div className="w-8 h-8 rounded-full bg-gray-600"></div>
           </div>
           <div>
-            <div className="w-full flex-1 flex flex-col gap-4 mt-8 px-4 ">
+            <div className={`w-full flex-1 flex flex-col gap-4 mt-8 px-4 `}>
               {isSuccess &&
                 Object.keys(timeMap).map((k) => {
                   return timeMap[k].map((rem: any, ind: number) => {
@@ -147,11 +149,11 @@ const Reminders = () => {
           </div>
         </div>
         <div
-          className={`md:basis-1/6 max-md:py-2 max-md:my-5 p-2 flex flex-col max-md:${
+          className={`md:basis-1/6 max-md:py-2 max-md:my-5 p-2 flex flex-col ${
             search.length > 0 && "hidden"
           }  `}
         >
-          <div className="w-full bg--300 md:px-2 md:mb-5 ">
+          <div className={`w-full bg--300 md:px-2 md:mb-5 `}>
             <Calendar
               // onChange={(date: any) => setDate(date.toString())}
               // className="mx-auto"
