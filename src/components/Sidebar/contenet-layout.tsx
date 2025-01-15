@@ -16,8 +16,7 @@ export function ContentLayout({ children }: ContentLayoutProps) {
   };
   return (
     <div className="relative">
-      <SheetMenu />
-      {isChildRoute() && (
+      {isChildRoute() ? (
         <div
           className="absolute z-50 bg-white rounded-full p-[1px] top-2 cursor-pointer"
           onClick={() => navigate(-1)}
@@ -27,6 +26,8 @@ export function ContentLayout({ children }: ContentLayoutProps) {
             className="text-[rgb(255,159,63)] hover:text-[#F1861B]"
           />
         </div>
+      ) : (
+        <SheetMenu />
       )}
 
       <div className="pb-8 p-2">{children}</div>

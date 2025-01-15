@@ -13,6 +13,7 @@ import { ChatInterface } from "@/types/chat.type";
 import NoMessage from "./NoMessage";
 import ChatItemSkeleton from "./ChatItemSkeleton";
 import { IoClose, IoMenu } from "react-icons/io5";
+import CustomTabs from "./CustomTabs";
 
 export interface ChatItems {
   id: string;
@@ -27,7 +28,11 @@ export interface ChatItems {
   latestMessageId?: string;
 }
 
-function ChatComponent() {
+interface ChatComponentProps {
+  setActiveTab: (tab: string) => void;
+}
+
+function ChatComponent({ setActiveTab }: ChatComponentProps) {
   const [user_id, setUserId] = useState<string | undefined>(undefined);
   const [searchValue, setSearchValue] = useState("");
   const [selectedChat, setSelectedChat] = useState<ChatItems | undefined>(
@@ -82,16 +87,13 @@ function ChatComponent() {
           unreadCount: chat.latestMessage?.isRead ? 0 : 1,
           isRead: chat.latestMessage?.isRead ?? false,
           reciverId: otherUser._id,
-          latestMessageId: chat?.latestMessage.id,
+          latestMessageId: chat.latestMessage?.id ?? "", // Add nullish coalescing
         };
       });
   };
-  if (isError) {
-    return "Error Page";
-  }
 
   const chats =
-    chats_data && chats_data?.length > 0 && user_id
+    chats_data && chats_data?.chats.length > 0 && user_id
       ? extractChatItems(chats_data.chats, user_id)
       : undefined;
 
@@ -106,11 +108,15 @@ function ChatComponent() {
       readMessage.mutate(id);
     }
   };
-  const [isSidebarOpen, setSidebarOpen] = useState(false);
+  const [isSidebarOpen, setSidebarOpen] = useState(true);
 
   const openSideBar = () => {
     setSidebarOpen((pre) => !pre);
   };
+
+  if (isError) {
+    return "Error Page";
+  }
 
   return (
     <div className="relative">
@@ -119,8 +125,11 @@ function ChatComponent() {
         <div
           className={`fixed inset-0 z-20 bg-white transition-transform transform md:relative md:translate-x-0 md:col-span-4 lg:col-span-3 ${
             isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-          } ${isSidebarOpen ? "sm:w-1/2 md:w-full" : ""} `}
+          } ${isSidebarOpen ? "md:w-full" : ""} `}
         >
+          <div className="md:hidden px-1">
+            <CustomTabs setActiveTab={setActiveTab} />
+          </div>
           <div className="flex gap-x-2 items-center p-4 rounded-lg">
             <Input
               type="text"
@@ -131,17 +140,19 @@ function ChatComponent() {
               className={"py-2 w-full !rounded-lg !outline-none"}
               startIcon={FaSearch}
             />
-            <button
+            {/* <button
               className="md:hidden flex-none top-4 bg-[#F28822] hover:bg-[#ffa34c] rounded p-1 right-4 text-xl"
               onClick={() => setSidebarOpen(false)}
             >
               <IoClose size={24} className="text-white" />
-            </button>
+            </button> */}
           </div>
           <ScrollArea className="h-[74vh] rounded-lg">
             <div>
               {isLoading ? (
-                Array.from({ length: 3 }).map(() => <ChatItemSkeleton />)
+                Array.from({ length: 3 }).map((_, index) => (
+                  <ChatItemSkeleton key={index} />
+                ))
               ) : filteredChats && filteredChats.length > 0 ? (
                 filteredChats.map((chat) => (
                   <ChatItem
@@ -182,7 +193,9 @@ function ChatComponent() {
                 }}
                 onClick={openSideBar}
               />
-              <ChatMessages chatId={selectedChat.id} />
+              <ScrollArea className="h-[81.5vh] md:h-[71vh] ">
+                <ChatMessages chatId={selectedChat.id} />
+              </ScrollArea>
               <ChatInput
                 chatId={selectedChat.id}
                 reciverId={selectedChat.reciverId}

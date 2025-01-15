@@ -65,7 +65,7 @@ const ChatMessages = ({ chatId }: { chatId: string }) => {
 
   return (
     <div
-      className={`flex flex-col-reverse gap-4  h-[68vh] md:h-[65vh]  ${styles.customScrollbar}`}
+      className={`flex flex-col-reverse gap-4 h-[83vh] md:h-[65vh]  ${styles.customScrollbar}`}
       ref={scrollAreaRef}
       // style={{ height: "467px" }}
     >

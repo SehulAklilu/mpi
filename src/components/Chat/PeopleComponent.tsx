@@ -63,6 +63,10 @@ const PeopleComponent: React.FC<PeopleComponentProps> = ({ setActiveTab }) => {
 
     return users;
   }
+
+  const friends =
+    friends_data && user_id && extractUsers(friends_data, user_id);
+
   if (isLoading) {
     return <PeopleSkeleton />;
   }
@@ -70,9 +74,6 @@ const PeopleComponent: React.FC<PeopleComponentProps> = ({ setActiveTab }) => {
   if (isError) {
     return <>Error</>;
   }
-
-  const friends =
-    friends_data && user_id && extractUsers(friends_data, user_id);
 
   return (
     <div>
