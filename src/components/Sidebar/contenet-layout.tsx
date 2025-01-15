@@ -18,7 +18,7 @@ export function ContentLayout({ children }: ContentLayoutProps) {
     <div className="relative">
       {isChildRoute() ? (
         <div
-          className="absolute z-50 bg-white rounded-full p-[1px] top-2 cursor-pointer"
+          className="absolute z-20 bg-white rounded-full p-[1px] top-2 cursor-pointer"
           onClick={() => navigate(-1)}
         >
           <FaCircleChevronLeft
@@ -27,7 +27,9 @@ export function ContentLayout({ children }: ContentLayoutProps) {
           />
         </div>
       ) : (
-        <SheetMenu />
+        <div className="absolute z-40 top-3 left-2">
+          <SheetMenu />
+        </div>
       )}
 
       <div>{children}</div>

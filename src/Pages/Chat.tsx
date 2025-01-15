@@ -37,13 +37,13 @@ function Chat() {
                 People
               </TabsTrigger>
             </TabsList>
-            <TabsContent value="messages">
+            <TabsContent className="!mt-0" value="messages">
               <ChatComponent setActiveTab={setActiveTab} />
             </TabsContent>
-            <TabsContent value="group">
+            <TabsContent className="!mt-0" value="group">
               <GroupChat />
             </TabsContent>
-            <TabsContent value="people">
+            <TabsContent className="!mt-0" value="people">
               <PeopleComponent setActiveTab={setActiveTab} />
             </TabsContent>
           </Tabs>

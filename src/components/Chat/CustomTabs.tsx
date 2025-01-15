@@ -4,7 +4,7 @@ interface CustomTabsProps {
 }
 function CustomTabs({ setActiveTab }: CustomTabsProps) {
   return (
-    <div className="pt-2">
+    <div className="pt-2 flex-auto ">
       <div className="flex items-center justify-center">
         <Tabs
           onValueChange={setActiveTab}

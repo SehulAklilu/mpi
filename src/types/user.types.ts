@@ -1,3 +1,5 @@
+import { Role } from "./auth.type";
+
 export interface EmailAddress {
   email: string;
   verified: boolean;
@@ -43,7 +45,7 @@ export interface User {
   isProfilePublic: boolean;
   notificationPreference: NotificationPreference;
   avatar: string;
-  role: string;
+  role: Role;
   googleId: string;
   lastOnline: string;
   provider: string;

@@ -1,5 +1,6 @@
 import { Tokens, User } from "./user.types";
 
+export type Role = "player" | "coach";
 export interface LoginPayload {
   email: string;
   password: string;
@@ -28,7 +29,7 @@ export interface OtpResponse {
 export interface RegisterPayload {
   email: string;
   otp: string;
-  role: string;
+  role: Role;
   firstName: string;
   lastName: string;
   password: string;

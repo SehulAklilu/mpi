@@ -14,6 +14,7 @@ import NoMessage from "./NoMessage";
 import ChatItemSkeleton from "./ChatItemSkeleton";
 import { IoClose, IoMenu } from "react-icons/io5";
 import CustomTabs from "./CustomTabs";
+import { MenuIcon } from "lucide-react";
 
 export interface ChatItems {
   id: string;
@@ -127,7 +128,11 @@ function ChatComponent({ setActiveTab }: ChatComponentProps) {
             isSidebarOpen ? "translate-x-0" : "-translate-x-full"
           } ${isSidebarOpen ? "md:w-full" : ""} `}
         >
-          <div className="md:hidden px-1">
+          <div className=" md:hidden px-1 flex items-center gap-x-1">
+            <MenuIcon
+              size={36}
+              className="invisible text-[#F2851C] flex-none "
+            />
             <CustomTabs setActiveTab={setActiveTab} />
           </div>
           <div className="flex gap-x-2 items-center p-4 rounded-lg">
@@ -193,7 +198,7 @@ function ChatComponent({ setActiveTab }: ChatComponentProps) {
                 }}
                 onClick={openSideBar}
               />
-              <ScrollArea className="h-[81.5vh] md:h-[71vh] ">
+              <ScrollArea className="h-[84vh] sm:h-[80vh] md:h-[71vh] !overflow-hidden ">
                 <ChatMessages chatId={selectedChat.id} />
               </ScrollArea>
               <ChatInput

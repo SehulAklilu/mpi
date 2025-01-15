@@ -10,14 +10,10 @@ import {
   TooltipProvider,
 } from "@/components/ui/tooltip";
 import { Link, useLocation, Location } from "react-router-dom";
-import { Settings, BookOpen } from "lucide-react";
-import { GoHome } from "react-icons/go";
-import { FiPieChart } from "react-icons/fi";
-import { RiGroupLine } from "react-icons/ri";
-import { IoCalendarNumberOutline } from "react-icons/io5";
 import nightMode from "../../assets/sidebar_svg/night-mode.svg";
 import notification from "../../assets/svg/notification.svg";
 import { getMenuList } from "@/lib/menu-list";
+import { useRole } from "@/RoleContext";
 
 interface MenuProps {
   isOpen: boolean | undefined;
@@ -25,7 +21,8 @@ interface MenuProps {
 
 function Menu({ isOpen }: MenuProps) {
   const location: Location<any> = useLocation();
-  const menuList = getMenuList(location);
+  const { role } = useRole();
+  const menuList = getMenuList(location, role);
 
   return (
     <ScrollArea className="[&gt;div&gt;div[style]]:!block">

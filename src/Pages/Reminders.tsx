@@ -16,6 +16,7 @@ import { LoaderCircle } from "lucide-react";
 import Calendar from "@/components/Reminder/MyCalendar/Calendar";
 import { IoIosArrowForward } from "react-icons/io";
 import { Input } from "@/components/ui/input";
+import { ContentLayout } from "@/components/Sidebar/contenet-layout";
 export interface ReminderInf {
   _id?: string;
   isCompleted?: boolean;
@@ -102,84 +103,88 @@ const Reminders = () => {
   );
 
   return (
-    <div className="  font-raleway bg-white  overflow-auto   min-h-[80vh] flex-1 ">
-      <div className="w-full px-2 pt-3 ">
-        <Input
-          value={search}
-          onChange={({ target }) => setSearch(target.value)}
-          className="bg-white mx-auto w-[10%] mt-4"
-          placeholder="search here"
-          type="search"
-        />
-      </div>
-      <WeekShow dateFilter={dateFilter} setDateFilter={setDateFilter} />
-      <div className="flex max-md:flex-col-reverse px-1 rounded-xl">
-        <div className="md:basis-5/6 border rounded-xl  p-1 ">
-          <div className="flex justify-between p-1 py-2 border-b">
-            <div className="flex flex-col">
-              <div className="text-sm font-semibold">
-                Schedules for{" "}
-                {dateChecker(dateFilter, new Date())
-                  ? "Today"
-                  : `${dateFilter.getFullYear()}-${
-                      dateFilter.getMonth() + 1
-                    }-${dateFilter.getDate()}`}
-              </div>
-              <div className="text-xs">
-                Create and complete tasks using boards
-              </div>
-            </div>
-            <div className="w-8 h-8 rounded-full bg-gray-600"></div>
-          </div>
-          <div>
-            <div className="w-full flex-1 flex flex-col gap-4 mt-8 px-4 ">
-              {isSuccess &&
-                Object.keys(timeMap).map((k) => {
-                  return timeMap[k].map((rem: any, ind: number) => {
-                    return search.length > 0 && ind == 0 ? <></> : rem;
-                  });
-                })}
-              {isLoading &&
-                [1, 2, 3, 4, 4, 4, 4, 4, 4, 4].map(() => {
-                  return <Skeleton className="w-full py-12 h-44 bg-primary" />;
-                })}
-            </div>
-          </div>
+    <ContentLayout>
+      <div className="  font-raleway bg-white  overflow-auto   min-h-[80vh] flex-1 ">
+        <div className="w-full px-2 pt-3 ">
+          <Input
+            value={search}
+            onChange={({ target }) => setSearch(target.value)}
+            className="bg-white mx-auto w-[10%] mt-4"
+            placeholder="search here"
+            type="search"
+          />
         </div>
-        <div
-          className={`md:basis-1/6 max-md:py-2 max-md:my-5 p-2 flex flex-col max-md:${
-            search.length > 0 && "hidden"
-          }  `}
-        >
-          <div className="w-full bg--300 md:px-2 md:mb-5 ">
-            <Calendar
-              // onChange={(date: any) => setDate(date.toString())}
-              // className="mx-auto"
-              // value={[new Date(2025, 0, 1), new Date(2025, 0, 4)]}
-              // allowPartialRange
-              setDateFilter={setDateFilter}
-              reminders={allReminders}
-              dateFilter={dateFilter}
-            />
+        <WeekShow dateFilter={dateFilter} setDateFilter={setDateFilter} />
+        <div className="flex max-md:flex-col-reverse px-1 rounded-xl">
+          <div className="md:basis-5/6 border rounded-xl  p-1 ">
+            <div className="flex justify-between p-1 py-2 border-b">
+              <div className="flex flex-col">
+                <div className="text-sm font-semibold">
+                  Schedules for{" "}
+                  {dateChecker(dateFilter, new Date())
+                    ? "Today"
+                    : `${dateFilter.getFullYear()}-${
+                        dateFilter.getMonth() + 1
+                      }-${dateFilter.getDate()}`}
+                </div>
+                <div className="text-xs">
+                  Create and complete tasks using boards
+                </div>
+              </div>
+              <div className="w-8 h-8 rounded-full bg-gray-600"></div>
+            </div>
+            <div>
+              <div className="w-full flex-1 flex flex-col gap-4 mt-8 px-4 ">
+                {isSuccess &&
+                  Object.keys(timeMap).map((k) => {
+                    return timeMap[k].map((rem: any, ind: number) => {
+                      return search.length > 0 && ind == 0 ? <></> : rem;
+                    });
+                  })}
+                {isLoading &&
+                  [1, 2, 3, 4, 4, 4, 4, 4, 4, 4].map(() => {
+                    return (
+                      <Skeleton className="w-full py-12 h-44 bg-primary" />
+                    );
+                  })}
+              </div>
+            </div>
           </div>
-          {/* <div className="hidden">
+          <div
+            className={`md:basis-1/6 max-md:py-2 max-md:my-5 p-2 flex flex-col max-md:${
+              search.length > 0 && "hidden"
+            }  `}
+          >
+            <div className="w-full bg--300 md:px-2 md:mb-5 ">
+              <Calendar
+                // onChange={(date: any) => setDate(date.toString())}
+                // className="mx-auto"
+                // value={[new Date(2025, 0, 1), new Date(2025, 0, 4)]}
+                // allowPartialRange
+                setDateFilter={setDateFilter}
+                reminders={allReminders}
+                dateFilter={dateFilter}
+              />
+            </div>
+            {/* <div className="hidden">
             <AddReminderAlert setDate={setDate} date={date} />
           </div> */}
-          {date == null ? (
-            <div className="md:min-h-[30vh] w-full flex">
-              <div
-                onClick={() => setDate("")}
-                className=" bg-gradient-to-b text-white z-20 hover:scale-105 duration-200 from-[#F8B672] to-[#F2851C] rounded-full shadow-lg shadow-primary p-5 w-fit fixed bottom-0 right-0 mb-12 mr-12"
-              >
-                <FaCalendar />
+            {date == null ? (
+              <div className="md:min-h-[30vh] w-full flex">
+                <div
+                  onClick={() => setDate("")}
+                  className=" bg-gradient-to-b text-white z-20 hover:scale-105 duration-200 from-[#F8B672] to-[#F2851C] rounded-full shadow-lg shadow-primary p-5 w-fit fixed bottom-0 right-0 mb-12 mr-12"
+                >
+                  <FaCalendar />
+                </div>
               </div>
-            </div>
-          ) : (
-            <AddReminder ref={ref} setDate={setDate} date={date ?? ""} />
-          )}
+            ) : (
+              <AddReminder ref={ref} setDate={setDate} date={date ?? ""} />
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </ContentLayout>
   );
 };
 // {open && <AddReminderAlert open={open} setOpen={setOpen} date={open} />}

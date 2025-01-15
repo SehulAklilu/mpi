@@ -23,6 +23,7 @@ import { LoaderCircle } from "lucide-react";
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Cookies from "js-cookie";
+import { useRole } from "@/RoleContext";
 
 const FormSchema = z.object({
   email: z.string({ required_error: "Email is Required!" }).email(),
@@ -31,6 +32,8 @@ const FormSchema = z.object({
 
 function NewLogin() {
   const [showPassword, setShowPassword] = useState(false);
+
+  const { setRole } = useRole();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -41,7 +44,12 @@ function NewLogin() {
   const { mutate, isLoading } = useMutation(login, {
     onSuccess: (data) => {
       Cookies.set("user_id", data.user.id);
-      navigate("/");
+      setRole(data.user.role);
+      if (data.user.role === "coach") {
+        navigate("/matches");
+      } else {
+        navigate("/");
+      }
     },
     onError: (error: any) => {
       const message = getAxiosErrorMessage(error);
