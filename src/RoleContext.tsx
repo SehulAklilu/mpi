@@ -1,6 +1,14 @@
 // RoleContext.tsx
-import React, { createContext, useState, useContext, ReactNode, Dispatch, SetStateAction } from 'react';
-import { Role } from './types/auth.type';
+import React, {
+  createContext,
+  useState,
+  useContext,
+  ReactNode,
+  Dispatch,
+  SetStateAction,
+} from "react";
+import { Role } from "./types/auth.type";
+import Cookies from "js-cookie";
 
 // Define the types for each piece of state in the context
 interface PersonalDataType {
@@ -40,10 +48,12 @@ export const useRole = (): RoleContextType => {
   return context;
 };
 
-
 // Define the RoleProvider component with type for children
-export const RoleProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [role, setRole] = useState<Role | null>(null);
+export const RoleProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
+  const currentRole: Role | null = Cookies.get("role") as Role | null;
+  const [role, setRole] = useState<Role | null>(currentRole);
   const [personalData, setPersonalData] = useState<PersonalDataType>({});
   const [contactInfo, setContactInfo] = useState<ContactInfoType>({});
   const [additionalInfo, setAdditionalInfo] = useState<AdditionalInfoType>({});

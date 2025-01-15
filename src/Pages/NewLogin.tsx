@@ -45,6 +45,7 @@ function NewLogin() {
     onSuccess: (data) => {
       Cookies.set("user_id", data.user.id);
       setRole(data.user.role);
+      Cookies.set("role", data.user.role);
       if (data.user.role === "coach") {
         navigate("/matches");
       } else {
