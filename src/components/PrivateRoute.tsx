@@ -10,8 +10,6 @@ interface PrivateRouteProps {
 const PrivateRoute: React.FC<PrivateRouteProps> = ({ allowedRoles }) => {
   const { role } = useRole();
 
-  console.log("5555555555555555555 role", role);
-
   if (!role) {
     return <Navigate to="/login" replace />;
   }
