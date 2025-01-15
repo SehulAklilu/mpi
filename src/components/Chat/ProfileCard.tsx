@@ -82,7 +82,7 @@ const ProfileCard: React.FC<ProfileDataInterface> = ({
   };
 
   return (
-    <div className="w-72 relative bg-[#F2F2F7] shadow-md rounded-lg border border-[#AEAFB2] p-6 text-center">
+    <div className="w-56 md:w-72 relative bg-[#F2F2F7] shadow-md rounded-lg border border-[#AEAFB2] p-6 text-center">
       <div className="absolute top-3 right-3">
         <button
           onClick={() => setShowMenu((prev) => !prev)}
@@ -112,20 +112,22 @@ const ProfileCard: React.FC<ProfileDataInterface> = ({
             className="w-full h-full object-cover"
           />
         </div>
-        <p className="text-2xl py-1">{name}</p>
+        <p className="text-sm sm:text-lg md:text-2xl py-1">{name}</p>
 
-        <p className="py-1 text-lg text-gray-600">{role}</p>
+        <p className="py-1 text-xs sm:text-sm md:text-lg text-gray-600">
+          {role}
+        </p>
         <div className="flex items-center justify-center py-1 gap-4">
           <button
             onClick={onFollow}
-            className="w-full bg-orange-500 text-white py-2 rounded-md px-3 hover:bg-orange-600 transition-colors"
+            className="w-full bg-orange-500 text-white text-xs md:text-sm py-2 px-3 rounded-md  hover:bg-orange-600 transition-colors"
           >
             {status === "friends" ? "Unfollow" : "Follow"}
           </button>
           <button
             onClick={onMessage}
             disabled={status !== "friends"}
-            className={`w-full py-2 border rounded-md px-3 ${
+            className={`w-full py-2 px-3 text-xs md:text-sm border rounded-md  ${
               status !== "friends"
                 ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                 : "bg-white hover:bg-gray-300"

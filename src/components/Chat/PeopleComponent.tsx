@@ -63,16 +63,17 @@ const PeopleComponent: React.FC<PeopleComponentProps> = ({ setActiveTab }) => {
 
     return users;
   }
+
+  const friends =
+    friends_data && user_id && extractUsers(friends_data, user_id);
+
   if (isLoading) {
-    return <PeopleSkeleton />
+    return <PeopleSkeleton />;
   }
 
   if (isError) {
     return <>Error</>;
   }
-
-  const friends =
-    friends_data && user_id && extractUsers(friends_data, user_id);
 
   return (
     <div>
@@ -86,7 +87,7 @@ const PeopleComponent: React.FC<PeopleComponentProps> = ({ setActiveTab }) => {
         />
       </div>
       <ScrollArea className="h-[65vh] rounded-md">
-        <div className="grid grid-cols-4 gap-x-2 gap-y-4">
+        <div className="justify-center sm:justify-start flex flex-wrap gap-x-2 gap-y-4">
           {friends ? (
             friends.map((profile) => (
               <ProfileCard

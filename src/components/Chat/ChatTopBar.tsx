@@ -1,4 +1,5 @@
 import React from "react";
+import { FaArrowLeft } from "react-icons/fa6";
 
 interface ChatTopBarProps {
   user: {
@@ -6,12 +7,16 @@ interface ChatTopBarProps {
     avatarUrl: string;
     status: "online" | "offline";
   };
+  onClick: () => void;
 }
 
-const ChatTopBar: React.FC<ChatTopBarProps> = ({ user }) => {
+const ChatTopBar: React.FC<ChatTopBarProps> = ({ user, onClick }) => {
   return (
     <div className="flex items-center justify-between bg-gradient-to-b py-1 px-4  from-[#F8B36D] to-[#F28822]  shadow-md sticky top-0 z-10">
       <div className="flex items-center gap-3">
+        <button onClick={onClick}>
+          <FaArrowLeft size={24} className="text-white" />
+        </button>
         <img
           src={user.avatarUrl}
           alt={user.name}

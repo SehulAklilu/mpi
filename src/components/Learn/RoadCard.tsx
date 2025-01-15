@@ -27,24 +27,31 @@ export const CardContainer: React.FC<CardProps> = ({ course, onclick }) => {
         />
       </CardContent>
       <CardFooter>
-        <div className="px-4 hidden md:block">
+        <div className="px-4">
           {/* <p className="">{course.}</p> */}
-          <p className="text-[#1c1d47] font-bold py-1">
-            {course.courseId.title}
+          <p className=" hidden md:block text-[#1c1d47] font-bold py-1">
+            {course.courseId.title?.length > 35
+              ? course.courseId.title.slice(0, 35) + "..."
+              : course.courseId.title}
+          </p>
+          <p className="  md:hidden text-[#1c1d47] text-xs ">
+            {course.courseId.title?.length > 18
+              ? course.courseId.title.slice(0, 18) + "..."
+              : course.courseId.title}
           </p>
         </div>
-        <div className="flex justify-between px-4 items-center text-[#1c1d47] font-bold">
+        <div className="flex justify-between px-4 text-xs md:text-base items-center text-[#1c1d47]">
           <div className="flex items-center gap-1">
             <FaStar className="text-[#ff9328]" />
-            <p className="font-medium">5</p>
+            <p className=" md:font-medium ">5</p>
           </div>
           <div className="flex items-center gap-1">
             <FaUserAlt className="text-[#ff9328]" />
-            <p className="font-medium">4000</p>
+            <p className=" md:font-medium">4000</p>
           </div>
           <div className="flex items-center gap-1">
             <FaClock className="text-[#ff9328]" />
-            <p className="font-medium">{formattedDuration}</p>
+            <p className=" md:font-medium">{formattedDuration}</p>
           </div>
         </div>
       </CardFooter>

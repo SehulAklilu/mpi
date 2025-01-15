@@ -12,6 +12,8 @@ import { useState } from "react";
 import { ChatInterface } from "@/types/chat.type";
 import NoMessage from "./NoMessage";
 import ChatItemSkeleton from "./ChatItemSkeleton";
+import { IoClose, IoMenu } from "react-icons/io5";
+import CustomTabs from "./CustomTabs";
 
 export interface ChatItems {
   id: string;
@@ -26,15 +28,16 @@ export interface ChatItems {
   latestMessageId?: string;
 }
 
-function ChatComponent() {
+interface ChatComponentProps {
+  setActiveTab: (tab: string) => void;
+}
+
+function ChatComponent({ setActiveTab }: ChatComponentProps) {
   const [user_id, setUserId] = useState<string | undefined>(undefined);
   const [searchValue, setSearchValue] = useState("");
   const [selectedChat, setSelectedChat] = useState<ChatItems | undefined>(
     undefined
   );
-
-  const [scrollToBottom, setScrollToBottom] = useState(false)
-
   const {
     data: chats_data,
     isLoading,
@@ -84,16 +87,13 @@ function ChatComponent() {
           unreadCount: chat.latestMessage?.isRead ? 0 : 1,
           isRead: chat.latestMessage?.isRead ?? false,
           reciverId: otherUser._id,
-          latestMessageId: chat?.latestMessage.id,
+          latestMessageId: chat.latestMessage?.id ?? "", // Add nullish coalescing
         };
       });
   };
-  if (isError) {
-    return "Error Page";
-  }
 
   const chats =
-    chats_data && chats_data?.length > 0 && user_id
+    chats_data && chats_data?.chats.length > 0 && user_id
       ? extractChatItems(chats_data.chats, user_id)
       : undefined;
 
@@ -108,43 +108,81 @@ function ChatComponent() {
       readMessage.mutate(id);
     }
   };
+  const [isSidebarOpen, setSidebarOpen] = useState(true);
+
+  const openSideBar = () => {
+    setSidebarOpen((pre) => !pre);
+  };
+
+  if (isError) {
+    return "Error Page";
+  }
 
   return (
-    <div className="">
+    <div className="relative">
       <div className="grid grid-cols-12 gap-x-6">
-        <div className="col-span-3">
-          <ScrollArea className="h-[75vh] rounded-md  ">
-            <div className="sticky top-0 p-4 rounded-lg">
-              <Input
-                type="text"
-                id="full_name"
-                placeholder="Search..."
-                value={searchValue}
-                onChange={handleSearchChange}
-                className={"py-2 w-full !rounded-lg !outline-none"}
-                startIcon={FaSearch}
-              />
-            </div>
+        {/* Sidebar */}
+        <div
+          className={`fixed inset-0 z-20 bg-white transition-transform transform md:relative md:translate-x-0 md:col-span-4 lg:col-span-3 ${
+            isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+          } ${isSidebarOpen ? "md:w-full" : ""} `}
+        >
+          <div className="md:hidden px-1">
+            <CustomTabs setActiveTab={setActiveTab} />
+          </div>
+          <div className="flex gap-x-2 items-center p-4 rounded-lg">
+            <Input
+              type="text"
+              id="full_name"
+              placeholder="Search..."
+              value={searchValue}
+              onChange={handleSearchChange}
+              className={"py-2 w-full !rounded-lg !outline-none"}
+              startIcon={FaSearch}
+            />
+            {/* <button
+              className="md:hidden flex-none top-4 bg-[#F28822] hover:bg-[#ffa34c] rounded p-1 right-4 text-xl"
+              onClick={() => setSidebarOpen(false)}
+            >
+              <IoClose size={24} className="text-white" />
+            </button> */}
+          </div>
+          <ScrollArea className="h-[74vh] rounded-lg">
             <div>
-              {isLoading ?  Array.from({length: 3}).map(() => <ChatItemSkeleton /> ): filteredChats && filteredChats.length > 0
-                ? filteredChats.map((chat) => (
-                    <ChatItem
-                      key={chat.id}
-                      {...chat}
-                      active={
-                        (selectedChat && selectedChat.id === chat.id) ?? false
-                      }
-                      onClick={() => {
-                        setSelectedChat(chat);
-                        makeLatestMessageRead(chat?.latestMessageId);
-                      }}
-                    />
-                  ))
-                : <p className="text-center p-1 border border-[#9092A1] rounded-md text-[#9092A1]">No Chat</p>}
+              {isLoading ? (
+                Array.from({ length: 3 }).map((_, index) => (
+                  <ChatItemSkeleton key={index} />
+                ))
+              ) : filteredChats && filteredChats.length > 0 ? (
+                filteredChats.map((chat) => (
+                  <ChatItem
+                    key={chat.id}
+                    {...chat}
+                    active={
+                      (selectedChat && selectedChat.id === chat.id) ?? false
+                    }
+                    onClick={() => {
+                      setSelectedChat(chat);
+                      makeLatestMessageRead(chat?.latestMessageId);
+                      setSidebarOpen(false); // Close sidebar on mobile after selecting chat
+                    }}
+                  />
+                ))
+              ) : (
+                <p className="text-center p-1 border border-[#9092A1] rounded-md text-[#9092A1]">
+                  No Chat
+                </p>
+              )}
             </div>
           </ScrollArea>
         </div>
-        <div className="col-span-9">
+
+        {/* Chat Area */}
+        <div
+          className={`col-span-12 md:col-span-8 lg:col-span-9 transition-transform ${
+            isSidebarOpen ? "hidden md:block" : "block"
+          }`}
+        >
           {selectedChat ? (
             <>
               <ChatTopBar
@@ -153,19 +191,18 @@ function ChatComponent() {
                   avatarUrl: selectedChat.avatarUrl,
                   status: selectedChat.status,
                 }}
+                onClick={openSideBar}
               />
-
-              <ScrollArea className="h-[57vh] rounded-md overflow-y-auto p-4">
+              <ScrollArea className="h-[81.5vh] md:h-[71vh] ">
                 <ChatMessages chatId={selectedChat.id} />
               </ScrollArea>
-
               <ChatInput
                 chatId={selectedChat.id}
                 reciverId={selectedChat.reciverId}
               />
             </>
           ) : (
-            <NoMessage />
+            <NoMessage onClick={openSideBar} />
           )}
         </div>
       </div>

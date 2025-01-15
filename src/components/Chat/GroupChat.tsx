@@ -70,6 +70,7 @@ function GroupChat() {
               avatarUrl: "https://i.pravatar.cc/150?img=1",
               status: "online",
             }}
+            onClick={() => {}}
           />
 
           <ScrollArea className="h-[57vh] rounded-md overflow-y-auto p-4">
