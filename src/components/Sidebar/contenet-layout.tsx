@@ -30,7 +30,7 @@ export function ContentLayout({ children }: ContentLayoutProps) {
         <SheetMenu />
       )}
 
-      <div className="pb-8 p-2">{children}</div>
+      <div>{children}</div>
     </div>
   );
 }

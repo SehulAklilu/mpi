@@ -9,7 +9,7 @@ import {
   TooltipContent,
   TooltipProvider,
 } from "@/components/ui/tooltip";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, Location } from "react-router-dom";
 import { Settings, BookOpen } from "lucide-react";
 import { GoHome } from "react-icons/go";
 import { FiPieChart } from "react-icons/fi";
@@ -17,62 +17,15 @@ import { RiGroupLine } from "react-icons/ri";
 import { IoCalendarNumberOutline } from "react-icons/io5";
 import nightMode from "../../assets/sidebar_svg/night-mode.svg";
 import notification from "../../assets/svg/notification.svg";
+import { getMenuList } from "@/lib/menu-list";
 
 interface MenuProps {
   isOpen: boolean | undefined;
 }
 
 function Menu({ isOpen }: MenuProps) {
-  const location = useLocation();
-  const menuList = [
-    {
-      groupLabel: "",
-      menus: [
-        {
-          href: "/",
-          label: "Home",
-          active: location.pathname === "/",
-          icon: GoHome,
-          submenus: [],
-        },
-        {
-          href: "/journal",
-          label: "Journal",
-          active: location.pathname.includes("/journal"),
-          icon: BookOpen,
-          submenus: [],
-        },
-        {
-          href: "/progress",
-          label: "Progress",
-          active: location.pathname.includes("/progress"),
-          icon: FiPieChart,
-          submenus: [],
-        },
-        {
-          href: "/calendar",
-          label: "Calendar",
-          active: location.pathname.includes("/calendar"),
-          icon: IoCalendarNumberOutline,
-          submenus: [],
-        },
-        {
-          href: "/chat",
-          label: "Connect",
-          active: location.pathname.includes("/chat"),
-          icon: RiGroupLine,
-          submenus: [],
-        },
-        {
-          href: "/settings",
-          label: "Settings",
-          active: location.pathname.includes("/settings"),
-          icon: Settings,
-          submenus: [],
-        },
-      ],
-    },
-  ];
+  const location: Location<any> = useLocation();
+  const menuList = getMenuList(location);
 
   return (
     <ScrollArea className="[&gt;div&gt;div[style]]:!block">
