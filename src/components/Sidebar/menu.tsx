@@ -17,6 +17,14 @@ import { RiGroupLine } from "react-icons/ri";
 import { IoCalendarNumberOutline } from "react-icons/io5";
 import nightMode from "../../assets/sidebar_svg/night-mode.svg";
 
+const MatchIcon = ({ className = "", size }: { className? : string,size? : number}) => {
+  return (
+    <div className={`flex rounded-lg px-1 py-2 ${className}`}>
+      <div className="m-auto">VS</div>
+    </div>
+  );
+};
+
 interface MenuProps {
   isOpen: boolean | undefined;
 }
@@ -32,6 +40,13 @@ function Menu({ isOpen }: MenuProps) {
           label: "Home",
           active: location.pathname === "/",
           icon: GoHome,
+          submenus: [],
+        },
+        {
+          href: "/matches",
+          label: "Matches",
+          active: location.pathname === "/matches",
+          icon: MatchIcon,
           submenus: [],
         },
         {

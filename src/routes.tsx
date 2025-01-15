@@ -25,6 +25,8 @@ import { assesment } from "./types/course.types.ts";
 import NewLearn from "./Pages/Learn/NewLearn.tsx";
 import Assessment from "./Pages/Assessment.tsx";
 import Chat from "./Pages/Chat.tsx";
+import Matches from "./Pages/Matches.tsx";
+import AddMatch from "./Pages/AddMatch.tsx";
 
 const router = createBrowserRouter([
   {
@@ -34,6 +36,14 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <NewLearn />,
+      },
+      {
+        path: "/matches",
+        element: <Matches />,
+      },
+      {
+        path: "/matches/addmatch",
+        element: <AddMatch />,
       },
       {
         path: "course/:course_id",
