@@ -7,7 +7,7 @@ import { useSignupContext } from "@/context/SignupContext";
 
 function Role({ setCurr }: any) {
   const [selectedRole, setSelectedRole] = useState<
-    "player" | "group" | "coach" | "organization" | undefined
+    "player" | "group" | "coach" | "family" | undefined
   >(undefined);
 
   const signupCon = useSignupContext();
@@ -42,7 +42,7 @@ function Role({ setCurr }: any) {
             }`}
           >
             <FaRegUser className="text-lg" />
-            <span className="ml-2">Single Player</span>
+            <span className="ml-2">Player</span>
           </Button>
 
           <Button
@@ -68,15 +68,15 @@ function Role({ setCurr }: any) {
             <span className="ml-2">Coach</span>
           </Button>
           <Button
-            onClick={() => setSelectedRole("organization")}
+            onClick={() => setSelectedRole("family")}
             className={` flex items-center justify-center gap-1 px-7 py-3 my-1 text-center shadow rounded-3xl ${
-              selectedRole === "organization"
+              selectedRole === "family"
                 ? "bg-primary text-white"
                 : "bg-[#F0F0FF] text-black"
             } `}
           >
             <HiOutlineBuildingOffice2 className="text-lg" />
-            <span className="ml-2">Organiztion</span>
+            <span className="ml-2">Family</span>
           </Button>
           <Button
             onClick={onsubmit}
