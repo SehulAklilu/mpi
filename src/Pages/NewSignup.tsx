@@ -7,6 +7,7 @@ import Congrats from "@/components/auth/Congrates";
 import CreatePassword from "@/components/auth/CreatePassword";
 import { InputOTPForm } from "@/components/auth/OtpNew";
 import Address from "@/components/auth/Address";
+import Resume from "@/components/auth/Resume";
 
 const NewSignup = () => {
   const [curr, setCurr] = useState(0);

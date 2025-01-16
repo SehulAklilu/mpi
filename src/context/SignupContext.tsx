@@ -7,7 +7,7 @@ interface UserInfo {
   lastName?: string;
   password?: string;
   avatar?: string;
-  role?: "player" | "group" | "coach" | "organization";
+  role?: "player" | "group" | "coach" | "family";
   dateOfBirth?: string;
   gender?: string;
   phoneNumber?: string;
