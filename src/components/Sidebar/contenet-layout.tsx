@@ -1,6 +1,7 @@
 import { SheetMenu } from "../Sidebar/sheet-menu";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FaCircleChevronLeft } from "react-icons/fa6";
+import { NavbarNew } from "../Navbar/NavbarNew";
 
 interface ContentLayoutProps {
   children: React.ReactNode;
@@ -10,10 +11,25 @@ export function ContentLayout({ children }: ContentLayoutProps) {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const excludeNavbar = [
+    "/chat",
+    "/calendar",
+    "/journal",
+    "/progress",
+    "/newJournal",
+  ];
+
   const isChildRoute = () => {
     const segments = location.pathname.split("/").filter(Boolean);
     return segments.length > 1;
   };
+
+  console.log(
+    "33333333333333333",
+    isChildRoute(),
+    excludeNavbar.includes(location.pathname),
+    location.pathname
+  );
   return (
     <div className="relative">
       {isChildRoute() ? (
@@ -27,11 +43,15 @@ export function ContentLayout({ children }: ContentLayoutProps) {
           />
         </div>
       ) : (
-        <div className="absolute z-40 top-3 left-2">
+        <div className="absolute z-40 top-3 left-1">
           <SheetMenu />
         </div>
       )}
-
+      {!isChildRoute() && !excludeNavbar.includes(location.pathname) ? (
+        <div className="flex pt-2 sm:pt-0 items-center justify-center pl-8 w-full">
+          <NavbarNew />
+        </div>
+      ) : null}
       <div>{children}</div>
     </div>
   );

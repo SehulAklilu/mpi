@@ -27,6 +27,9 @@ import Assessment from "./Pages/Assessment.tsx";
 import Chat from "./Pages/Chat.tsx";
 import PrivateRoute from "./components/PrivateRoute.tsx";
 import PendingMatch from "./Pages/PendingMatch.tsx";
+import UnauthorizedPage from "./Pages/Unauthorized.tsx";
+import Players from "./Pages/Players.tsx";
+import Dashboard from "./Pages/Dashboard.tsx";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -60,24 +63,8 @@ const router = createBrowserRouter([
             element: <Progress />,
           },
           {
-            path: "calendar",
-            element: <Reminders />,
-          },
-          {
-            path: "settings",
-            element: <Settings />,
-          },
-          {
             path: "newJournal",
             element: <NewJournal />,
-          },
-          {
-            path: "profile",
-            element: <Profile />,
-          },
-          {
-            path: "chat",
-            element: <Chat />,
           },
         ],
       },
@@ -87,6 +74,35 @@ const router = createBrowserRouter([
           {
             path: "/matches",
             element: <PendingMatch />,
+          },
+        ],
+      },
+      {
+        element: <PrivateRoute allowedRoles={["player", "coach"]} />,
+        children: [
+          {
+            path: "dashboard",
+            element: <Dashboard />,
+          },
+          {
+            path: "chat",
+            element: <Chat />,
+          },
+          {
+            path: "calendar",
+            element: <Reminders />,
+          },
+          {
+            path: "players",
+            element: <Players />,
+          },
+          {
+            path: "settings",
+            element: <Settings />,
+          },
+          {
+            path: "profile",
+            element: <Profile />,
           },
         ],
       },
@@ -133,6 +149,10 @@ const router = createBrowserRouter([
         onContinue={() => console.log("")}
       />
     ),
+  },
+  {
+    path: "/unauthorized",
+    element: <UnauthorizedPage />,
   },
 ]);
 

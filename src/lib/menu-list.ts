@@ -1,10 +1,12 @@
-import { Settings, BookOpen } from "lucide-react";
+import { Settings, BookOpen, LayoutDashboard } from "lucide-react";
 import { GoHome } from "react-icons/go";
 import { FiPieChart } from "react-icons/fi";
 import { RiGroupLine } from "react-icons/ri";
 import { IoCalendarNumberOutline } from "react-icons/io5";
 import { Location } from "react-router-dom";
 import { Role } from "@/types/auth.type";
+import vs from "../assets/svg/vs.svg";
+import { PiUsersThree } from "react-icons/pi";
 
 type Submenu = {
   href: string;
@@ -17,6 +19,7 @@ type Menu = {
   label: string;
   active: boolean;
   icon: any;
+  svgType?: boolean;
   submenus: Submenu[];
 };
 
@@ -85,10 +88,46 @@ export function getMenuList(
         groupLabel: "",
         menus: [
           {
-            href: "/",
-            label: "Home",
-            active: location.pathname === "/",
-            icon: GoHome,
+            href: "/dashboard",
+            label: "Dashboard",
+            active: location.pathname === "/dashboard",
+            icon: LayoutDashboard,
+            submenus: [],
+          },
+          {
+            href: "/matches",
+            label: "Matches",
+            active: location.pathname === "/matches",
+            icon: vs,
+            svgType: true,
+            submenus: [],
+          },
+          {
+            href: "/players",
+            label: "Players",
+            active: location.pathname.includes("/players"),
+            icon: PiUsersThree,
+            submenus: [],
+          },
+          {
+            href: "/calendar",
+            label: "Calendar",
+            active: location.pathname.includes("/calendar"),
+            icon: IoCalendarNumberOutline,
+            submenus: [],
+          },
+          {
+            href: "/chat",
+            label: "Connect",
+            active: location.pathname.includes("/chat"),
+            icon: RiGroupLine,
+            submenus: [],
+          },
+          {
+            href: "/settings",
+            label: "Settings",
+            active: location.pathname.includes("/settings"),
+            icon: Settings,
             submenus: [],
           },
         ],
