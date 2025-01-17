@@ -18,8 +18,7 @@ interface GroupChatProps {
   setActiveTab: (tab: string) => void;
 }
 
-
-function GroupChat({setActiveTab}: GroupChatProps) {
+function GroupChat({ setActiveTab }: GroupChatProps) {
   const chats: ChatItemProps[] = [
     {
       name: "Archer",
@@ -54,18 +53,19 @@ function GroupChat({setActiveTab}: GroupChatProps) {
       unreadCount: 4,
     },
   ];
-  const [selectedChat, setSelectedChat] = useState<ChatItemProps | undefined>(undefined)
+  const [selectedChat, setSelectedChat] = useState<ChatItemProps | undefined>(
+    undefined
+  );
 
   const [isSidebarOpen, setSidebarOpen] = useState(true);
-    const [searchValue, setSearchValue] = useState("");
-const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const [searchValue, setSearchValue] = useState("");
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value);
   };
-   const openSideBar = () => {
+  const openSideBar = () => {
     setSidebarOpen((pre) => !pre);
   };
-  
-  
+
   return (
     <div className="relative">
       <div className="grid grid-cols-12 gap-x-6">
@@ -101,21 +101,18 @@ const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
           </div>
           <ScrollArea className="h-[74vh] rounded-lg">
             <div>
-             { chats.map((chat) => (
-                  <ChatItem
-                    key={chat.id}
-                    {...chat}
-                    active={
-                      (selectedChat && selectedChat.id === chat.id) ?? false
-                    }
-                    onClick={() => {
-                      setSelectedChat(chat);
-                      // makeLatestMessageRead(chat?.latestMessageId);
-                      setSidebarOpen(false); // Close sidebar on mobile after selecting chat
-                    }}
-                  />
-                ))
-              }
+              {chats.map((chat) => (
+                <ChatItem
+                  key={chat.id}
+                  {...chat}
+                  active={false}
+                  onClick={() => {
+                    setSelectedChat(chat);
+                    // makeLatestMessageRead(chat?.latestMessageId);
+                    setSidebarOpen(false); // Close sidebar on mobile after selecting chat
+                  }}
+                />
+              ))}
             </div>
           </ScrollArea>
         </div>
@@ -139,10 +136,7 @@ const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
               <ScrollArea className="h-[84vh] sm:h-[80vh] md:h-[71vh] !overflow-hidden ">
                 <GroupChatMessages />
               </ScrollArea>
-              <ChatInput
-                chatId={"1"}
-                reciverId={"2"}
-              />
+              <ChatInput chatId={"1"} reciverId={"2"} />
             </>
           ) : (
             <NoMessage onClick={openSideBar} />

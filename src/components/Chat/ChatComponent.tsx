@@ -174,7 +174,7 @@ function ChatComponent({ setActiveTab }: ChatComponentProps) {
                   />
                 ))
               ) : (
-                <p className="text-center p-1 border border-[#9092A1] rounded-md text-[#9092A1]">
+                <p className="text-center p-1 rounded-md text-[#9092A1]">
                   No Chat
                 </p>
               )}

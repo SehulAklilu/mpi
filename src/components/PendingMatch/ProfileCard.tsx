@@ -24,7 +24,7 @@ function ProfileCard({
           onClick={onClick}
           className="bg-orange-500 text-white text-xs md:text-sm py-2 px-3 rounded-md hover:bg-orange-600 transition-colors"
         >
-          Progress
+          Track Progress
         </button>
       )}
     </div>
