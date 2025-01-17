@@ -5,8 +5,26 @@ import img3 from "@/assets/progress/target-arrow-svgrepo-com 1.svg";
 import img4 from "@/assets/progress/flame.svg";
 import img5 from "@/assets/progress/tennis-ball-svgrepo-com 1.svg";
 import Calendar from "@/components/Progress/MyCalendar/Calendar";
-import { FaStar } from "react-icons/fa6";
+import { FaClock, FaStar } from "react-icons/fa6";
+import { useQuery } from "react-query";
+import { getUserCourses, UserCoursesResponse } from "@/api/course.api";
+import { UserCourseProgress } from "@/types/course.types";
+import { Link } from "react-router-dom";
+import { FaUserAlt } from "react-icons/fa";
 const Progress = () => {
+  const {
+    data: allCourses,
+    isLoading,
+    isSuccess,
+    isError,
+  } = useQuery<UserCoursesResponse, Error>({
+    queryKey: ["courses"],
+    queryFn: getUserCourses,
+    onSuccess(data) {
+      console.log(data, "LLLLLLLLLL");
+    },
+  });
+
   return (
     <div className="px-4 py-12">
       <div className="flex max-md:flex-col w-full">
@@ -68,48 +86,65 @@ const Progress = () => {
           <div className="underline text-primary">View All</div>
         </div>
         <div className="mt-3 flex overflow-auto">
-          <Course />
-          <Course />
-          <Course />
-          <Course />
-          <Course />
-          <Course />
+          {isSuccess && (
+            <>
+              {allCourses.courses.map((course) => (
+                <Course key={course._id} course={course} />
+              ))}
+            </>
+          )}
         </div>
       </div>
     </div>
   );
 };
 
-const Course = () => {
+const Course = ({ course }: { course: UserCourseProgress }) => {
+  let num = 0;
+  course.assessments.map((a) => {
+    a.status == "passed" ? num++ : null;
+  });
+  const percentage = (num / course.assessments.length) * 100;
   return (
-    <div className="flex min-w-[300px] max-w-[300px] flex-col gap-1 p-2 rounded-2xl bg-white">
-      <img className="rounded-2xl h-[200px] object-cover" src={img2} alt="" />
+    <Link
+      to={"/course/" + course._id}
+      className="flex min-w-[300px] max-w-[300px] flex-col gap-1 p-2 rounded-2xl bg-white"
+    >
+      <img
+        className="rounded-2xl h-[200px] object-cover"
+        src={course.courseId.videos[1].thumbnail}
+        alt=""
+      />
       <div className="text-gray-500">Inst. Damian</div>
-      <div>Equipment Essentials</div>
+      <div>{course.courseId.title}</div>
       <div className="flex gap-3">
         <div className="flex gap-1 text-sm justify-center items-center">
           <FaStar className="text-primary" />
           <div>5.0</div>
         </div>
         <div className="flex gap-1 text-sm justify-center items-center">
-          <FaStar className="text-primary" />
-          <div>5.0</div>
+          <FaUserAlt className="text-primary" />
+          <div>400</div>
         </div>
         <div className="flex gap-1 text-sm justify-center items-center">
-          <FaStar className="text-primary" />
-          <div>5.0</div>
+          <FaClock className="text-primary" />
+          <div>5 Min</div>
         </div>
       </div>
-      <div className="mt-2">
+      <div className="mt-auto">
         <div className="flex justify-between text-sm">
           <div>Progress</div>
-          <div>75%</div>
+          <div>{percentage}%</div>
         </div>
         <div className="h-3 w-full border rounded-xl">
-          <div className="w-[75%] rounded-xl bg-primary h-full"></div>
+          <div
+            className={`w-[${
+              percentage == 0 ? "1" : percentage
+            }%] rounded-xl bg-primary h-full`}
+          ></div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

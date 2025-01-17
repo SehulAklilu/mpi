@@ -9,22 +9,14 @@ const Report = () => {
       <div className="flex w-full justify-center gap-12 mt-6">
         <div className="flex gap-2 items-center justify-center">
           <div
-            className={`h-6 w-6 cursor-pointer rounded-full border ${
-              cur == 0 ? "bg-primary" : "bg-white border-primary"
-            } `}
-            onClick={() => setCur(0)}
+            className={`h-6 w-6  rounded-full border  border-primary`}
           ></div>
           <div>Candace</div>
         </div>
-        <div
-          onClick={() => setCur(1)}
-          className="flex gap-2 items-center justify-center"
-        >
+        <div className="flex gap-2 items-center justify-center">
           <div>Jene</div>
           <div
-            className={`h-6 w-6 cursor-pointer rounded-full border ${
-              cur == 1 ? "bg-primary" : "bg-white border-primary"
-            } `}
+            className={`h-6 w-6  rounded-full  bg-primary`}
           ></div>
         </div>
       </div>
@@ -93,7 +85,7 @@ const Report = () => {
                     <div className="font-semibold text-2xl">142</div>
                     <div className="my-auto">(47.5%)</div>
                   </div>
-                  <div className="text-white py-2 px-2 bg-primary flex justify-center gap-2">
+                  <div className="text-white py-2 px-2 bg-gradient-to-b from-[#f8b672] to-[#f2851c] flex justify-center gap-2">
                     <div className="font-semibold text-2xl">142</div>
                     <div className="my-auto">(47.5%)</div>
                   </div>
@@ -113,7 +105,7 @@ const Report = () => {
                       <div className="font-semibold text-xl">142</div>
                       <div className="my-auto">(47.5%)</div>
                     </div>
-                    <div className="text-white border w-[200px] border-primary  py-1 px-1 bg-primary flex justify-center gap-2">
+                    <div className="text-white border w-[200px] border-primary  py-1 px-1 bg-gradient-to-b from-[#f8b672] to-[#f2851c] flex justify-center gap-2">
                       <div className="font-semibold text-xl">142</div>
                       <div className="my-auto">(47.5%)</div>
                     </div>
@@ -124,7 +116,7 @@ const Report = () => {
                       <div className="font-semibold text-xl">142</div>
                       <div className="my-auto">(47.5%)</div>
                     </div>
-                    <div className="text-white border w-[200px] border-primary  py-1 px-1 bg-primary flex justify-center gap-2">
+                    <div className="text-white border w-[200px] border-primary  py-1 px-1 bg-gradient-to-b from-[#f8b672] to-[#f2851c] flex justify-center gap-2">
                       <div className="font-semibold text-xl">142</div>
                       <div className="my-auto">(47.5%)</div>
                     </div>
@@ -135,7 +127,7 @@ const Report = () => {
                       <div className="font-semibold text-xl">142</div>
                       <div className="my-auto">(47.5%)</div>
                     </div>
-                    <div className="text-white border w-[200px] border-primary  py-1 px-1 bg-primary flex justify-center gap-2">
+                    <div className="text-white border w-[200px] border-primary  py-1 px-1 bg-gradient-to-b from-[#f8b672] to-[#f2851c] flex justify-center gap-2">
                       <div className="font-semibold text-xl">142</div>
                       <div className="my-auto">(47.5%)</div>
                     </div>
@@ -151,7 +143,7 @@ const Report = () => {
             <div className="font-semibold mt-6">Serve Report</div>
             <div className="grid grid-cols-2 gap-10">
               <div className="flex flex-col gap-3 justify-center items-center px-6">
-                <div className="w-fit px-2 mt-5 py-1 rounded bg-primary text-white">
+                <div className="w-fit px-2 mt-5 py-1 rounded bg-gradient-to-b from-[#f8b672] to-[#f2851c] text-white">
                   Ace Counts
                 </div>
                 <div className="w-full border flex ">
@@ -159,14 +151,14 @@ const Report = () => {
                     <div className="font-semibold text-xl">142</div>
                     <div className="my-auto">(47.5%)</div>
                   </div>
-                  <div className="border w-[70%] py-2 border-primary   px-1 bg-primary text-white flex justify-center gap-2">
+                  <div className="border w-[70%] py-2 border-primary   px-1 bg-gradient-to-b from-[#f8b672] to-[#f2851c] text-white flex justify-center gap-2">
                     <div className="font-semibold text-xl">142</div>
                     <div className="my-auto">(47.5%)</div>
                   </div>
                 </div>
               </div>
               <div className="flex flex-col gap-3 justify-center items-center px-6">
-                <div className="w-fit px-2 mt-5 py-1 rounded bg-primary text-white">
+                <div className="w-fit px-2 mt-5 py-1 rounded bg-gradient-to-b from-[#f8b672] to-[#f2851c] text-white">
                   DOUBLE FAULTS
                 </div>
                 <div className="w-full border flex ">
@@ -174,7 +166,7 @@ const Report = () => {
                     <div className="font-semibold text-xl">142</div>
                     <div className="my-auto">(47.5%)</div>
                   </div>
-                  <div className="border w-[70%] py-2 border-primary   px-1 bg-primary text-white flex justify-center gap-2">
+                  <div className="border w-[70%] py-2 border-primary   px-1 bg-gradient-to-b from-[#f8b672] to-[#f2851c] text-white flex justify-center gap-2">
                     <div className="font-semibold text-xl">142</div>
                     <div className="my-auto">(47.5%)</div>
                   </div>
@@ -190,7 +182,7 @@ const Report = () => {
               </div>
               <div className="grid grid-rows-2  ">
                 <div className="flex flex-col  gap-3 justify-center items-center px-6">
-                  <div className="w-fit px-2 mt-5 py-1 rounded bg-primary text-white">
+                  <div className="w-fit px-2 mt-5 py-1 rounded bg-gradient-to-b from-[#f8b672] to-[#f2851c] text-white">
                     SERVE SPEED(AVG)
                   </div>
                   <div className="w-full border flex ">
@@ -198,14 +190,14 @@ const Report = () => {
                       <div className="font-semibold text-xl">142</div>
                       <div className="my-auto">(47.5%)</div>
                     </div>
-                    <div className="border w-[70%] py-2 border-primary   px-1 bg-primary text-white flex justify-center gap-2">
+                    <div className="border w-[70%] py-2 border-primary   px-1 bg-gradient-to-b from-[#f8b672] to-[#f2851c] text-white flex justify-center gap-2">
                       <div className="font-semibold text-xl">142</div>
                       <div className="my-auto">(47.5%)</div>
                     </div>
                   </div>
                 </div>
                 <div className="flex flex-col  gap-3 justify-center items-center px-6">
-                  <div className="w-fit px-2 py-1 rounded bg-primary text-white">
+                  <div className="w-fit px-2 py-1 rounded bg-gradient-to-b from-[#f8b672] to-[#f2851c] text-white">
                     SERVE SPEED(MAX)
                   </div>
                   <div className="w-full border flex ">
@@ -213,7 +205,7 @@ const Report = () => {
                       <div className="font-semibold text-xl">142</div>
                       <div className="my-auto">(47.5%)</div>
                     </div>
-                    <div className="border w-[70%] py-2 border-primary   px-1 bg-primary text-white flex justify-center gap-2">
+                    <div className="border w-[70%] py-2 border-primary   px-1 bg-gradient-to-b from-[#f8b672] to-[#f2851c] text-white flex justify-center gap-2">
                       <div className="font-semibold text-xl">142</div>
                       <div className="my-auto">(47.5%)</div>
                     </div>
@@ -261,6 +253,49 @@ const Report = () => {
             </div>
           </>
         )}
+        {choice == 4 && (
+          <>
+            <div className="mt-12 grid grid-cols-2">
+              <div className="flex gap-12">
+                <CircularProgressBar percentage={70} />
+                <CircularProgressBar percentage={55} outline />
+              </div>
+              <div className="grid grid-cols-2 gap-12">
+                <Hist />
+                <Hist />
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+};
+
+const CircularProgressBar = ({
+  percentage,
+  size = 52,
+  className = "",
+  outline = false,
+}: {
+  percentage: number;
+  size?: number;
+  className?: string;
+  outline?: boolean;
+}) => {
+  const conicStyle = {
+    background: `conic-gradient(rgb(242, 133, 28) 0% ${percentage}%, white ${percentage}% 100%)`,
+  };
+
+  return (
+    <div className={`relative  w-${size} h-${size}`}>
+      <div
+        className={`absolute inset-0 rounded-full border-2 border-primary flex ${className}`}
+        style={conicStyle}
+      >
+        <div className="m-auto pt-12 font-semibold  text-xl ">
+          {percentage}%
+        </div>
       </div>
     </div>
   );
@@ -351,18 +386,18 @@ const MyTable = () => {
               </div>
             </td>
             <td className="border border-gray-300 px-4 py-2">2</td>
-            <td className="border border-gray-300 px-4 py-2 text-center bg-primary text-white">
+            <td className="border border-gray-300 px-4 py-2 text-center bg-gradient-to-r to-red-500 from-[#f2851c] text-white">
               6
             </td>
             <td className="border border-gray-300 px-4 py-2 text-center">5</td>
             <td className="border border-gray-300 px-4 py-2 text-center">2</td>
-            <td className="border border-gray-300 px-4 py-2 text-center bg-primary text-white">
+            <td className="border border-gray-300 px-4 py-2 text-center bg-gradient-to-r to-red-500 from-[#f2851c] text-white">
               7
             </td>
             <td className="border border-gray-300 px-4 py-2 text-center">3</td>
           </tr>
           <tr className={`hover:bg-gray-50`}>
-            <td className="border border-gray-300 px-4 py-2 flex gap-2 bg-primary text-white">
+            <td className="border border-gray-300 px-4 py-2 flex gap-2 bg-gradient-to-b from-[#F8B672] to-[#F2851C] text-white">
               <img
                 className="w-10 h-10 rounded-full"
                 src={profile_img}
@@ -373,18 +408,18 @@ const MyTable = () => {
                 <p className="text-gray-200 text-xs">USDTA: 19</p>
               </div>
             </td>
-            <td className="border border-gray-300 px-4 py-2 bg-primary text-white">
+            <td className="border border-gray-300 px-4 py-2 bg-gradient-to-r to-red-500 from-[#f2851c] text-white">
               3
             </td>
             <td className="border border-gray-300 px-4 py-2 text-center">4</td>
-            <td className="border border-gray-300 px-4 py-2 text-center bg-primary text-white">
+            <td className="border border-gray-300 px-4 py-2 text-center bg-gradient-to-r to-red-500 from-[#f2851c] text-white">
               7
             </td>
-            <td className="border border-gray-300 px-4 py-2 text-center bg-primary text-white">
+            <td className="border border-gray-300 px-4 py-2 text-center bg-gradient-to-r to-red-500 from-[#f2851c] text-white">
               6
             </td>
             <td className="border border-gray-300 px-4 py-2 text-center ">6</td>
-            <td className="border border-gray-300 px-4 py-2 text-center bg-primary text-white">
+            <td className="border border-gray-300 px-4 py-2 text-center bg-gradient-to-r to-red-500 from-[#f2851c] text-white">
               6
             </td>
           </tr>

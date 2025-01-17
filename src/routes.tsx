@@ -30,6 +30,10 @@ import PendingMatch from "./components/Matches/PendingMatch.tsx";
 import Matches from "./Pages/Matches.tsx";
 import AddMatch from "./Pages/AddMatch.tsx";
 import RecentMatch from "./components/Matches/RecentMatch.tsx";
+import UnauthorizedPage from "./Pages/Unauthorized.tsx";
+import Players from "./Pages/Players.tsx";
+import Dashboard from "./Pages/Dashboard.tsx";
+import TrackingMatch from "./components/Matches/TrackingMatch.tsx";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -80,14 +84,6 @@ const router = createBrowserRouter([
             path: "newJournal",
             element: <NewJournal />,
           },
-          {
-            path: "profile",
-            element: <Profile />,
-          },
-          {
-            path: "chat",
-            element: <Chat />,
-          },
         ],
       },
       {
@@ -108,6 +104,39 @@ const router = createBrowserRouter([
           {
             path: "/matches/addMatch",
             element: <AddMatch />,
+          },
+          {
+            path: "/matches/trackingMatch",
+            element: <TrackingMatch />,
+          },
+        ],
+      },
+      {
+        element: <PrivateRoute allowedRoles={["player", "coach"]} />,
+        children: [
+          {
+            path: "dashboard",
+            element: <Dashboard />,
+          },
+          {
+            path: "chat",
+            element: <Chat />,
+          },
+          {
+            path: "calendar",
+            element: <Reminders />,
+          },
+          {
+            path: "players",
+            element: <Players />,
+          },
+          {
+            path: "settings",
+            element: <Settings />,
+          },
+          {
+            path: "profile",
+            element: <Profile />,
           },
         ],
       },
@@ -154,6 +183,10 @@ const router = createBrowserRouter([
         onContinue={() => console.log("")}
       />
     ),
+  },
+  {
+    path: "/unauthorized",
+    element: <UnauthorizedPage />,
   },
 ]);
 

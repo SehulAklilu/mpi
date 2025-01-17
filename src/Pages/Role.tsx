@@ -42,7 +42,7 @@ const Role: React.FC<RoleProps> = ({ onUpdate }) => {
 
   const handleSelected = (value: string) => {
     setSelected(value);
-    setRole(value);
+    setRole(value as any);
     onUpdate(value);
   };
 

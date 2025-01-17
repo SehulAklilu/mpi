@@ -169,7 +169,7 @@ function RecentMatch() {
                           <td className="border border-gray-300 px-4 py-2">
                             2
                           </td>
-                          <td className="border border-gray-300 px-4 py-2 text-center bg-primary text-white">
+                          <td className="border border-gray-300 px-4 py-2 text-center bg-gradient-to-b from-[#f8b672] to-[#f2851c] text-white">
                             6
                           </td>
                           <td className="border border-gray-300 px-4 py-2 text-center">
@@ -178,7 +178,7 @@ function RecentMatch() {
                           <td className="border border-gray-300 px-4 py-2 text-center">
                             2
                           </td>
-                          <td className="border border-gray-300 px-4 py-2 text-center bg-primary text-white">
+                          <td className="border border-gray-300 px-4 py-2 text-center bg-gradient-to-b from-[#f8b672] to-[#f2851c] text-white">
                             7
                           </td>
                           <td className="border border-gray-300 px-4 py-2 text-center">
@@ -186,7 +186,7 @@ function RecentMatch() {
                           </td>
                         </tr>
                         <tr className={`hover:bg-gray-50`}>
-                          <td className="border border-gray-300 px-4 py-2 flex gap-2 bg-primary text-white">
+                          <td className="border border-gray-300 px-4 py-2 flex gap-2 bg-gradient-to-b from-[#f8b672] to-[#f2851c] text-white">
                             <img
                               className="w-10 h-10 rounded-full"
                               src={profile_img}
@@ -199,22 +199,22 @@ function RecentMatch() {
                               <p className="text-gray-200 text-xs">USDTA: 19</p>
                             </div>
                           </td>
-                          <td className="border border-gray-300 px-4 py-2 bg-primary text-white">
+                          <td className="border border-gray-300 px-4 py-2 bg-gradient-to-b from-[#f8b672] to-[#f2851c] text-white">
                             3
                           </td>
                           <td className="border border-gray-300 px-4 py-2 text-center">
                             4
                           </td>
-                          <td className="border border-gray-300 px-4 py-2 text-center bg-primary text-white">
+                          <td className="border border-gray-300 px-4 py-2 text-center bg-gradient-to-b from-[#f8b672] to-[#f2851c] text-white">
                             7
                           </td>
-                          <td className="border border-gray-300 px-4 py-2 text-center bg-primary text-white">
+                          <td className="border border-gray-300 px-4 py-2 text-center bg-gradient-to-b from-[#f8b672] to-[#f2851c] text-white">
                             6
                           </td>
                           <td className="border border-gray-300 px-4 py-2 text-center ">
                             6
                           </td>
-                          <td className="border border-gray-300 px-4 py-2 text-center bg-primary text-white">
+                          <td className="border border-gray-300 px-4 py-2 text-center bg-gradient-to-b from-[#f8b672] to-[#f2851c] text-white">
                             6
                           </td>
                         </tr>

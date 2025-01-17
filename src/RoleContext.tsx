@@ -44,7 +44,10 @@ const RoleContext = createContext<RoleContextType | undefined>(undefined);
 // Custom hook to use the RoleContext
 export const useRole = (): RoleContextType => {
   const context = useContext(RoleContext);
-  if (!context) throw new Error("useRole must be used within a RoleProvider");
+
+  if (!context) {
+    throw new Error("useRole must be used within a RoleProvider");
+  }
   return context;
 };
 
@@ -57,7 +60,7 @@ export const RoleProvider: React.FC<{ children: ReactNode }> = ({
   const [personalData, setPersonalData] = useState<PersonalDataType>({});
   const [contactInfo, setContactInfo] = useState<ContactInfoType>({});
   const [additionalInfo, setAdditionalInfo] = useState<AdditionalInfoType>({});
-
+  console.log("eeeeeeeeee", role);
   return (
     <RoleContext.Provider
       value={{
