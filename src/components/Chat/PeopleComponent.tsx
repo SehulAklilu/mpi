@@ -9,6 +9,9 @@ import { useQuery } from "react-query";
 import { getFriends } from "@/api/chat.api";
 import Cookies from "js-cookie";
 import PeopleSkeleton from "./PeopleSkeleton";
+import { MenuIcon } from "lucide-react";
+import CustomTabs from "./CustomTabs";
+import NotificationCard from "../PendingMatch/NotificationCard";
 export interface ProfileDataInterface {
   user_id: string;
   friendship_id: string;
@@ -75,9 +78,34 @@ const PeopleComponent: React.FC<PeopleComponentProps> = ({ setActiveTab }) => {
     return <>Error</>;
   }
 
+  const notifications = [
+    {
+      name: "Myles Munroe",
+      role: "Coach",
+      message: "Myles wants to be your Friend",
+      status: "pending",
+    },
+    {
+      name: "Candace Flynn",
+      role: "Player",
+      message: "Candace accepted your Friend Request!",
+      status: "accepted",
+    },
+    {
+      name: "Phineas",
+      role: "Coach",
+      message: "Myles wants to be your Friend",
+      status: "pending",
+    },
+  ];
+
   return (
     <div>
-      <div className="sticky top-0 p-4 rounded-lg">
+      <div className="sticky top-0 md:p-4 mx-2 rounded-lg">
+        <div className=" md:hidden px-1 flex items-center gap-x-1 pb-2">
+          <MenuIcon size={36} className="invisible text-[#F2851C] flex-none " />
+          <CustomTabs setActiveTab={setActiveTab} />
+        </div>
         <Input
           type="text"
           id="full_name"
@@ -87,19 +115,43 @@ const PeopleComponent: React.FC<PeopleComponentProps> = ({ setActiveTab }) => {
         />
       </div>
       <ScrollArea className="h-[65vh] rounded-md">
-        <div className="justify-center sm:justify-start flex flex-wrap gap-x-2 gap-y-4">
-          {friends ? (
-            friends.map((profile) => (
-              <ProfileCard
-                key={profile.user_id}
-                {...profile}
-                setActiveTab={setActiveTab}
+        <section className="p-4">
+          <h1 className="text-xl text-[#32445D] my-2 font-bold">
+            Friend Requests
+          </h1>
+          <div className="space-y-2">
+            {notifications.map((notification, index) => (
+              <NotificationCard
+                key={index}
+                name={notification.name}
+                role={notification.role}
+                message={notification.message}
+                status={notification.status as "pending" | "accepted"}
+                onAccept={() => console.log(`${notification.name} accepted`)}
+                onDecline={() => console.log(`${notification.name} declined`)}
+                onMessage={() => console.log(`Message ${notification.name}`)}
               />
-            ))
-          ) : (
-            <>No Friends Found</>
-          )}
-        </div>
+            ))}
+          </div>
+        </section>
+        <section className="p-4">
+          <h1 className="text-xl text-[#32445D] my-2 font-bold">
+            From your Contacts
+          </h1>
+          <div className="justify-center sm:justify-start flex flex-wrap gap-x-2 gap-y-4">
+            {friends ? (
+              friends.map((profile) => (
+                <ProfileCard
+                  key={profile.user_id}
+                  {...profile}
+                  setActiveTab={setActiveTab}
+                />
+              ))
+            ) : (
+              <>No Friends Found</>
+            )}
+          </div>
+        </section>
       </ScrollArea>
     </div>
   );

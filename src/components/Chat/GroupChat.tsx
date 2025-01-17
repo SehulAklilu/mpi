@@ -109,9 +109,7 @@ function GroupChat({ setActiveTab }: GroupChatProps) {
                 <ChatItem
                   key={chat.id}
                   {...chat}
-                  active={
-                    (selectedChat && selectedChat.id === chat.id) ?? false
-                  }
+                  active={false}
                   onClick={() => {
                     setSelectedChat(chat);
                     // makeLatestMessageRead(chat?.latestMessageId);
