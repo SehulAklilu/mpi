@@ -68,7 +68,11 @@ const page = () => {
       </Link>
       <div className="flex w-full">
         {/* <FaSearch className="my-auto px-2" /> */}
-        <Input placeholder="search" className="w-full border-gray-700 bg-white" type="search" />
+        <Input
+          placeholder="search"
+          className="w-full border-gray-700 bg-white"
+          type="search"
+        />
       </div>
       <div className="mt-5">
         <div className="flex justify-between">
@@ -103,7 +107,11 @@ const page = () => {
 
 const PendingMatch = ({ result }: { result: PlayersArray }) => {
   return (
-    <div title="abcd" className="flex flex-col gap-2">
+    <Link
+      to={"/matches/pendingMatch"}
+      title="abcd"
+      className="flex flex-col gap-2"
+    >
       <div className="flex gap-2">
         <PersonPending data={result.player1} d={true} />
         <div className="my-auto px-3 py-2 w-14 h-14 text-3xl  font-bold text-white bg-gradient-to-b from-[#F8B36D] to-[#F28822]  rounded-xl flex justify-center items-center">
@@ -114,14 +122,18 @@ const PendingMatch = ({ result }: { result: PlayersArray }) => {
       <div className="font-semibold text-xs text-center">
         Jan 18, 2025 02:00 PM
       </div>
-    </div>
+    </Link>
   );
 };
 
-const PersonPending = ({ data, d }: { data: Player, d? : boolean }) => {
+const PersonPending = ({ data, d }: { data: Player; d?: boolean }) => {
   //   const user =
   return (
-    <div className={`w-fit  rounded-xl border py-2 shadow flex justify-center items-center flex-col  ${d ? "shadow-primary border-primary " : " "} bg-white`}>
+    <div
+      className={`w-fit  rounded-xl border py-2 shadow flex justify-center items-center flex-col  ${
+        d ? "shadow-primary border-primary " : " "
+      } bg-white`}
+    >
       <div className="rounded-full mt-2 mx-12 max-md:mx-4">
         <img
           className="w-24 h-2w-24 rounded-full"
@@ -137,7 +149,11 @@ const PersonPending = ({ data, d }: { data: Player, d? : boolean }) => {
 
 const RecentMatch = () => {
   return (
-    <div className="flex flex-col gap-2">
+    <Link
+      to={"/matches/recentMatch"}
+      title="abcd"
+      className="flex flex-col gap-2"
+    >
       <div className="flex gap-2">
         <PersonRecent won={false} />
         <div className="my-auto px-3 py-2 w-14 h-14 text-3xl  font-bold text-white bg-gradient-to-b from-[#F8B36D] to-[#F28822]  rounded-xl flex justify-center items-center">
@@ -148,7 +164,7 @@ const RecentMatch = () => {
       <div className="font-semibold text-xs text-center">
         Jan 18, 2025 02:00 PM
       </div>
-    </div>
+    </Link>
   );
 };
 

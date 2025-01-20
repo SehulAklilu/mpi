@@ -26,12 +26,25 @@ import NewLearn from "./Pages/Learn/NewLearn.tsx";
 import Assessment from "./Pages/Assessment.tsx";
 import Chat from "./Pages/Chat.tsx";
 import PrivateRoute from "./components/PrivateRoute.tsx";
-import PendingMatch from "./Pages/PendingMatch.tsx";
+import PendingMatch from "./components/Matches/PendingMatch.tsx";
+import Matches from "./Pages/Matches.tsx";
+import AddMatch from "./Pages/AddMatch.tsx";
+import RecentMatch from "./components/Matches/RecentMatch.tsx";
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Home />,
     children: [
+      {
+        element: <PrivateRoute allowedRoles={["coach", "player"]} />,
+        children: [
+          {
+            path: "/calendar",
+            element: <Reminders />,
+          },
+        ],
+      },
+
       {
         element: <PrivateRoute allowedRoles={["player"]} />,
         children: [
@@ -60,10 +73,6 @@ const router = createBrowserRouter([
             element: <Progress />,
           },
           {
-            path: "calendar",
-            element: <Reminders />,
-          },
-          {
             path: "settings",
             element: <Settings />,
           },
@@ -86,7 +95,19 @@ const router = createBrowserRouter([
         children: [
           {
             path: "/matches",
+            element: <Matches />,
+          },
+          {
+            path: "/matches/pendingMatch",
             element: <PendingMatch />,
+          },
+          {
+            path: "/matches/recentMatch",
+            element: <RecentMatch />,
+          },
+          {
+            path: "/matches/addMatch",
+            element: <AddMatch />,
           },
         ],
       },

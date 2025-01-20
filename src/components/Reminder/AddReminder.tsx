@@ -18,6 +18,8 @@ import { toast } from "react-toastify";
 import axios from "@/api/axios";
 import { useEffect, useRef } from "react";
 import { FaX } from "react-icons/fa6";
+import { useRole } from "@/RoleContext";
+import Role from "../auth/Role";
 
 const AddReminderSchema = z.object({
   title: z.string({ required_error: "Title is required" }).min(1),
@@ -47,7 +49,11 @@ const AddReminder = ({
   });
 
   const queryClient = useQueryClient();
-  const types = ["reminder", "goal"];
+  const { role }: any = useRole();
+  const types =
+    role != null && role == "player"
+      ? ["reminder", "goal"]
+      : ["reminder", "goal", "match", "training"];
 
   const { isLoading, mutate } = useMutation(
     (data: AddReminderForm) => axios.post("/api/v1/reminders", data),

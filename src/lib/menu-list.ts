@@ -91,6 +91,20 @@ export function getMenuList(
             icon: GoHome,
             submenus: [],
           },
+          {
+            href: "/matches",
+            label: "Matches",
+            active: location.pathname === "/matches",
+            icon: GoHome,
+            submenus: [],
+          },
+          {
+            href: "/calendar",
+            label: "Calendar",
+            active: location.pathname.includes("/calendar"),
+            icon: IoCalendarNumberOutline,
+            submenus: [],
+          },
         ],
       },
     ];
@@ -98,3 +112,4 @@ export function getMenuList(
     return [];
   }
 }
+

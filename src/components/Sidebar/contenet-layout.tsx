@@ -4,9 +4,10 @@ import { FaCircleChevronLeft } from "react-icons/fa6";
 
 interface ContentLayoutProps {
   children: React.ReactNode;
+  name?: string;
 }
 
-export function ContentLayout({ children }: ContentLayoutProps) {
+export function ContentLayout({ children, name }: ContentLayoutProps) {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -18,13 +19,14 @@ export function ContentLayout({ children }: ContentLayoutProps) {
     <div className="relative">
       {isChildRoute() ? (
         <div
-          className="absolute z-20 bg-white rounded-full p-[1px] top-2 cursor-pointer"
+          className="absolute z-20 bg-white rounded-full p-[1px] top-2 cursor-pointer flex gap-2"
           onClick={() => navigate(-1)}
         >
           <FaCircleChevronLeft
             size={34}
             className="text-[rgb(255,159,63)] hover:text-[#F1861B]"
           />
+          {name && <div className="my-auto">{name}</div>}
         </div>
       ) : (
         <div className="absolute z-40 top-3 left-2">

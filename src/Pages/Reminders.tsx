@@ -17,6 +17,7 @@ import Calendar from "@/components/Reminder/MyCalendar/Calendar";
 import { IoIosArrowForward } from "react-icons/io";
 import { Input } from "@/components/ui/input";
 import { ContentLayout } from "@/components/Sidebar/contenet-layout";
+import { useRole } from "@/RoleContext";
 export interface ReminderInf {
   _id?: string;
   isCompleted?: boolean;
@@ -29,7 +30,7 @@ export interface ReminderInf {
 }
 
 const Reminders = () => {
-  const today = new Date();
+  const { role } = useRole();
   const tomorrow = new Date();
   const dateChecker = (date1: Date, date2: Date) => {
     return (
@@ -104,7 +105,7 @@ const Reminders = () => {
 
   return (
     <ContentLayout>
-      <div className="  font-raleway bg-white  overflow-auto   min-h-[80vh] flex-1 ">
+      <div className="font-raleway bg-white  overflow-auto   min-h-[80vh] flex-1 ">
         <div className="w-full px-2 pt-3 ">
           <Input
             value={search}
@@ -157,18 +158,12 @@ const Reminders = () => {
           >
             <div className="w-full bg--300 md:px-2 md:mb-5 ">
               <Calendar
-                // onChange={(date: any) => setDate(date.toString())}
-                // className="mx-auto"
-                // value={[new Date(2025, 0, 1), new Date(2025, 0, 4)]}
-                // allowPartialRange
                 setDateFilter={setDateFilter}
                 reminders={allReminders}
                 dateFilter={dateFilter}
               />
             </div>
-            {/* <div className="hidden">
-            <AddReminderAlert setDate={setDate} date={date} />
-          </div> */}
+
             {date == null ? (
               <div className="md:min-h-[30vh] w-full flex">
                 <div
@@ -187,8 +182,6 @@ const Reminders = () => {
     </ContentLayout>
   );
 };
-// {open && <AddReminderAlert open={open} setOpen={setOpen} date={open} />}
-//
 
 const WeekShow = ({
   setDateFilter,
