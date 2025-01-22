@@ -62,7 +62,7 @@ function Menu({ isOpen }: MenuProps) {
                           <TooltipTrigger asChild>
                             <Button
                               variant={active ? "secondary" : "ghost"}
-                              className={`w-full justify-start  h-14 mb-1 hover:bg-[#F1861B] hover:text-white ${
+                              className={`group w-full justify-start  h-14 mb-1 hover:bg-[#F1861B] hover:text-white ${
                                 active ? "bg-[#F1861B] text-white" : ""
                               }`}
                               asChild
@@ -72,12 +72,19 @@ function Menu({ isOpen }: MenuProps) {
                                   className={cn(isOpen === false ? "" : "mr-4")}
                                 >
                                   {svgType ? (
-                                    <img
-                                      src={Icon}
-                                      alt={`${label} icon`}
-                                      width={30}
-                                      height={30}
-                                    />
+                                    <div
+                                      className={`
+                                          flex items-center justify-center text-base font-bold rounded-md w-[2.1rem] h-[2.1rem] 
+                                          border-[2.4px] text-black border-black 
+                                          ${
+                                            active
+                                              ? "bg-[#F1851B] text-white border-white"
+                                              : "group-hover:bg-[#F1851B] group-hover:text-white group-hover:border-white"
+                                          }
+                                        `}
+                                    >
+                                      VS
+                                    </div>
                                   ) : (
                                     <Icon size={28} />
                                   )}
