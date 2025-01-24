@@ -114,7 +114,7 @@ const Editreminder = ({ initialValue, open, setOpen }: any) => {
             <div className="space-y-4">
               <div className=""></div>
               <div>
-                <label htmlFor="title" className="block text-sm font-medium">
+                <label htmlFor="title" className="block text-sm font-medium text-left">
                   Title
                 </label>
                 <Input
@@ -132,7 +132,7 @@ const Editreminder = ({ initialValue, open, setOpen }: any) => {
               <div>
                 <label
                   htmlFor="description"
-                  className="block text-sm font-medium"
+                  className="block text-sm font-medium text-left"
                 >
                   Description
                 </label>

@@ -1,13 +1,14 @@
 import ProfileCard from "@/components/PendingMatch/ProfileCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React, { useState } from "react";
-import { FaFlag } from "react-icons/fa";
+import { FaFlag, FaInfoCircle } from "react-icons/fa";
 import { FaBalanceScaleLeft } from "react-icons/fa";
 import { FaTrophy } from "react-icons/fa6";
 import { IoTime } from "react-icons/io5";
 import { FaRegCalendarPlus } from "react-icons/fa";
 import { MdOutlineWaves } from "react-icons/md";
 import { ContentLayout } from "@/components/Sidebar/contenet-layout";
+import { FiInfo } from "react-icons/fi";
 
 interface DetailsInterface {
   icon: any;
@@ -52,7 +53,7 @@ function PendingMatch() {
   ];
 
   return (
-    <ContentLayout>
+    <ContentLayout name="Pending Match">
       <div className="bg-white pt-10 min-h-[100vh]">
         <div className="w-full mx-auto mt-4">
           <div className="flex gap-x-6 flex-col gap-y-2 sm:flex-row items-center justify-center">
@@ -120,19 +121,40 @@ function PendingMatch() {
                 value="sets"
                 className="w-full md:w-[44rem] lg:w-[56rem] mx-auto px-4"
               >
-                Sets
+                <div className="w-full flex justify-center items-center flex-col gap-2 mt-14">
+                  <div className="w-12 h-12 rounded-xl bg-gray-300 flex justify-center items-center">
+                    <FiInfo className="text-primary text-3xl" />
+                  </div>
+                  <div className="mt-3">
+                    Set not Available for undone Mactch
+                  </div>
+                </div>
               </TabsContent>
               <TabsContent
                 value="momentum"
                 className="w-full md:w-[44rem] lg:w-[56rem] mx-auto px-4"
               >
-                momentum
+                <div className="w-full flex justify-center items-center flex-col gap-2 mt-14">
+                  <div className="w-12 h-12 rounded-xl bg-gray-300 flex justify-center items-center">
+                    <FiInfo className="text-primary text-3xl" />
+                  </div>
+                  <div className="mt-3">
+                    Set not Available for undone Mactch
+                  </div>
+                </div>
               </TabsContent>
               <TabsContent
                 value="report"
                 className="w-full md:w-[44rem] lg:w-[56rem] mx-auto px-4"
               >
-                report
+                <div className="w-full flex justify-center items-center flex-col gap-2 mt-14">
+                  <div className="w-12 h-12 rounded-xl bg-gray-300 flex justify-center items-center">
+                    <FiInfo className="text-primary text-3xl" />
+                  </div>
+                  <div className="mt-3">
+                    Set not Available for undone Mactch
+                  </div>
+                </div>
               </TabsContent>
             </Tabs>
           </div>

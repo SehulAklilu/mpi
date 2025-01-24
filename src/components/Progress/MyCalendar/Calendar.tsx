@@ -96,7 +96,7 @@ const Calendar: React.FC<CalendarProps> = ({
             </button>
           </div>
         </div>
-        <div className="-mx-2">
+        <div className="-mx-2 border-2 rounded-3xl border-primary">
           <table className="w-full  dark:text-white">
             <thead className="" >
               <tr className="text-sm bg--300  font-thin ">

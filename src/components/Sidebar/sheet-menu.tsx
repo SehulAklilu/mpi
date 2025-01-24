@@ -9,8 +9,11 @@ import {
   SheetContent,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { useState } from "react";
 
 export function SheetMenu() {
+  const [isNotiOpen, setIsNotiOpen] = useState(false);
+
   return (
     <Sheet>
       <SheetTrigger className="lg:hidden" asChild>
@@ -30,7 +33,7 @@ export function SheetMenu() {
             </a>
           </Button>
         </SheetHeader>
-        <Menu isOpen />
+        <Menu isOpen isNotiOpen={isNotiOpen} setIsNotiOpen={setIsNotiOpen} />
       </SheetContent>
     </Sheet>
   );

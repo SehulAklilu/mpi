@@ -17,6 +17,8 @@ import { useRole } from "@/RoleContext";
 
 interface MenuProps {
   isOpen: boolean | undefined;
+  isNotiOpen? : boolean,
+  setIsNotiOpen? : Function,
 }
 
 function Menu({ isOpen }: MenuProps) {

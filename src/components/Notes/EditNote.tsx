@@ -75,7 +75,7 @@ const EditNote = ({ note }: { note: JournalCardProps }) => {
           Edit
         </Button>
       </AlertDialogTrigger>
-      <AlertDialogContent className="min-h-[90vh] bg-gray-100 h-[90vh] min-w-[70%] overflow-auto">
+      <AlertDialogContent className="min-h-[90vh]  bg-gray-100 h-[90vh] md:min-w-[70%] overflow-y-auto">
         <AlertDialogHeader>
           <div className="flex justify-between w-full">
             <AlertDialogTitle>Edit Your Note</AlertDialogTitle>
@@ -88,12 +88,12 @@ const EditNote = ({ note }: { note: JournalCardProps }) => {
               <IoCloseSharp />
             </Button>
           </div>
-          <AlertDialogDescription>
+          <AlertDialogDescription className="text-left">
             Modify the details of your note and save your changes.
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <div className="bg-white  rounded-xl shadow-xl">
-          <div className="py-3 px-4 w-full flex justify-between">
+        <div className="  rounded-xl shadow-xl">
+          <div className="py-3 md:px-4 w-full flex justify-between">
             <input
               type="text"
               value={title}

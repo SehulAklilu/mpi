@@ -130,6 +130,7 @@ export function getMenuList(
             icon: Settings,
             submenus: [],
           },
+        
         ],
       },
     ];
@@ -137,3 +138,4 @@ export function getMenuList(
     return [];
   }
 }
+

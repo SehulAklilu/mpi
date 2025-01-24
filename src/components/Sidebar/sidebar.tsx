@@ -5,10 +5,13 @@ import Menu from "./menu";
 import { useSidebarToggle } from "@/context/SidebarToggleContext";
 import { SidebarToggle } from "./sidebar-toggler";
 import new_logo from "../../assets/logo/new-logo.svg";
+import { FaArrowLeft } from "react-icons/fa6";
+import { useState } from "react";
+import NotificationAlert from "../Notification/NotificationAlert";
 
 export function Sidebar() {
   const sidebar = useStore(() => useSidebarToggle());
-
+  const [isNotiOpen, setIsNotiOpen] = useState(false);
   if (!sidebar) return null;
 
   return (
@@ -18,8 +21,9 @@ export function Sidebar() {
         sidebar?.isOpen === false ? "w-[100px] bg-white " : "w-72 bg-white "
       )}
     >
+      {isNotiOpen && <NotificationAlert setIsNotiOpen={setIsNotiOpen} />}
       <SidebarToggle isOpen={sidebar?.isOpen} setIsOpen={sidebar?.setIsOpen} />
-      <div className="relative h-full bg-white flex flex-col px-3 py-4 overflow-y-auto shadow-md dark:shadow-zinc-800">
+      <div className=" h-full bg-white flex flex-col px-3 py-4 overflow-y-auto shadow-md dark:shadow-zinc-800">
         <Button
           className={cn(
             "transition-transform ease-in-out duration-300 mb-1",
@@ -46,7 +50,11 @@ export function Sidebar() {
             </h1> */}
           </a>
         </Button>
-        <Menu isOpen={sidebar?.isOpen} />
+        <Menu
+          isOpen={sidebar?.isOpen}
+          isNotiOpen={isNotiOpen}
+          setIsNotiOpen={setIsNotiOpen}
+        />
       </div>
     </aside>
   );

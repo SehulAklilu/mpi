@@ -43,15 +43,15 @@ const QuillEditor = () => {
   };
   return (
     <div className="bg-white  rounded-xl shadow-xl">
-      <div className="py-3 px-4 w-full flex justify-between">
+      <div className="py-3 px-4 w-full flex justify-between ">
         <input
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="p-2 text-xl font-semibold placeholder-gray-600 placeholder:font-bold appearance-none bg-transparent border-none focus:outline-none"
+          className="p-2 text-xl max-md:w-1/2 font-semibold placeholder-gray-600 placeholder:font-bold appearance-none bg-transparent border-none focus:outline-none"
           placeholder="Title..."
         />
-        <Button onClick={() => handleSave()} className="font-bold text-primary">
+        <Button onClick={() => handleSave()} className="font-bold  text-primary">
           {isLoading ? (
             <LoaderCircle
               style={{
