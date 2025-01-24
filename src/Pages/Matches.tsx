@@ -108,7 +108,7 @@ const page = () => {
 const PendingMatch = ({ result }: { result: PlayersArray }) => {
   return (
     <Link
-      to={"/matches/pendingMatch"}
+      to={"/matches/trackingMatch"}
       title="abcd"
       className="flex flex-col gap-2"
     >
