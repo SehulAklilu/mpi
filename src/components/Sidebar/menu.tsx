@@ -14,15 +14,14 @@ import nightMode from "../../assets/sidebar_svg/night-mode.svg";
 import notification from "../../assets/svg/notification.svg";
 import { getMenuList } from "@/lib/menu-list";
 import { useRole } from "@/RoleContext";
-import { useState } from "react";
 
 interface MenuProps {
   isOpen: boolean | undefined;
-  isNotiOpen: boolean;
-  setIsNotiOpen: Function;
+  isNotiOpen? : boolean,
+  setIsNotiOpen? : Function,
 }
 
-function Menu({ isOpen, isNotiOpen, setIsNotiOpen }: MenuProps) {
+function Menu({ isOpen }: MenuProps) {
   const location: Location<any> = useLocation();
   const { role } = useRole();
   const menuList = getMenuList(location, role);
@@ -137,7 +136,7 @@ function Menu({ isOpen, isNotiOpen, setIsNotiOpen }: MenuProps) {
               <img src={nightMode} alt="night mode" className="w-12" />
             </div>
 
-              {/* <TooltipProvider disableHoverableContent>
+            {/* <TooltipProvider disableHoverableContent>
               <Tooltip delayDuration={100}>
                 <TooltipTrigger asChild>
                   <Button
@@ -167,11 +166,10 @@ function Menu({ isOpen, isNotiOpen, setIsNotiOpen }: MenuProps) {
                 )}
               </Tooltip>
             </TooltipProvider> */}
-            </li>
-          </ul>
-        </nav>
-      </ScrollArea>
-    </>
+          </li>
+        </ul>
+      </nav>
+    </ScrollArea>
   );
 }
 

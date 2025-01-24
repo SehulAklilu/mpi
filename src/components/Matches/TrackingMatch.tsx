@@ -265,7 +265,8 @@ const OneGame = ({
       name: "SERVE RETURN WIN(+1)",
       onClick: () =>
         setSingleData((d) => ({
-          ...d,
+          ...initialData,
+          rallyCount: d.rallyCount,
           goalType: "serveReturnWin",
           winner: score.serve,
         })),
@@ -275,7 +276,8 @@ const OneGame = ({
       name: "SCORE (+1)",
       onClick: () =>
         setSingleData((d) => ({
-          ...d,
+          ...initialData,
+          rallyCount: d.rallyCount,
           goalType: "scoreByServer",
           winner: score.serve,
         })),
@@ -287,7 +289,8 @@ const OneGame = ({
       name: "FAULT",
       onClick: () =>
         setSingleData((d) => ({
-          ...d,
+          ...initialData,
+          rallyCount: d.rallyCount,
           goalType: "fault",
           winner: againest,
         })),
@@ -297,7 +300,8 @@ const OneGame = ({
       name: "SERVE RETURN LOSS(+1)",
       onClick: () =>
         setSingleData((d) => ({
-          ...d,
+          ...initialData,
+          rallyCount: d.rallyCount,
           goalType: "serveReturnLoss",
           winner: againest,
         })),
@@ -307,7 +311,8 @@ const OneGame = ({
       name: "SCORE(+1)",
       onClick: () =>
         setSingleData((d) => ({
-          ...d,
+          ...initialData,
+          rallyCount: d.rallyCount,
           goalType: "score",
           winner: againest,
         })),
@@ -319,25 +324,21 @@ const OneGame = ({
     return ["ace", "serveReturnWin", "fault"].includes(singleData.goalType);
   };
   const GroundstrokeCheck = () => {
-    return ["ace", "serveReturnWin", "scoreByServer", "fault"].includes(
-      singleData.goalType
-    );
+    return ["ace", "serveReturnWin", "fault"].includes(singleData.goalType);
   };
   const ApproachCheck = () => {
-    return ["ace", "serveReturnWin", "scoreByServer", "fault"].includes(
-      singleData.goalType
-    );
+    return ["ace", "serveReturnWin", "fault"].includes(singleData.goalType);
   };
   const VolleyCheck = () => {
-    return ["ace", "serveReturnWin", "scoreByServer", "fault"].includes(
-      singleData.goalType
-    );
+    return ["ace", "serveReturnWin", "fault"].includes(singleData.goalType);
   };
   const ForcedCheck = () => {
     return ["ace", "fault"].includes(singleData.goalType);
   };
   const UnforcedCheck = () => {
-    return ["ace", "serveReturnWin"].includes(singleData.goalType);
+    return ["ace", "serveReturnWin", "serveReturnLoss"].includes(
+      singleData.goalType
+    );
   };
   const NetCheck = () => {
     return ["ace"].includes(singleData.goalType);
@@ -408,102 +409,121 @@ const OneGame = ({
             />
           ))}
         </div>
-        <div className="flex flex-col gap-1 text-sm my-auto">
-          <div className="text-center">Hand Position</div>
-          <div className="flex flex-wrap justify-center gap-5">
-            <InnerButton
-              name="Backhand"
-              isActive={singleData.handPosition == "Backhand"}
-              disabled={getDisabled("Backhand")}
-              onClick={() => {
-                setSingleData((d) => ({ ...d, handPosition: "Backhand" }));
-              }}
-            />
-            <InnerButton
-              name="Forehand"
-              isActive={singleData.handPosition == "Forehand"}
-              disabled={getDisabled("Forehand")}
-              onClick={() => {
-                setSingleData((d) => ({ ...d, handPosition: "Forehand" }));
-              }}
-            />
-          </div>
-          <div className="text-center mt-4">Hit Type</div>
-          <div className="flex flex-wrap justify-center gap-3 content-center ">
-            <InnerButton
-              name="Groundstroke"
-              isActive={singleData.hitType == "Groundstroke"}
-              disabled={getDisabled("Groundstroke")}
-              onClick={() => {
-                setSingleData((d) => ({ ...d, hitType: "Groundstroke" }));
-              }}
-            />
-            <InnerButton
-              name="Approach"
-              isActive={singleData.hitType == "Approach"}
-              disabled={getDisabled("Approach")}
-              onClick={() => {
-                setSingleData((d) => ({ ...d, hitType: "Approach" }));
-              }}
-            />
-            <InnerButton
-              name="Volley"
-              isActive={singleData.hitType == "Volley"}
-              disabled={getDisabled("Volley")}
-              onClick={() => {
-                setSingleData((d) => ({ ...d, hitType: "Volley" }));
-              }}
-            />
-          </div>
-        </div>
-        <div className="flex flex-col gap-1 text-sm my-auto">
-          <div className="text-center">Error Type</div>
-          <div className="flex flex-wrap justify-center gap-5">
-            <InnerButton
-              name="Forced"
-              isActive={singleData.errorType == "Forced"}
-              disabled={getDisabled("Forced")}
-              onClick={() => {
-                setSingleData((d) => ({ ...d, errorType: "Forced" }));
-              }}
-            />
-            <InnerButton
-              name="Unforced"
-              isActive={singleData.errorType == "Unforced"}
-              disabled={getDisabled("Unforced")}
-              onClick={() => {
-                setSingleData((d) => ({ ...d, errorType: "Unforced" }));
-              }}
-            />
-          </div>
-          <div className="text-center mt-4">Error/Outside Ball Position</div>
-          <div className="flex flex-wrap justify-center gap-3 content-center ">
-            <InnerButton
-              name="Net"
-              isActive={singleData.ballPosition == "Net"}
-              disabled={getDisabled("Net")}
-              onClick={() => {
-                setSingleData((d) => ({ ...d, ballPosition: "Net" }));
-              }}
-            />
-            <InnerButton
-              name="Backcourt"
-              isActive={singleData.ballPosition == "Backcourt"}
-              disabled={getDisabled("Backcourt")}
-              onClick={() => {
-                setSingleData((d) => ({ ...d, ballPosition: "Backcourt" }));
-              }}
-            />
-            <InnerButton
-              name="Alley"
-              isActive={singleData.ballPosition == "Alley"}
-              disabled={getDisabled("Alley")}
-              onClick={() => {
-                setSingleData((d) => ({ ...d, ballPosition: "Alley" }));
-              }}
-            />
-          </div>
-        </div>
+        {singleData.goalType == "" ? (
+          <>
+            <div></div>
+            <div></div>
+          </>
+        ) : (
+          <>
+            <div className="flex flex-col gap-1 text-sm my-auto">
+              <div className="text-center">Hand Position</div>
+              <div className="flex flex-wrap justify-center gap-5">
+                <InnerButton
+                  name="Backhand"
+                  isActive={singleData.handPosition == "Backhand"}
+                  disabled={getDisabled("Backhand")}
+                  onClick={() => {
+                    setSingleData((d) => ({ ...d, handPosition: "Backhand" }));
+                  }}
+                />
+                <InnerButton
+                  name="Forehand"
+                  isActive={singleData.handPosition == "Forehand"}
+                  disabled={getDisabled("Forehand")}
+                  onClick={() => {
+                    setSingleData((d) => ({ ...d, handPosition: "Forehand" }));
+                  }}
+                />
+              </div>
+              <div className="text-center mt-4">Hit Type</div>
+              <div className="flex flex-wrap justify-center gap-3 content-center ">
+                <InnerButton
+                  name="Groundstroke"
+                  isActive={singleData.hitType == "Groundstroke"}
+                  disabled={getDisabled("Groundstroke")}
+                  onClick={() => {
+                    setSingleData((d) => ({ ...d, hitType: "Groundstroke" }));
+                  }}
+                />
+                <InnerButton
+                  name="Approach"
+                  isActive={singleData.hitType == "Approach"}
+                  disabled={getDisabled("Approach")}
+                  onClick={() => {
+                    setSingleData((d) => ({ ...d, hitType: "Approach" }));
+                  }}
+                />
+                <InnerButton
+                  name="Volley"
+                  isActive={singleData.hitType == "Volley"}
+                  disabled={getDisabled("Volley")}
+                  onClick={() => {
+                    setSingleData((d) => ({ ...d, hitType: "Volley" }));
+                  }}
+                />
+              </div>
+            </div>
+            <div className="flex flex-col gap-1 text-sm my-auto">
+              <div className="text-center">Error Type</div>
+              <div className="flex flex-wrap justify-center gap-5">
+                <InnerButton
+                  name="Forced"
+                  isActive={
+                    singleData.errorType == "Forced" ||
+                    singleData.goalType == "serveReturnLoss" ||
+                    singleData.goalType == "serveReturnWin"
+                  }
+                  disabled={getDisabled("Forced")}
+                  onClick={() => {
+                    setSingleData((d) => ({ ...d, errorType: "Forced" }));
+                  }}
+                />
+                <InnerButton
+                  name="Unforced"
+                  isActive={
+                    singleData.errorType == "Unforced" ||
+                    singleData.goalType == "fault"
+                  }
+                  disabled={getDisabled("Unforced")}
+                  onClick={() => {
+                    setSingleData((d) => ({ ...d, errorType: "Unforced" }));
+                  }}
+                />
+              </div>
+              <div className="text-center mt-4">
+                Error/Outside Ball Position
+              </div>
+              <div className="flex flex-wrap justify-center gap-3 content-center ">
+                <InnerButton
+                  name="Net"
+                  isActive={singleData.ballPosition == "Net"}
+                  disabled={getDisabled("Net")}
+                  onClick={() => {
+                    setSingleData((d) => ({ ...d, ballPosition: "Net" }));
+                  }}
+                />
+                <InnerButton
+                  name="Backcourt"
+                  isActive={singleData.ballPosition == "Backcourt"}
+                  disabled={getDisabled("Backcourt")}
+                  onClick={() => {
+                    setSingleData((d) => ({ ...d, ballPosition: "Backcourt" }));
+                  }}
+                />
+                <InnerButton
+                  name="Alley"
+                  isActive={singleData.ballPosition == "Alley"}
+                  disabled={getDisabled("Alley")}
+                  onClick={() => {
+                    setSingleData((d) => ({ ...d, ballPosition: "Alley" }));
+                  }}
+                />
+              </div>
+            </div>
+          </>
+        )}
+
         <div className="flex flex-col gap-3 text-sm items-center">
           {rightData.map((data, ind) => (
             <GamePointButtons
