@@ -15,7 +15,7 @@ import { ChatItems } from "./ChatComponent";
 import NoMessage from "./NoMessage";
 
 interface GroupChatProps {
-  setActiveTab?: (tab: string) => void;
+  setActiveTab: (tab: string) => void;
 }
 
 function GroupChat({ setActiveTab }: GroupChatProps) {
@@ -80,11 +80,7 @@ function GroupChat({ setActiveTab }: GroupChatProps) {
               size={36}
               className="invisible text-[#F2851C] flex-none "
             />
-            <CustomTabs
-              setActiveTab={() => {
-                return setActiveTab ? setActiveTab : () => {};
-              }}
-            />
+            <CustomTabs setActiveTab={setActiveTab} />
           </div>
           <div className="flex gap-x-2 items-center p-4 rounded-lg">
             <Input

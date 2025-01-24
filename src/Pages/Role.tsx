@@ -35,14 +35,14 @@ const roles = [
 ];
 
 const Role: React.FC<RoleProps> = ({ onUpdate }) => {
-  const {role, setRole } = useRole();
+  const { role, setRole } = useRole();
   const [selected, setSelected] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
   const handleSelected = (value: string) => {
     setSelected(value);
-    setRole(value as any);
+    // setRole(value);
     onUpdate(value);
   };
 
@@ -51,7 +51,7 @@ const Role: React.FC<RoleProps> = ({ onUpdate }) => {
       setError("Please select a role");
       return;
     }
-  
+
     const data = {
       role: selected,
       // Add other required fields here
@@ -68,10 +68,13 @@ const Role: React.FC<RoleProps> = ({ onUpdate }) => {
       // emailNotificationEnabled: false,
       // zipCode: "1000"
     };
-  
+
     try {
-      const response = await axios.post('http://116.203.117.190:5000/api/role', data);
-  
+      const response = await axios.post(
+        "http://116.203.117.190:5000/api/role",
+        data
+      );
+
       if (response.status === 201) {
         setSuccess("Role selected successfully");
         setError(null);
@@ -79,7 +82,7 @@ const Role: React.FC<RoleProps> = ({ onUpdate }) => {
         setError("Role selection failed");
         setSuccess(null);
       }
-    } catch (error : any) {
+    } catch (error: any) {
       if (error.response) {
         setError(error.response.data.message || "Role selection failed");
       } else {
@@ -88,7 +91,6 @@ const Role: React.FC<RoleProps> = ({ onUpdate }) => {
       setSuccess(null);
     }
   };
-  
 
   return (
     <div className="">

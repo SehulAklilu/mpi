@@ -5,7 +5,7 @@ import { RiGroupLine } from "react-icons/ri";
 import { IoCalendarNumberOutline } from "react-icons/io5";
 import { Location } from "react-router-dom";
 import { Role } from "@/types/auth.type";
-import Vs from "../assets/svg/vs.svg";
+import vs from "../assets/svg/vs.svg";
 import { PiUsersThree } from "react-icons/pi";
 
 type Submenu = {
@@ -97,8 +97,8 @@ export function getMenuList(
           {
             href: "/matches",
             label: "Matches",
-            active: location.pathname.includes("/matches"),
-            icon: IoCalendarNumberOutline,
+            active: location.pathname === "/matches",
+            icon: vs,
             svgType: true,
             submenus: [],
           },
