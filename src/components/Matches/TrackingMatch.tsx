@@ -50,7 +50,7 @@ interface GameState {
   events: Events; // Tracks game events
 }
 
-type PointInf = 0 | 15 | 30 | 40 | "A";
+type PointInf = number | "A";
 interface ScoreInf {
   gameScore: {
     player1: PointInf;
@@ -95,15 +95,15 @@ const getAgainest = (player: "player1" | "player2"): "player1" | "player2" => {
 
 function TrackingMatch() {
   const [dataTracker, setDataTracker] = useState<dataTrackerType[]>([]);
-
+  const [isTieBreak, setIsTieBreak] = useState(false);
   const [score, setScore] = useState<ScoreInf>({
     matchScore: {
       player1: 0,
       player2: 0,
     },
     setScore: {
-      player1: 0,
-      player2: 0,
+      player1: 4,
+      player2: 4,
     },
     gameScore: {
       player1: 0,
@@ -126,7 +126,7 @@ function TrackingMatch() {
     const newPoint = winnerMatchPoint + 1;
     setScore((data) => ({
       ...data,
-      setMatch: { ...data["setScore"], [winner]: newPoint },
+      matchScore: { ...data["setScore"], [winner]: newPoint },
     }));
     if (newPoint == 2) {
       alert(winner + " Winnes");
@@ -138,11 +138,20 @@ function TrackingMatch() {
     const againest = getAgainest(winner);
     const againestSetPoint = score.setScore[againest];
     const newPoint = winnerSetPoint + 1;
+    if (isTieBreak) {
+      resetScore("setScore");
+      setIsTieBreak(false);
+      updateMatch(winner);
+      return;
+    }
     setScore((data) => ({
       ...data,
       setScore: { ...data["setScore"], [winner]: newPoint, serve: againest },
       serve: getAgainest(data.serve),
     }));
+    if (newPoint == 6 && 6 == againestSetPoint) {
+      setIsTieBreak(true);
+    }
     if (newPoint > 5 && newPoint - againestSetPoint > 1) {
       resetScore("setScore");
       updateMatch(winner);
@@ -159,6 +168,23 @@ function TrackingMatch() {
     const winnerPoint = score.gameScore[winner];
     const againest = getAgainest(winner);
     const againestPoint = score.gameScore[againest];
+    if (isTieBreak && winnerPoint != "A" && againestPoint != "A") {
+      const nextpoint = winnerPoint + 1;
+      setScore((data) => ({
+        ...data,
+        gameScore: {
+          ...data.gameScore,
+          [winner]: nextpoint,
+          serve: getAgainest(data.serve),
+        },
+      }));
+
+      if (nextpoint > 6 && nextpoint - againestPoint > 1) {
+        resetScore("gameScore");
+        updateSet(winner);
+      }
+      return;
+    }
     if (winnerPoint != 40 && winnerPoint != "A") {
       const nextpoint = getNextPoint(winnerPoint);
       setScore((data) => ({
@@ -253,7 +279,7 @@ const OneGame = ({
     setSingleData({ ...initialData });
   };
   const againest = getAgainest(score.serve);
-
+  const [isOnFault, setIsOnFault] = useState(false);
   const leftData = [
     {
       name: "ACE(+1)",
@@ -286,7 +312,7 @@ const OneGame = ({
   ];
   const rightData = [
     {
-      name: "FAULT",
+      name: isOnFault ? "Double Fault" : "FAULT",
       onClick: () =>
         setSingleData((d) => ({
           ...initialData,
@@ -543,10 +569,15 @@ const OneGame = ({
         // disabled={player == null}
         onClick={() => {
           if (singleData.goalType != "") {
-            console.log("okay");
-            addPoint(singleData.winner);
+            if (singleData.goalType == "fault") {
+              if (isOnFault) {
+                addPoint(singleData.winner);
+              }
+              setIsOnFault((d) => !d);
+            } else {
+              addPoint(singleData.winner);
+            }
             reset();
-            console.log("okay");
           }
         }}
         className={`px-8 py-2 rounded-full ${
