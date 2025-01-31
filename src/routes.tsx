@@ -35,11 +35,12 @@ import AddMatch from "./Pages/AddMatch.tsx";
 import RecentMatch from "./components/Matches/RecentMatch.tsx";
 import Matches from "./Pages/Matches.tsx";
 import PendingMatch from "./components/Matches/PendingMatch.tsx";
+import LandingPage from "./Pages/LandingPage.tsx";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Home />,
+    element: <LandingPage />,
     children: [
       {
         element: <PrivateRoute allowedRoles={["coach", "player"]} />,

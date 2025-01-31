@@ -1,7 +1,7 @@
 import { SheetMenu } from "../Sidebar/sheet-menu";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FaCircleChevronLeft } from "react-icons/fa6";
-import { NavbarNew } from "../Navbar/NavbarNew";
+import { Navbar, links } from "../Navbar/NavbarNew";
 
 interface ContentLayoutProps {
   children: React.ReactNode;
@@ -51,7 +51,7 @@ export function ContentLayout({ children, name }: ContentLayoutProps) {
       )}
       {!isChildRoute() && !excludeNavbar.includes(location.pathname) ? (
         <div className="flex pt-2 sm:pt-0 items-center justify-center pl-8 w-full">
-          <NavbarNew />
+          <Navbar links={links}/>
         </div>
       ) : null}
       <div>{children}</div>
