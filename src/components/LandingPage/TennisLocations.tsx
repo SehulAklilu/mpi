@@ -26,7 +26,7 @@ const TennisLocations = () => {
         setVisibleLocations(locations.slice(newIndex, newIndex + 3));
         return newIndex;
       });
-    }, 3000);
+    }, 2500);
 
     return () => clearInterval(interval);
   }, []);
