@@ -16,13 +16,13 @@ const CustomButton = ({
         className
       )}
     >
-      <span>{title}</span>
+      <span className="text-sm sm:text-base">{title}</span>
       <div
         className={
-          "w-8 h-8 flex items-center justify-center rounded-full bg-white hover:bg-primary border border-primary hover:border-white"
+          "w-8 h-8 flex items-center justify-center rounded-full bg-white hover:bg-primary border flex-shrink-0 border-primary hover:border-white"
         }
       >
-        <FiArrowUpRight size={24} className="text-primary hover:text-white" />
+        <FiArrowUpRight size={24} className="text-primary hover:text-white " />
       </div>
     </button>
   );

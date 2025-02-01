@@ -2,7 +2,7 @@ import image6 from "../../assets/landingpage/image6.png";
 import image7 from "../../assets/landingpage/image7.png";
 import image15 from "../../assets/landingpage/image15.png";
 import CustomButton from "./CustomButton";
-
+import "./footer.css";
 interface CardIinterface {
   id: number;
   image: string;
@@ -49,7 +49,7 @@ const TrainingCard = ({
   buttonText,
 }: CardIinterface) => {
   return (
-    <div className="bg-white rounded-3xl flex flex-col items-start shadow p-4 space-y-6 border border-gray-200 w-full sm:w-[90%] md:w-[75%] lg:max-w-md flex-shrink-0">
+    <div className="bg-white rounded-3xl flex flex-col items-start shadow p-4 space-y-6 border border-gray-200 w-full sm:w-[70%] md:max-w-md lg:max-w-[26rem] flex-shrink-0">
       <div>
         <img
           src={image}
@@ -57,7 +57,9 @@ const TrainingCard = ({
           className="w-full h-72  object-cover rounded-t-2xl"
         />
         <h3 className="text-xl font-bold mt-4">{title}</h3>
-        <p className="text-gray-600 mt-2 max-w-md">{description}</p>
+        <p className="text-gray-600 text-sm sm:text-base mt-2 max-w-md">
+          {description}
+        </p>
       </div>
       <CustomButton title={buttonText} />
     </div>
@@ -66,7 +68,7 @@ const TrainingCard = ({
 
 const TrainingSection = () => {
   return (
-    <div className="flex container mx-auto gap-6 overflow-x-auto scrollbar-hidden p-2 lg:p-0 my-4 sm:my-10 md:my-20">
+    <div className="flex justify-between container mx-auto gap-6 overflow-x-auto scrollbar-hidden-custom p-2 lg:p-0 my-4 sm:my-10 md:my-20">
       {cardData.map((card) => (
         <TrainingCard key={card.id} {...card} />
       ))}

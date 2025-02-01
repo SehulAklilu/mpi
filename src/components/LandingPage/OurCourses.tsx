@@ -46,8 +46,8 @@ function OurCourses() {
     setIndex((prevIndex) => (prevIndex - 1 + slides.length) % slides.length);
   };
   return (
-    <div className="p-2 sm:p-0 ">
-      <div className="relative  my-5  sm:my-10 md:my-20 container mx-auto min-h-[80vh] bg-[#F5F6F9] shadow-lg rounded-3xl px-6 md:px-10 py-6 ">
+    <div className="p-2 md:p-0 ">
+      <div className="relative  my-5  sm:my-10 md:my-20 container mx-auto min-h-[80vh] border bg-[#F5F6F9] shadow-lg rounded-3xl px-6 md:px-10 py-6 ">
         <div className="flex flex-col md:flex-row justify-between items-center my-6 px-4 md:px-10 gap-4">
           <div className="flex flex-col md:flex-row items-center justify-center gap-0 sm:gap-2 md:gap-4 xl:gap-6">
             <button className="px-4 py-2 border border-black rounded-full text-sm font-semibold ">
@@ -57,7 +57,7 @@ function OurCourses() {
               Unleash Your Tennis Potential
             </h1>
           </div>
-          <CustomButton title="Discover More" className="hidden sm:flex" />
+          <CustomButton title="Discover More" className="hidden md:flex" />
         </div>
 
         <div className="w-full overflow-x-hidden py-4">
@@ -129,7 +129,7 @@ function OurCourses() {
             court.
           </p>
         </div>
-        <div className="w-full  flex sm:hidden justify-center items-center my-1">
+        <div className="w-full  flex md:hidden justify-center items-center my-1">
           <CustomButton title="Discover More" />
         </div>
 

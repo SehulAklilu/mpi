@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import image9 from "../../assets/landingpage/image9.png";
-
+import { motion, AnimatePresence } from "framer-motion";
 const locations = [
   "Highlands Ranch, CO",
   "Castle Rock, CO",
@@ -14,13 +14,30 @@ const locations = [
 ];
 
 const TennisLocations = () => {
+  const [visibleLocations, setVisibleLocations] = useState(
+    locations.slice(0, 3)
+  );
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIndex((prevIndex) => {
+        const newIndex = (prevIndex + 3) % locations.length;
+        setVisibleLocations(locations.slice(newIndex, newIndex + 3));
+        return newIndex;
+      });
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="relative w-full container my-4 sm:my-10 lg:my-20 mx-auto p-2 sm:p-0">
       <div
         className="relative bg-cover bg-center rounded-2xl overflow-hidden min-h-[550px] flex items-center justify-center"
         style={{ backgroundImage: `url(${image9})` }}
       >
-        <div className="absolute bg-black bg-opacity-50 w-[90%] h-[80%] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-2xl"></div>
+        <div className="absolute bg-black bg-opacity-50 w-[96%] sm:w-[90%] h-[80%] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-2xl"></div>
         <div className="z-10 text-center text-white px-6">
           <h2 className="text-2xl md:text-3xl font-bold mb-4">
             Elevate Your Tennis Journey with MPI
@@ -34,35 +51,28 @@ const TennisLocations = () => {
           </p>
 
           {/* Locations Section */}
-          <div className="hidden sm:grid grid-cols-2 md:grid-cols-4 gap-4">
-            {locations.map((location, index) => (
-              <div
-                key={index}
-                className="flex items-center bg-black bg-opacity-40 rounded-full pr-4 pl-1 py-1 text-white"
-              >
-                <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center mr-2">
-                  <FaMapMarkerAlt size={24} className="text-orange-500" />
-                </div>
-                <span className="text-sm font-semibold">{location}</span>
-              </div>
-            ))}
-          </div>
-
-          <div className="hidden border border-white w-full h-[6rem] overflow-hidden z-50">
-            <div className="flex overflow-x-auto space-x-4 w-max">
-              {locations.map((location, index) => (
-                <div
-                  key={index}
-                  className="flex flex-col items-center bg-black bg-opacity-40 rounded-lg w-24 h-24 p-2 text-white"
+          <div className="w-full h-[6rem] flex justify-center items-center">
+            <div className="grid grid-cols-3 gap-4">
+              {/* <AnimatePresence> */}
+              {visibleLocations.map((location, i) => (
+                <motion.div
+                  key={location}
+                  className="flex flex-col items-center bg-black bg-opacity-40 rounded-lg w-20 h-20 sm:w-24 sm:h-24 p-2 text-white shadow-lg"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  transition={{ duration: 0.5, delay: i * 0.1 }}
+                  layout
                 >
-                  <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center mb-2">
+                  <div className="w-6 h-6 sm:w-10 sm:h-10 rounded-full bg-white flex items-center justify-center mb-2">
                     <FaMapMarkerAlt size={20} className="text-orange-500" />
                   </div>
                   <span className="text-xs font-semibold text-center">
                     {location}
                   </span>
-                </div>
+                </motion.div>
               ))}
+              {/* </AnimatePresence> */}
             </div>
           </div>
         </div>

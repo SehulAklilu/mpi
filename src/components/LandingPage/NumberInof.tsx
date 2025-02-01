@@ -10,7 +10,7 @@ function NumberInof() {
     { value: 15, title: "Traning Awards Won" },
   ];
   return (
-    <div className="p-2 sm:p-0">
+    <div className="p-2 md:p-0">
       <div
         className="h-[90vh] my-4 sm:my-10 md:my-20 relative container mx-auto rounded-3xl bg-cover bg-center px-4"
         style={{ backgroundImage: `url(${image5})` }}
@@ -28,11 +28,11 @@ function NumberInof() {
               features courses tailored for every age and skill level, fostering
               improvement while ensuring enjoyment on the court.
             </p>
-            <div className="flex flex-wrap justify-center gap-2 sm:gap-6 md:gap-10">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-6 md:gap-10">
               {numberInfos?.map((info, index) => (
                 <div
                   key={index}
-                  className="flex flex-col gap-y-2 md:gap-y-4 px-6 md:px-10 border-r-0 sm:border-r border-white  last:border-r-0"
+                  className="flex flex-col gap-y-2 md:gap-y-4 px-6 md:px-10 border-r-0 md:border-r border-white  last:border-r-0"
                 >
                   <h1 className="text-3xl md:text-4xl font-semibold">
                     {info.value}

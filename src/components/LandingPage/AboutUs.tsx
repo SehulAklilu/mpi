@@ -58,10 +58,10 @@ function AboutUs() {
     <div>
       <section className="container my-5 md:my-20 mx-auto  py-10 grid lg:grid-cols-5 gap-10 items-center">
         <div className="col-span-2 w-full flex flex-col items-center justify-center md:block md:w-[90%] space-y-4 md:space-y-8 ml-4 md:pr-0">
-          <button className="px-4 py-2 border border-black rounded-full text-sm font-semibold mb-4">
+          <button className="px-4 py-2 border border-black rounded-full text-sm font-semibold mb-2 sm:mb-4">
             About Us
           </button>
-          <h1 className="text-4xl md:text-5xl text-center md:text-left font-bold mb-4">
+          <h1 className="text-3xl sm:4xl md:text-5xl text-center md:text-left font-bold mb-4">
             Unlock Your Potential with{" "}
             <span className="text-orange-500">
               MPI's Tennis Training Center.

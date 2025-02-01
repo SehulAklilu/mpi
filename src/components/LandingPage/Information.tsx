@@ -58,7 +58,7 @@ function Information() {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-10  my-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10  my-8">
         <div
           key={sections[currentIndex].id}
           className="grid grid-cols-1 md:grid-cols-2 gap-4 rounded-3xl bg-primary text-white p-4"
@@ -88,10 +88,15 @@ function Information() {
                 {sections[currentIndex].title}
               </h1>
               <p className="">{sections[currentIndex].description}</p>
-              <button className="mt-3 flex items-center py-1 gap-2 bg-white rounded-full pl-4 pr-1">
-                <span className="text-black">Request a Consultation</span>
-                <div className="w-8 h-8 flex items-center justify-center rounded-full bg-primary">
-                  <FiArrowUpRight size={24} className="text-white" />
+              <button className="mt-3 flex items-center py-1 gap-2 hover bg-white rounded-full pl-4 pr-1 transition-colors duration-300 hover:bg-primary border border-primary hover:border-white group">
+                <span className="text-black transition-colors duration-300 group-hover:text-white">
+                  Request a Consultation
+                </span>
+                <div className="w-8 h-8 flex items-center justify-center rounded-full bg-primary transition-colors duration-300 group-hover:bg-white">
+                  <FiArrowUpRight
+                    size={24}
+                    className="text-white transition-colors duration-300 group-hover:text-primary"
+                  />
                 </div>
               </button>
             </motion.div>
@@ -123,7 +128,7 @@ function Information() {
         </div>
 
         <div className="my-auto hidden sm:block">
-          <h1 className="text-4xl mb-4 w-[75%] font-bold">
+          <h1 className="text-3xl md:text-4xl mb-4 w-[75%] font-bold">
             Transform Your Tennis Exh1erience with{" "}
             <span className="text-primary">MPI</span>
           </h1>

@@ -1,6 +1,7 @@
 import AboutUs from "@/components/LandingPage/AboutUs";
 import TrainingSection from "@/components/LandingPage/Cards";
 import ContactUs from "@/components/LandingPage/ContactUs";
+import Courses from "@/components/LandingPage/Courses";
 import FAQSection from "@/components/LandingPage/FAQSection";
 import Footer from "@/components/LandingPage/Footer";
 import Hero from "@/components/LandingPage/Hero";
@@ -14,6 +15,7 @@ import TrainingBanner from "@/components/LandingPage/TrainingBanner";
 function LandingPage() {
   return (
     <div>
+      {/* <Courses /> */}
       <Hero />
       <AboutUs />
       <Information />
