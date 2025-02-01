@@ -11,7 +11,7 @@ import {
   IoLogoTwitter,
   IoLogoYoutube,
 } from "react-icons/io5";
-
+import "./footer.css";
 function ContactUs() {
   const contactInfos = [
     {
@@ -57,13 +57,13 @@ function ContactUs() {
   ];
 
   return (
-    <div className="container mx-auto my-10 px-4 sm:px-6 lg:px-8">
+    <div className="container mx-auto my-10">
       <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-6">
         Connect With Us
       </h2>
 
       {/* Scrollable Container */}
-      <div className="flex space-x-6 overflow-x-auto scrollbar-hide px-2 sm:px-4">
+      <div className="flex space-x-6 overflow-x-auto scrollbar-hidden-custom px-2 ">
         {contactInfos.map((contactInfo, index) => (
           <div
             key={index}

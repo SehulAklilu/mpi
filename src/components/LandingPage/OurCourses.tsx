@@ -49,8 +49,8 @@ function OurCourses() {
     <div className="p-2 sm:p-0 ">
       <div className="relative  my-5  sm:my-10 md:my-20 container mx-auto min-h-[80vh] bg-[#F5F6F9] shadow-lg rounded-3xl px-6 md:px-10 py-6 ">
         <div className="flex flex-col md:flex-row justify-between items-center my-6 px-4 md:px-10 gap-4">
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-0 sm:gap-2 md:gap-4">
-            <button className="px-4 py-2 border border-black rounded-full text-sm font-semibold mb-4">
+          <div className="flex flex-col md:flex-row items-center justify-center gap-0 sm:gap-2 md:gap-4 xl:gap-6">
+            <button className="px-4 py-2 border border-black rounded-full text-sm font-semibold ">
               Our Courses
             </button>
             <h1 className="text-lg md:text-2xl font-bold text-center md:text-left">
