@@ -6,6 +6,7 @@ import image7 from "../../assets/landingpage/image5.png";
 import stars from "../../assets/landingpage/stars.svg";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import "./footer.css";
 function Information() {
   const infos = [
     "Tennis Games",
@@ -45,21 +46,22 @@ function Information() {
   };
 
   return (
-    <section className="container my-20 mx-auto min-h-[90vh]">
-      <div className="flex gap-2 justify-around ">
+    <section className="container my-5 md:my-20 mx-auto min-h-[90vh] p-2">
+      <div className="flex gap-2 justify-around overflow-x-auto scrollbar-hidden px-2 md:px-0">
         {infos.map((info) => (
-          <div
-            className="px-8 py-2 border border-black rounded-full"
+          <button
+            className="px-4 md:px-8 py-2 border border-black flex-none rounded-full"
             key={info}
           >
             {info}
-          </div>
+          </button>
         ))}
       </div>
-      <div className="grid grid-cols-2 gap-10  my-8">
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10  my-8">
         <div
           key={sections[currentIndex].id}
-          className="grid grid-cols-2 gap-1 rounded-3xl bg-primary text-white p-4"
+          className="grid grid-cols-1 md:grid-cols-2 gap-4 rounded-3xl bg-primary text-white p-4"
         >
           <motion.div
             key={sections[currentIndex].id}
@@ -70,7 +72,7 @@ function Information() {
           >
             <img
               src={sections[currentIndex].image}
-              className="h-[65vh] w-full rounded-3xl object-cover"
+              className="h-[30vh] sm:h-[50vh] md:h-[75vh] w-full rounded-3xl object-cover"
             />
           </motion.div>
           <div>
@@ -80,9 +82,11 @@ function Information() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.5 }}
-              className="space-y-8 py-4 px-4"
+              className="space-y-2 sm:space-y-4 md:space-y-8 py-4 px-4"
             >
-              <h1 className="text-3xl">{sections[currentIndex].title}</h1>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl">
+                {sections[currentIndex].title}
+              </h1>
               <p className="">{sections[currentIndex].description}</p>
               <button className="mt-3 flex items-center py-1 gap-2 bg-white rounded-full pl-4 pr-1">
                 <span className="text-black">Request a Consultation</span>
@@ -117,7 +121,8 @@ function Information() {
             </div>
           </div>
         </div>
-        <div className="my-auto">
+
+        <div className="my-auto hidden sm:block">
           <h1 className="text-4xl mb-4 w-[75%] font-bold">
             Transform Your Tennis Exh1erience with{" "}
             <span className="text-primary">MPI</span>

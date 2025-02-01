@@ -11,7 +11,7 @@ const CustomButton = ({
   return (
     <button
       className={clsx(
-        "mt-3 flex items-center py-1 gap-4 rounded-full pl-4 pr-1 transition-all",
+        "mt-3 flex flex-shrink-0 items-center py-1 gap-4 rounded-full pl-4 pr-1 transition-all",
         "bg-primary text-white hover:bg-white hover:text-primary border border-transparent hover:border-primary",
         className
       )}

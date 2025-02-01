@@ -56,18 +56,18 @@ function AboutUs() {
 
   return (
     <div>
-      <section className="container my-20 mx-auto  py-10 grid md:grid-cols-4 gap-10 items-center">
-        <div className="col-span-2 w-[80%] space-y-8">
+      <section className="container my-5 md:my-20 mx-auto  py-10 grid lg:grid-cols-5 gap-10 items-center">
+        <div className="col-span-2 w-full flex flex-col items-center justify-center md:block md:w-[90%] space-y-4 md:space-y-8 ml-4 md:pr-0">
           <button className="px-4 py-2 border border-black rounded-full text-sm font-semibold mb-4">
             About Us
           </button>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
+          <h1 className="text-4xl md:text-5xl text-center md:text-left font-bold mb-4">
             Unlock Your Potential with{" "}
             <span className="text-orange-500">
               MPI's Tennis Training Center.
             </span>
           </h1>
-          <p className="text-gray-600 text-base lg:text-lg mb-6">
+          <p className="text-gray-600 text-base text-center md:text-left lg:text-lg mb-6">
             Our training center offers immersive programs tailored for players
             of all ages, ensuring a pivotal blend of passion and performance to
             elevate your game.
@@ -75,10 +75,10 @@ function AboutUs() {
           <CustomButton title="Connect with Us" />
         </div>
 
-        <div className="col-span-2 w-full flex flex-col items-center">
+        <div className="col-span-3 w-full flex flex-col items-center p-2 md:p-0">
           <div className="relative w-full max-w-4xl mx-auto flex gap-4">
             {/* Taller Image - Next Image Preloaded */}
-            <div className="w-1/2 h-[460px] rounded-xl overflow-hidden shadow-lg relative">
+            <div className="w-1/2 h-[460px] hidden md:block rounded-xl overflow-hidden shadow-lg relative">
               <motion.img
                 key={index}
                 src={slides[index % slides.length].image}
@@ -99,7 +99,7 @@ function AboutUs() {
               </div>
             </div>
 
-            <div className="flex flex-col space-y-4 w-1/2">
+            <div className="flex flex-col space-y-4 w-full md:w-1/2">
               <motion.div
                 key={index + 1}
                 className="relative h-[380px] rounded-xl overflow-hidden shadow-lg"

@@ -42,7 +42,7 @@ const FAQSection = () => {
   };
 
   return (
-    <div className="container mx-auto my-20">
+    <div className="container mx-auto my-4 sm:my-10 lg:my-20 p-2 sm:p-0">
       <h2 className="text-3xl font-bold text-center mb-6">
         Frequently <span className="text-orange-500">Asked Questions</span>
       </h2>

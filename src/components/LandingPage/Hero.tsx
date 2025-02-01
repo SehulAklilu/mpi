@@ -23,30 +23,29 @@ function Hero() {
 
       {/* Nav bar */}
 
-      <div className="flex !sticky top-0 justify-between bg-[#EFEFED] items-center left-0 w-full p-4 z-50">
+      <div className="flex !sticky top-0 justify-between bg-[#EFEFED] border  items-center left-0 w-full p-4 z-50">
         <div className="flex gap-24">
           <img className="w-36 z-50" src={logo} />
-          <div className="hidden md:block">
+          <div className="hidden xl:block">
             <Navbar links={heroLinks} />
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 md:gap-6">
           <div className="hidden md:flex pl-4 pr-1 py-1 rounded-full border bg-white items-center gap-4 hover:bg-gray-100 cursor-pointer ml-4 ">
             <span className="font-bold">LOGIN / SIGNUP</span>
             <div className="w-10 h-10 flex items-center justify-center rounded-full bg-primary">
               <FiArrowUpRight size={24} className="text-white" />
             </div>
           </div>
-          <div className="block md:hidden">
+          <div className="block xl:hidden">
             <MobileNavbar links={heroLinks} />
           </div>
         </div>
       </div>
-
-      <section className="relative mx-auto container w-full bg-transparent z-10">
-        <div className="  flex flex-col md:flex-row items-center px-6 md:px-12 justify-between gap-x-12">
+      <section className="relative mx-auto container w-full bg-transparent z-10 mt-0 md:mt-20 xl:mt-0 flex items-center justify-center min-h-[80Vh] md:min-h-[auto]">
+        <div className="  flex flex-col md:flex-row   items-center lg:px-12 justify-between gap-x-12">
           {/* Left Content */}
-          <div className="w-full  md:w-1/2 text-center  md:text-left">
+          <div className="flex flex-col justify-between items-center my-auto md:block w-full   md:w-1/2 text-center  md:text-left">
             <h1 className="text-4xl  md:text-5xl font-bold text-gray-900">
               <span className="py-1">Elevate Your</span>
               <span className="text-orange-500 block py-2">Tennis Game</span>
@@ -64,8 +63,8 @@ function Hero() {
           </div>
 
           {/* Right Content (Image Section) */}
-          <div className="w-full  md:w-1/2 relative hidden md:block">
-            <img src={bgt} alt="Tennis Court" className="rounded-3xl w-[98%]" />
+          <div className="w-full md:w-[60%] lg:w-1/2 relative hidden md:block">
+            <img src={bgt} alt="Tennis Court" className="rounded-3xl w-full" />
             {/* Overlay Box */}
             <div className="absolute bottom-4 right-8 w-3/4 p-4 rounded-lg border border-white">
               <h3 className="text-lg font-semibold text-white">
@@ -86,3 +85,41 @@ function Hero() {
 }
 
 export default Hero;
+//  <section className="relative mx-auto container w-full bg-transparent z-10 mt-0 md:mt-20 xl:mt-0">
+//         <div className="  flex flex-col md:flex-row items-center px-6 md:px-12 justify-between gap-x-12">
+//           {/* Left Content */}
+//           <div className="w-full  md:w-1/2 text-center  md:text-left">
+//             <h1 className="text-4xl  md:text-5xl font-bold text-gray-900">
+//               <span className="py-1">Elevate Your</span>
+//               <span className="text-orange-500 block py-2">Tennis Game</span>
+//               <span className="py-1">with MPI!</span>
+//             </h1>
+//             <p className="mt-4 px-4 text-gray-600 text-lg">
+//               Our Tennis Training Center is dedicated to nurturing talent and
+//               enhancing skills through specialized courses tailored for players
+//               of all levels. Experience personal growth with top-tier facilities
+//               and innovative tools.
+//             </p>
+//             <div className="mt-6">
+//               <CustomButton title="Connect with Us Today" />
+//             </div>
+//           </div>
+
+//           {/* Right Content (Image Section) */}
+//           <div className="w-full  md:w-1/2 relative hidden md:block">
+//             <img src={bgt} alt="Tennis Court" className="rounded-3xl w-full" />
+//             {/* Overlay Box */}
+//             <div className="absolute bottom-4 right-8 w-3/4 p-4 rounded-lg border border-white">
+//               <h3 className="text-lg font-semibold text-white">
+//                 Discover Our Courses
+//               </h3>
+//               <p className="text-sm text-white">
+//                 Explore our diverse range of training programs tailored for
+//                 different age groups and skill levels.
+//               </p>
+
+//               <CustomButton title="View All Courses" />
+//             </div>
+//           </div>
+//         </div>
+//       </section>

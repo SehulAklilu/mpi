@@ -8,10 +8,10 @@ import "./footer.css";
 
 const Footer = () => {
   return (
-    <footer className="bg-black mt-20 text-white py-10  min-h-[60vh] px-6 md:px-16 relative diagonal-box">
+    <footer className="bg-black mt-20 text-white py-10 sm:min-h-[60vh] px-6 md:px-16 relative diagonal-box">
       {/* <div className="absolute rounded-t-[3rem] top-0 left-0 w-full h-20 bg-black"></div> */}
       <div className="absolute rounded-t-[3rem] -top-6 -z-10  left-0 w-full h-40 bg-orange-500 transform  -skew-y-1"></div>
-      <div className="max-w-7xl pt-20  z-20 mx-auto grid grid-cols-1 md:grid-cols-10 gap-8">
+      <div className="max-w-7xl  pt-10 md:pt-20  z-20 mx-auto grid grid-cols-1 md:grid-cols-10 gap-8">
         {/* Company Info */}
         <div className="col-span-4">
           <h2 className="text-4xl font-bold">MPI</h2>
@@ -55,7 +55,7 @@ const Footer = () => {
         </div>
 
         {/* Social Media */}
-        <div className="col-span-2">
+        <div className="col-span-4 lg:col-span-2">
           <h3 className="text-lg font-semibold">Follow Us</h3>
           <div className="mt-4 flex space-x-4">
             <FaFacebookF className="text-white bg-gray-800 p-2 rounded-full w-10 h-10 hover:bg-orange-500 cursor-pointer" />

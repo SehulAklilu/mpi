@@ -46,88 +46,95 @@ function OurCourses() {
     setIndex((prevIndex) => (prevIndex - 1 + slides.length) % slides.length);
   };
   return (
-    <div className=" relative my-20 container mx-auto min-h-[80vh] bg-[#F5F6F9] shadow-lg rounded-3xl px-10 py-6">
-      <div className="flex justify-between items-center my-6 px-10">
-        <div className="flex items-center justify-center gap-4">
-          <button className="px-4 py-2 border border-black rounded-full text-sm font-semibold">
-            Our Courses
-          </button>
-          <h1 className="text-2xl font-bold">Unleash Your Tennis Potential</h1>
+    <div className="p-2 sm:p-0 ">
+      <div className="relative  my-5  sm:my-10 md:my-20 container mx-auto min-h-[80vh] bg-[#F5F6F9] shadow-lg rounded-3xl px-6 md:px-10 py-6 ">
+        <div className="flex flex-col md:flex-row justify-between items-center my-6 px-4 md:px-10 gap-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-0 sm:gap-2 md:gap-4">
+            <button className="px-4 py-2 border border-black rounded-full text-sm font-semibold mb-4">
+              Our Courses
+            </button>
+            <h1 className="text-lg md:text-2xl font-bold text-center md:text-left">
+              Unleash Your Tennis Potential
+            </h1>
+          </div>
+          <CustomButton title="Discover More" className="hidden sm:flex" />
         </div>
-        <CustomButton title="Discover More" />
-      </div>
-      <div className="w-full overflow-x-hidden py-4">
-        <motion.div
-          className="flex gap-8"
-          animate={{ x: `-${index * 50}%` }}
-          transition={{ type: "spring", stiffness: 100, damping: 15 }}
-          style={{ width: `${(slides.length / 2) * 50}%` }} // Adjust width
-        >
-          {slides.map((slide, i) =>
-            i % 2 === 0 ? ( // Render slides in pairs
-              <div key={i} className="flex gap-x-4 ">
-                <motion.div
-                  className="relative w-80 h-96 bg-gray-300 rounded-2xl p-6 text-white flex flex-col justify-end"
-                  style={{
-                    backgroundImage: `url('${slides[i]?.image}')`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                    flex: "0 0 50%",
-                  }}
-                  whileHover={{ scale: 1.05 }}
-                >
-                  <div className="">
-                    <h3 className="text-lg text-white font-semibold">
-                      {slides[i]?.title}
-                    </h3>
-                  </div>
-                </motion.div>
 
-                {slides[i + 1] && ( // Render the second slide in the pair
+        <div className="w-full overflow-x-hidden py-4">
+          <motion.div
+            className="flex gap-4 md:gap-8"
+            animate={{ x: `-${index * 50}%` }}
+            transition={{ type: "spring", stiffness: 100, damping: 15 }}
+            style={{ width: `${(slides.length / 2) * 50}%` }}
+          >
+            {slides.map((slide, i) =>
+              i % 2 === 0 ? (
+                <div key={i} className="flex gap-x-2 md:gap-x-4">
                   <motion.div
-                    className="relative w-72 h-96 bg-gray-300 rounded-2xl p-6 text-white flex flex-col justify-end"
+                    className="relative w-40 h-56 md:w-80 md:h-96 bg-gray-300 rounded-2xl p-4 md:p-6 text-white flex flex-col justify-end"
                     style={{
-                      backgroundImage: `url('${slides[i + 1]?.image}')`,
+                      backgroundImage: `url('${slides[i]?.image}')`,
                       backgroundSize: "cover",
                       backgroundPosition: "center",
                       flex: "0 0 50%",
                     }}
                     whileHover={{ scale: 1.05 }}
                   >
-                    <div className="">
-                      <h3 className="text-lg text-white font-semibold">
+                    <h3 className="text-sm md:text-lg font-semibold">
+                      {slides[i]?.title}
+                    </h3>
+                  </motion.div>
+
+                  {slides[i + 1] && (
+                    <motion.div
+                      className="relative w-36 h-56 md:w-72 md:h-96 bg-gray-300 rounded-2xl p-4 md:p-6 text-white flex flex-col justify-end"
+                      style={{
+                        backgroundImage: `url('${slides[i + 1]?.image}')`,
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                        flex: "0 0 50%",
+                      }}
+                      whileHover={{ scale: 1.05 }}
+                    >
+                      <h3 className="text-sm md:text-lg font-semibold">
                         {slides[i + 1]?.title}
                       </h3>
-                    </div>
-                  </motion.div>
-                )}
-              </div>
-            ) : null
-          )}
-        </motion.div>
-      </div>
-      <div className="flex items-center justify-between">
-        <div className="flex gap-2 mt-4">
-          <div
-            onClick={prevSlide}
-            className="w-10 h-10 cursor-pointer flex items-center justify-center rounded-full bg-white shadow-md"
-          >
-            <LuChevronLeft size={32} className="text-primary" />
-          </div>
-          <div
-            onClick={nextSlide}
-            className="w-10 h-10 cursor-pointer flex items-center justify-center rounded-full bg-primary shadow-md"
-          >
-            <LuChevronRight size={32} className="text-white" />
-          </div>
+                    </motion.div>
+                  )}
+                </div>
+              ) : null
+            )}
+          </motion.div>
         </div>
-        <p className="flex-row-reverse w-1/2 text-right">
-          Engage in expertly designed programs at MPI that elevate your skills,
-          enrich your understanding of the game, and refine your performance
-          metrics, helping you achieve your goals on and off the court.
-        </p>
+
+        <div className="flex items-center justify-between flex-col md:flex-row gap-4">
+          <div className="flex gap-2 mt-4">
+            <div
+              onClick={prevSlide}
+              className="w-8 h-8 md:w-10 md:h-10 cursor-pointer flex items-center justify-center rounded-full bg-white shadow-md"
+            >
+              <LuChevronLeft size={24} className="text-primary" />
+            </div>
+            <div
+              onClick={nextSlide}
+              className="w-8 h-8 md:w-10 md:h-10 cursor-pointer flex items-center justify-center rounded-full bg-primary shadow-md"
+            >
+              <LuChevronRight size={24} className="text-white" />
+            </div>
+          </div>
+          <p className="text-xs md:text-sm w-full md:w-1/2 text-center md:text-right">
+            Engage in expertly designed programs at MPI that elevate your
+            skills, enrich your understanding of the game, and refine your
+            performance metrics, helping you achieve your goals on and off the
+            court.
+          </p>
+        </div>
+        <div className="w-full  flex sm:hidden justify-center items-center my-1">
+          <CustomButton title="Discover More" />
+        </div>
+
+        <div className="hidden md:block absolute h-[90%] w-[110%] md:w-[103%] -z-10 rounded-[2.4rem] bg-primary top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2"></div>
       </div>
-      <div className="absolute h-[90%] w-[103%] -z-10 rounded-[2.4rem] bg-primary top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2"></div>
     </div>
   );
 }

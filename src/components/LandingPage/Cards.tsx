@@ -47,10 +47,9 @@ const TrainingCard = ({
   title,
   description,
   buttonText,
-  buttonLink,
 }: CardIinterface) => {
   return (
-    <div className="bg-white rounded-3xl flex justify-between flex-col items-start shadow p-4 space-y-6 border border-gray-200 max-w-md">
+    <div className="bg-white rounded-3xl flex flex-col items-start shadow p-4 space-y-6 border border-gray-200 w-full sm:w-[90%] md:w-[75%] lg:max-w-md flex-shrink-0">
       <div>
         <img
           src={image}
@@ -67,7 +66,7 @@ const TrainingCard = ({
 
 const TrainingSection = () => {
   return (
-    <div className="flex my-20 container mx-auto gap-6 overflow-x-auto">
+    <div className="flex container mx-auto gap-6 overflow-x-auto scrollbar-hidden p-2 lg:p-0 my-4 sm:my-10 md:my-20">
       {cardData.map((card) => (
         <TrainingCard key={card.id} {...card} />
       ))}
@@ -76,3 +75,11 @@ const TrainingSection = () => {
 };
 
 export default TrainingSection;
+
+//  <div className="container mx-auto my-8 sm:my-10 md:my-20 px-4 lg:px-0">
+//       <div className="flex gap-6 overflow-x-auto scrollbar-hide sm:scroll-snap-x sm:flex-nowrap sm:overflow-x-scroll md:overflow-x-scroll xl:overflow-x-visible scrollbar-hidden">
+//         {cardData.map((card) => (
+//           <TrainingCard key={card.id} {...card} />
+//         ))}
+//       </div>
+//     </div>

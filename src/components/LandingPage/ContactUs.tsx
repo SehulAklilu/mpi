@@ -57,20 +57,28 @@ function ContactUs() {
   ];
 
   return (
-    <div className="container mx-auto my-20">
-      <h2 className="text-4xl font-bold text-center mb-6">Connect With Us</h2>
-      <div className=" flex gap-4 justify-around">
-        {contactInfos.map((contactInfo) => (
-          <div className="relative group w-64 h-64 rounded-xl">
+    <div className="container mx-auto my-10 px-4 sm:px-6 lg:px-8">
+      <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-6">
+        Connect With Us
+      </h2>
+
+      {/* Scrollable Container */}
+      <div className="flex space-x-6 overflow-x-auto scrollbar-hide px-2 sm:px-4">
+        {contactInfos.map((contactInfo, index) => (
+          <div
+            key={index}
+            className="relative group flex-shrink-0 w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 rounded-xl"
+          >
             <img
               className="w-full h-full object-cover rounded-xl"
               src={contactInfo.bgImage}
               alt="img"
             />
+
             {contactInfo?.socialMedia && (
-              <div className=" w-[70%] h-[70%] absolute hidden group-hover:flex items-center flex-col gap-2 justify-center py-4 px-6 z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-opacity-40 bg-black  rounded-full text-white">
-                <contactInfo.socialMedia.icon className="text-4xl  text-white" />
-                <p className="text-xs text-white text-center font-semibold">
+              <div className="absolute hidden group-hover:flex items-center flex-col gap-2 justify-center w-[80%] h-[80%] py-4 px-6 bg-black bg-opacity-40 rounded-full text-white z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                <contactInfo.socialMedia.icon className="text-2xl sm:text-3xl md:text-4xl text-white" />
+                <p className="text-xs sm:text-sm text-white text-center font-semibold">
                   {contactInfo.socialMedia.message}
                 </p>
               </div>

@@ -116,7 +116,7 @@ export const MobileNavbar = ({ links }: MobileNavbarProps) => {
       {/* Mobile Menu Button */}
       <button
         onClick={toggleMenu}
-        className="p-2 text-white bg-primary rounded-md md:hidden"
+        className="p-2 text-white bg-primary rounded-md"
       >
         <FaBars size={20} />
       </button>
