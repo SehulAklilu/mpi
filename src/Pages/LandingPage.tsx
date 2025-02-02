@@ -14,8 +14,7 @@ import TrainingBanner from "@/components/LandingPage/TrainingBanner";
 
 function LandingPage() {
   return (
-    <div>
-      {/* <Courses /> */}
+    <div className="bg-white">
       <Hero />
       <AboutUs />
       <Information />

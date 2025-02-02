@@ -55,7 +55,7 @@ function AboutUs() {
   };
 
   return (
-    <div>
+    <div id="#about-us">
       <section className="container my-5 md:my-20 mx-auto  py-10 grid lg:grid-cols-5 gap-10 items-center">
         <div className="col-span-2 w-full flex flex-col items-center justify-center md:block md:w-[90%] space-y-4 md:space-y-8 ml-4 md:pr-0">
           <button className="px-4 py-2 border border-black rounded-full text-sm font-semibold mb-2 sm:mb-4">

@@ -129,11 +129,12 @@ function OurCourses() {
             court.
           </p>
         </div>
+
         <div className="w-full  flex md:hidden justify-center items-center my-1">
           <CustomButton title="Discover More" />
         </div>
 
-        <div className="hidden md:block absolute h-[90%] w-[110%] md:w-[103%] -z-10 rounded-[2.4rem] bg-primary top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2"></div>
+        {/* <div className=" absolute h-[90%] w-[110%] md:w-[110%] -z-10 rounded-[2.4rem] bg-primary top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2"></div> */}
       </div>
     </div>
   );

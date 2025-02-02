@@ -253,22 +253,8 @@ export const heroLinks = [
     ],
   },
   {
-    title: "TESTIMONIALS & FAQs",
-    href: "/learn-more",
-    subLinks: [
-      {
-        title: "Learn More 1",
-        href: "/docs/primitives/alert-dialog",
-        description:
-          "A modal dialog that interrupts the user with important content and expects a response.",
-      },
-      {
-        title: "Learn More 2",
-        href: "/docs/primitives/hover-card",
-        description:
-          "For sighted users to preview content available behind a link.",
-      },
-    ],
+    title: "TESTIMONIALS",
+    href: "/testimonials",
   },
   {
     title: "CONTACT",

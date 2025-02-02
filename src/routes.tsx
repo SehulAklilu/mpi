@@ -36,6 +36,8 @@ import RecentMatch from "./components/Matches/RecentMatch.tsx";
 import Matches from "./Pages/Matches.tsx";
 import PendingMatch from "./components/Matches/PendingMatch.tsx";
 import LandingPage from "./Pages/LandingPage.tsx";
+import Courses from "./components/LandingPage/Courses.tsx";
+import Testimonial from "./components/LandingPage/Testimonial.tsx";
 
 const router = createBrowserRouter([
   {
@@ -215,6 +217,14 @@ const router = createBrowserRouter([
   {
     path: "/unauthorized",
     element: <UnauthorizedPage />,
+  },
+  {
+    path: "/courses",
+    element: <Courses />,
+  },
+  {
+    path: "/testimonials",
+    element: <Testimonial />,
   },
 ]);
 
