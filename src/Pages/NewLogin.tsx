@@ -33,7 +33,7 @@ const FormSchema = z.object({
 function NewLogin() {
   const [showPassword, setShowPassword] = useState(false);
 
-  const { setRole } = useRole();
+  const { setRole, lastAttemptedRoute } = useRole();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -49,7 +49,11 @@ function NewLogin() {
       if (data.user.role === "coach") {
         navigate("/matches");
       } else {
-        navigate("/course");
+        if (lastAttemptedRoute !== "/") {
+          navigate(`${lastAttemptedRoute}`);
+        } else {
+          navigate("/courses");
+        }
       }
     },
     onError: (error: any) => {

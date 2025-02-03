@@ -59,7 +59,7 @@ function Hero() {
                 different age groups and skill levels.
               </p>
 
-              <CustomButton title="View All Courses" />
+              <CustomButton title="View All Courses" link="/courses" />
             </div>
           </div>
         </div>
@@ -69,41 +69,3 @@ function Hero() {
 }
 
 export default Hero;
-//  <section className="relative mx-auto container w-full bg-transparent z-10 mt-0 md:mt-20 xl:mt-0">
-//         <div className="  flex flex-col md:flex-row items-center px-6 md:px-12 justify-between gap-x-12">
-//           {/* Left Content */}
-//           <div className="w-full  md:w-1/2 text-center  md:text-left">
-//             <h1 className="text-4xl  md:text-5xl font-bold text-gray-900">
-//               <span className="py-1">Elevate Your</span>
-//               <span className="text-orange-500 block py-2">Tennis Game</span>
-//               <span className="py-1">with MPI!</span>
-//             </h1>
-//             <p className="mt-4 px-4 text-gray-600 text-lg">
-//               Our Tennis Training Center is dedicated to nurturing talent and
-//               enhancing skills through specialized courses tailored for players
-//               of all levels. Experience personal growth with top-tier facilities
-//               and innovative tools.
-//             </p>
-//             <div className="mt-6">
-//               <CustomButton title="Connect with Us Today" />
-//             </div>
-//           </div>
-
-//           {/* Right Content (Image Section) */}
-//           <div className="w-full  md:w-1/2 relative hidden md:block">
-//             <img src={bgt} alt="Tennis Court" className="rounded-3xl w-full" />
-//             {/* Overlay Box */}
-//             <div className="absolute bottom-4 right-8 w-3/4 p-4 rounded-lg border border-white">
-//               <h3 className="text-lg font-semibold text-white">
-//                 Discover Our Courses
-//               </h3>
-//               <p className="text-sm text-white">
-//                 Explore our diverse range of training programs tailored for
-//                 different age groups and skill levels.
-//               </p>
-
-//               <CustomButton title="View All Courses" />
-//             </div>
-//           </div>
-//         </div>
-//       </section>

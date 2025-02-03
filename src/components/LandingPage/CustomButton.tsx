@@ -1,13 +1,17 @@
 import { FiArrowUpRight } from "react-icons/fi";
 import clsx from "clsx";
+import { useNavigate } from "react-router-dom";
 
 const CustomButton = ({
   title,
   className = "",
+  link,
 }: {
   title: string;
   className?: string;
+  link?: string;
 }) => {
+  const navigate = useNavigate();
   return (
     <button
       className={clsx(
@@ -15,6 +19,7 @@ const CustomButton = ({
         "bg-primary text-white hover:bg-white hover:text-primary border border-transparent hover:border-primary",
         className
       )}
+      onClick={() => link && navigate(`${link}`)}
     >
       <span className="text-sm sm:text-base">{title}</span>
       <div

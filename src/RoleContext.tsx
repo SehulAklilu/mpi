@@ -36,6 +36,8 @@ interface RoleContextType {
   setContactInfo: Dispatch<SetStateAction<ContactInfoType>>;
   additionalInfo: AdditionalInfoType;
   setAdditionalInfo: Dispatch<SetStateAction<AdditionalInfoType>>;
+  lastAttemptedRoute: string;
+  setLastAttemptedRoute: (route: string) => void;
 }
 
 // Create the context with an undefined default value for type safety
@@ -60,6 +62,7 @@ export const RoleProvider: React.FC<{ children: ReactNode }> = ({
   const [personalData, setPersonalData] = useState<PersonalDataType>({});
   const [contactInfo, setContactInfo] = useState<ContactInfoType>({});
   const [additionalInfo, setAdditionalInfo] = useState<AdditionalInfoType>({});
+  const [lastAttemptedRoute, setLastAttemptedRoute] = useState<string>("/");
   console.log("eeeeeeeeee", role);
   return (
     <RoleContext.Provider
@@ -72,6 +75,8 @@ export const RoleProvider: React.FC<{ children: ReactNode }> = ({
         setContactInfo,
         additionalInfo,
         setAdditionalInfo,
+        lastAttemptedRoute,
+        setLastAttemptedRoute,
       }}
     >
       {children}
