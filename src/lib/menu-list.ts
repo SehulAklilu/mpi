@@ -38,7 +38,7 @@ export function getMenuList(
         groupLabel: "",
         menus: [
           {
-            href: "/course",
+            href: "/courses",
             label: "Home",
             active: location.pathname === "/course",
             icon: GoHome,
