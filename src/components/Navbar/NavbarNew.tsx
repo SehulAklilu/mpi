@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import {
   NavigationMenu,
@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import React from "react";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { FaBars, FaChevronDown } from "react-icons/fa"; // Using React Icons for mobile and dropdown icons
 import { motion, AnimatePresence } from "framer-motion";
 import { FiArrowUpRight } from "react-icons/fi";
@@ -111,8 +111,40 @@ export const MobileNavbar = ({ links }: MobileNavbarProps) => {
     setOpenSubMenu(openSubMenu === title ? null : title); // Toggle sub-menu visibility
   };
 
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+
+    if (isMenuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isMenuOpen]);
+
+  const handleClick = (e: React.MouseEvent, link: LinkItem) => {
+    e.preventDefault();
+
+    if (!link?.subLinks) {
+      navigate(`${link.href}`);
+    }
+
+    toggleSubMenu(link.title);
+  };
+
   return (
-    <div className="relative">
+    <div className="relative" ref={menuRef}>
       {/* Mobile Menu Button */}
       <button
         onClick={toggleMenu}
@@ -137,10 +169,10 @@ export const MobileNavbar = ({ links }: MobileNavbarProps) => {
                   <div>
                     <button
                       className="flex justify-between items-center w-full text-left p-2 hover:bg-gray-100"
-                      onClick={() => toggleSubMenu(link.title)}
+                      onClick={(e) => handleClick(e, link)}
                     >
                       {link.title}
-                      {link.subLinks && <FaChevronDown />}
+                      {link?.subLinks && <FaChevronDown />}
                     </button>
 
                     {/* Animated Sub-links */}
@@ -169,7 +201,10 @@ export const MobileNavbar = ({ links }: MobileNavbarProps) => {
                   </div>
                 </li>
               ))}
-              <li className="w-full text-left p-2 hover:bg-gray-100 font-semibold cursor-pointer">
+              <li
+                className="w-full text-left p-2 hover:bg-gray-100 font-semibold cursor-pointer"
+                onClick={() => navigate("/login")}
+              >
                 LOGIN / SIGNUP
               </li>
             </ul>
@@ -229,7 +264,7 @@ export const links = [
 export const heroLinks = [
   {
     title: "ABOUT US",
-    href: "/about-us",
+    href: "/",
   },
   {
     title: "COURSES",
@@ -237,17 +272,17 @@ export const heroLinks = [
   },
   {
     title: "TRAINING & FACILITIES",
-    href: "/services",
+    href: "/",
     subLinks: [
       {
         title: "Service One",
-        href: "/docs/alert-dialog",
+        href: "/",
         description:
           "A modal dialog that interrupts the user with important content and expects a response.",
       },
       {
         title: "Service Two",
-        href: "/docs/installation",
+        href: "/",
         description: "How to install dependencies and structure your app.",
       },
     ],
@@ -258,6 +293,6 @@ export const heroLinks = [
   },
   {
     title: "CONTACT",
-    href: "/contact",
+    href: "/",
   },
 ];

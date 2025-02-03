@@ -42,7 +42,7 @@ import Testimonial from "./components/LandingPage/Testimonial.tsx";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <LandingPage />,
+    element: <Home />,
     children: [
       {
         element: <PrivateRoute allowedRoles={["coach", "player"]} />,
@@ -58,7 +58,7 @@ const router = createBrowserRouter([
         element: <PrivateRoute allowedRoles={["player"]} />,
         children: [
           {
-            path: "/",
+            path: "/course",
             element: <NewLearn />,
           },
           {
@@ -213,6 +213,10 @@ const router = createBrowserRouter([
         onContinue={() => console.log("")}
       />
     ),
+  },
+  {
+    path: "/home",
+    element: <LandingPage />,
   },
   {
     path: "/unauthorized",

@@ -10,7 +10,7 @@ function Home() {
   useEffect(() => {
     const authToken = Cookies.get("authToken");
     if (!authToken) {
-      navigate("/login");
+      navigate("/home");
     }
   }, [navigate]);
   return (

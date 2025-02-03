@@ -38,9 +38,9 @@ export function getMenuList(
         groupLabel: "",
         menus: [
           {
-            href: "/",
+            href: "/course",
             label: "Home",
-            active: location.pathname === "/",
+            active: location.pathname === "/course",
             icon: GoHome,
             submenus: [],
           },
@@ -130,7 +130,6 @@ export function getMenuList(
             icon: Settings,
             submenus: [],
           },
-        
         ],
       },
     ];
@@ -138,4 +137,3 @@ export function getMenuList(
     return [];
   }
 }
-

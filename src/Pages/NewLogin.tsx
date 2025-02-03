@@ -49,7 +49,7 @@ function NewLogin() {
       if (data.user.role === "coach") {
         navigate("/matches");
       } else {
-        navigate("/");
+        navigate("/course");
       }
     },
     onError: (error: any) => {
