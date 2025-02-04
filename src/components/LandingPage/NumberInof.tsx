@@ -10,7 +10,7 @@ function NumberInof() {
     { value: 15, title: "Traning Awards Won" },
   ];
   return (
-    <div className="p-2 md:p-0">
+    <div className="p-2 md:p-0 ">
       <div
         className="h-[40rem] my-4 sm:my-10 md:my-20 relative container mx-auto rounded-3xl bg-cover bg-center px-4"
         style={{ backgroundImage: `url(${image5})` }}
@@ -23,7 +23,7 @@ function NumberInof() {
             <h1 className="text-xl md:text-2xl lg:text-3xl font-bold">
               Elevate Your Tennis Game
             </h1>
-            <p className="w-[28rem] sm:w-[32rem] md:w-[36rem] text-sm md:text-base lg:text-lg">
+            <p className="w-[90%] sm:w-[80%] md:w-[90%] text-sm md:text-base lg:text-lg">
               Unlock your full potential at MPI! Our Tennis Training Center
               features courses tailored for every age and skill level, fostering
               improvement while ensuring enjoyment on the court.
