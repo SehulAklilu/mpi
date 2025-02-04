@@ -1,6 +1,6 @@
 import ProfileCard from "@/components/PendingMatch/ProfileCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaFlag, FaInfoCircle } from "react-icons/fa";
 import { FaBalanceScaleLeft } from "react-icons/fa";
 import { FaBaseball, FaMinus, FaPlus, FaTrophy } from "react-icons/fa6";
@@ -67,7 +67,7 @@ interface ScoreInf {
 
   setScoreCur: number;
   matchScoreCur: number;
-  serve: "player1" | "player2";
+  serve: "player1" | "player2" | null;
 }
 
 type scoreTrackType =
@@ -89,7 +89,9 @@ interface dataTrackerType {
   rallyCount: number;
 }
 
-const getAgainest = (player: "player1" | "player2"): "player1" | "player2" => {
+const getAgainest = (
+  player: "player1" | "player2" | null
+): "player1" | "player2" => {
   return player == "player1" ? "player2" : "player1";
 };
 
@@ -109,7 +111,7 @@ function TrackingMatch() {
       player1: 0,
       player2: 0,
     },
-    serve: "player1",
+    serve: null,
     setScoreCur: 0,
     matchScoreCur: 0,
   });
@@ -130,6 +132,10 @@ function TrackingMatch() {
     }));
     if (newPoint == 2) {
       alert(winner + " Winnes");
+      setScore((data) => ({
+        ...data,
+        serve: null,
+      }));
     }
   };
 
@@ -147,7 +153,7 @@ function TrackingMatch() {
     setScore((data) => ({
       ...data,
       setScore: { ...data["setScore"], [winner]: newPoint, serve: againest },
-      serve: getAgainest(data.serve),
+      serve: getAgainest(data.serve!),
     }));
     if (newPoint == 6 && 6 == againestSetPoint) {
       setIsTieBreak(true);
@@ -175,7 +181,7 @@ function TrackingMatch() {
         gameScore: {
           ...data.gameScore,
           [winner]: nextpoint,
-          serve: getAgainest(data.serve),
+          serve: getAgainest(data.serve!),
         },
       }));
 
@@ -240,14 +246,34 @@ function TrackingMatch() {
             />
           </div>
         </div>
-        <div className="mt-4 flex flex-col">
-          <Table score={score} />
-          <OneGame
-            score={score}
-            addPoint={addPoint}
-            setDataTracker={setDataTracker}
-          />
-        </div>
+        {score.serve == null ? (
+          <div className="flex flex-col gap-2 mt-12">
+            <div className="text-center mb-8">Start Serve</div>
+            <div className="w-full justify-center flex gap-10">
+              <Button
+                onClick={() => setScore((d) => ({ ...d, serve: "player1" }))}
+                className="w-44 py-6 rounded-lg bg-white text-primary border border-primary"
+              >
+                Candace
+              </Button>
+              <Button
+                onClick={() => setScore((d) => ({ ...d, serve: "player2" }))}
+                className="w-44 py-6 rounded-lg bg-primary text-white"
+              >
+                Jane
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className="mt-4 flex flex-col">
+            <Table score={score} />
+            <OneGame
+              score={score}
+              addPoint={addPoint}
+              setDataTracker={setDataTracker}
+            />
+          </div>
+        )}
       </div>
     </ContentLayout>
   );
@@ -272,6 +298,7 @@ const OneGame = ({
     ballPosition: "",
     rallyCount: 0,
   };
+
   const [singleData, setSingleData] = useState<dataTrackerType>(initialData);
 
   const reset = () => {
@@ -284,7 +311,12 @@ const OneGame = ({
     {
       name: "ACE(+1)",
       onClick: () =>
-        setSingleData((d) => ({ ...d, goalType: "ace", winner: score.serve })),
+        setSingleData((d) => ({
+          ...d,
+          goalType: "ace",
+          winner: score.serve ?? "player1",
+        })),
+      disabled: singleData.rallyCount > 0,
       isActive: singleData.goalType == "ace",
     },
     {
@@ -294,8 +326,9 @@ const OneGame = ({
           ...initialData,
           rallyCount: d.rallyCount,
           goalType: "serveReturnWin",
-          winner: score.serve,
+          winner: score.serve ?? "player1",
         })),
+      disabled: false,
       isActive: singleData.goalType == "serveReturnWin",
     },
     {
@@ -305,8 +338,9 @@ const OneGame = ({
           ...initialData,
           rallyCount: d.rallyCount,
           goalType: "scoreByServer",
-          winner: score.serve,
+          winner: score.serve ?? "player1",
         })),
+      disabled: false,
       isActive: singleData.goalType == "scoreByServer",
     },
   ];
@@ -320,6 +354,7 @@ const OneGame = ({
           goalType: "fault",
           winner: againest,
         })),
+      disabled: singleData.rallyCount > 0,
       isActive: singleData.goalType == "fault",
     },
     {
@@ -331,6 +366,7 @@ const OneGame = ({
           goalType: "serveReturnLoss",
           winner: againest,
         })),
+      disabled: false,
       isActive: singleData.goalType == "serveReturnLoss",
     },
     {
@@ -342,6 +378,7 @@ const OneGame = ({
           goalType: "score",
           winner: againest,
         })),
+      disabled: false,
       isActive: singleData.goalType == "score",
     },
   ];
@@ -390,6 +427,18 @@ const OneGame = ({
 
     return false;
   };
+
+  useEffect(() => {
+    const func = () => {
+      if (
+        singleData.rallyCount > 0 &&
+        (singleData.goalType == "ace" || singleData.goalType == "fault")
+      ) {
+        setSingleData((d) => ({ ...d, goalType: "" }));
+      }
+    };
+    func();
+  }, [singleData.goalType, singleData.rallyCount]);
   return (
     <div className="flex flex-col">
       <div className="mx-auto mt-8">
@@ -430,6 +479,7 @@ const OneGame = ({
                 data.onClick();
               }}
               isActive={data.isActive}
+              disabled={data.disabled}
               name={data.name}
               type={score.serve == "player1" ? "server" : "againest"}
             />
@@ -558,6 +608,7 @@ const OneGame = ({
                 data.onClick();
               }}
               isActive={data.isActive}
+              disabled={data.disabled}
               name={data.name}
               type={score.serve == "player2" ? "server" : "againest"}
             />
@@ -575,6 +626,7 @@ const OneGame = ({
               }
               setIsOnFault((d) => !d);
             } else {
+              isOnFault && setIsOnFault(false);
               addPoint(singleData.winner);
             }
             reset();
@@ -595,9 +647,11 @@ const GamePointButtons = ({
   isActive = false,
   onClick = () => {},
   type = "server",
+  disabled = false,
 }: {
   name: string;
   isActive?: boolean;
+  disabled?: boolean;
   onClick?: Function;
   type?: "server" | "againest";
 }) => {
@@ -608,8 +662,13 @@ const GamePointButtons = ({
     : "";
   return (
     <Button
+      disabled={disabled}
       onClick={() => onClick()}
-      className={`px-1 w-40 h-24  shadow rounded-xl shadow-primary ${css}`}
+      className={`px-1 w-40 h-24  shadow rounded-xl  ${css} ${
+        disabled
+          ? "cursor-not-allowed bg-white text-gray-400 border border-gray-300 "
+          : "shadow-primary"
+      }`}
     >
       {name}
     </Button>
