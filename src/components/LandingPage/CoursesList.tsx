@@ -51,7 +51,7 @@ const CourseCard = ({
           <img
             src={course.image}
             alt={course.title}
-            className="w-full h-[40vh] md:h-[70vh] rounded-lg object-cover order-first"
+            className="w-full h-[25rem] md:h-[43.75rem] rounded-lg object-cover order-first"
           />
           <div className="flex flex-col justify-center">
             <p className="text-sm text-orange-500 font-bold">
@@ -77,7 +77,7 @@ const CourseCard = ({
           <img
             src={course.image}
             alt={course.title}
-            className={`w-full h-[40vh] md:h-[70vh] rounded-lg object-cover ${
+            className={`w-full h-[25rem] md:h-[43.75rem] rounded-lg object-cover ${
               rotate ? "order-first md:order-last" : ""
             }`}
           />
