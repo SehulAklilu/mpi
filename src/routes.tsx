@@ -58,11 +58,11 @@ const router = createBrowserRouter([
         element: <PrivateRoute allowedRoles={["player"]} />,
         children: [
           {
-            path: "/courses",
+            path: "/course",
             element: <NewLearn />,
           },
           {
-            path: "course/:course_id",
+            path: "/course/:course_id",
             element: <CourseDetail />,
           },
           {

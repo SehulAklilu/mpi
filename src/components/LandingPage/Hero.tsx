@@ -59,7 +59,7 @@ function Hero() {
                 different age groups and skill levels.
               </p>
 
-              <CustomButton title="View All Courses" link="/courses" />
+              <CustomButton title="View All Courses" link="/course" />
             </div>
           </div>
         </div>

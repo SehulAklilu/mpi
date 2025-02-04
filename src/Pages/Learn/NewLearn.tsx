@@ -171,7 +171,7 @@ function NewLearn() {
                 onClick={() =>
                   course &&
                   course.status !== "locked" &&
-                  navigate(`course/${course?.courseId.id}`)
+                  navigate(`/course/${course?.courseId.id}`)
                 }
                 className={` px-10 py-2 mt-6 shadow rounded-3xl bg-primary text-white !w-full disabled:${
                   course?.status === "locked"

@@ -52,7 +52,7 @@ function NewLogin() {
         if (lastAttemptedRoute !== "/") {
           navigate(`${lastAttemptedRoute}`);
         } else {
-          navigate("/courses");
+          navigate("/course");
         }
       }
     },
