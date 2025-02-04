@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Location, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import {
   NavigationMenu,
@@ -26,6 +26,13 @@ interface NavbarProps {
 }
 
 export function Navbar({ links }: NavbarProps) {
+  const location: Location = useLocation();
+  const isActive = (url: string) => {
+    if (url === location.pathname) {
+      return true;
+    }
+    return false;
+  };
   return (
     <NavigationMenu>
       <NavigationMenuList>
@@ -52,7 +59,11 @@ export function Navbar({ links }: NavbarProps) {
               </>
             ) : (
               <Link to={link.href}>
-                <NavigationMenuLink className="mx-2">
+                <NavigationMenuLink
+                  className={`mx-2 px-2 py-1 rounded-md ${
+                    isActive(link.href) ? "bg-primary text-white" : ""
+                  }`}
+                >
                   {link.title}
                 </NavigationMenuLink>
               </Link>
@@ -105,7 +116,7 @@ interface MobileNavbarProps {
 export const MobileNavbar = ({ links }: MobileNavbarProps) => {
   const [isMenuOpen, setMenuOpen] = useState(false); // State to manage the menu visibility
   const [openSubMenu, setOpenSubMenu] = useState<string | null>(null); // State to manage sub-menu visibility
-
+  const location: Location = useLocation();
   const toggleMenu = () => setMenuOpen(!isMenuOpen); // Toggle menu button
   const toggleSubMenu = (title: string) => {
     setOpenSubMenu(openSubMenu === title ? null : title); // Toggle sub-menu visibility
@@ -143,6 +154,13 @@ export const MobileNavbar = ({ links }: MobileNavbarProps) => {
     toggleSubMenu(link.title);
   };
 
+  const isActive = (url: string) => {
+    if (url === location.pathname) {
+      return true;
+    }
+    return false;
+  };
+
   return (
     <div className="relative" ref={menuRef}>
       {/* Mobile Menu Button */}
@@ -168,7 +186,9 @@ export const MobileNavbar = ({ links }: MobileNavbarProps) => {
                 <li key={link.title}>
                   <div>
                     <button
-                      className="flex justify-between items-center w-full text-left p-2 hover:bg-gray-100"
+                      className={`flex justify-between items-center w-full text-left p-2 rounded-md hover:bg-gray-100 hover:text-black ${
+                        isActive(link.href) ? "bg-primary text-white" : ""
+                      }`}
                       onClick={(e) => handleClick(e, link)}
                     >
                       {link.title}
@@ -264,7 +284,7 @@ export const links = [
 export const heroLinks = [
   {
     title: "ABOUT US",
-    href: "/",
+    href: "/about-us",
   },
   {
     title: "COURSES",
@@ -272,17 +292,17 @@ export const heroLinks = [
   },
   {
     title: "TRAINING & FACILITIES",
-    href: "/",
+    href: "/home",
     subLinks: [
       {
         title: "Service One",
-        href: "/",
+        href: "/services-one",
         description:
           "A modal dialog that interrupts the user with important content and expects a response.",
       },
       {
         title: "Service Two",
-        href: "/",
+        href: "/services-two",
         description: "How to install dependencies and structure your app.",
       },
     ],
@@ -293,6 +313,6 @@ export const heroLinks = [
   },
   {
     title: "CONTACT",
-    href: "/",
+    href: "/contact-us",
   },
 ];

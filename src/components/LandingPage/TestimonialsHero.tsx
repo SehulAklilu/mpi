@@ -14,7 +14,7 @@ function TestimonialsHero() {
               Don’t Just Take Our Words!
             </h1>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-[#152946]  items-center md:my-4 lg:my-6 xl:my-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-[#152946]  items-center md:my-4">
             <div className="space-y-8 sm:space-y-4 text-center w-full md:w-[80%]  md:text-left">
               <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold md:font-bold">
                 Thousands of Students so far have found our Platform very

@@ -45,7 +45,7 @@ const CourseCard = ({
   rotate: boolean;
 }) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-10 bg-white rounded-lg">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-1 md:px-4 md:gap-10 bg-white rounded-lg">
       {!rotate ? (
         <>
           <img

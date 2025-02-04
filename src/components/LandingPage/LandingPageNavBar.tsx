@@ -8,7 +8,7 @@ function LandingPageNavBar() {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate("/"); // Replace with your actual route
+    navigate("/home"); // Replace with your actual route
   };
   return (
     <div className="flex !sticky top-0 justify-between bg-[#EFEFED] border  items-center left-0 w-full p-4 z-50">
