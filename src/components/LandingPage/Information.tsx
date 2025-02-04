@@ -46,7 +46,7 @@ function Information() {
   };
 
   return (
-    <section className="container my-5 md:my-20 mx-auto min-h-[90vh] p-2">
+    <section className="container my-5 md:my-20 mx-auto  p-2">
       <div className="flex gap-2 justify-around overflow-x-auto scrollbar-hidden px-2 md:px-0">
         {infos.map((info) => (
           <button
@@ -72,7 +72,7 @@ function Information() {
           >
             <img
               src={sections[currentIndex].image}
-              className="h-[30vh] sm:h-[50vh] md:h-[75vh] w-full rounded-3xl object-cover"
+              className="h-[12rem] sm:h-[20rem] md:h-[30rem] w-full rounded-3xl object-cover"
             />
           </motion.div>
           <div>

@@ -12,7 +12,7 @@ function NumberInof() {
   return (
     <div className="p-2 md:p-0">
       <div
-        className="h-[90vh] my-4 sm:my-10 md:my-20 relative container mx-auto rounded-3xl bg-cover bg-center px-4"
+        className="h-[40rem] my-4 sm:my-10 md:my-20 relative container mx-auto rounded-3xl bg-cover bg-center px-4"
         style={{ backgroundImage: `url(${image5})` }}
       >
         <div className="absolute flex flex-col items-center justify-center w-[95%] md:w-[90%] h-[90%] rounded-3xl bg-black text-white bg-opacity-40 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-4 sm:p-8">
@@ -23,7 +23,7 @@ function NumberInof() {
             <h1 className="text-xl md:text-2xl lg:text-3xl font-bold">
               Elevate Your Tennis Game
             </h1>
-            <p className="w-full sm:w-[80%] md:w-[70%] text-sm md:text-base lg:text-lg">
+            <p className="w-[28rem] sm:w-[32rem] md:w-[36rem] text-sm md:text-base lg:text-lg">
               Unlock your full potential at MPI! Our Tennis Training Center
               features courses tailored for every age and skill level, fostering
               improvement while ensuring enjoyment on the court.

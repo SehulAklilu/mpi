@@ -47,7 +47,7 @@ function OurCourses() {
   };
   return (
     <div className="p-2 md:p-0 ">
-      <div className="relative  my-5  sm:my-10 md:my-20 container mx-auto min-h-[80vh] border bg-[#F5F6F9] shadow-lg rounded-3xl px-6 md:px-10 py-6 ">
+      <div className="relative  my-5  sm:my-10 md:my-20 container mx-auto border bg-[#F5F6F9] shadow-lg rounded-3xl px-6 md:px-10 py-6 ">
         <div className="flex flex-col md:flex-row justify-between items-center my-6 px-4 md:px-10 gap-4">
           <div className="flex flex-col md:flex-row items-center justify-center gap-0 sm:gap-2 md:gap-4 xl:gap-6">
             <button className="px-4 py-2 border border-black rounded-full text-sm font-semibold ">

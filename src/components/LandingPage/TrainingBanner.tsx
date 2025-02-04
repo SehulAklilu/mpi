@@ -18,7 +18,7 @@ const TrainingBanner = () => {
   };
   return (
     <div className="p-2 md:p-0">
-      <div className="bg-white rounded-2xl min-h-[80vh] shadow-lg border border-gray-200 flex flex-col lg:flex-row items-center gap-6 container mx-auto overflow-hidden sm:p-6 my-4 sm:my-10 md:my-20">
+      <div className="bg-white rounded-2xl shadow-lg border border-gray-200 flex flex-col lg:flex-row items-center gap-6 container mx-auto overflow-hidden sm:p-6 my-4 sm:my-10 md:my-20">
         <div className="flex-1 space-y-2 sm:space-y-6 p-1 sm:p-4 mt-2 sm:mt-0">
           <h1 className="text-3xl md:text-5xl font-bold leading-tight text-center sm:text-left">
             Elevate Your Tennis Game with{" "}
