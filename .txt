@@ -1,6 +1,10 @@
-- time order
-- calendar size
-- add date on card
-- check apis
-
-- dont allow before date
+- notification 
+    - endpoint
+- calendar  
+    - role
+- match
+    - report
+        - endpoint
+    - add match
+    - score tracking
+        - how the endpoint works

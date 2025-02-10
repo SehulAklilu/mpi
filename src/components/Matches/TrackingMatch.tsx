@@ -296,7 +296,7 @@ const OneGame = ({
     hitType: "",
     errorType: "",
     ballPosition: "",
-    rallyCount: 0,
+    rallyCount: 1,
   };
 
   const [singleData, setSingleData] = useState<dataTrackerType>(initialData);
@@ -316,7 +316,7 @@ const OneGame = ({
           goalType: "ace",
           winner: score.serve ?? "player1",
         })),
-      disabled: singleData.rallyCount > 0,
+      disabled: singleData.rallyCount > 1,
       isActive: singleData.goalType == "ace",
     },
     {
@@ -354,7 +354,7 @@ const OneGame = ({
           goalType: "fault",
           winner: againest,
         })),
-      disabled: singleData.rallyCount > 0,
+      disabled: singleData.rallyCount > 1,
       isActive: singleData.goalType == "fault",
     },
     {
@@ -448,9 +448,9 @@ const OneGame = ({
             onClick={() => {
               setSingleData((d) => ({ ...d, rallyCount: d.rallyCount - 1 }));
             }}
-            disabled={singleData.rallyCount == 0}
+            disabled={singleData.rallyCount ==1}
             className={`px-12 py-6 rounded-l-lg bg-primary ${
-              singleData.rallyCount == 0 && "bg-primary/50"
+              singleData.rallyCount ==1 && "bg-primary/50"
             } text-white flex justify-center items-center`}
           >
             <FaMinus />
