@@ -22,3 +22,28 @@
     opacity: 1;
   }
 }
+
+.custom-phone-input {
+  border-radius: 1.5rem 0 0 1.5rem !important; /* Match input's border-radius */
+  overflow: hidden; /* Ensures it doesn't break */
+  border: none !important; /* Removes default border */
+}
+.custom-phone-input:hover {
+  border-radius: 1.5rem 0 0 1.5rem !important; /* Match input's border-radius */
+}
+
+.phone-input .flag-dropdown {
+  border-radius: 1.5rem 0 0 1.5rem !important; /* Initially rounded */
+  transition: border-radius 0.2s ease-in-out; /* Smooth transition */
+}
+
+.phone-input .flag-dropdown:hover,
+.phone-input .flag-dropdown:focus {
+  border-radius: 1.5rem 0 0 1.5rem !important; /* Keeps rounded */
+}
+
+.phone-input-button-hover {
+  border-top-left-radius: 1.3rem;
+  border-bottom-left-radius: 1.3rem;
+  background-color: red;
+}

@@ -66,3 +66,12 @@ export const updateAssessmentStatus = async (
 
   return response.data as UpdateAssessmentResponse;
 };
+
+export const getPlayersCourse = async (
+  id: string
+): Promise<UserCoursesResponse> => {
+  const response = await axiosInstance.get(
+    `/api/v1/users/player/${id}/courses`
+  );
+  return response.data;
+};

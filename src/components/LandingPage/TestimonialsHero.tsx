@@ -33,7 +33,7 @@ function TestimonialsHero() {
                 <img
                   src={image18}
                   alt="Tennis Course"
-                  className="w-full md:h-[43.75rem]  object-cover rounded-3xl"
+                  className="w-full md:h-[30.75rem]  object-cover rounded-3xl"
                 />
               </div>
             </div>

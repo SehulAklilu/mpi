@@ -28,7 +28,7 @@ const ChatItem: React.FC<ChatItemProps> = ({
   return (
     <div
       onClick={onClick}
-      className={`flex items-center gap-3 p-4 hover:bg-gray-100 rounded-lg cursor-pointer ${
+      className={`flex items-center gap-3 p-2 hover:bg-gray-100 rounded-lg cursor-pointer ${
         active ? "bg-gradient-to-b from-[#F8B46F] to-[#F39030]  text-white" : ""
       }`}
     >

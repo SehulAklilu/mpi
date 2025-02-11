@@ -192,6 +192,7 @@ function ChatComponent({ setActiveTab }: ChatComponentProps) {
             <>
               <ChatTopBar
                 user={{
+                  id: selectedChat.id,
                   name: selectedChat.name,
                   avatarUrl: selectedChat.avatarUrl,
                   status: selectedChat.status,

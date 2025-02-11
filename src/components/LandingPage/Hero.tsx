@@ -23,8 +23,8 @@ function Hero() {
         {/* Nav bar */}
         <LandingPageNavBar />
 
-        <section className="relative w-full bg-transparent z-10 mt-0 md:mt-20 xl:mt-0 flex items-center justify-center ">
-          <div className="  flex flex-col md:flex-row   items-center lg:px-12 justify-between gap-x-12">
+        <section className="relative w-full bg-transparent z-10 mt-0 md:mt-20 xl:mt-0 flex items-center justify-center  ">
+          <div className="  flex flex-col md:flex-row   items-center lg:px-12 justify-between gap-x-12 my-4 sm:my-0">
             {/* Left Content */}
             <div className="flex flex-col justify-between items-center my-auto md:block w-full   md:w-1/2 text-center  md:text-left">
               <h1 className="text-4xl  md:text-5xl font-bold text-gray-900">
@@ -64,7 +64,11 @@ function Hero() {
                   different age groups and skill levels.
                 </p>
 
-                <CustomButton title="View All Courses" link="/course" />
+                <CustomButton
+                  title="View All Courses"
+                  link="/course"
+                  blank={true}
+                />
               </div>
             </div>
           </div>

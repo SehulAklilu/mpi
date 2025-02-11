@@ -9,7 +9,7 @@ function Chat() {
   const [activeTab, setActiveTab] = useState("messages");
   return (
     <ContentLayout>
-      <div className=" md:pt-4">
+      <div className="">
         <div className="flex items-center justify-center">
           <Tabs
             value={activeTab}

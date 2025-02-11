@@ -6,18 +6,24 @@ import FAQSection from "@/components/LandingPage/FAQSection";
 import Footer from "@/components/LandingPage/Footer";
 import Hero from "@/components/LandingPage/Hero";
 import Information from "@/components/LandingPage/Information";
+import MakeChampions from "@/components/LandingPage/MakeChampions";
+import NewHero from "@/components/LandingPage/NewHero";
 import NumberInof from "@/components/LandingPage/NumberInof";
 import OurCourses from "@/components/LandingPage/OurCourses";
+import PlayTennis from "@/components/LandingPage/PlayTennis";
 import TennisLocations from "@/components/LandingPage/TennisLocations";
 import TrainingBanner from "@/components/LandingPage/TrainingBanner";
 // import Information from "@/components/LandingPage/Information";
 
 function LandingPage() {
   return (
-    <div>
-      <Hero />
-      <AboutUs />
-      <Information />
+    <div className="bg-white">
+      {/* <Hero /> */}
+      <NewHero />
+      <PlayTennis />
+      <MakeChampions />
+      {/* <AboutUs /> */}
+      {/* <Information /> */}
       <OurCourses />
       <NumberInof />
       <TrainingSection />

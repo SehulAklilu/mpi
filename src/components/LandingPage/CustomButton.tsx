@@ -6,10 +6,12 @@ const CustomButton = ({
   title,
   className = "",
   link,
+  blank,
 }: {
   title: string;
   className?: string;
   link?: string;
+  blank?: boolean;
 }) => {
   const navigate = useNavigate();
   return (
@@ -19,7 +21,13 @@ const CustomButton = ({
         "bg-primary text-white hover:bg-white hover:text-primary border border-transparent hover:border-primary",
         className
       )}
-      onClick={() => link && navigate(`${link}`)}
+      onClick={() =>
+        link && blank
+          ? window.open("/login", "_blank")
+          : link
+          ? navigate(`${link}`)
+          : console.log("link")
+      }
     >
       <span className="text-sm sm:text-base">{title}</span>
       <div

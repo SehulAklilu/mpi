@@ -60,8 +60,8 @@ export function Navbar({ links }: NavbarProps) {
             ) : (
               <Link to={link.href}>
                 <NavigationMenuLink
-                  className={`mx-2 px-2 py-1 rounded-md ${
-                    isActive(link.href) ? "bg-primary text-white" : ""
+                  className={`mx-2 px-2 py-1 rounded-md font-bold whitespace-nowrap ${
+                    isActive(link.href) ? "text-primary" : ""
                   }`}
                 >
                   {link.title}
@@ -283,33 +283,41 @@ export const links = [
 
 export const heroLinks = [
   {
+    title: "HOME",
+    href: "/home",
+  },
+  {
     title: "ABOUT US",
     href: "/about-us",
+  },
+  {
+    title: "SERVICES",
+    href: "/services",
   },
   {
     title: "COURSES",
     href: "/courses",
   },
+  // {
+  //   title: "TRAINING & FACILITIES",
+  //   href: "/home",
+  //   subLinks: [
+  //     {
+  //       title: "Service One",
+  //       href: "/services-one",
+  //       description:
+  //         "A modal dialog that interrupts the user with important content and expects a response.",
+  //     },
+  //     {
+  //       title: "Service Two",
+  //       href: "/services-two",
+  //       description: "How to install dependencies and structure your app.",
+  //     },
+  //   ],
+  // },
   {
-    title: "TRAINING & FACILITIES",
-    href: "/home",
-    subLinks: [
-      {
-        title: "Service One",
-        href: "/services-one",
-        description:
-          "A modal dialog that interrupts the user with important content and expects a response.",
-      },
-      {
-        title: "Service Two",
-        href: "/services-two",
-        description: "How to install dependencies and structure your app.",
-      },
-    ],
-  },
-  {
-    title: "TESTIMONIALS",
-    href: "/testimonials",
+    title: "BLOG",
+    href: "/blog",
   },
   {
     title: "CONTACT",

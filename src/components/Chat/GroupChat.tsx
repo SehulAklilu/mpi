@@ -13,7 +13,35 @@ import CustomTabs from "./CustomTabs";
 import ChatItemSkeleton from "./ChatItemSkeleton";
 import { ChatItems } from "./ChatComponent";
 import NoMessage from "./NoMessage";
+import { MdOutlineAddCircleOutline } from "react-icons/md";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { FiUploadCloud } from "react-icons/fi";
+import { LuImagePlus } from "react-icons/lu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
+const FormSchema = z.object({
+  group_name: z.string(),
+  group_type: z.string(),
+  bio: z.string(),
+  avatar: z.string(),
+});
 interface GroupChatProps {
   setActiveTab: (tab: string) => void;
 }
@@ -53,9 +81,13 @@ function GroupChat({ setActiveTab }: GroupChatProps) {
       unreadCount: 4,
     },
   ];
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+  });
   const [selectedChat, setSelectedChat] = useState<ChatItemProps | undefined>(
     undefined
   );
+  const [open, setOpen] = useState(false);
 
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [searchValue, setSearchValue] = useState("");
@@ -65,6 +97,9 @@ function GroupChat({ setActiveTab }: GroupChatProps) {
   const openSideBar = () => {
     setSidebarOpen((pre) => !pre);
   };
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+
+  const onSubmit = () => {};
 
   return (
     <div className="relative">
@@ -101,6 +136,15 @@ function GroupChat({ setActiveTab }: GroupChatProps) {
           </div>
           <ScrollArea className="h-[74vh] rounded-lg">
             <div>
+              <div
+                className="flex  px-2 py-4 items-center gap-4 cursor-pointer hover:bg-gray-100 rounded-lg"
+                onClick={() => setOpen(true)}
+              >
+                <div className="w-12 h-12 flex items-center justify-center bg-gradient-to-b from-orange-300  to-primary rounded-full shadow-lg shadow-primary ">
+                  <MdOutlineAddCircleOutline className="text-white text-2xl" />
+                </div>
+                <p className="text-[#152946] font-semibold">New Group</p>
+              </div>
               {chats.map((chat) => (
                 <ChatItem
                   key={chat.id}
@@ -127,6 +171,7 @@ function GroupChat({ setActiveTab }: GroupChatProps) {
             <>
               <ChatTopBar
                 user={{
+                  id: "3q34u234uo23i4o23i",
                   name: selectedChat.name,
                   avatarUrl: selectedChat.avatarUrl,
                   status: selectedChat.status,
@@ -143,6 +188,135 @@ function GroupChat({ setActiveTab }: GroupChatProps) {
           )}
         </div>
       </div>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="  overflow-x-hidden custom-scrollbar-two rounded-lg bg-white ">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
+              <div className="flex w-full justify-center flex-col items-center">
+                <FormField
+                  control={form.control}
+                  name="avatar"
+                  render={({ field: { value, onChange, ...fieldProps } }) => (
+                    <FormItem>
+                      <FormControl>
+                        <div className="relative flex items-center">
+                          <div className="w-20 h-20 rounded-full bg-[#F0F0FF]  border border-[#e3e3fd] flex items-center justify-center overflow-hidden">
+                            {previewImage ? (
+                              <img
+                                src={previewImage}
+                                alt="Uploaded preview"
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <LuImagePlus />
+                            )}
+                          </div>
+
+                          <input
+                            {...fieldProps}
+                            type="file"
+                            accept="image/*"
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                            onChange={(event) => {
+                              const file =
+                                event.target.files && event.target.files[0];
+                              if (file) {
+                                onChange(file);
+                                const reader = new FileReader();
+                                reader.onload = () =>
+                                  setPreviewImage(reader.result as string);
+                                reader.readAsDataURL(file);
+                              }
+                            }}
+                          />
+                        </div>
+                      </FormControl>
+                      <FormMessage className="!text-center" />
+                    </FormItem>
+                  )}
+                />
+                <p className="text-center w-[80%]">
+                  Drag/Upload Group Picture or Leave to use Your Profile Picture
+                </p>
+              </div>
+              <FormField
+                control={form.control}
+                name="group_name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Group Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="text"
+                        id="group_name"
+                        placeholder="Coach Damian"
+                        className={"!rounded-3xl shadow !bg-white"}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="group_type"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Group Type</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <SelectTrigger
+                        className={
+                          "!rounded-3xl  shadow !h-10 !py-4 !px-4 !bg-white"
+                        }
+                      >
+                        <SelectValue placeholder="Group Type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="pirvate">Private</SelectItem>
+                        <SelectItem value="public">Public</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div>
+                <label>Bio</label>
+                <textarea
+                  id="bio"
+                  placeholder="Coach Damian’s Resource Repository..."
+                  rows={2}
+                  className="w-full border !rounded-2xl p-2"
+                  {...form.register("bio")}
+                />
+              </div>
+              <div>
+                <label>Add Members</label>
+                <Input
+                  type="text"
+                  id="full_name"
+                  placeholder="Search People..."
+                  value={searchValue}
+                  onChange={handleSearchChange}
+                  className={"py-2 w-full !rounded-full !bg-white"}
+                  startIcon={FaSearch}
+                />
+              </div>
+              <button className="px-4 py-2 mt-4  bg-primary text-white w-full rounded-full">
+                Create Group
+              </button>
+              <button
+                type="button"
+                className="px-4 py-2  bg-transparent  w-full rounded-full"
+                onClick={() => setOpen(false)}
+              >
+                Cancel
+              </button>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

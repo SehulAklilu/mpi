@@ -38,6 +38,8 @@ import PendingMatch from "./components/Matches/PendingMatch.tsx";
 import LandingPage from "./Pages/LandingPage.tsx";
 import Courses from "./components/LandingPage/Courses.tsx";
 import Testimonial from "./components/LandingPage/Testimonial.tsx";
+import ChatProflie from "./components/Chat/ChatProflie.tsx";
+import ProfileSetting from "./components/Chat/ProfileSetting.tsx";
 
 const router = createBrowserRouter([
   {
@@ -138,6 +140,14 @@ const router = createBrowserRouter([
           {
             path: "profile",
             element: <Profile />,
+          },
+          {
+            path: "chat/profile/:id",
+            element: <ChatProflie />,
+          },
+          {
+            path: "user/profile/:id",
+            element: <ProfileSetting />,
           },
         ],
       },
