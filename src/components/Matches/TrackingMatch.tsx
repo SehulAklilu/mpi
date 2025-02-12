@@ -13,6 +13,7 @@ import profile_img from "../../assets/user.jpeg";
 import Report from "./Report";
 import MatchProfile from "./MatchProfile";
 import { Button } from "../ui/button";
+import { BsArrow90DegLeft, BsArrow90DegRight } from "react-icons/bs";
 interface Player {
   id: number; // Unique identifier for the player
   name: string; // Player's name
@@ -123,6 +124,15 @@ function TrackingMatch() {
     return "A";
   };
 
+  const getPrevPoint = (score: PointInf): PointInf => {
+    if (score == 0) return 0;
+    if (score == 15) return 0;
+    if (score == 30) return 15;
+    if (score == 40) return 30;
+    if (score == "A") return 40;
+    return "A";
+  };
+
   const updateMatch = (winner: "player1" | "player2") => {
     const winnerMatchPoint = score.matchScore[winner];
     const newPoint = winnerMatchPoint + 1;
@@ -162,12 +172,6 @@ function TrackingMatch() {
       resetScore("setScore");
       updateMatch(winner);
     }
-  };
-  const resetScore = (type: "gameScore" | "setScore") => {
-    setScore((data) => ({
-      ...data,
-      [type]: { player1: 0, player2: 0 },
-    }));
   };
 
   const addPoint = (winner: "player1" | "player2") => {
@@ -225,6 +229,39 @@ function TrackingMatch() {
     }
   };
 
+  const undoPoint = (losser: "player1" | "player2") => {
+    const losserPoint = score.gameScore[losser];
+    const againest = getAgainest(losser);
+    const againestPoint = score.gameScore[againest];
+    if (losserPoint == "A" || losserPoint > 0) {
+      setScore((data) => ({
+        ...data,
+        gameScore: { ...data.gameScore, [losser]: getPrevPoint(losserPoint) },
+      }));
+    } else {
+      undoSet(losser);
+    }
+  };
+
+  const undoSet = (losser: "player1" | "player2") => {
+    const losserSetPoint = score.setScore[losser];
+    const againest = getAgainest(losser);
+    const againestSetPoint = score.setScore[againest];
+    const newPoint = losserSetPoint - 1;
+    setScore((data) => ({
+      ...data,
+      setScore: { ...data["setScore"], [losser]: newPoint, serve: againest },
+      serve: getAgainest(data.serve!),
+    }));
+  };
+
+  const resetScore = (type: "gameScore" | "setScore") => {
+    setScore((data) => ({
+      ...data,
+      [type]: { player1: 0, player2: 0 },
+    }));
+  };
+
   return (
     <ContentLayout name="Tracking Match">
       <div className="bg-white pt-10 min-h-[100vh] overflow-auto pb-12">
@@ -269,6 +306,7 @@ function TrackingMatch() {
             <Table score={score} />
             <OneGame
               score={score}
+              undoPoint={undoPoint}
               addPoint={addPoint}
               setDataTracker={setDataTracker}
             />
@@ -283,10 +321,12 @@ const OneGame = ({
   addPoint,
   setDataTracker,
   score,
+  undoPoint,
 }: {
   addPoint: Function;
   setDataTracker: Function;
   score: ScoreInf;
+  undoPoint: Function;
 }) => {
   const initialData: dataTrackerType = {
     goalType: "",
@@ -431,7 +471,7 @@ const OneGame = ({
   useEffect(() => {
     const func = () => {
       if (
-        singleData.rallyCount > 0 &&
+        singleData.rallyCount > 1 &&
         (singleData.goalType == "ace" || singleData.goalType == "fault")
       ) {
         setSingleData((d) => ({ ...d, goalType: "" }));
@@ -439,8 +479,49 @@ const OneGame = ({
     };
     func();
   }, [singleData.goalType, singleData.rallyCount]);
+
+  interface Stack {
+    fault: boolean | null;
+    winner: "player1" | "player2" | null;
+  }
+  const [undoStack, setUndoStack] = useState<Stack[]>([]);
+  // const [redoStack, setUndoStack] = useState<Stack[]>([]);
+
+  const undoLastAction = () => {
+    if (undoStack.length === 0) return;
+    const lastAction = undoStack.pop();
+    if (lastAction?.fault) {
+      setIsOnFault((prev) => !prev);
+    }
+    if (lastAction?.winner) {
+      undoPoint(lastAction.winner);
+    }
+  };
+
   return (
     <div className="flex flex-col">
+      <div className="flex w-full justify-end   gap-5 px-32 mt-4">
+        <Button
+          onClick={undoLastAction}
+          className="flex gap-2 items-center justify-center capitalize text-sm"
+        >
+          <div>undo</div>
+          <BsArrow90DegLeft className="text-primary font-bold" />
+        </Button>
+        <Button
+          onClick={() => {}}
+          className="flex gap-2 items-center justify-center capitalize text-sm"
+        >
+          <BsArrow90DegRight className="text-primary" />
+          <div>Redo</div>
+        </Button>
+        {/* 
+              Point
+                Person,
+              Fault
+
+          */}
+      </div>
       <div className="mx-auto mt-8">
         <div className="text-center mb-1">Rally Count</div>
         <div className="border rounded-lg flex">
@@ -448,9 +529,9 @@ const OneGame = ({
             onClick={() => {
               setSingleData((d) => ({ ...d, rallyCount: d.rallyCount - 1 }));
             }}
-            disabled={singleData.rallyCount ==1}
+            disabled={singleData.rallyCount == 1}
             className={`px-12 py-6 rounded-l-lg bg-primary ${
-              singleData.rallyCount ==1 && "bg-primary/50"
+              singleData.rallyCount == 1 && "bg-primary/50"
             } text-white flex justify-center items-center`}
           >
             <FaMinus />
@@ -620,15 +701,23 @@ const OneGame = ({
         // disabled={player == null}
         onClick={() => {
           if (singleData.goalType != "") {
+            let stack: Stack = {
+              fault: null,
+              winner: singleData.winner as Stack["winner"],
+            };
             if (singleData.goalType == "fault") {
               if (isOnFault) {
                 addPoint(singleData.winner);
+              } else {
+                stack.winner = null;
               }
               setIsOnFault((d) => !d);
+              stack.fault = true;
             } else {
               isOnFault && setIsOnFault(false);
               addPoint(singleData.winner);
             }
+            setUndoStack((d) => [...d, stack]);
             reset();
           }
         }}
@@ -670,7 +759,7 @@ const GamePointButtons = ({
           : "shadow-primary"
       }`}
     >
-      {name}
+      {name} {disabled}
     </Button>
   );
 };
