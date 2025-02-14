@@ -1,6 +1,6 @@
-import { FiArrowUpRight } from "react-icons/fi";
 import clsx from "clsx";
 import { useNavigate } from "react-router-dom";
+import { GoArrowRight } from "react-icons/go";
 
 const CustomButton = ({
   title,
@@ -35,7 +35,7 @@ const CustomButton = ({
           "w-8 h-8 flex items-center justify-center rounded-full bg-white hover:bg-primary border flex-shrink-0 border-primary hover:border-white"
         }
       >
-        <FiArrowUpRight size={24} className="text-primary hover:text-white " />
+        <GoArrowRight size={24} className="text-primary hover:text-white " />
       </div>
     </button>
   );

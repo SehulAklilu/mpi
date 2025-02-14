@@ -14,9 +14,9 @@ const Card = ({
   Icon: any;
 }) => {
   return (
-    <div className="max-w-sm rounded overflow-hidden shadow-xl p-6 py-10 bg-white">
+    <div className="max-w-sm rounded overflow-hidden  shadow-xl drop-shadow-xl border-t border-gray-100 px-6 py-10 bg-white">
       <div className="flex flex-col items-center  md:items-start text-center md:text-left">
-        <div className="w-14 h-14 flex items-center justify-center bg-primary rounded-full">
+        <div className="w-12 h-12 flex items-center justify-center bg-primary ">
           <Icon className="text-white text-3xl" />
         </div>
         <h2 className="text-2xl md:text-3xl font-medium my-4">{title}</h2>
@@ -64,7 +64,7 @@ function PlayTennis() {
       </div>
 
       {/* Cards Section */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12 justify-items-center">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mt-12 justify-items-center mx-10">
         {cardData.map((card, index) => (
           <Card
             key={index}

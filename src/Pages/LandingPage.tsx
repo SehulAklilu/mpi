@@ -11,6 +11,7 @@ import NewHero from "@/components/LandingPage/NewHero";
 import NumberInof from "@/components/LandingPage/NumberInof";
 import OurCourses from "@/components/LandingPage/OurCourses";
 import PlayTennis from "@/components/LandingPage/PlayTennis";
+import Purchases from "@/components/LandingPage/Purchases";
 import TennisLocations from "@/components/LandingPage/TennisLocations";
 import TrainingBanner from "@/components/LandingPage/TrainingBanner";
 // import Information from "@/components/LandingPage/Information";
@@ -27,6 +28,7 @@ function LandingPage() {
       <OurCourses />
       <NumberInof />
       <TrainingSection />
+      <Purchases />
       <TrainingBanner />
       <FAQSection />
       <TennisLocations />

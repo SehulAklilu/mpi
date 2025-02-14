@@ -1,6 +1,7 @@
 import image1 from "../../assets/landingpage/image20.png";
 import image2 from "../../assets/landingpage/image21.png";
 import { IoPlayOutline } from "react-icons/io5";
+import CustomButton2 from "./CustomButton2";
 
 function MakeChampions() {
   return (
@@ -36,9 +37,12 @@ function MakeChampions() {
           quidem accusantium voluptatibus, sapiente at cupiditate dolorum! Iusto
           praesentium magni non!
         </p>
-        <button className="py-2 sm:py-3 font-medium px-6 sm:px-8 bg-primary text-white rounded-full w-fit">
-          About Us
-        </button>
+
+        <CustomButton2
+          label="About Us"
+          url="about-us"
+          style="py-2 sm:py-3 font-medium px-6 sm:px-8 w-fit"
+        />
       </div>
     </div>
   );

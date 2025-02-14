@@ -284,7 +284,7 @@ export const links = [
 export const heroLinks = [
   {
     title: "HOME",
-    href: "/home",
+    href: "/",
   },
   {
     title: "ABOUT US",
@@ -298,23 +298,6 @@ export const heroLinks = [
     title: "COURSES",
     href: "/courses",
   },
-  // {
-  //   title: "TRAINING & FACILITIES",
-  //   href: "/home",
-  //   subLinks: [
-  //     {
-  //       title: "Service One",
-  //       href: "/services-one",
-  //       description:
-  //         "A modal dialog that interrupts the user with important content and expects a response.",
-  //     },
-  //     {
-  //       title: "Service Two",
-  //       href: "/services-two",
-  //       description: "How to install dependencies and structure your app.",
-  //     },
-  //   ],
-  // },
   {
     title: "BLOG",
     href: "/blog",

@@ -24,8 +24,9 @@ export const login = async (
   return response.data;
 };
 
-export const logout = () => {
-  Cookies.remove("authToken");
+export const logout = async (): Promise<any> => {
+  const response = await axiosInstance.post<any>("/auth/logout");
+  return response.data;
 };
 
 export const sendOtp = async (payload: OtpPayload): Promise<OtpResponse> => {

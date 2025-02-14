@@ -1,7 +1,8 @@
 import React from "react";
 import LandingPageNavBar from "./LandingPageNavBar";
-import bgImage from "../../assets/landingpage/wilson-tennis-ball-1-1536x1024.webp";
+import bgImage from "../../assets/landingpage/wallpaperflare.com_wallpaper.jpg";
 import { IoPlayCircle } from "react-icons/io5";
+import CustomButton2 from "./CustomButton2";
 
 function NewHero() {
   return (
@@ -23,11 +24,13 @@ function NewHero() {
           MPI!
         </h1>
 
-        <div className="mt-6 flex  flex-col md:flex-row items-center justify-center gap-4">
-          <button className="px-6 py-2 text-lg rounded-full text-white bg-primary w-fit md:w-auto">
-            Register Now
-          </button>
-          <button className="flex items-center gap-2 text-white text-base md:text-xl py-3 px-6 rounded-lg group w-fit md:w-auto">
+        <div className="mt-6 flex flex-col md:flex-row gap-x-4 justify-center items-center">
+          <CustomButton2
+            label="Register Now"
+            url="signup"
+            style="py-2 flex items-center justify-center"
+          />
+          <button className="flex items-center gap-x-2 text-white text-base md:text-xl px-6 pt-4 rounded-lg group w-fit md:w-auto">
             <IoPlayCircle className="text-4xl text-white group-hover:text-primary" />
             Watch Intro
           </button>

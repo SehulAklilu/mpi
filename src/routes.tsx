@@ -40,8 +40,16 @@ import Courses from "./components/LandingPage/Courses.tsx";
 import Testimonial from "./components/LandingPage/Testimonial.tsx";
 import ChatProflie from "./components/Chat/ChatProflie.tsx";
 import ProfileSetting from "./components/Chat/ProfileSetting.tsx";
+import AboutUsContainer from "./components/LandingPage/About-Us.tsx";
+import CoursesDetail from "./components/LandingPage/CoursesDetail.tsx";
+import Contact from "./components/LandingPage/Contact.tsx";
+import Blog from "./components/LandingPage/Blog.tsx";
 
 const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <LandingPage />,
+  },
   {
     path: "/",
     element: <Home />,
@@ -225,8 +233,8 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/home",
-    element: <LandingPage />,
+    path: "/about-us",
+    element: <AboutUsContainer />,
   },
   {
     path: "/unauthorized",
@@ -237,8 +245,20 @@ const router = createBrowserRouter([
     element: <Courses />,
   },
   {
+    path: "/courses/detail",
+    element: <CoursesDetail />,
+  },
+  {
     path: "/testimonials",
     element: <Testimonial />,
+  },
+  {
+    path: "/contact-us",
+    element: <Contact />,
+  },
+  {
+    path: "/blog",
+    element: <Blog />,
   },
 ]);
 

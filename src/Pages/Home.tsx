@@ -13,7 +13,7 @@ function Home() {
   useEffect(() => {
     const authToken = Cookies.get("authToken");
     if (!authToken && location.pathname === "/") {
-      navigate("/home");
+      navigate("/");
     }
     if (!authToken && location.pathname !== "/") {
       setLastAttemptedRoute(location.pathname);
