@@ -115,22 +115,26 @@ function Contact() {
           Address & Contacts
         </h1>
         <div
-          className="relative mt-40 h-[44rem] bg-cover bg-center bg-no-repeat "
+          className="relative mt-10 md:mt-40 h-auto md:h-[44rem] bg-cover bg-center bg-no-repeat w-full"
           style={{
             backgroundImage: `url(${bgImage2})`,
           }}
         >
-          <div className="flex absolute left-1/2 -translate-x-1/2 -top-20 gap-4">
-            {locationDatas.map((data) => (
-              <div className="py-8 px-4 z-50 flex flex-col items-center flex-wrap justify-center rounded-xl shadow-lg drop-shadow-lg bg-white w-[16rem] md:w-[20rem] gap-4">
-                <data.Icon className="text-4xl text-primary " />
-                <p className="text-2xl text-center">{data.lable}</p>
-                <p className="text-2xl text-center">{data.value}</p>
+          {/* Responsive Container */}
+          <div className="flex flex-wrap justify-center gap-4 px-4 md:absolute md:w-full md:top-[-6rem]">
+            {locationDatas.map((data, index) => (
+              <div
+                key={index}
+                className="py-6 px-4 z-50 flex flex-col items-center rounded-xl shadow-lg bg-white w-full sm:w-[14rem] md:w-[18rem] lg:w-[20rem] gap-3"
+              >
+                <data.Icon className="text-3xl md:text-4xl text-primary" />
+                <p className="text-xl md:text-2xl text-center">{data.lable}</p>
+                <p className="text-lg md:text-2xl text-center">{data.value}</p>
               </div>
             ))}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-6 gap-4 absolute left-1/2 -translate-x-1/2 bg-white z-20 -bottom-16 p-10 rounded-xl shadow-xl drop-shadow-xl xl:w-[62rem]">
+          <div className="m-4 grid grid-cols-1 md:grid-cols-6 gap-4 mx-auto bg-white z-20 p-6 md:p-10 rounded-xl shadow-xl drop-shadow-xl w-[94%] md:w-[90%] xl:w-[62rem] mt-10 md:mt-0 md:absolute md:left-1/2 md:-translate-x-1/2 md:-bottom-16 ">
             <div className="col-span-full md:col-span-4">
               <h1 className="text-primary text-sm">CONTACT</h1>
               <h1 className="text-4xl">Get in Touch</h1>
@@ -155,7 +159,7 @@ function Contact() {
                               type="text"
                               id="full_name"
                               placeholder="First Name"
-                              className={"!rounded-3xl shadow !bg-[#F0F0FF]"}
+                              className="!rounded-3xl shadow !bg-[#F0F0FF]"
                               {...field}
                             />
                           </FormControl>
@@ -212,11 +216,9 @@ function Contact() {
                             <FormControl>
                               <Input
                                 type="text"
-                                id="full_name"
+                                id="email"
                                 placeholder="Enter your email"
-                                className={
-                                  "!rounded-3xl shadow flex-1 !bg-[#F0F0FF] "
-                                }
+                                className="!rounded-3xl shadow flex-1 !bg-[#F0F0FF]"
                                 {...field}
                               />
                             </FormControl>
@@ -230,13 +232,13 @@ function Contact() {
                       name="subject"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>First Name</FormLabel>
+                          <FormLabel>Subject</FormLabel>
                           <FormControl>
                             <Input
                               type="text"
                               id="subject"
                               placeholder="Subject"
-                              className={"!rounded-3xl shadow !bg-[#F0F0FF]"}
+                              className="!rounded-3xl shadow !bg-[#F0F0FF]"
                               {...field}
                             />
                           </FormControl>
@@ -248,7 +250,7 @@ function Contact() {
                       <label>Message</label>
                       <textarea
                         id="Message"
-                        placeholder="Coach Damian’s Resource Repository..."
+                        placeholder="Enter your message..."
                         rows={2}
                         className="w-full border p-2 !rounded-xl shadow !bg-[#F0F0FF]"
                         {...form.register("message")}
@@ -262,7 +264,10 @@ function Contact() {
               </div>
             </div>
             <div className="col-span-full md:col-span-2">
-              <img src={map} className="h-full object-cover" />
+              <img
+                src={map}
+                className="w-full h-auto md:h-full object-cover rounded-xl"
+              />
             </div>
           </div>
         </div>
@@ -290,7 +295,7 @@ function Contact() {
             <FaLinkedin className="text-primary" />
           </div>
         </div>
-        <div className="flex items-center justify-center gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 items-center m-2 gap-10">
           <div>
             <h2 className="text-2xl md:text-5xl text-gray-800 md:w-[90%]">
               Subscribe To Our Weekly Newsletter

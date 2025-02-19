@@ -25,7 +25,7 @@ axiosInstance.interceptors.response.use(
     const originalRequest = error.config;
 
     if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true; 
+      originalRequest._retry = true;
       try {
         const refreshToken = Cookies.get("refreshToken");
         if (!refreshToken) {
@@ -49,8 +49,8 @@ axiosInstance.interceptors.response.use(
         return axiosInstance(originalRequest);
       } catch (refreshError) {
         console.error("Failed to refresh token:", refreshError);
-        // Cookies.remove("authToken");
-        // Cookies.remove("refreshToken");
+        Cookies.remove("authToken");
+        Cookies.remove("refreshToken");
 
         return Promise.reject(refreshError);
       }

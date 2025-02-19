@@ -9,6 +9,9 @@ import { FaCaretDown } from "react-icons/fa6";
 import { useEffect, useRef, useState } from "react";
 import { useMutation } from "react-query";
 import { logout } from "@/api/auth.api";
+import { BsPerson } from "react-icons/bs";
+import { TbLogout2 } from "react-icons/tb";
+import { LoaderCircle } from "lucide-react";
 
 interface ContentLayoutProps {
   children: React.ReactNode;
@@ -47,7 +50,12 @@ export function ContentLayout({ children, name }: ContentLayoutProps) {
   const [showProfile, setShowProfile] = useState(false);
 
   const logOut = () => {
-    logoutMut.mutate();
+    const refreshToken = Cookies.get("refreshToken");
+    if (refreshToken) {
+      logoutMut.mutate({
+        refreshToken: refreshToken,
+      });
+    }
   };
 
   useEffect(() => {
@@ -89,44 +97,48 @@ export function ContentLayout({ children, name }: ContentLayoutProps) {
               : "justify-between"
           }`}
         >
-          {!shouldExcludeNavbar && (
+          <div></div>
+          {/* {!shouldExcludeNavbar && (
             <div className="flex-1 flex items-center justify-center">
               <Navbar links={heroLinks} />
             </div>
-          )}
+          )} */}
           <div
-            className="flex-none relative  flex items-center gap-1"
-            onClick={() => setShowProfile(true)}
+            className="flex-none relative flex items-center gap-1"
+            onMouseEnter={() => setShowProfile(true)}
+            onMouseLeave={() => setShowProfile(false)}
           >
-            {/* <div className="relative w-8 h-8 rounded-full flex items-center justify-center bg-primary cursor-pointer">
-              <BiBell className="text-white text-lg" />
-              <div className="absolute bottom-0 right-0 bg-red-600 w-2 h-2 rounded-full border border-white"></div>
-            </div> */}
             <div className="w-10 h-10 border-2 rounded-full border-primary cursor-pointer">
               <img src={userImage} className="w-full h-full rounded-full" />
             </div>
             <FaCaretDown className="text-xl text-primary" />
 
             {showProfile && (
-              <div
-                className="absolute  flex flex-col p-4 drop-shadow-xl shadow-md shadow-primary rounded-lg gap-4 bg-white top-12 right-4 z-50"
-                ref={profile}
-              >
-                <p
+              <div className="absolute flex flex-col p-4 drop-shadow-xl shadow-md shadow-primary rounded-lg gap-4 bg-white top-10 right-4 pr-10 z-50">
+                <div
                   onClick={() => {
                     navigate(`/user/profile/${userId}`);
                     setShowProfile(false);
                   }}
-                  className="text-lg hover:text-primary cursor-pointer whitespace-nowrap"
+                  className="flex items-center gap-2 font-semibold hover:text-primary cursor-pointer whitespace-nowrap"
                 >
-                  View Profile
-                </p>
-                <p
+                  <BsPerson className="text-xl" /> View Profile
+                </div>
+                <div
                   onClick={logOut}
-                  className="text-lg hover:text-primary cursor-pointer"
+                  className="flex items-center gap-2 font-semibold hover:text-primary cursor-pointer"
                 >
-                  Logout
-                </p>
+                  <TbLogout2 className="text-xl" /> Logout{" "}
+                  {logoutMut.isLoading && (
+                    <LoaderCircle
+                      style={{
+                        animation: "spin 1s linear infinite",
+                        fontSize: "2rem",
+                        color: "#FF9800",
+                      }}
+                    />
+                  )}
+                </div>
               </div>
             )}
           </div>

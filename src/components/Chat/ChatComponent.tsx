@@ -8,7 +8,7 @@ import ChatInput from "./ChatInput";
 import { useMutation, useQuery } from "react-query";
 import { getChats, isRead } from "@/api/chat.api";
 import Cookies from "js-cookie";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChatInterface } from "@/types/chat.type";
 import NoMessage from "./NoMessage";
 import ChatItemSkeleton from "./ChatItemSkeleton";
@@ -31,11 +31,13 @@ export interface ChatItems {
 
 interface ChatComponentProps {
   setActiveTab: (tab: string) => void;
+  openChatId: string | null;
 }
 
-function ChatComponent({ setActiveTab }: ChatComponentProps) {
+function ChatComponent({ setActiveTab, openChatId }: ChatComponentProps) {
   const [user_id, setUserId] = useState<string | undefined>(undefined);
   const [searchValue, setSearchValue] = useState("");
+  const [isManuallySelected, setIsManuallySelected] = useState(false);
   const [selectedChat, setSelectedChat] = useState<ChatItems | undefined>(
     undefined
   );
@@ -97,6 +99,15 @@ function ChatComponent({ setActiveTab }: ChatComponentProps) {
     chats_data && chats_data?.chats.length > 0 && user_id
       ? extractChatItems(chats_data.chats, user_id)
       : undefined;
+
+  useEffect(() => {
+    if (!isManuallySelected && openChatId && chats) {
+      const selectedChat = chats.find((chat) => chat.id === openChatId);
+      if (selectedChat) {
+        setSelectedChat(selectedChat);
+      }
+    }
+  }, [chats, openChatId]);
 
   const filteredChats =
     chats &&
@@ -167,6 +178,7 @@ function ChatComponent({ setActiveTab }: ChatComponentProps) {
                       (selectedChat && selectedChat.id === chat.id) ?? false
                     }
                     onClick={() => {
+                      setIsManuallySelected(true);
                       setSelectedChat(chat);
                       makeLatestMessageRead(chat?.latestMessageId);
                       setSidebarOpen(false); // Close sidebar on mobile after selecting chat
@@ -175,7 +187,7 @@ function ChatComponent({ setActiveTab }: ChatComponentProps) {
                 ))
               ) : (
                 <p className="text-center p-1 rounded-md text-[#9092A1]">
-                  No Chat
+                  {/* No Chat */}
                 </p>
               )}
             </div>

@@ -3,6 +3,7 @@ import Cookies from "js-cookie";
 import {
   LoginPayload,
   LoginResponse,
+  LogoutPayload,
   OtpPayload,
   OtpResponse,
   RegisterPayload,
@@ -24,8 +25,8 @@ export const login = async (
   return response.data;
 };
 
-export const logout = async (): Promise<any> => {
-  const response = await axiosInstance.post<any>("/auth/logout");
+export const logout = async (payload: LogoutPayload): Promise<any> => {
+  const response = await axiosInstance.post<any>("/auth/logout", payload);
   return response.data;
 };
 

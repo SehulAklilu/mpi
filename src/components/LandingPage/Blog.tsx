@@ -146,7 +146,7 @@ function Blog() {
         </div>
       </div>
 
-      <div className="container mx-auto my-20 space-y-4">
+      <div className="container mx-auto my-20 space-y-4 p-2">
         <h1 className="text-3xl font-bold text-center">
           Stay Connect On Our Social Media
         </h1>
@@ -167,7 +167,7 @@ function Blog() {
             <FaLinkedin className="text-primary" />
           </div>
         </div>
-        <div className="flex items-center justify-center gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-10">
           <div>
             <h2 className="text-2xl md:text-5xl text-gray-800 md:w-[90%]">
               Subscribe To Our Weekly Newsletter

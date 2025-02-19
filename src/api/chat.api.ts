@@ -24,6 +24,27 @@ export interface MessagePayload {
   //   message: string;
 }
 
+export interface AnnouncementsPayload {
+  title: string;
+  description: string;
+  category: string;
+}
+
+export interface MyAnnouncementsResponse {
+  _id: string;
+  title: string;
+  description: string;
+  category: string;
+  announcedTo: string;
+  createdBy: string;
+  deletedBy: string[];
+  createdAt: string;
+  updatedAt: string;
+  id: string;
+  showButton?: boolean;
+  editAnnouncement?: (id: string) => void;
+}
+
 export interface sendFriendRequestPayload {
   user2: string;
 }
@@ -70,7 +91,7 @@ export const getFriendRequest = async (): Promise<FriendRequestResponse> => {
 export const acceptFriendRequest = async (
   id: string
 ): Promise<FriendRequestResponse> => {
-  const response = await axiosInstance.patch(`/api/v1/friendship/${id}/accept`);
+  const response = await axiosInstance.put(`/api/v1/friendship/${id}/accept`);
   return response.data;
 };
 
@@ -107,5 +128,53 @@ export const createChat = async (payload: CreateChatPayload): Promise<any> => {
 
 export const isRead = async (id: string): Promise<any> => {
   const response = await axiosInstance.patch(`/api/v1/messages/read/${id}`);
+  return response.data;
+};
+
+export const createAnnouncements = async (
+  payload: AnnouncementsPayload
+): Promise<any> => {
+  const response = await axiosInstance.post("/api/v1/announcements", payload);
+  return response.data;
+};
+
+export const getAnnouncements = async (): Promise<any> => {
+  const response = await axiosInstance.get("/api/v1/announcements");
+  return response.data;
+};
+
+export const getMyAnnouncements = async (): Promise<
+  MyAnnouncementsResponse[]
+> => {
+  const response = await axiosInstance.get("/api/v1/announcements/me");
+  return response.data;
+};
+
+export const getMyAnnouncement = async (
+  announcementId: string
+): Promise<any> => {
+  const response = await axiosInstance.get(
+    `/api/v1/announcements/me/${announcementId}`
+  );
+  return response.data;
+};
+
+export const updateMyAnnouncement = async (
+  payload: AnnouncementsPayload,
+  announcementId: string
+): Promise<any> => {
+  const response = await axiosInstance.patch(
+    `/api/v1/announcements/me/${announcementId}`,
+    payload
+  );
+  return response.data;
+};
+
+export const deleteMyAnnouncement = async (
+  announcementId: string
+): Promise<any> => {
+  const response = await axiosInstance.delete(
+    `/api/v1/announcements/${announcementId}`
+  );
   return response.data;
 };

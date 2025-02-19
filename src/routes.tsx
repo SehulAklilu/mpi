@@ -36,14 +36,16 @@ import RecentMatch from "./components/Matches/RecentMatch.tsx";
 import Matches from "./Pages/Matches.tsx";
 import PendingMatch from "./components/Matches/PendingMatch.tsx";
 import LandingPage from "./Pages/LandingPage.tsx";
-import Courses from "./components/LandingPage/Courses.tsx";
+import Courses from "./Pages/CoursesPage.tsx";
 import Testimonial from "./components/LandingPage/Testimonial.tsx";
 import ChatProflie from "./components/Chat/ChatProflie.tsx";
 import ProfileSetting from "./components/Chat/ProfileSetting.tsx";
-import AboutUsContainer from "./components/LandingPage/About-Us.tsx";
+import AboutUsContainer from "./Pages/AboutUsPage.tsx";
 import CoursesDetail from "./components/LandingPage/CoursesDetail.tsx";
 import Contact from "./components/LandingPage/Contact.tsx";
 import Blog from "./components/LandingPage/Blog.tsx";
+import AboutUsPage from "./Pages/AboutUsPage.tsx";
+import CoursesPage from "./Pages/CoursesPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -234,7 +236,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/about-us",
-    element: <AboutUsContainer />,
+    element: <AboutUsPage />,
   },
   {
     path: "/unauthorized",
@@ -242,7 +244,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/courses",
-    element: <Courses />,
+    element: <CoursesPage />,
   },
   {
     path: "/courses/detail",

@@ -62,3 +62,7 @@ export const requiredFields: (keyof RegisterPayload)[] = [
   "country",
   "zipCode",
 ];
+
+export interface LogoutPayload {
+  refreshToken: string;
+}

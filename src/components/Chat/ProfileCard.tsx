@@ -20,7 +20,7 @@ const ProfileCard: React.FC<ProfileDataInterface> = ({
   role,
   profilePicture,
   status,
-  otherUserBolocked,
+  otherUserBlocked,
   setActiveTab,
 }) => {
   const [showMenu, setShowMenu] = useState(false);
@@ -74,7 +74,7 @@ const ProfileCard: React.FC<ProfileDataInterface> = ({
     createChatMessage.mutate({ userId: user_id });
   };
   const onBlockToggle = () => {
-    if (otherUserBolocked) {
+    if (otherUserBlocked) {
       unblock.mutate(friendship_id);
       return;
     }
@@ -99,7 +99,7 @@ const ProfileCard: React.FC<ProfileDataInterface> = ({
               }}
               className="block w-full text-center px-4 py-2 hover:bg-gray-100"
             >
-              {otherUserBolocked ? "Unblock" : "Block"}
+              {otherUserBlocked ? "Unblock" : "Block"}
             </button>
           </div>
         )}

@@ -6,7 +6,7 @@ function Purchases() {
     <div className="container mx-auto">
       <div className="flex items-center justify-center gap-y-4 flex-col">
         <h1 className="text-primary text-xl">OUR PRICING</h1>
-        <h1 className="text-2xl md:text-4xl font-bold ">
+        <h1 className="text-2xl md:text-4xl font-bold text-center ">
           FLEXIBLE PRICING PLANS
         </h1>
         <p className="text-[#3B4547] w-[90%] lg:w-[50%] text-center">
