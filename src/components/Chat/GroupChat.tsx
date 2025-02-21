@@ -8,7 +8,7 @@ import ChatMessages from "./ChatMessages";
 import ChatInput from "./ChatInput";
 import GroupChatMessages from "./GroupChatMessages";
 import { useState } from "react";
-import { MenuIcon } from "lucide-react";
+import { LoaderCircle, MenuIcon } from "lucide-react";
 import CustomTabs from "./CustomTabs";
 import ChatItemSkeleton from "./ChatItemSkeleton";
 import { ChatItems } from "./ChatComponent";
@@ -35,58 +35,44 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useMutation, useQuery } from "react-query";
+import { getFriends } from "@/api/chat.api";
+import Cookies from "js-cookie";
+import { extractUsers } from "@/lib/utils";
+import MultiSelectDropdown from "../MultipleDropDown";
+import {
+  createGroup,
+  CreateGroupPayload,
+  getGroups,
+} from "@/api/group-chat.api";
+import { getAxiosErrorMessage, getAxiosSuccessMessage } from "@/api/axios";
+import { toast } from "react-toastify";
+import GroupChatItem, { GroupChatItemProps } from "./GroupChatItem";
+import { groupCollapsed } from "console";
 
 const FormSchema = z.object({
   group_name: z.string(),
   group_type: z.string(),
-  bio: z.string(),
-  avatar: z.string(),
+  bio: z.string().optional(),
+  avatar: z.string().optional(),
+  members: z.array(z.string()).min(1, "At least one member is required"),
 });
 interface GroupChatProps {
   setActiveTab: (tab: string) => void;
 }
 
 function GroupChat({ setActiveTab }: GroupChatProps) {
-  const chats: ChatItemProps[] = [
-    {
-      name: "Archer",
-      avatarUrl: "https://i.pravatar.cc/150?img=1",
-      status: "online",
-      message: "Typing...",
-      time: "4:30 PM",
-      unreadCount: 2,
-    },
-    {
-      name: "Lana",
-      avatarUrl: "https://i.pravatar.cc/150?img=2",
-      status: "offline",
-      message: "Let's meet tomorrow at 10.",
-      time: "3:45 PM",
-      unreadCount: 0,
-    },
-    {
-      name: "Cyril",
-      avatarUrl: "https://i.pravatar.cc/150?img=3",
-      status: "online",
-      message: "Got the report, thanks!",
-      time: "2:20 PM",
-      unreadCount: 1,
-    },
-    {
-      name: "Pam",
-      avatarUrl: "https://i.pravatar.cc/150?img=4",
-      status: "online",
-      message: "Can you send me the files?",
-      time: "1:15 PM",
-      unreadCount: 4,
-    },
-  ];
+  const user_id = Cookies.get("user_id");
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
+    defaultValues: {
+      members: [],
+    },
   });
-  const [selectedChat, setSelectedChat] = useState<ChatItemProps | undefined>(
-    undefined
-  );
+  const [selectedChat, setSelectedChat] = useState<
+    GroupChatItemProps | undefined
+  >(undefined);
   const [open, setOpen] = useState(false);
 
   const [isSidebarOpen, setSidebarOpen] = useState(true);
@@ -99,7 +85,49 @@ function GroupChat({ setActiveTab }: GroupChatProps) {
   };
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
-  const onSubmit = () => {};
+  const { data: friends_data } = useQuery({
+    queryKey: ["friends"],
+    queryFn: getFriends,
+  });
+
+  const {
+    data: groups,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["groups"],
+    queryFn: getGroups,
+  });
+
+  const { mutate, isLoading: isCreatingGroup } = useMutation({
+    mutationKey: ["createGroup"],
+    mutationFn: (payload: CreateGroupPayload) => createGroup(payload),
+    onSuccess: (response) => {
+      const message = getAxiosSuccessMessage(response);
+      toast.success(message);
+      form.reset();
+      setOpen(false);
+    },
+    onError: (error: any) => {
+      const message = getAxiosErrorMessage(error);
+      toast.error(message);
+    },
+  });
+
+  const friends =
+    friends_data && user_id && extractUsers(friends_data, user_id);
+
+  const onSubmit = (data: z.infer<typeof FormSchema>) => {
+    const payload = {
+      groupName: data.group_name,
+      members: data.members.map((member) => ({
+        user: member,
+      })),
+    };
+    mutate(payload);
+  };
+
+  console.log("333333333333333", groups);
 
   return (
     <div className="relative">
@@ -110,12 +138,8 @@ function GroupChat({ setActiveTab }: GroupChatProps) {
             isSidebarOpen ? "translate-x-0" : "-translate-x-full"
           } ${isSidebarOpen ? "md:w-full" : ""} `}
         >
-          <div className=" md:hidden px-1 flex items-center gap-x-1">
-            <MenuIcon
-              size={36}
-              className="invisible text-[#F2851C] flex-none "
-            />
-            <CustomTabs setActiveTab={setActiveTab} />
+          <div className=" md:hidden px-1 m-1 ml-[2rem]">
+            <CustomTabs setActiveTab={setActiveTab} tab="group" />
           </div>
           <div className="flex gap-x-2 items-center p-4 rounded-lg">
             <Input
@@ -145,18 +169,26 @@ function GroupChat({ setActiveTab }: GroupChatProps) {
                 </div>
                 <p className="text-[#152946] font-semibold">New Group</p>
               </div>
-              {chats.map((chat) => (
-                <ChatItem
-                  key={chat.id}
-                  {...chat}
-                  active={false}
-                  onClick={() => {
-                    setSelectedChat(chat);
-                    // makeLatestMessageRead(chat?.latestMessageId);
-                    setSidebarOpen(false); // Close sidebar on mobile after selecting chat
-                  }}
-                />
-              ))}
+              {groups &&
+                groups.map((group) => (
+                  <GroupChatItem
+                    key={group._id}
+                    id={group._id}
+                    name={group.groupName}
+                    avatarUrl={group.avatar}
+                    active={false}
+                    onClick={() => {
+                      setSelectedChat({
+                        id: group._id,
+                        name: group.groupName,
+                        avatarUrl: group.avatar,
+                        active: false,
+                      });
+                      // makeLatestMessageRead(chat?.latestMessageId);
+                      setSidebarOpen(false); // Close sidebar on mobile after selecting chat
+                    }}
+                  />
+                ))}
             </div>
           </ScrollArea>
         </div>
@@ -173,15 +205,20 @@ function GroupChat({ setActiveTab }: GroupChatProps) {
                 user={{
                   id: "3q34u234uo23i4o23i",
                   name: selectedChat.name,
-                  avatarUrl: selectedChat.avatarUrl,
-                  status: selectedChat.status,
+                  // avatarUrl: selectedChat.avatarUrl,
+                  avatarUrl: "https://i.pravatar.cc/100?img=20",
+                  status: "online",
                 }}
                 onClick={openSideBar}
               />
               <ScrollArea className="h-[84vh] sm:h-[80vh] md:h-[71vh] !overflow-hidden ">
-                <GroupChatMessages />
+                <GroupChatMessages groupId={selectedChat.id} />
               </ScrollArea>
-              <ChatInput chatId={"1"} reciverId={"2"} />
+              <ChatInput
+                chatId={selectedChat.id}
+                reciverId={"2"}
+                chatType="GROUP"
+              />
             </>
           ) : (
             <NoMessage onClick={openSideBar} />
@@ -249,8 +286,8 @@ function GroupChat({ setActiveTab }: GroupChatProps) {
                       <Input
                         type="text"
                         id="group_name"
-                        placeholder="Coach Damian"
-                        className={"!rounded-3xl shadow !bg-white"}
+                        placeholder="Group Name"
+                        className={"!rounded-lg shadow !bg-white"}
                         {...field}
                       />
                     </FormControl>
@@ -267,7 +304,7 @@ function GroupChat({ setActiveTab }: GroupChatProps) {
                     <Select onValueChange={field.onChange} value={field.value}>
                       <SelectTrigger
                         className={
-                          "!rounded-3xl  shadow !h-10 !py-4 !px-4 !bg-white"
+                          "!rounded-lg  shadow !h-10 !py-4 !px-4 !bg-white"
                         }
                       >
                         <SelectValue placeholder="Group Type" />
@@ -287,24 +324,61 @@ function GroupChat({ setActiveTab }: GroupChatProps) {
                   id="bio"
                   placeholder="Coach Damian’s Resource Repository..."
                   rows={2}
-                  className="w-full border !rounded-2xl p-2"
+                  className="w-full border !rounded-lg p-2"
                   {...form.register("bio")}
                 />
               </div>
               <div>
-                <label>Add Members</label>
-                <Input
-                  type="text"
-                  id="full_name"
-                  placeholder="Search People..."
-                  value={searchValue}
-                  onChange={handleSearchChange}
-                  className={"py-2 w-full !rounded-full !bg-white"}
-                  startIcon={FaSearch}
+                <label
+                  className={
+                    form.formState.errors?.members
+                      ? "text-red-500 font-medium text-sm"
+                      : "text-black font-medium text-sm"
+                  }
+                >
+                  Add Members
+                </label>
+
+                <Controller
+                  name="members"
+                  control={form.control}
+                  rules={{ required: "At least one member is required" }}
+                  render={({ field }) => (
+                    <MultiSelectDropdown
+                      control={form.control}
+                      name="members"
+                      options={
+                        friends
+                          ? friends.map((friend) => ({
+                              value: friend.user_id,
+                              label: friend.name,
+                              image: friend.profilePicture,
+                            }))
+                          : []
+                      }
+                    />
+                  )}
                 />
+
+                {form.formState.errors?.members && (
+                  <small className="text-red-500">
+                    {form.formState.errors.members.message}
+                  </small>
+                )}
               </div>
-              <button className="px-4 py-2 mt-4  bg-primary text-white w-full rounded-full">
-                Create Group
+
+              <button className="px-4 py-2 mt-4 flex items-center justify-center  bg-primary text-white w-full rounded-full">
+                {isCreatingGroup ? (
+                  <LoaderCircle
+                    style={{
+                      animation: "spin 1s linear infinite",
+                      fontSize: "2rem",
+                      color: "#FFFFFF",
+                    }}
+                  />
+                ) : (
+                  <span>Create Group</span>
+                )}
               </button>
               <button
                 type="button"

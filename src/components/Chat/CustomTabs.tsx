@@ -1,49 +1,53 @@
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useRole } from "@/RoleContext";
+import { useState } from "react";
+
 interface CustomTabsProps {
   setActiveTab: (tab: string) => void;
+  tab: string;
 }
-function CustomTabs({ setActiveTab }: CustomTabsProps) {
+
+function CustomTabs({ setActiveTab, tab }: CustomTabsProps) {
+  const [activeTab, setActive] = useState(tab);
+  const { role } = useRole();
+
+  const handleTabChange = (tab: string) => {
+    setActive(tab);
+    setActiveTab(tab);
+  };
+
+  const tabs = [
+    { value: "messages", label: "Messages" },
+    { value: "group", label: "Groups" },
+    { value: "people", label: "People" },
+    ...(role === "coach"
+      ? [{ value: "announcements", label: "Announcements" }]
+      : []),
+    { value: "posts", label: "Posts" },
+  ];
+
   return (
-    <div className="pt-2 flex-auto ">
+    <div className="pt-2 flex-auto">
       <div className="flex items-center justify-center">
-        <Tabs
-          onValueChange={setActiveTab}
-          defaultValue="messages"
-          className="w-full"
-        >
-          <TabsList className="flex bg-[#FFF6ED] rounded-full w-full md:w-[30rem] lg:w-[40rem] shadow-md h-[2.5rem] md:h-[3rem] mx-auto border overflow-x-scroll">
-            <TabsTrigger
-              value="messages"
-              className="flex-1 text-center py-1 text-sm md:text-base lg:text-lg rounded-full transition-colors data-[state=active]:bg-[#F2851C] data-[state=active]:text-white data-[state=inactive]:text-gray-700"
-            >
-              Messages
-            </TabsTrigger>
-            <TabsTrigger
-              value="group"
-              className="flex-1 text-center py-1 text-sm md:text-base lg:text-lg rounded-full transition-colors data-[state=active]:bg-[#F2851C] data-[state=active]:text-white data-[state=inactive]:text-gray-700"
-            >
-              Groups
-            </TabsTrigger>
-            <TabsTrigger
-              value="people"
-              className="flex-1 text-center py-1 text-sm md:text-base lg:text-lg rounded-full transition-colors data-[state=active]:bg-[#F2851C] data-[state=active]:text-white data-[state=inactive]:text-gray-700"
-            >
-              People
-            </TabsTrigger>
-            <TabsTrigger
-              value="announcements"
-              className="flex-1 text-center py-1 text-sm md:text-base lg:text-lg rounded-full transition-colors data-[state=active]:bg-[#F2851C] data-[state=active]:text-white data-[state=inactive]:text-gray-700"
-            >
-              Announcements
-            </TabsTrigger>
-            <TabsTrigger
-              value="posts"
-              className="flex-1 text-center py-1 text-sm md:text-base lg:text-lg rounded-full transition-colors data-[state=active]:bg-[#F2851C] data-[state=active]:text-white data-[state=inactive]:text-gray-700"
-            >
-              Posts
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
+        {/* Ensure scrolling works */}
+        <div className="w-full overflow-x-scroll scrollbar-hide">
+          <div className="flex w-max bg-[#FFF6ED] rounded-full shadow-md h-[2.8rem] md:h-[3rem] mx-auto border px-2 space-x-2">
+            {tabs.map((tab) => (
+              <button
+                key={tab.value}
+                onClick={() => handleTabChange(tab.value)}
+                className={`text-center px-4 py-2 text-sm md:text-base lg:text-lg rounded-full transition-colors whitespace-nowrap  m-1
+                  ${
+                    activeTab === tab.value
+                      ? "bg-[#F2851C] text-white"
+                      : "text-gray-700"
+                  }
+                `}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

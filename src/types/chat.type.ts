@@ -6,7 +6,7 @@ export interface ChatInterface {
   createdAt: string;
   updatedAt: string;
   __v: number;
-  latestMessage: Message;
+  latestMessage?: Message;
   id: string;
 }
 

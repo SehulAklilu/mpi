@@ -80,17 +80,23 @@ function ChatComponent({ setActiveTab, openChatId }: ChatComponentProps) {
           name: `${otherUser.firstName} ${otherUser.lastName}`,
           avatarUrl: otherUser.avatar,
           status: otherUser.lastOnline ? "online" : "offline",
-          message: chat.latestMessage?.content || "",
-          time: chat.latestMessage?.createdAt
-            ? new Date(chat.latestMessage.createdAt).toLocaleTimeString([], {
+          message: chat?.latestMessage?.content || "",
+          time: chat?.latestMessage?.createdAt
+            ? new Date(chat?.latestMessage.createdAt).toLocaleTimeString([], {
                 hour: "2-digit",
                 minute: "2-digit",
               })
             : "",
-          unreadCount: chat.latestMessage?.isRead ? 0 : 1,
-          isRead: chat.latestMessage?.isRead ?? false,
+          unreadCount: chat?.latestMessage
+            ? chat.latestMessage.isRead
+              ? 0
+              : chat.latestMessage.content
+              ? 1
+              : 0
+            : 0,
+          isRead: chat?.latestMessage?.isRead ?? false,
           reciverId: otherUser._id,
-          latestMessageId: chat.latestMessage?.id ?? "", // Add nullish coalescing
+          latestMessageId: chat?.latestMessage?.id ?? "", // Add nullish coalescing
         };
       });
   };
@@ -139,12 +145,8 @@ function ChatComponent({ setActiveTab, openChatId }: ChatComponentProps) {
             isSidebarOpen ? "translate-x-0" : "-translate-x-full"
           } ${isSidebarOpen ? "md:w-full" : ""} `}
         >
-          <div className=" md:hidden px-1 flex items-center gap-x-1">
-            <MenuIcon
-              size={36}
-              className="invisible text-[#F2851C] flex-none "
-            />
-            <CustomTabs setActiveTab={setActiveTab} />
+          <div className=" md:hidden px-1 m-1 ml-[2rem]">
+            <CustomTabs setActiveTab={setActiveTab} tab="messages" />
           </div>
           <div className="flex gap-x-2 items-center p-4 rounded-lg">
             <Input
@@ -217,6 +219,7 @@ function ChatComponent({ setActiveTab, openChatId }: ChatComponentProps) {
               <ChatInput
                 chatId={selectedChat.id}
                 reciverId={selectedChat.reciverId}
+                chatType="DIRECT"
               />
             </>
           ) : (

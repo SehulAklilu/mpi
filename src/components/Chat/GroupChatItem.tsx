@@ -1,29 +1,23 @@
 import React from "react";
-import { MdDoneAll } from "react-icons/md";
 
-export interface ChatItemProps {
-  id?: string;
+export interface GroupChatItemProps {
+  id: string;
   name: string;
   avatarUrl: string;
-  status: "online" | "offline";
-  message: string;
-  time: string;
-  unreadCount: number;
+  //   status: "online" | "offline";
+  //   message: string;
+  //   time: string;
+  //   unreadCount: number;
   onClick?: () => void;
   active?: boolean;
-  isRead?: boolean;
+  //   isRead?: boolean;
 }
 
-const ChatItem: React.FC<ChatItemProps> = ({
-  name,
-  avatarUrl,
-  status,
-  message,
-  time,
-  unreadCount,
-  onClick,
+const GroupChatItem: React.FC<GroupChatItemProps> = ({
   active,
-  isRead,
+  avatarUrl,
+  name,
+  onClick,
 }) => {
   return (
     <div
@@ -35,7 +29,7 @@ const ChatItem: React.FC<ChatItemProps> = ({
       {/* Avatar */}
       <div className="relative flex-none">
         <img
-          src={avatarUrl}
+          src="https://i.pravatar.cc/100?img=20"
           alt={`${name}'s avatar`}
           className="w-12 h-12 rounded-full"
         />
@@ -52,13 +46,13 @@ const ChatItem: React.FC<ChatItemProps> = ({
           <h4 className="text-base font-medium">
             {name && name.length > 15 ? name.slice(0, 15) + "..." : name}
           </h4>
-          <span
+          {/* <span
             className={`text-sm ${active ? "text-white" : "text-gray-500"}`}
           >
             {time}
-          </span>
+          </span> */}
         </div>
-        <div className="flex justify-between items-center">
+        {/* <div className="flex justify-between items-center">
           <p className="text-sm truncate max-w-[70%]">
             {message && message.length > 15
               ? message.slice(0, 15) + "..."
@@ -79,10 +73,10 @@ const ChatItem: React.FC<ChatItemProps> = ({
               </span>
             )
           )}
-        </div>
+        </div> */}
       </div>
     </div>
   );
 };
 
-export default ChatItem;
+export default GroupChatItem;

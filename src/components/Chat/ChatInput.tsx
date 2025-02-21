@@ -12,6 +12,7 @@ import { GrDocumentText } from "react-icons/gr";
 import { Dialog, DialogContent, DialogTitle } from "../ui/dialog";
 import { PiFilePdfBold, PiFileDocBold } from "react-icons/pi";
 import { TbFileTypeDocx } from "react-icons/tb";
+import { createGroupMessage, GroupMessagePayload } from "@/api/group-chat.api";
 
 // is mobile hook
 const useIsMobile = (): boolean => {
@@ -32,9 +33,11 @@ const useIsMobile = (): boolean => {
 const ChatInput = ({
   chatId,
   reciverId,
+  chatType,
 }: {
   chatId: string;
   reciverId: string;
+  chatType: "GROUP" | "DIRECT";
 }) => {
   const [message, setMessage] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -63,7 +66,19 @@ const ChatInput = ({
       content: message.trim(),
       // image: previewImage, // Include the image in the payload
     };
-    createMessageMutation.mutate(payload);
+
+    const groupChatPayload: GroupMessagePayload = {
+      message: message.trim(),
+    };
+
+    if (chatType === "DIRECT") {
+      createMessageMutation.mutate(payload);
+    } else {
+      createGroupMessageMutation.mutate({
+        groupId: chatId,
+        payload: groupChatPayload,
+      });
+    }
     setMessage("");
     setPreviewImage(null);
   };
@@ -135,6 +150,17 @@ const ChatInput = ({
     onSuccess: () => {
       queryClient.invalidateQueries(["message", chatId]);
     },
+  });
+
+  const createGroupMessageMutation = useMutation({
+    mutationKey: ["createGroupMessage"],
+    mutationFn: ({
+      groupId,
+      payload,
+    }: {
+      groupId: string;
+      payload: GroupMessagePayload;
+    }) => createGroupMessage(groupId, payload),
   });
 
   return (
