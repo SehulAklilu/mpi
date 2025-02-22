@@ -10,6 +10,9 @@ import { useNavigate } from "react-router-dom";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { useRole } from "@/RoleContext";
 import { Role } from "@/types/auth.type";
+import { useMutation } from "react-query";
+import { logout } from "@/api/auth.api";
+import { LoaderCircle } from "lucide-react";
 
 interface LinkItem {
   title: string;
@@ -21,6 +24,8 @@ interface DropdownMenuProps {
   openSubMenu: string | null;
   setOpenSubMenu: (title: string | null) => void;
   isMenuOpen: boolean;
+  onClick: () => void;
+  isLogoutLoading?: boolean;
 }
 
 const DropdownMenu: React.FC<DropdownMenuProps> = ({
@@ -28,6 +33,8 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
   openSubMenu,
   setOpenSubMenu,
   isMenuOpen,
+  onClick,
+  isLogoutLoading,
 }) => {
   const navigate = useNavigate();
 
@@ -67,15 +74,21 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
                 </div>
               </li>
             ))}
-            {/* <li
-              className="w-full text-left p-2 hover:bg-gray-100 font-semibold cursor-pointer"
-              onClick={() => {
-                Cookies.remove("authToken");
-                window.location.reload();
-              }}
+            <li
+              className="w-full flex items-center gap-4 text-left p-2 hover:bg-gray-100 font-semibold cursor-pointer"
+              onClick={onClick}
             >
               Logout
-            </li> */}
+              {isLogoutLoading && (
+                <LoaderCircle
+                  style={{
+                    animation: "spin 1s linear infinite",
+                    fontSize: "2rem",
+                    color: "#FF9800",
+                  }}
+                />
+              )}
+            </li>
           </ul>
         </motion.div>
       )}
@@ -123,16 +136,19 @@ function LandingPageNavBar() {
   const [authToken, setAuthToken] = useState<string | undefined>(
     Cookies.get("authToken")
   );
+
+  const [refreshToken, setRefreshToken] = useState<string | undefined>(
+    Cookies.get("refreshToken")
+  );
   const [role, setRole] = useState<string | undefined>(Cookies.get("role"));
 
   useEffect(() => {
     const handleStorageChange = () => {
       setUserName(Cookies.get("user_name"));
       setAuthToken(Cookies.get("authToken"));
+      setRefreshToken(Cookies.get("refreshToken"));
       setRole(Cookies.get("role"));
     };
-
-    console.log("sldkjfalsdjf", userName, authToken, role);
 
     window.addEventListener("storage", handleStorageChange);
 
@@ -142,6 +158,29 @@ function LandingPageNavBar() {
   }, []);
 
   const links = role ? getLinksForRole(role) : [];
+
+  const logoutMut = useMutation({
+    mutationKey: ["logout"],
+    mutationFn: logout,
+    onSuccess: () => {
+      Cookies.remove("authToken");
+      Cookies.remove("refreshToken");
+      Cookies.remove("user_id");
+      Cookies.remove("role");
+      setAuthToken(undefined);
+      setRefreshToken(undefined);
+      localStorage.setItem("authUpdate", Date.now().toString());
+      navigate("/");
+    },
+  });
+
+  const logOut = () => {
+    if (refreshToken) {
+      logoutMut.mutate({
+        refreshToken: refreshToken,
+      });
+    }
+  };
 
   const initials = userName
     ? userName
@@ -217,6 +256,8 @@ function LandingPageNavBar() {
               openSubMenu={openSubMenu}
               setOpenSubMenu={setOpenSubMenu}
               isMenuOpen={isMenuOpen}
+              onClick={logOut}
+              isLogoutLoading={logoutMut.isLoading}
             />
           </div>
         ) : (

@@ -16,6 +16,16 @@ function GroupChatMessages({ groupId }: { groupId: string }) {
     enabled: !!groupId,
   });
 
+  function formatTime(createdAt: string): string {
+    const date = new Date(createdAt);
+    const options: Intl.DateTimeFormatOptions = {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    };
+    return date.toLocaleTimeString([], options);
+  }
+
   const scrollAreaRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -26,48 +36,51 @@ function GroupChatMessages({ groupId }: { groupId: string }) {
 
   return (
     <div
-      className={`flex flex-col-reverse gap-4 h-[84vh] sm:h-[80vh] md:h-[65vh]  ${styles.customScrollbar}`}
+      className={`flex flex-col-reverse gap-4 h-[84vh] sm:h-[80vh] md:h-[68vh]  ${styles.customScrollbar}`}
       ref={scrollAreaRef}
       // style={{ height: "467px" }}
     >
       {user_id &&
-        messages?.map((message, index) => (
-          <div
-            key={index}
-            className={`flex  ${
-              message.sender === user_id ? "justify-end" : "justify-start"
-            }`}
-          >
-            <div className="max-w-xs p-3 rounded-lg">
-              <span className="text-lg">{message.createdAt}</span>
+        messages
+          ?.slice()
+          .reverse()
+          .map((message, index) => (
+            <div
+              key={index}
+              className={`flex  ${
+                message.sender === user_id ? "justify-end" : "justify-start"
+              }`}
+            >
+              <div className="max-w-xs p-3 rounded-lg">
+                <span className="text-lg">{formatTime(message.createdAt)}</span>
 
-              {message.type === "message" && (
-                <div
-                  className={`py-2 px-4  ${
-                    message.sender === user_id
-                      ? "bg-[#F2851C]  text-white rounded-md rounded-tr-none"
-                      : "bg-[#D8D8D8] text-black rounded-md rounded-tl-none"
-                  }`}
-                >
-                  {message.message}
-                </div>
-              )}
-              {message.type === "image" && (
-                <img
-                  src={message.message}
-                  alt="Chat Image"
-                  className="rounded"
-                />
-              )}
-              {message.type === "voice" && (
-                <audio controls className="w-full">
-                  <source src={message.message} type="audio/mpeg" />
-                  Your browser does not support the audio element.
-                </audio>
-              )}
+                {message.type === "message" && (
+                  <div
+                    className={`py-2 px-4  ${
+                      message.sender === user_id
+                        ? "bg-[#F2851C]  text-white rounded-md rounded-tr-none"
+                        : "bg-[#D8D8D8] text-black rounded-md rounded-tl-none"
+                    }`}
+                  >
+                    {message.message}
+                  </div>
+                )}
+                {message.type === "image" && (
+                  <img
+                    src={message.message}
+                    alt="Chat Image"
+                    className="rounded"
+                  />
+                )}
+                {message.type === "voice" && (
+                  <audio controls className="w-full">
+                    <source src={message.message} type="audio/mpeg" />
+                    Your browser does not support the audio element.
+                  </audio>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
     </div>
   );
 }

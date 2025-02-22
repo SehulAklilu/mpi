@@ -10,6 +10,8 @@ export interface ChatInterface {
   id: string;
 }
 
+type Role = "player" | "coach" | "parent";
+
 type User = {
   _id: string;
   badge: number;
@@ -26,7 +28,7 @@ type User = {
   };
   isProfilePublic: boolean;
   avatar: string;
-  role: string;
+  role: Role;
   lastOnline: string;
   provider: string;
   players: string[];
