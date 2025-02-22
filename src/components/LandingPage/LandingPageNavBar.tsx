@@ -263,7 +263,9 @@ function LandingPageNavBar() {
         ) : (
           <div
             className="hidden md:flex pl-4 pr-1 py-1 rounded-full border bg-white items-center gap-4 hover:bg-primary cursor-pointer ml-4 group"
-            onClick={() => window.open("/login", "_blank")}
+            onClick={() =>
+              window.open(window.location.origin + "/login", "_blank")
+            }
           >
             <span className="font-bold group-hover:text-white">
               LOGIN / SIGNUP
