@@ -135,7 +135,7 @@ function ProfileSetting() {
             defaultValue="Profile"
             className="w-full"
           >
-            <TabsList className="flex f bg-transparent  w-full md:w-[30rem] lg:w-[40rem] gap-x-4  h-[2.5rem] md:h-[3rem]  ">
+            <TabsList className="flex flex-wrap bg-transparent  w-full md:w-[30rem] lg:w-[40rem] gap-x-4  h-[2.5rem] md:h-[3rem]  ">
               <TabsTrigger
                 value="Profile"
                 className="flex-1 text-center gap-x-2 py-1 text-sm md:text-base lg:text-lg rounded-md transition-colors border border-[#152946] data-[state=active]:border-[#F2851C] text-[#152946]"

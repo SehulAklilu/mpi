@@ -1,6 +1,6 @@
 import React from "react";
 import LandingPageNavBar from "./LandingPageNavBar";
-import bgImage from "../../assets/landingpage/image26.png";
+import bgImage from "../../assets/landingpage/image26.webp";
 import bgImage2 from "../../assets/landingpage/image27.jpg";
 import map from "../../assets/landingpage/Screenshot 2025-02-14 082120.png";
 import { FaArrowDown } from "react-icons/fa";

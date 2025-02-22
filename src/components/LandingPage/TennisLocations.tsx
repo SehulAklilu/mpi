@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FaMapMarkerAlt } from "react-icons/fa";
-import image9 from "../../assets/landingpage/image9.png";
+import image9 from "../../assets/landingpage/image9.jpg";
 import { motion, AnimatePresence } from "framer-motion";
 const locations = [
   "Highlands Ranch, CO",
