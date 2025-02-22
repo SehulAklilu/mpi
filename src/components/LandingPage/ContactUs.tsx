@@ -3,7 +3,7 @@ import image10 from "../../assets/landingpage/image10.png";
 import image11 from "../../assets/landingpage/image11.png";
 import image12 from "../../assets/landingpage/image12.png";
 import image13 from "../../assets/landingpage/image13.png";
-import image14 from "../../assets/landingpage/image14.png";
+import image14 from "../../assets/landingpage/image13.png";
 import {
   IoLogoFacebook,
   IoLogoInstagram,
