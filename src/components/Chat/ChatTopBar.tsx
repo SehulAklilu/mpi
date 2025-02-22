@@ -32,7 +32,7 @@ const ChatTopBar: React.FC<ChatTopBarProps> = ({ user, onClick }) => {
     };
   }, []);
   return (
-    <div className="flex items-center justify-between bg-gradient-to-b py-1 px-4  from-[#F8B36D] to-[#F28822]  shadow-md sticky top-0 z-50">
+    <div className="flex items-center justify-between bg-gradient-to-b py-1 px-4  from-[#F8B36D] to-[#F28822]  shadow-md sticky top-0 z-40">
       <div className="flex items-center gap-3">
         <button onClick={onClick}>
           <FaArrowLeft size={24} className="text-white" />

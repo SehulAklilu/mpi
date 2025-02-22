@@ -52,11 +52,11 @@ function Purchases() {
     <div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="flex gap-10 my-4 flex-wrap">
+          <div className="flex gap-2 sm:gap-10 my-4 flex-wrap">
             {paymentMethods.map((method, index) => (
               <label
                 key={index}
-                className={`flex flex-col items-center justify-between gap-2 border border-gray-200 shadow-lg p-4 rounded-2xl cursor-pointer w-48 h-36 relative ${
+                className={`flex flex-col items-center justify-between sm:gap-2 border border-gray-200 shadow-lg p-2 sm:p-4 rounded-2xl cursor-pointer w-36 h-26 sm:w-44 sm:h-32 md:w-48 md:h-36 lg:w-52 lg:h-40 relative ${
                   card === method.value ? "border-2 border-primary" : ""
                 }`}
               >
@@ -64,7 +64,7 @@ function Purchases() {
                   <img
                     src={method.img}
                     alt={method.name}
-                    className="w-16 h-10"
+                    className="w-14 h-8 sm:w-16 sm:h-10"
                   />
                   <p className="text-sm mt-2">{method.name}</p>
                 </div>
@@ -84,8 +84,8 @@ function Purchases() {
               </label>
             ))}
           </div>
-          <div className="my-4">
-            <div className="grid grid-cols-2 gap-x-10 gap-y-4 max-w-4xl">
+          <div className="my-4 px-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-4 max-w-4xl">
               <FormField
                 control={form.control}
                 name="card_number"
@@ -190,7 +190,7 @@ function Purchases() {
               />
             </div>
           </div>
-          <div className="flex items-center space-x-6 p-8 px-2">
+          <div className="flex items-center flex-wrap justify-center space-y-2 md:space-x-6 p-8 px-2">
             {/* Basic Plan */}
             <div className="w-80 bg-white shadow-lg rounded-lg p-6 h-fit">
               <button className="px-4 py-2 bg-gray-200 rounded-lg text-[#000B33]">

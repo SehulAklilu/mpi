@@ -57,7 +57,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.3, ease: "easeInOut" }}
-          className="absolute top-14 right-6 rounded-md bg-white shadow-lg z-10"
+          className="absolute top-14 right-6 rounded-md bg-white shadow-lg z-[9999]"
         >
           <ul className="space-y-2 p-4 w-48">
             {links.map((link) => (

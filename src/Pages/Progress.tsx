@@ -11,6 +11,7 @@ import { getUserCourses, UserCoursesResponse } from "@/api/course.api";
 import { UserCourseProgress } from "@/types/course.types";
 import { Link } from "react-router-dom";
 import { FaUserAlt } from "react-icons/fa";
+import { ContentLayout } from "@/components/Sidebar/contenet-layout";
 const Progress = () => {
   const {
     data: allCourses,
@@ -26,76 +27,78 @@ const Progress = () => {
   });
 
   return (
-    <div className="px-4 py-12">
-      <div className="flex max-md:flex-col w-full">
-        <div className="w-3/5 max-md:w-full bg-gradient-to-b from-[#F8B36D] to-[#F28822]  text-white rounded-xl py-4">
-          <div className="flex justify-around gap-2">
-            <div className="flex flex-col items-center justify-center gap-1">
-              <img className="max-md:w-[70px]" src={img} alt="" />
-              <div className="mt-1 text-lg font-semibold">3 Courses</div>
-              <div className="text-sm">Completed</div>
+    <ContentLayout>
+      <div className="px-4 py-12">
+        <div className="flex max-md:flex-col w-full">
+          <div className="w-3/5 max-md:w-full bg-gradient-to-b from-[#F8B36D] to-[#F28822]  text-white rounded-xl py-4">
+            <div className="flex justify-around gap-2">
+              <div className="flex flex-col items-center justify-center gap-1">
+                <img className="max-md:w-[70px]" src={img} alt="" />
+                <div className="mt-1 text-lg font-semibold">3 Courses</div>
+                <div className="text-sm">Completed</div>
+              </div>
+              <div className="flex flex-col items-center justify-center gap-1">
+                <img className="max-md:w-[70px]" src={img3} alt="" />
+                <div className="mt-1 text-lg font-semibold">85%</div>
+                <div className="text-sm">Accuracy</div>
+              </div>
+              <div className="flex flex-col items-center justify-center gap-1">
+                <img className="max-md:w-[70px]" src={img} alt="" />
+                <div className="mt-1 text-lg font-semibold">3 Courses</div>
+                <div className="text-sm">Completed</div>
+              </div>
             </div>
-            <div className="flex flex-col items-center justify-center gap-1">
-              <img className="max-md:w-[70px]" src={img3} alt="" />
-              <div className="mt-1 text-lg font-semibold">85%</div>
-              <div className="text-sm">Accuracy</div>
-            </div>
-            <div className="flex flex-col items-center justify-center gap-1">
-              <img className="max-md:w-[70px]" src={img} alt="" />
-              <div className="mt-1 text-lg font-semibold">3 Courses</div>
-              <div className="text-sm">Completed</div>
+            <div className="w-full px-4  mt-5">
+              <div className="w-full flex justify-around py-4 bg-white text-primary rounded-xl">
+                <div className="flex flex-col items-center justify-center gap-1">
+                  <img className="max-md:w-[70px]" src={img1} alt="" />
+                  <div className="text mt-1 text-3xl max-md:text-lg font-bold">
+                    18
+                  </div>
+                  <div className="text-sm">USTA</div>
+                </div>
+                <div className="flex flex-col items-center justify-center gap-1">
+                  <img className="max-md:w-[70px]" src={img4} alt="" />
+                  <div className="text mt-1 text-3xl max-md:text-lg font-bold">
+                    34 Days
+                  </div>
+                  <div className="text-sm">USTA</div>
+                </div>
+                <div className="flex flex-col items-center justify-center gap-1">
+                  <img className="max-md:w-[70px]" src={img5} alt="" />
+                  <div className="text mt-1 text-3xl max-md:text-lg font-bold">
+                    Top 18%
+                  </div>
+                  <div className="text-sm">USTA</div>
+                </div>
+              </div>
             </div>
           </div>
-          <div className="w-full px-4  mt-5">
-            <div className="w-full flex justify-around py-4 bg-white text-primary rounded-xl">
-              <div className="flex flex-col items-center justify-center gap-1">
-                <img className="max-md:w-[70px]" src={img1} alt="" />
-                <div className="text mt-1 text-3xl max-md:text-lg font-bold">
-                  18
-                </div>
-                <div className="text-sm">USTA</div>
-              </div>
-              <div className="flex flex-col items-center justify-center gap-1">
-                <img className="max-md:w-[70px]" src={img4} alt="" />
-                <div className="text mt-1 text-3xl max-md:text-lg font-bold">
-                  34 Days
-                </div>
-                <div className="text-sm">USTA</div>
-              </div>
-              <div className="flex flex-col items-center justify-center gap-1">
-                <img className="max-md:w-[70px]" src={img5} alt="" />
-                <div className="text mt-1 text-3xl max-md:text-lg font-bold">
-                  Top 18%
-                </div>
-                <div className="text-sm">USTA</div>
-              </div>
-            </div>
+          <div className="max-md:mt-6">
+            <Calendar
+              reminders={[]}
+              dateFilter={new Date()}
+              setDateFilter={() => {}}
+            />
           </div>
         </div>
-        <div className="max-md:mt-6">
-          <Calendar
-            reminders={[]}
-            dateFilter={new Date()}
-            setDateFilter={() => {}}
-          />
+        <div className="mt-8">
+          <div className="flex justify-between">
+            <div className="text-lg font-semibold">Courses</div>
+            <div className="underline text-primary">View All</div>
+          </div>
+          <div className="mt-3 flex overflow-auto">
+            {isSuccess && (
+              <>
+                {allCourses.courses.map((course) => (
+                  <Course key={course._id} course={course} />
+                ))}
+              </>
+            )}
+          </div>
         </div>
       </div>
-      <div className="mt-8">
-        <div className="flex justify-between">
-          <div className="text-lg font-semibold">Courses</div>
-          <div className="underline text-primary">View All</div>
-        </div>
-        <div className="mt-3 flex overflow-auto">
-          {isSuccess && (
-            <>
-              {allCourses.courses.map((course) => (
-                <Course key={course._id} course={course} />
-              ))}
-            </>
-          )}
-        </div>
-      </div>
-    </div>
+    </ContentLayout>
   );
 };
 

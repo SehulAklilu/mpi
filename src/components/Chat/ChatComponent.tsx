@@ -265,7 +265,7 @@ function ChatComponent({ setActiveTab, openChatId }: ChatComponentProps) {
                 }}
                 onClick={openSideBar}
               />
-              <ScrollArea className="h-[84vh] sm:h-[80vh] md:h-[71vh] !overflow-hidden ">
+              <ScrollArea className="h-[74.4vh] sm:h-[76vh] md:h-[68.8vh] !overflow-hidden ">
                 <ChatMessages chatId={selectedChat.id} />
               </ScrollArea>
               <ChatInput
