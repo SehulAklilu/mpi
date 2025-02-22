@@ -1,4 +1,4 @@
-import image1 from "../../assets/landingpage/image20.png";
+import image1 from "../../assets/landingpage/image21.png";
 import image2 from "../../assets/landingpage/image21.png";
 import { IoPlayOutline } from "react-icons/io5";
 import CustomButton2 from "./CustomButton2";
