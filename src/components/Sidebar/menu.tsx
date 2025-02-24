@@ -17,11 +17,11 @@ import { useRole } from "@/RoleContext";
 
 interface MenuProps {
   isOpen: boolean | undefined;
-  isNotiOpen? : boolean,
-  setIsNotiOpen? : Function,
+  isNotiOpen?: boolean;
+  setIsNotiOpen?: Function;
 }
 
-function Menu({ isOpen }: MenuProps) {
+function Menu({ isOpen, setIsNotiOpen }: MenuProps) {
   const location: Location<any> = useLocation();
   const { role } = useRole();
   const menuList = getMenuList(location, role);
@@ -128,7 +128,12 @@ function Menu({ isOpen }: MenuProps) {
           ))}
           <li className="w-full grow flex items-end">
             <div className="space-y-2">
-              <div className="flex items-center gap-1 cursor-pointer">
+              <div
+                onClick={() =>
+                  setIsNotiOpen && setIsNotiOpen((d: boolean) => !d)
+                }
+                className="flex items-center gap-1 cursor-pointer"
+              >
                 <img src={notification} alt="night mode" className="w-12" />
                 {isOpen ? <p>10 Notification</p> : null}
               </div>

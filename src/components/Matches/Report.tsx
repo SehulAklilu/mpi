@@ -1,5 +1,6 @@
 import { useState } from "react";
 import profile_img from "../../assets/user.jpeg";
+import { cn } from "@/lib/utils";
 
 const Report = () => {
   const [cur, setCur] = useState(0);
@@ -8,16 +9,12 @@ const Report = () => {
     <div className="flex flex-col  ">
       <div className="flex w-full justify-center gap-12 mt-6">
         <div className="flex gap-2 items-center justify-center">
-          <div
-            className={`h-6 w-6  rounded-full border  border-primary`}
-          ></div>
+          <div className={`h-6 w-6  rounded-full border  border-primary`}></div>
           <div>Candace</div>
         </div>
         <div className="flex gap-2 items-center justify-center">
           <div>Jene</div>
-          <div
-            className={`h-6 w-6  rounded-full  bg-primary`}
-          ></div>
+          <div className={`h-6 w-6  rounded-full  bg-primary`}></div>
         </div>
       </div>
       <div className=" w-full  flex flex-col">
@@ -72,9 +69,7 @@ const Report = () => {
               <div className="basis-2/5 flex flex-col justify-center items-center">
                 <div className="mt-5 flex  justify-center items-center">
                   <div className="flex flex-col  justify-center items-center">
-                    <div className="px-2 py-1 rounded text-white bg-primary">
-                      Total Points
-                    </div>
+                    <ColoredTab name={"Total Points"} />
                     <div className="p-2 w-20 h-20 mt-2 shadow-lg shadow-primary  rounded-full flex text-white bg-primary">
                       <div className="m-auto text-xl">299</div>
                     </div>
@@ -94,9 +89,7 @@ const Report = () => {
               <div className="basis-3/5 flex flex-col justify-center items-center">
                 <div className="mt-5 flex  justify-center items-center">
                   <div className="flex flex-col  justify-center items-center">
-                    <div className="px-2 py-1 rounded text-white bg-primary">
-                      RALLY LENGTHS
-                    </div>
+                    <ColoredTab name={"RALLY LENGTHS"} />
                   </div>
                 </div>
                 <div className="flex gap-2">
@@ -143,9 +136,8 @@ const Report = () => {
             <div className="font-semibold mt-6">Serve Report</div>
             <div className="grid grid-cols-2 gap-10">
               <div className="flex flex-col gap-3 justify-center items-center px-6">
-                <div className="w-fit px-2 mt-5 py-1 rounded bg-gradient-to-b from-[#f8b672] to-[#f2851c] text-white">
-                  Ace Counts
-                </div>
+                <ColoredTab name={"Ace Counts"} />
+
                 <div className="w-full border flex ">
                   <div className="border w-[30%] py-2 border-primary   px-1 text-primary flex justify-center gap-2">
                     <div className="font-semibold text-xl">142</div>
@@ -158,9 +150,8 @@ const Report = () => {
                 </div>
               </div>
               <div className="flex flex-col gap-3 justify-center items-center px-6">
-                <div className="w-fit px-2 mt-5 py-1 rounded bg-gradient-to-b from-[#f8b672] to-[#f2851c] text-white">
-                  DOUBLE FAULTS
-                </div>
+                <ColoredTab name={"DOUBLE FAULTS"} />
+
                 <div className="w-full border flex ">
                   <div className="border w-[30%] py-2 border-primary   px-1 text-primary flex justify-center gap-2">
                     <div className="font-semibold text-xl">142</div>
@@ -182,9 +173,11 @@ const Report = () => {
               </div>
               <div className="grid grid-rows-2  ">
                 <div className="flex flex-col  gap-3 justify-center items-center px-6">
-                  <div className="w-fit px-2 mt-5 py-1 rounded bg-gradient-to-b from-[#f8b672] to-[#f2851c] text-white">
-                    SERVE SPEED(AVG)
-                  </div>
+                  <ColoredTab
+                    name={"SERVE SPEED(AVG)"}
+                    className="text-sm  mt-5"
+                  />
+
                   <div className="w-full border flex ">
                     <div className="border w-[30%] py-2 border-primary   px-1 text-primary flex justify-center gap-2">
                       <div className="font-semibold text-xl">142</div>
@@ -197,9 +190,10 @@ const Report = () => {
                   </div>
                 </div>
                 <div className="flex flex-col  gap-3 justify-center items-center px-6">
-                  <div className="w-fit px-2 py-1 rounded bg-gradient-to-b from-[#f8b672] to-[#f2851c] text-white">
-                    SERVE SPEED(MAX)
-                  </div>
+                  <ColoredTab
+                    name={"SERVE SPEED(MAX)"}
+                    className="text-sm  mt-5"
+                  />
                   <div className="w-full border flex ">
                     <div className="border w-[30%] py-2 border-primary   px-1 text-primary flex justify-center gap-2">
                       <div className="font-semibold text-xl">142</div>
@@ -257,7 +251,7 @@ const Report = () => {
           <>
             <div className="mt-12 grid grid-cols-2">
               <div className="flex gap-12">
-                <CircularProgressBar percentage={70} />
+                <CircularProgressBar percentage={55}  />
                 <CircularProgressBar percentage={55} outline />
               </div>
               <div className="grid grid-cols-2 gap-12">
@@ -301,14 +295,14 @@ const CircularProgressBar = ({
   );
 };
 
+
+
 export default Report;
 
 const Hist = () => {
   return (
     <div className="flex flex-col">
-      <div className="px-2 text-sm mb-5 py-1 rounded text-white bg-primary">
-        FIRST SERVE WIN
-      </div>
+      <ColoredTab name={"FIRST SERVE WIN"} className="text-sm px-2 mb-5" />
       <div className="w-[150px] h-[300px] flex ">
         <div className="h-[60%] mt-auto w-1/2 border border-primary"></div>
         <div className="h-[100%] w-1/2 bg-primary"></div>
@@ -332,9 +326,8 @@ const Hist = () => {
 const Hist2 = () => {
   return (
     <div className="flex flex-col">
-      <div className="px-2 text-sm w-fit mb-8 py-1 rounded text-white bg-primary">
-        FIRST SERVE WIN
-      </div>
+      {/* <div className="px-2 text-sm w-fit mb-8 py-1 rounded text-white bg-primary"></div> */}
+      <ColoredTab name={"FIRST SERVE WIN"} className="text-sm w-fit px mb-8" />
       <div className="w-[150px] h-[300px] flex gap-2 ">
         <div className="h-[60%] mt-auto w-1/2 border border-primary"></div>
         <div className="h-[100%] w-1/2 bg-primary"></div>
@@ -386,12 +379,12 @@ const MyTable = () => {
               </div>
             </td>
             <td className="border border-gray-300 px-4 py-2">2</td>
-            <td className="border border-gray-300 px-4 py-2 text-center bg-gradient-to-r to-red-500 from-[#f2851c] text-white">
+            <td className="border border-gray-300 px-4 py-2 text-center text-xl font-bold">
               6
             </td>
             <td className="border border-gray-300 px-4 py-2 text-center">5</td>
             <td className="border border-gray-300 px-4 py-2 text-center">2</td>
-            <td className="border border-gray-300 px-4 py-2 text-center bg-gradient-to-r to-red-500 from-[#f2851c] text-white">
+            <td className="border border-gray-300 px-4 py-2 text-center text-xl font-bold">
               7
             </td>
             <td className="border border-gray-300 px-4 py-2 text-center">3</td>
@@ -408,23 +401,42 @@ const MyTable = () => {
                 <p className="text-gray-200 text-xs">USDTA: 19</p>
               </div>
             </td>
-            <td className="border border-gray-300 px-4 py-2 bg-gradient-to-r to-red-500 from-[#f2851c] text-white">
+            <td className="border border-gray-300 px-4 py-2 text-xl font-bold">
               3
             </td>
             <td className="border border-gray-300 px-4 py-2 text-center">4</td>
-            <td className="border border-gray-300 px-4 py-2 text-center bg-gradient-to-r to-red-500 from-[#f2851c] text-white">
+            <td className="border border-gray-300 px-4 py-2 text-center text-xl font-bold">
               7
             </td>
-            <td className="border border-gray-300 px-4 py-2 text-center bg-gradient-to-r to-red-500 from-[#f2851c] text-white">
+            <td className="border border-gray-300 px-4 py-2 text-center text-xl font-bold">
               6
             </td>
             <td className="border border-gray-300 px-4 py-2 text-center ">6</td>
-            <td className="border border-gray-300 px-4 py-2 text-center bg-gradient-to-r to-red-500 from-[#f2851c] text-white">
+            <td className="border border-gray-300 px-4 py-2 text-center text-xl font-bold">
               6
             </td>
           </tr>
         </tbody>
       </table>
+    </div>
+  );
+};
+
+const ColoredTab = ({
+  name,
+  className = "",
+}: {
+  name: string;
+  className?: string;
+}) => {
+  return (
+    <div
+      className={cn(
+        "px-6 py-[2px] w-fit rounded text-white bg-[#152946]",
+        className
+      )}
+    >
+      {name}
     </div>
   );
 };

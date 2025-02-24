@@ -1,6 +1,6 @@
 import ProfileCard from "@/components/PendingMatch/ProfileCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaFlag, FaInfoCircle } from "react-icons/fa";
 import { FaBalanceScaleLeft } from "react-icons/fa";
 import { FaBaseball, FaMinus, FaPlus, FaTrophy } from "react-icons/fa6";
@@ -13,6 +13,7 @@ import profile_img from "../../assets/user.jpeg";
 import Report from "./Report";
 import MatchProfile from "./MatchProfile";
 import { Button } from "../ui/button";
+import { BsArrow90DegLeft, BsArrow90DegRight } from "react-icons/bs";
 interface Player {
   id: number; // Unique identifier for the player
   name: string; // Player's name
@@ -67,7 +68,7 @@ interface ScoreInf {
 
   setScoreCur: number;
   matchScoreCur: number;
-  serve: "player1" | "player2";
+  serve: "player1" | "player2" | null;
 }
 
 type scoreTrackType =
@@ -89,7 +90,9 @@ interface dataTrackerType {
   rallyCount: number;
 }
 
-const getAgainest = (player: "player1" | "player2"): "player1" | "player2" => {
+const getAgainest = (
+  player: "player1" | "player2" | null
+): "player1" | "player2" => {
   return player == "player1" ? "player2" : "player1";
 };
 
@@ -109,7 +112,7 @@ function TrackingMatch() {
       player1: 0,
       player2: 0,
     },
-    serve: "player1",
+    serve: null,
     setScoreCur: 0,
     matchScoreCur: 0,
   });
@@ -118,6 +121,15 @@ function TrackingMatch() {
     if (score == 0) return 15;
     if (score == 15) return 30;
     if (score == 30) return 40;
+    return "A";
+  };
+
+  const getPrevPoint = (score: PointInf): PointInf => {
+    if (score == 0) return 0;
+    if (score == 15) return 0;
+    if (score == 30) return 15;
+    if (score == 40) return 30;
+    if (score == "A") return 40;
     return "A";
   };
 
@@ -130,6 +142,10 @@ function TrackingMatch() {
     }));
     if (newPoint == 2) {
       alert(winner + " Winnes");
+      setScore((data) => ({
+        ...data,
+        serve: null,
+      }));
     }
   };
 
@@ -147,7 +163,7 @@ function TrackingMatch() {
     setScore((data) => ({
       ...data,
       setScore: { ...data["setScore"], [winner]: newPoint, serve: againest },
-      serve: getAgainest(data.serve),
+      serve: getAgainest(data.serve!),
     }));
     if (newPoint == 6 && 6 == againestSetPoint) {
       setIsTieBreak(true);
@@ -156,12 +172,6 @@ function TrackingMatch() {
       resetScore("setScore");
       updateMatch(winner);
     }
-  };
-  const resetScore = (type: "gameScore" | "setScore") => {
-    setScore((data) => ({
-      ...data,
-      [type]: { player1: 0, player2: 0 },
-    }));
   };
 
   const addPoint = (winner: "player1" | "player2") => {
@@ -175,7 +185,7 @@ function TrackingMatch() {
         gameScore: {
           ...data.gameScore,
           [winner]: nextpoint,
-          serve: getAgainest(data.serve),
+          serve: getAgainest(data.serve!),
         },
       }));
 
@@ -219,6 +229,39 @@ function TrackingMatch() {
     }
   };
 
+  const undoPoint = (losser: "player1" | "player2") => {
+    const losserPoint = score.gameScore[losser];
+    const againest = getAgainest(losser);
+    const againestPoint = score.gameScore[againest];
+    if (losserPoint == "A" || losserPoint > 0) {
+      setScore((data) => ({
+        ...data,
+        gameScore: { ...data.gameScore, [losser]: getPrevPoint(losserPoint) },
+      }));
+    } else {
+      undoSet(losser);
+    }
+  };
+
+  const undoSet = (losser: "player1" | "player2") => {
+    const losserSetPoint = score.setScore[losser];
+    const againest = getAgainest(losser);
+    const againestSetPoint = score.setScore[againest];
+    const newPoint = losserSetPoint - 1;
+    setScore((data) => ({
+      ...data,
+      setScore: { ...data["setScore"], [losser]: newPoint, serve: againest },
+      serve: getAgainest(data.serve!),
+    }));
+  };
+
+  const resetScore = (type: "gameScore" | "setScore") => {
+    setScore((data) => ({
+      ...data,
+      [type]: { player1: 0, player2: 0 },
+    }));
+  };
+
   return (
     <ContentLayout name="Tracking Match">
       <div className="bg-white pt-10 min-h-[100vh] overflow-auto pb-12">
@@ -240,14 +283,35 @@ function TrackingMatch() {
             />
           </div>
         </div>
-        <div className="mt-4 flex flex-col">
-          <Table score={score} />
-          <OneGame
-            score={score}
-            addPoint={addPoint}
-            setDataTracker={setDataTracker}
-          />
-        </div>
+        {score.serve == null ? (
+          <div className="flex flex-col gap-2 mt-12">
+            <div className="text-center mb-8">Start Serve</div>
+            <div className="w-full justify-center flex gap-10">
+              <Button
+                onClick={() => setScore((d) => ({ ...d, serve: "player1" }))}
+                className="w-44 py-6 rounded-lg bg-white text-primary border border-primary"
+              >
+                Candace
+              </Button>
+              <Button
+                onClick={() => setScore((d) => ({ ...d, serve: "player2" }))}
+                className="w-44 py-6 rounded-lg bg-primary text-white"
+              >
+                Jane
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className="mt-4 flex flex-col">
+            <Table score={score} />
+            <OneGame
+              score={score}
+              undoPoint={undoPoint}
+              addPoint={addPoint}
+              setDataTracker={setDataTracker}
+            />
+          </div>
+        )}
       </div>
     </ContentLayout>
   );
@@ -257,10 +321,12 @@ const OneGame = ({
   addPoint,
   setDataTracker,
   score,
+  undoPoint,
 }: {
   addPoint: Function;
   setDataTracker: Function;
   score: ScoreInf;
+  undoPoint: Function;
 }) => {
   const initialData: dataTrackerType = {
     goalType: "",
@@ -270,8 +336,9 @@ const OneGame = ({
     hitType: "",
     errorType: "",
     ballPosition: "",
-    rallyCount: 0,
+    rallyCount: 1,
   };
+
   const [singleData, setSingleData] = useState<dataTrackerType>(initialData);
 
   const reset = () => {
@@ -284,7 +351,12 @@ const OneGame = ({
     {
       name: "ACE(+1)",
       onClick: () =>
-        setSingleData((d) => ({ ...d, goalType: "ace", winner: score.serve })),
+        setSingleData((d) => ({
+          ...d,
+          goalType: "ace",
+          winner: score.serve ?? "player1",
+        })),
+      disabled: singleData.rallyCount > 1,
       isActive: singleData.goalType == "ace",
     },
     {
@@ -294,8 +366,9 @@ const OneGame = ({
           ...initialData,
           rallyCount: d.rallyCount,
           goalType: "serveReturnWin",
-          winner: score.serve,
+          winner: score.serve ?? "player1",
         })),
+      disabled: false,
       isActive: singleData.goalType == "serveReturnWin",
     },
     {
@@ -305,8 +378,9 @@ const OneGame = ({
           ...initialData,
           rallyCount: d.rallyCount,
           goalType: "scoreByServer",
-          winner: score.serve,
+          winner: score.serve ?? "player1",
         })),
+      disabled: false,
       isActive: singleData.goalType == "scoreByServer",
     },
   ];
@@ -320,6 +394,7 @@ const OneGame = ({
           goalType: "fault",
           winner: againest,
         })),
+      disabled: singleData.rallyCount > 1,
       isActive: singleData.goalType == "fault",
     },
     {
@@ -331,6 +406,7 @@ const OneGame = ({
           goalType: "serveReturnLoss",
           winner: againest,
         })),
+      disabled: false,
       isActive: singleData.goalType == "serveReturnLoss",
     },
     {
@@ -342,6 +418,7 @@ const OneGame = ({
           goalType: "score",
           winner: againest,
         })),
+      disabled: false,
       isActive: singleData.goalType == "score",
     },
   ];
@@ -390,8 +467,61 @@ const OneGame = ({
 
     return false;
   };
+
+  useEffect(() => {
+    const func = () => {
+      if (
+        singleData.rallyCount > 1 &&
+        (singleData.goalType == "ace" || singleData.goalType == "fault")
+      ) {
+        setSingleData((d) => ({ ...d, goalType: "" }));
+      }
+    };
+    func();
+  }, [singleData.goalType, singleData.rallyCount]);
+
+  interface Stack {
+    fault: boolean | null;
+    winner: "player1" | "player2" | null;
+  }
+  const [undoStack, setUndoStack] = useState<Stack[]>([]);
+  // const [redoStack, setUndoStack] = useState<Stack[]>([]);
+
+  const undoLastAction = () => {
+    if (undoStack.length === 0) return;
+    const lastAction = undoStack.pop();
+    if (lastAction?.fault) {
+      setIsOnFault((prev) => !prev);
+    }
+    if (lastAction?.winner) {
+      undoPoint(lastAction.winner);
+    }
+  };
+
   return (
     <div className="flex flex-col">
+      <div className="flex w-full justify-end   gap-5 px-32 mt-4">
+        <Button
+          onClick={undoLastAction}
+          className="flex gap-2 items-center justify-center capitalize text-sm"
+        >
+          <div>undo</div>
+          <BsArrow90DegLeft className="text-primary font-bold" />
+        </Button>
+        <Button
+          onClick={() => {}}
+          className="flex gap-2 items-center justify-center capitalize text-sm"
+        >
+          <BsArrow90DegRight className="text-primary" />
+          <div>Redo</div>
+        </Button>
+        {/* 
+              Point
+                Person,
+              Fault
+
+          */}
+      </div>
       <div className="mx-auto mt-8">
         <div className="text-center mb-1">Rally Count</div>
         <div className="border rounded-lg flex">
@@ -399,9 +529,9 @@ const OneGame = ({
             onClick={() => {
               setSingleData((d) => ({ ...d, rallyCount: d.rallyCount - 1 }));
             }}
-            disabled={singleData.rallyCount == 0}
+            disabled={singleData.rallyCount == 1}
             className={`px-12 py-6 rounded-l-lg bg-primary ${
-              singleData.rallyCount == 0 && "bg-primary/50"
+              singleData.rallyCount == 1 && "bg-primary/50"
             } text-white flex justify-center items-center`}
           >
             <FaMinus />
@@ -430,6 +560,7 @@ const OneGame = ({
                 data.onClick();
               }}
               isActive={data.isActive}
+              disabled={data.disabled}
               name={data.name}
               type={score.serve == "player1" ? "server" : "againest"}
             />
@@ -558,6 +689,7 @@ const OneGame = ({
                 data.onClick();
               }}
               isActive={data.isActive}
+              disabled={data.disabled}
               name={data.name}
               type={score.serve == "player2" ? "server" : "againest"}
             />
@@ -569,14 +701,23 @@ const OneGame = ({
         // disabled={player == null}
         onClick={() => {
           if (singleData.goalType != "") {
+            let stack: Stack = {
+              fault: null,
+              winner: singleData.winner as Stack["winner"],
+            };
             if (singleData.goalType == "fault") {
               if (isOnFault) {
                 addPoint(singleData.winner);
+              } else {
+                stack.winner = null;
               }
               setIsOnFault((d) => !d);
+              stack.fault = true;
             } else {
+              isOnFault && setIsOnFault(false);
               addPoint(singleData.winner);
             }
+            setUndoStack((d) => [...d, stack]);
             reset();
           }
         }}
@@ -595,9 +736,11 @@ const GamePointButtons = ({
   isActive = false,
   onClick = () => {},
   type = "server",
+  disabled = false,
 }: {
   name: string;
   isActive?: boolean;
+  disabled?: boolean;
   onClick?: Function;
   type?: "server" | "againest";
 }) => {
@@ -608,10 +751,15 @@ const GamePointButtons = ({
     : "";
   return (
     <Button
+      disabled={disabled}
       onClick={() => onClick()}
-      className={`px-1 w-40 h-24  shadow rounded-xl shadow-primary ${css}`}
+      className={`px-1 w-40 h-24  shadow rounded-xl  ${css} ${
+        disabled
+          ? "cursor-not-allowed bg-white text-gray-400 border border-gray-300 "
+          : "shadow-primary"
+      }`}
     >
-      {name}
+      {name} {disabled}
     </Button>
   );
 };
