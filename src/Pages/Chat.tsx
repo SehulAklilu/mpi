@@ -1,4 +1,5 @@
 import Announcements from "@/components/Chat/Announcements";
+import AnnouncementsPlayer from "@/components/Chat/AnnouncementsPlayer";
 import ChatComponent from "@/components/Chat/ChatComponent";
 import GroupChat from "@/components/Chat/GroupChat";
 import PeopleComponent from "@/components/Chat/PeopleComponent";
@@ -41,14 +42,12 @@ function Chat() {
               >
                 People
               </TabsTrigger>
-              {role && role === "coach" && (
-                <TabsTrigger
-                  value="announcements"
-                  className="flex-1 text-center py-1 text-sm md:text-base lg:text-lg rounded-full transition-colors data-[state=active]:bg-[#F2851C] data-[state=active]:text-white data-[state=inactive]:text-gray-700"
-                >
-                  Announcements
-                </TabsTrigger>
-              )}
+              <TabsTrigger
+                value="announcements"
+                className="flex-1 text-center py-1 text-sm md:text-base lg:text-lg rounded-full transition-colors data-[state=active]:bg-[#F2851C] data-[state=active]:text-white data-[state=inactive]:text-gray-700"
+              >
+                Announcements
+              </TabsTrigger>
               <TabsTrigger
                 value="posts"
                 className="flex-1 text-center py-1 text-sm md:text-base lg:text-lg rounded-full transition-colors data-[state=active]:bg-[#F2851C] data-[state=active]:text-white data-[state=inactive]:text-gray-700"
@@ -71,11 +70,13 @@ function Chat() {
                 setOpenChatId={setOpenChatId}
               />
             </TabsContent>
-            {role && role === "coach" && (
-              <TabsContent className="!mt-0" value="announcements">
+            <TabsContent className="!mt-0" value="announcements">
+              {role && role === "coach" ? (
                 <Announcements setActiveTab={setActiveTab} />
-              </TabsContent>
-            )}
+              ) : (
+                <AnnouncementsPlayer setActiveTab={setActiveTab} />
+              )}
+            </TabsContent>
             <TabsContent className="!mt-5" value="posts">
               <SocialFeed />
             </TabsContent>

@@ -1,4 +1,5 @@
 import {
+  Announcement,
   ChatInterface,
   FriendDataResponse,
   FriendRequestResponse,
@@ -138,7 +139,7 @@ export const createAnnouncements = async (
   return response.data;
 };
 
-export const getAnnouncements = async (): Promise<any> => {
+export const getAnnouncements = async (): Promise<Announcement[]> => {
   const response = await axiosInstance.get("/api/v1/announcements");
   return response.data;
 };

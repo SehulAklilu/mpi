@@ -128,3 +128,35 @@ export interface FriendRequestResponse {
   result: number;
   friendRequests: FriendRequest[];
 }
+
+interface UserAnnouncement {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  avatar: string;
+  role: string;
+  lastOnline: string;
+  __t: string;
+  id: string;
+}
+
+interface Seen {
+  _id: string;
+  announcementId: string;
+  read: boolean;
+}
+
+export interface Announcement {
+  _id: string;
+  title: string;
+  description: string;
+  category: string;
+  announcedTo: string;
+  createdBy: UserAnnouncement;
+  deletedBy: string[];
+  createdAt: string;
+  updatedAt: string;
+  seen?: Seen;
+  id: string;
+  showButton?: boolean;
+}
