@@ -1,6 +1,6 @@
 import { Tokens, User } from "./user.types";
 
-export type Role = "player" | "coach";
+export type Role = "player" | "coach" | "parent";
 export interface LoginPayload {
   email: string;
   password: string;
