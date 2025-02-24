@@ -19,9 +19,7 @@ function CustomTabs({ setActiveTab, tab }: CustomTabsProps) {
     { value: "messages", label: "Messages" },
     { value: "group", label: "Groups" },
     { value: "people", label: "People" },
-    ...(role === "coach"
-      ? [{ value: "announcements", label: "Announcements" }]
-      : []),
+    { value: "announcements", label: "Announcements" },
     { value: "posts", label: "Posts" },
   ];
 
