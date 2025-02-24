@@ -51,6 +51,8 @@ function NewLogin() {
       localStorage.setItem("authUpdate", Date.now().toString());
       if (data.user.role === "coach") {
         navigate("/matches");
+      } else if (data.user.role === "parent") {
+        navigate("/dashboard");
       } else {
         if (lastAttemptedRoute !== "/") {
           navigate(`${lastAttemptedRoute}`);

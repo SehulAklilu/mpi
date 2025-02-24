@@ -7,6 +7,7 @@ import { Location } from "react-router-dom";
 import { Role } from "@/types/auth.type";
 import vs from "../assets/svg/vs.svg";
 import { PiUsersThree } from "react-icons/pi";
+import { FaChildren } from "react-icons/fa6";
 
 type Submenu = {
   href: string;
@@ -97,7 +98,7 @@ export function getMenuList(
           {
             href: "/matches",
             label: "Matches",
-            active: location.pathname === "/matches",
+            active: location.pathname.startsWith("/matches"),
             icon: vs,
             svgType: true,
             submenus: [],
@@ -130,6 +131,57 @@ export function getMenuList(
             icon: Settings,
             submenus: [],
           },
+        ],
+      },
+    ];
+  } else if (role === "parent") {
+    return [
+      {
+        groupLabel: "",
+        menus: [
+          {
+            href: "/dashboard",
+            label: "Dashboard",
+            active: location.pathname === "/dashboard",
+            icon: LayoutDashboard,
+            submenus: [],
+          },
+          {
+            href: "/children",
+            label: "Children",
+            active: location.pathname.startsWith("/children"),
+            icon: FaChildren,
+            submenus: [],
+          },
+          {
+            href: "/matches",
+            label: "Matches",
+            active: location.pathname.startsWith("/matches"),
+            icon: vs,
+            svgType: true,
+            submenus: [],
+          },
+          {
+            href: "/calendar",
+            label: "Calendar",
+            active: location.pathname.includes("/calendar"),
+            icon: IoCalendarNumberOutline,
+            submenus: [],
+          },
+          {
+            href: "/chat",
+            label: "Connect",
+            active: location.pathname.includes("/chat"),
+            icon: RiGroupLine,
+            submenus: [],
+          },
+          // {
+          //   href: "/profile",
+          //   label: "Profile",
+          //   active: location.pathname.includes("/profile"),
+          //   icon: PiUserCircle,
+          //   submenus: [],
+          // },
         ],
       },
     ];
