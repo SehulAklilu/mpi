@@ -6,9 +6,11 @@ export interface ChatInterface {
   createdAt: string;
   updatedAt: string;
   __v: number;
-  latestMessage: Message;
+  latestMessage?: Message;
   id: string;
 }
+
+type Role = "player" | "coach" | "parent";
 
 type User = {
   _id: string;
@@ -26,7 +28,7 @@ type User = {
   };
   isProfilePublic: boolean;
   avatar: string;
-  role: string;
+  role: Role;
   lastOnline: string;
   provider: string;
   players: string[];

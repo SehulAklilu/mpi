@@ -174,7 +174,7 @@ export const deleteMyAnnouncement = async (
   announcementId: string
 ): Promise<any> => {
   const response = await axiosInstance.delete(
-    `/api/v1/announcements/${announcementId}`
+    `/api/v1/announcements/me/${announcementId}`
   );
   return response.data;
 };

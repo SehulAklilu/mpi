@@ -1,25 +1,41 @@
-import { ContentLayout } from "@/components/Sidebar/contenet-layout";
-import AdminPanelLayout from "@/components/Sidebar/mainLayout";
-import { useEffect } from "react";
-import { Outlet, useNavigate, Location, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import Cookies from "js-cookie";
 import { useRole } from "@/RoleContext";
+import AdminPanelLayout from "@/components/Sidebar/mainLayout";
 
 function Home() {
   const navigate = useNavigate();
   const { setLastAttemptedRoute } = useRole();
-  const location: Location<any> = useLocation();
+  const location = useLocation();
+  const [authToken, setAuthToken] = useState<string | undefined>(
+    Cookies.get("authToken")
+  );
 
   useEffect(() => {
-    const authToken = Cookies.get("authToken");
-    if (!authToken && location.pathname === "/") {
+    const handleStorageChange = () => {
+      setAuthToken(Cookies.get("authToken")); // Update state when cookies change
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    console.log("is authToken updated", authToken);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (authToken === undefined && location.pathname === "/") {
       navigate("/");
     }
-    if (!authToken && location.pathname !== "/") {
+    if (authToken === undefined && location.pathname !== "/") {
       setLastAttemptedRoute(location.pathname);
       navigate("/login");
     }
-  }, [navigate]);
+  }, [authToken, navigate, location.pathname]);
+
   return (
     <AdminPanelLayout>
       <Outlet />

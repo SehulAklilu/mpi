@@ -73,7 +73,7 @@ function Chat() {
             </TabsContent>
             {role && role === "coach" && (
               <TabsContent className="!mt-0" value="announcements">
-                <Announcements />
+                <Announcements setActiveTab={setActiveTab} />
               </TabsContent>
             )}
             <TabsContent className="!mt-5" value="posts">

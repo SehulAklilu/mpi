@@ -1,5 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
-import Login from "./Pages/Login.tsx";
+// import Login from "./Pages/Login.tsx";
 import SignUp from "./Pages/signup.tsx";
 import CreateProfile from "./Pages/CreateProfile.tsx";
 import { ToastContainer } from "react-toastify";
@@ -196,10 +196,10 @@ const router = createBrowserRouter([
     path: "/login",
     element: <NewLogin />,
   },
-  {
-    path: "/login/old",
-    element: <Login />,
-  },
+  // {
+  //   path: "/login/old",
+  //   element: <Login />,
+  // },
   {
     path: "/signup",
     element: <NewSignup />,

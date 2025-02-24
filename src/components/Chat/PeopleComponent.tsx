@@ -38,6 +38,7 @@ import { nativeEnum } from "zod";
 import FriendRequestCard from "../PendingMatch/NotificationCard";
 import { getAxiosErrorMessage, getAxiosSuccessMessage } from "@/api/axios";
 import { toast } from "react-toastify";
+import { extractUsers } from "@/lib/utils";
 
 interface PeopleComponentProps {
   setActiveTab: (tab: string) => void;
@@ -88,35 +89,6 @@ const PeopleComponent: React.FC<PeopleComponentProps> = ({
     onMeesageMut.mutate({ userId: otherUserId });
   };
 
-  function extractUsers(
-    data: FriendDataResponse,
-    userId: string
-  ): ProfileDataInterface[] {
-    const users: ProfileDataInterface[] = [];
-
-    // Process friendships
-    data.friendship.friends.forEach((friendship) => {
-      const isFollower = friendship.user1._id === userId; // If user1 is the current user, they are following user2
-      const otherUser = isFollower ? friendship.user2 : friendship.user1;
-      const otherUserBlocked = isFollower
-        ? friendship.user2IsBlocked
-        : friendship.user1IsBlocked;
-
-      users.push({
-        user_id: otherUser._id,
-        friendship_id: friendship.id,
-        name: `${otherUser.firstName} ${otherUser.lastName}`,
-        role: otherUser.__t,
-        status: friendship.status,
-        profilePicture: otherUser.avatar,
-        otherUserBlocked: otherUserBlocked,
-        relationshipType: isFollower ? "following" : "follower",
-      });
-    });
-
-    return users;
-  }
-
   function extractFriendRequests(
     data: FriendRequestResponse,
     userId: string
@@ -163,9 +135,8 @@ const PeopleComponent: React.FC<PeopleComponentProps> = ({
   return (
     <div>
       <div className="sticky top-0 md:p-4 mx-2 rounded-lg">
-        <div className=" md:hidden px-1 flex items-center gap-x-1 pb-2">
-          <MenuIcon size={36} className="invisible text-[#F2851C] flex-none " />
-          <CustomTabs setActiveTab={setActiveTab} />
+        <div className="md:hidden px-1 my-1">
+          <CustomTabs setActiveTab={setActiveTab} tab="people" />
         </div>
         <Input
           type="text"
@@ -175,7 +146,7 @@ const PeopleComponent: React.FC<PeopleComponentProps> = ({
           startIcon={FaSearch}
         />
       </div>
-      <ScrollArea className="h-[65vh] rounded-md">
+      <ScrollArea className="h-[70vh] rounded-md">
         <section className="p-4">
           {/* Friend Requests */}
           <div className="border-b">
@@ -236,97 +207,26 @@ const PeopleComponent: React.FC<PeopleComponentProps> = ({
             </div>
             {isFriendsOpen && friends && (
               <div className="space-y-4">
-                {/* Following Section */}
-                <div>
-                  <button
-                    className="flex justify-between items-center w-full text-[#32445D] font-semibold py-2 border-b"
-                    onClick={() => setShowFollowing(!showFollowing)}
-                  >
-                    <span>Following</span>
-                    <span>
-                      {showFollowing ? (
-                        <FiChevronUp size={20} className="text-gray-600" />
-                      ) : (
-                        <FiChevronDown size={20} className="text-gray-600" />
-                      )}
-                    </span>
-                  </button>
-                  {showFollowing && (
-                    <div className="space-y-2 mt-2">
-                      {friends
-                        ?.filter(
-                          (friend) => friend.relationshipType === "following"
-                        )
-                        .map((friend) => (
-                          <FriendRequestCard
-                            key={friend.friendship_id}
-                            friendshipId={friend.friendship_id}
-                            name={friend.name}
-                            role={friend.role}
-                            message={`Say hi to ${friend.name}`}
-                            profilePicture={friend.profilePicture}
-                            status={
-                              friend.status === "friends"
-                                ? "accepted"
-                                : "rejected"
-                            }
-                            onMessage={() => onMessage(friend.user_id)}
-                          />
-                        ))}
-                      {/* <div className="flex items-center justify-center">
+                <div className="space-y-2 mt-2">
+                  {friends?.map((friend) => (
+                    <FriendRequestCard
+                      key={friend.friendship_id}
+                      friendshipId={friend.friendship_id}
+                      name={friend.name}
+                      role={friend.role}
+                      message={`Say hi to ${friend.name}`}
+                      profilePicture={friend.profilePicture}
+                      status={
+                        friend.status === "friends" ? "accepted" : "rejected"
+                      }
+                      onMessage={() => onMessage(friend.user_id)}
+                    />
+                  ))}
+                  {/* <div className="flex items-center justify-center">
                         <button className="border rounded-lg px-6 py-2">
                           Load More
                         </button>
                       </div> */}
-                    </div>
-                  )}
-                </div>
-
-                {/* Followers Section */}
-                <div>
-                  <button
-                    className="flex justify-between items-center w-full text-[#32445D] font-semibold py-2 border-b"
-                    onClick={() => setShowFollowers(!showFollowers)}
-                  >
-                    <span>Followers</span>
-
-                    <span>
-                      {showFollowers ? (
-                        <FiChevronUp size={20} className="text-gray-600" />
-                      ) : (
-                        <FiChevronDown size={20} className="text-gray-600" />
-                      )}
-                    </span>
-                  </button>
-                  {showFollowers && (
-                    <div className="space-y-2 mt-2">
-                      {friends
-                        ?.filter(
-                          (friend) => friend.relationshipType === "follower"
-                        )
-                        .map((friend) => (
-                          <FriendRequestCard
-                            key={friend.friendship_id}
-                            friendshipId={friend.friendship_id}
-                            name={friend.name}
-                            role={friend.role}
-                            message={`Say hi to ${friend.name}`}
-                            profilePicture={friend.profilePicture}
-                            status={
-                              friend.status === "friends"
-                                ? "accepted"
-                                : "rejected"
-                            }
-                            onMessage={() => onMessage(friend.user_id)}
-                          />
-                        ))}
-                      {/* <div className="flex items-center justify-center">
-                        {<button className="border rounded-lg px-6 py-2">
-                          Load More
-                        </button>}
-                      </div> */}
-                    </div>
-                  )}
                 </div>
               </div>
             )}

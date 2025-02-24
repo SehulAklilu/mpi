@@ -47,7 +47,7 @@ const ChatMessages = ({ chatId }: { chatId: string }) => {
   ): ExtractedMessage[] {
     return messages.map((message) => ({
       id: message.id,
-      type: "text",
+      type: message.content.startsWith("Image: ") ? "image" : "text",
       content: message.content,
       time: new Date(message.createdAt).toLocaleTimeString([], {
         hour: "2-digit",
@@ -62,7 +62,7 @@ const ChatMessages = ({ chatId }: { chatId: string }) => {
     message_datas && user_id && message_datas.messages
       ? extractMessages(message_datas.messages, user_id)
       : undefined;
-
+  const BASE_URL = "https://mpiglobal.org";
   return (
     <div
       className={`flex flex-col-reverse gap-4 h-[84vh] sm:h-[80vh] md:h-[65vh]  ${styles.customScrollbar}`}
@@ -95,7 +95,7 @@ const ChatMessages = ({ chatId }: { chatId: string }) => {
               )}
               {message.type === "image" && (
                 <img
-                  src={message.content}
+                  src={BASE_URL + message.content.replace("Image: ", "")}
                   alt="Chat Image"
                   className="rounded"
                 />

@@ -48,6 +48,7 @@ function NewLogin() {
       Cookies.set("role", data.user.role);
       Cookies.set("user_name", data.user.firstName + " " + data.user.lastName);
       Cookies.set("avater", data.user?.avatar);
+      localStorage.setItem("authUpdate", Date.now().toString());
       if (data.user.role === "coach") {
         navigate("/matches");
       } else {

@@ -122,9 +122,9 @@ function ProfileSetting() {
 
   return (
     <ContentLayout>
-      <div className="px-10">
+      <div className="px-2 sm:px-4 md:px-10">
         <div className="flex items-center justify-end my-2">
-          <button className="py-2 px-4 rounded-md bg-primary text-white mx-4 ">
+          <button className="py-2 hidden sm:block px-4 rounded-md bg-primary text-white mx-4 ">
             Save Changes
           </button>
         </div>
@@ -135,34 +135,40 @@ function ProfileSetting() {
             defaultValue="Profile"
             className="w-full"
           >
-            <TabsList className="flex f bg-transparent  w-full md:w-[30rem] lg:w-[40rem] gap-x-4  h-[2.5rem] md:h-[3rem]  ">
+            <TabsList className="flex bg-transparent  w-full md:w-[30rem] lg:w-[40rem] gap-x-1 sm:gap-x-4  h-[2.5rem] md:h-[3rem]  ">
               <TabsTrigger
                 value="Profile"
-                className="flex-1 text-center gap-x-2 py-1 text-sm md:text-base lg:text-lg rounded-md transition-colors border border-[#152946] data-[state=active]:border-[#F2851C] text-[#152946]"
+                className="flex-1 text-center gap-x-0 sm:gap-x-2 py-1 text-sm md:text-base lg:text-lg rounded-md transition-colors border border-[#152946] data-[state=active]:border-[#F2851C] text-[#152946]"
               >
-                <BsPerson /> Profile
+                <BsPerson className="hidden sm:block" /> Profile
               </TabsTrigger>
               <TabsTrigger
                 value="Privacy & Security"
-                className="flex-1 text-center gap-x-2 py-1 text-sm md:text-base lg:text-lg rounded-md transition-colors border border-[#152946] data-[state=active]:border-[#F2851C] text-[#152946]"
+                className="flex-1 text-center gap-x-0 sm:gap-x-2 py-1 text-sm md:text-base lg:text-lg rounded-md transition-colors border border-[#152946] data-[state=active]:border-[#F2851C] text-[#152946]"
               >
-                <CiLock /> Privacy & Security
+                <CiLock className="hidden sm:block" />{" "}
+                <span className="flex gap-0 sm:gap-1">
+                  {" "}
+                  Privacy <span className="hidden sm:block">
+                    & Security
+                  </span>{" "}
+                </span>
               </TabsTrigger>
               <TabsTrigger
                 value="Purchases"
-                className="flex-1 text-center gap-x-2 py-1 text-sm md:text-base lg:text-lg rounded-md transition-colors border border-[#152946] data-[state=active]:border-[#F2851C] text-[#152946]"
+                className="flex-1 text-center gap-x-0 sm:gap-x-2 py-1 text-sm md:text-base lg:text-lg rounded-md transition-colors border border-[#152946] data-[state=active]:border-[#F2851C] text-[#152946]"
               >
-                <CiCreditCard1 /> Purchases
+                <CiCreditCard1 className="hidden sm:block" /> Purchases
               </TabsTrigger>
             </TabsList>
             <TabsContent className="!mt-4" value="Profile">
-              <h1 className="font-semibold text-[#152946] text-base mb-2">
+              <h1 className="font-semibold text-[#152946] text-center md:text-left text-base mb-2">
                 Profile Picture
               </h1>
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
-                  <div className="flex gap-x-4  items-center">
-                    <div className="w-24 h-24 rounded-full">
+                  <div className="flex gap-x-4 flex-col md:flex-row gap-y-2 items-center">
+                    <div className="w-16 h-16 md:w-24 md:h-24 rounded-full">
                       {previewImage ? (
                         <img
                           src={previewImage}
@@ -172,7 +178,7 @@ function ProfileSetting() {
                       ) : (
                         <img
                           src={userImage}
-                          className="w-24 h-24 rounded-full"
+                          className="w-full h-full rounded-full object-cover"
                         />
                       )}
                     </div>
@@ -185,9 +191,9 @@ function ProfileSetting() {
                         <FormItem>
                           <FormControl>
                             <div className="relative flex items-center">
-                              <div className="w-[22rem]  border border-dashed rounded-lg  border-[#e3e3fd] flex flex-col gap-y-2 py-4 items-center justify-center overflow-hidden">
+                              <div className="w-[16rem] sm:[18rem] md:w-[22rem]  border border-dashed rounded-lg  border-gray-500 flex flex-col gap-y-2 py-4 items-center justify-center overflow-hidden">
                                 <FiUploadCloud className="" size={32} />
-                                <p className="text-gray-500 text-lg">
+                                <p className="text-gray-500 text-sm md:text-lg text-center">
                                   Click to upload or drag and drop
                                 </p>
                                 <p className="text-gray-500">
@@ -547,9 +553,7 @@ function ProfileSetting() {
                                 type="text"
                                 id="full_name"
                                 placeholder="Enter zip code"
-                                className={
-                                  "!rounded-3xl !w-fit shadow !bg-[#F0F0FF]"
-                                }
+                                className={"!rounded-3xl  shadow !bg-[#F0F0FF]"}
                                 startIcon={IoIosMail}
                                 {...field}
                               />
@@ -560,6 +564,9 @@ function ProfileSetting() {
                       />
                     </div>
                   </div>
+                  <button className="py-2 w-full sm:w-fit sm:hidden px-4 rounded-md bg-primary text-white mx:0 sm:mx-4 ">
+                    Save Changes
+                  </button>
                 </form>
               </Form>
             </TabsContent>

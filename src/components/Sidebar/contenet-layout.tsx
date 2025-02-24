@@ -43,6 +43,7 @@ export function ContentLayout({ children, name }: ContentLayoutProps) {
       Cookies.remove("refreshToken");
       Cookies.remove("user_id");
       Cookies.remove("role");
+      localStorage.setItem("authUpdate", Date.now().toString());
       navigate("/");
     },
   });

@@ -20,18 +20,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useMutation, useQueries, useQuery } from "react-query";
+import { useMutation, useQueries, useQuery, useQueryClient } from "react-query";
 import {
+  AnnouncementsPayload,
   createAnnouncements,
+  deleteMyAnnouncement,
   getAnnouncements,
   getMyAnnouncements,
   MyAnnouncementsResponse,
+  updateMyAnnouncement,
 } from "@/api/chat.api";
 import { getAxiosErrorMessage, getAxiosSuccessMessage } from "@/api/axios";
 import { toast } from "react-toastify";
-import { LoaderCircle } from "lucide-react";
+import { LoaderCircle, MenuIcon } from "lucide-react";
 import { BiEditAlt } from "react-icons/bi";
 import { MdDeleteOutline } from "react-icons/md";
+import CustomTabs from "./CustomTabs";
+import { Textarea } from "../ui/textarea";
 
 const TodayAnnouncementCard: React.FC<MyAnnouncementsResponse> = ({
   id,
@@ -71,13 +76,16 @@ const TodayAnnouncementCard: React.FC<MyAnnouncementsResponse> = ({
 };
 
 const FormSchema = z.object({
+  id: z.string().optional(),
   title: z.string().min(3, {
-    message: "First Name must be at least 3 characters.",
+    message: "Title must be at least 3 characters.",
   }),
   description: z.string().min(3, {
-    message: "First Name must be at least 3 characters.",
+    message: "Description must be at least 3 characters.",
   }),
-  category: z.string(),
+  category: z.string().min(1, {
+    message: "Category is required.",
+  }),
 });
 
 type CategorizedAnnouncements = {
@@ -87,22 +95,74 @@ type CategorizedAnnouncements = {
   "Last Month": MyAnnouncementsResponse[];
   Older: MyAnnouncementsResponse[];
 };
+interface AnnouncementsProps {
+  setActiveTab: (tab: string) => void;
+}
 
-const Announcements: React.FC = () => {
+const Announcements: React.FC<AnnouncementsProps> = ({ setActiveTab }) => {
   const [openSections, setOpenSections] = useState<{ [key: string]: boolean }>({
     Today: true,
   });
   const [onEdit, setOnEdit] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const queryClient = useQueryClient();
 
   const toggleSection = (section: string) => {
     setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
   };
+
+  const { isLoading: isGettingAnnouncement, data: announcements } = useQuery({
+    queryKey: ["Announcement"],
+    queryFn: getMyAnnouncements,
+  });
 
   const { isLoading, mutate } = useMutation({
     mutationKey: ["createAnnouncements"],
     mutationFn: createAnnouncements,
     onSuccess: (response) => {
       const message = getAxiosSuccessMessage(response);
+      queryClient.invalidateQueries(["Announcement"]);
+      toast.success(message);
+      setIsOpen(false);
+      form.reset();
+    },
+    onError: (error: any) => {
+      const message = getAxiosErrorMessage(error);
+      toast.error(message);
+    },
+  });
+  const updateAnnouncementMut = useMutation({
+    mutationKey: ["updateAnnouncement"],
+    mutationFn: ({
+      payload,
+      announcementId,
+    }: {
+      payload: AnnouncementsPayload;
+      announcementId: string;
+    }) => updateMyAnnouncement(payload, announcementId),
+    onSuccess: (response) => {
+      const message = getAxiosSuccessMessage(response);
+      toast.success(message);
+      setIsOpen(false);
+      setOnEdit(false);
+      queryClient.invalidateQueries(["Announcement"]);
+
+      form.reset();
+    },
+    onError: (error: any) => {
+      const message = getAxiosErrorMessage(error);
+      toast.error(message);
+    },
+  });
+
+  const deleteAnnouncemen = useMutation({
+    mutationKey: ["deleteAnnouncements"],
+    mutationFn: (announcementId: string) =>
+      deleteMyAnnouncement(announcementId),
+    onSuccess: (response) => {
+      const message = getAxiosSuccessMessage(response);
+      queryClient.invalidateQueries(["Announcement"]);
       toast.success(message);
       setIsOpen(false);
       form.reset();
@@ -114,7 +174,25 @@ const Announcements: React.FC = () => {
   });
 
   const onSubmit = (payload: z.infer<typeof FormSchema>) => {
-    mutate(payload);
+    const newPayload = { ...payload };
+    delete newPayload?.id;
+
+    if (onEdit && payload?.id) {
+      updateAnnouncementMut.mutate({
+        payload: newPayload,
+        announcementId: payload.id,
+      });
+    } else {
+      mutate(payload);
+    }
+  };
+
+  const reset = () => {
+    form.reset();
+    form.setValue("id", "");
+    form.setValue("title", "");
+    form.setValue("description", "");
+    form.setValue("category", "");
   };
 
   const editAnnouncement = (id: string) => {
@@ -124,21 +202,25 @@ const Announcements: React.FC = () => {
     if (announcement) {
       setIsOpen(true);
       setOnEdit(true);
+      form.setValue("id", id);
       form.setValue("title", announcement.title);
       form.setValue("description", announcement.description);
       form.setValue("category", announcement.category);
     }
   };
 
-  const [isOpen, setIsOpen] = useState(false);
+  const deleteAnnouncement = () => {
+    const announcementId = form.getValues("id");
+
+    if (announcementId) {
+      deleteAnnouncemen.mutate(announcementId);
+    } else {
+      toast.error("No announcement selected for deletion.");
+    }
+  };
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
-  });
-
-  const { isLoading: isGettingAnnouncement, data: announcements } = useQuery({
-    queryKey: ["Announcement"],
-    queryFn: getMyAnnouncements,
   });
 
   function categorizeAnnouncements(
@@ -185,7 +267,10 @@ const Announcements: React.FC = () => {
     announcements ? categorizeAnnouncements(announcements) : null;
 
   return (
-    <div className=" mx-auto p-4 space-y-4">
+    <div className=" mx-auto space-y-4">
+      <div className="md:hidden my-1 px-1">
+        <CustomTabs setActiveTab={setActiveTab} tab="announcements" />
+      </div>
       <Input
         type="text"
         id="full_name"
@@ -242,7 +327,13 @@ const Announcements: React.FC = () => {
             </div>
           ))}
 
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <Dialog
+        open={isOpen}
+        onOpenChange={(open) => {
+          setIsOpen(open);
+          if (!open) reset();
+        }}
+      >
         <DialogContent className="">
           <DialogTitle className="text-lg">Create Announcement</DialogTitle>
           <Form {...form}>
@@ -266,45 +357,39 @@ const Announcements: React.FC = () => {
                   </FormItem>
                 )}
               />
-              <div>
-                <label className="font-medium">Description</label>
-                <textarea
-                  id="description"
-                  placeholder="Description..."
-                  rows={2}
-                  className="w-full border !rounded-lg p-2"
-                  {...form.register("description")}
-                />
-              </div>
-
-              {/* <FormField
+              <FormField
                 control={form.control}
-                name="type"
+                name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Bio</FormLabel>
+                    <FormLabel>Description</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="Tell us a little bit about yourself"
-                        className="resize-none"
+                        placeholder="Description..."
+                        className="resize-none !bg-white"
                         {...field}
                       />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
-              /> */}
+              />
               <FormField
                 control={form.control}
                 name="category"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Gender</FormLabel>
+                    <FormLabel>Category</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <SelectTrigger
-                        className={"shadow !h-10 !py-4 !px-4 !bg-white"}
+                        className={
+                          "shadow !h-10 !py-4 !px-4 !bg-white !text-black"
+                        }
                       >
-                        <SelectValue placeholder="Select Type" />
+                        <SelectValue
+                          placeholder="Select Type"
+                          className="!text-black"
+                        />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="match">Match</SelectItem>
@@ -318,24 +403,62 @@ const Announcements: React.FC = () => {
                 )}
               />
               <DialogFooter>
-                <div className="mt-6 w-full">
-                  <button
-                    className="py-2 px-4 rounded-lg w-full text-white bg-primary border border-white hover:bg-orange-500 "
-                    onClick={() => setIsOpen(true)}
-                  >
-                    {isLoading ? (
-                      <LoaderCircle
-                        style={{
-                          animation: "spin 1s linear infinite",
-                          fontSize: "2rem",
-                          color: "#FFFFFF",
-                        }}
-                      />
-                    ) : (
-                      <span></span>
-                    )}
-                  </button>
-                </div>
+                {onEdit ? (
+                  <div className="flex gap-4 w-full">
+                    <button
+                      className="py-2 px-4 rounded-lg w-full text-white bg-primary border border-white hover:bg-orange-500 flex items-center justify-center "
+                      // onClick={() => updateAnnouncement()}
+                    >
+                      {updateAnnouncementMut.isLoading ? (
+                        <LoaderCircle
+                          style={{
+                            animation: "spin 1s linear infinite",
+                            fontSize: "2rem",
+                            color: "#FFFFFF",
+                          }}
+                        />
+                      ) : (
+                        <span>Update</span>
+                      )}
+                    </button>
+                    <button
+                      type="button"
+                      className="py-2 px-4 rounded-lg w-full text-white bg-red-600 border border-white hover:bg-red-400 flex items-center justify-center "
+                      onClick={deleteAnnouncement}
+                    >
+                      {deleteAnnouncemen.isLoading ? (
+                        <LoaderCircle
+                          style={{
+                            animation: "spin 1s linear infinite",
+                            fontSize: "2rem",
+                            color: "#FFFFFF",
+                          }}
+                        />
+                      ) : (
+                        <span>Delelte</span>
+                      )}
+                    </button>
+                  </div>
+                ) : (
+                  <div className="mt-6 w-full">
+                    <button
+                      className="py-2 px-4 rounded-lg w-full text-white bg-primary border border-white hover:bg-orange-500 flex items-center justify-center "
+                      onClick={() => setIsOpen(true)}
+                    >
+                      {isLoading ? (
+                        <LoaderCircle
+                          style={{
+                            animation: "spin 1s linear infinite",
+                            fontSize: "2rem",
+                            color: "#FFFFFF",
+                          }}
+                        />
+                      ) : (
+                        <span> Create Announcement</span>
+                      )}
+                    </button>
+                  </div>
+                )}
               </DialogFooter>
             </form>
           </Form>

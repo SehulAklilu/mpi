@@ -33,7 +33,7 @@ const ChatItem: React.FC<ChatItemProps> = ({
       }`}
     >
       {/* Avatar */}
-      <div className="relative">
+      <div className="relative flex-none">
         <img
           src={avatarUrl}
           alt={`${name}'s avatar`}
@@ -49,7 +49,9 @@ const ChatItem: React.FC<ChatItemProps> = ({
       {/* Chat Details */}
       <div className="flex flex-col flex-1">
         <div className="flex justify-between items-center">
-          <h4 className="text-base font-medium">{name}</h4>
+          <h4 className="text-base font-medium">
+            {name && name.length > 15 ? name.slice(0, 15) + "..." : name}
+          </h4>
           <span
             className={`text-sm ${active ? "text-white" : "text-gray-500"}`}
           >
@@ -57,7 +59,11 @@ const ChatItem: React.FC<ChatItemProps> = ({
           </span>
         </div>
         <div className="flex justify-between items-center">
-          <p className="text-sm truncate max-w-[70%]">{message}</p>
+          <p className="text-sm truncate max-w-[70%]">
+            {message && message.length > 15
+              ? message.slice(0, 15) + "..."
+              : message}
+          </p>
           {isRead ? (
             <MdDoneAll className="text-green-500 text-lg" />
           ) : (

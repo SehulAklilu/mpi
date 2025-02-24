@@ -1,9 +1,9 @@
 import React from "react";
 import bgImage from "../../assets/landingpage/jeremy-yap-PQWDsr78l8w-unsplash-1024x683.jpg";
-import image from "../../assets/landingpage/image20.png";
+import image from "../../assets/landingpage/image21.png";
 import image1 from "../../assets/landingpage/image21.png";
 import image2 from "../../assets/landingpage/image22.png";
-import image3 from "../../assets/landingpage/image26.png";
+import image3 from "../../assets/landingpage/image26.webp";
 import image4 from "../../assets/landingpage/image24.png";
 import LandingPageNavBar from "./LandingPageNavBar";
 import { FaArrowDown } from "react-icons/fa";

@@ -67,7 +67,7 @@ function PrivacySecurity() {
 
   const onSubmit = () => {};
   return (
-    <div className="px-4">
+    <div className="px-2 sm:px-4">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}

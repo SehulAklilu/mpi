@@ -1,6 +1,6 @@
 import React from "react";
 import LandingPageNavBar from "./LandingPageNavBar";
-import bgImage from "../../assets/landingpage/image26.png";
+import bgImage from "../../assets/landingpage/image26.webp";
 import bgImage2 from "../../assets/landingpage/image27.jpg";
 import map from "../../assets/landingpage/Screenshot 2025-02-14 082120.png";
 import { FaArrowDown } from "react-icons/fa";
@@ -29,9 +29,10 @@ import {
   FaLinkedin,
 } from "react-icons/fa";
 import Footer from "./Footer";
+import { IconType } from "react-icons";
 
 interface LocaiotnInterface {
-  Icon: any;
+  Icon: IconType;
   lable: string;
   value: string;
 }
@@ -71,17 +72,17 @@ function Contact() {
 
   const onSubmit = () => {};
 
-  const handleChange = (value: any) => {
-    form.setValue("phoneNumber", value);
+  // const handleChange = (value: any) => {
+  //   form.setValue("phoneNumber", value);
 
-    if (value) {
-      // const phoneNumberObj = parsePhoneNumber(value);
-      console.log("3333333333333", value);
-      // if (phoneNumberObj) {
-      //   form.setValue("phoneNumberCountryCode", phoneNumberObj?.country || "");
-      // }
-    }
-  };
+  //   if (value) {
+  //     const phoneNumberObj = parsePhoneNumber(value);
+  //     console.log("3333333333333", value);
+  //     if (phoneNumberObj) {
+  //       form.setValue("phoneNumberCountryCode", phoneNumberObj?.country || "");
+  //     }
+  //   }
+  // };
   return (
     <div>
       <div
@@ -185,7 +186,7 @@ function Contact() {
                               value={field.value}
                               onChange={(value) => {
                                 field.onChange(value);
-                                handleChange(value);
+                                // handleChange(value);
                               }}
                               country={"us"}
                               enableSearch={true}
