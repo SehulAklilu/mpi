@@ -46,6 +46,8 @@ import Contact from "./components/LandingPage/Contact.tsx";
 import Blog from "./components/LandingPage/Blog.tsx";
 import AboutUsPage from "./Pages/AboutUsPage.tsx";
 import CoursesPage from "./Pages/CoursesPage.tsx";
+import ChildrenPage from "./Pages/ChildrenPage.tsx";
+import ChildrenDetailPage from "./components/Children/ChildrenDetailPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -57,24 +59,43 @@ const router = createBrowserRouter([
     element: <Home />,
     children: [
       {
-        element: <PrivateRoute allowedRoles={["coach", "player"]} />,
+        element: <PrivateRoute allowedRoles={["coach", "player", "parent"]} />,
         children: [
           {
-            path: "/calendar",
+            path: "dashboard",
+            element: <Dashboard />,
+          },
+          {
+            path: "chat",
+            element: <Chat />,
+          },
+          {
+            path: "calendar",
             element: <Reminders />,
+          },
+          {
+            path: "profile",
+            element: <Profile />,
+          },
+          {
+            path: "chat/profile/:id",
+            element: <ChatProflie />,
+          },
+          {
+            path: "user/profile/:id",
+            element: <ProfileSetting />,
           },
         ],
       },
-
       {
         element: <PrivateRoute allowedRoles={["player"]} />,
         children: [
           {
-            path: "/course",
+            path: "course",
             element: <NewLearn />,
           },
           {
-            path: "/course/:course_id",
+            path: "course/:course_id",
             element: <CourseDetail />,
           },
           {
@@ -100,93 +121,40 @@ const router = createBrowserRouter([
         ],
       },
       {
-        element: <PrivateRoute allowedRoles={["coach"]} />,
+        element: <PrivateRoute allowedRoles={["coach", "parent"]} />,
         children: [
           {
-            path: "/matches",
+            path: "matches",
             element: <Matches />,
           },
           {
-            path: "/matches/pendingMatch",
+            path: "matches/pendingMatch",
             element: <PendingMatch />,
           },
           {
-            path: "/matches/recentMatch",
+            path: "matches/recentMatch",
             element: <RecentMatch />,
           },
           {
-            path: "/matches/addMatch",
+            path: "matches/addMatch",
             element: <AddMatch />,
           },
           {
-            path: "/matches/trackingMatch",
+            path: "matches/trackingMatch",
             element: <TrackingMatch />,
           },
         ],
       },
       {
-        element: <PrivateRoute allowedRoles={["player", "coach"]} />,
+        element: <PrivateRoute allowedRoles={["parent"]} />,
         children: [
           {
-            path: "dashboard",
-            element: <Dashboard />,
+            path: "children",
+            element: <ChildrenPage />,
           },
           {
-            path: "chat",
-            element: <Chat />,
-          },
-          {
-            path: "calendar",
-            element: <Reminders />,
-          },
-          {
-            path: "players",
-            element: <Players />,
-          },
-          {
-            path: "settings",
-            element: <Settings />,
-          },
-          {
-            path: "profile",
-            element: <Profile />,
-          },
-          {
-            path: "chat/profile/:id",
-            element: <ChatProflie />,
-          },
-          {
-            path: "user/profile/:id",
-            element: <ProfileSetting />,
-          },
-        ],
-      },
-      {
-        element: <PrivateRoute allowedRoles={["player", "coach"]} />,
-        children: [
-          {
-            path: "dashboard",
-            element: <Dashboard />,
-          },
-          {
-            path: "chat",
-            element: <Chat />,
-          },
-          {
-            path: "calendar",
-            element: <Reminders />,
-          },
-          {
-            path: "players",
-            element: <Players />,
-          },
-          {
-            path: "settings",
-            element: <Settings />,
-          },
-          {
-            path: "profile",
-            element: <Profile />,
+            path: "children/:id",
+            element: <ChildrenDetailPage />,
           },
         ],
       },
@@ -196,10 +164,6 @@ const router = createBrowserRouter([
     path: "/login",
     element: <NewLogin />,
   },
-  // {
-  //   path: "/login/old",
-  //   element: <Login />,
-  // },
   {
     path: "/signup",
     element: <NewSignup />,
