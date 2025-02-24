@@ -1,5 +1,6 @@
 import { getChildren } from "@/api/children.api";
 import { ContentLayout } from "@/components/Sidebar/contenet-layout";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
 
@@ -46,6 +47,24 @@ const PlayerCard: React.FC<CardProps> = ({
   );
 };
 
+const PlayerCardSkeleton: React.FC = () => {
+  return (
+    <div className="bg-white shadow-lg rounded-lg p-4 w-64">
+      {/* Profile Image Skeleton */}
+      <div className="flex justify-center mb-4">
+        <Skeleton className="w-24 h-24 rounded-full" />
+      </div>
+
+      {/* Player Info Skeleton */}
+      <div className="text-center">
+        <Skeleton className="w-3/4 h-4 mb-2" /> {/* Name Skeleton */}
+        <Skeleton className="w-1/2 h-3 mb-2" /> {/* Email Skeleton */}
+        <Skeleton className="w-1/2 h-3" /> {/* UTSA #18 Skeleton */}
+      </div>
+    </div>
+  );
+};
+
 function ChildrenPage() {
   const {
     data: childrens,
@@ -56,10 +75,20 @@ function ChildrenPage() {
     queryFn: getChildren,
   });
 
+  if (isLoading) {
+    return (
+      <div className="flex gap-4 mt-20">
+        {[1, 2, 3].map((value) => (
+          <PlayerCardSkeleton key={value} />
+        ))}
+      </div>
+    );
+  }
+
   return (
     <ContentLayout>
       <h1 className="text-2xl font-semibold my-4">Children</h1>
-      <div>
+      <div className="flex gap-4 flex-wrap">
         {childrens?.players?.map((children) => (
           <PlayerCard
             id={children._id}
