@@ -11,59 +11,89 @@ import { ContentLayout } from "@/components/Sidebar/contenet-layout";
 import { FiInfo } from "react-icons/fi";
 import profile_img from "../../assets/user.jpeg";
 import Report from "./Report";
+import { useParams } from "react-router-dom";
+import { string } from "zod";
+import { useQuery } from "react-query";
+import { getMatch } from "@/api/match.api";
+import { formatDateTime } from "@/lib/utils";
+import { Match } from "@/types/match.type";
+import MatchTable from "./Sets";
 
 interface DetailsInterface {
   icon: any;
   label: string;
-  value: string;
+  value: string | number;
 }
 
 function RecentMatch() {
   const [activeTab, setActiveTab] = useState("details");
 
-  const details: DetailsInterface[] = [
-    {
-      label: "Match Date & Time",
-      icon: FaRegCalendarPlus,
-      value: "Feb 05, 2025, 10:00 AM",
-    },
-    {
-      label: "Match Length",
-      icon: IoTime,
-      value: "2 Hours 23 Minutes",
-    },
-    {
-      label: "Game Best Out of",
-      icon: FaTrophy,
-      value: "3 Games",
-    },
-    {
-      label: "Tie-Breaker Rule",
-      icon: FaBalanceScaleLeft,
-      value: "7 points Tie Breaker",
-    },
-    {
-      label: "Court Type",
-      icon: FaFlag,
-      value: "Outdoor Court",
-    },
-    {
-      label: "Court Surface Type",
-      icon: MdOutlineWaves,
-      value: "Hard Court",
-    },
-  ];
+  const { id } = useParams<{ id: string }>();
+
+  const { data: match } = useQuery({
+    queryKey: ["getMatch", id],
+    queryFn: () => (id ? getMatch(id) : Promise.reject("No ID provided")),
+    enabled: !!id,
+  });
+
+  const getMatchDetail = (match: Match): DetailsInterface[] => {
+    const details: DetailsInterface[] = [
+      {
+        label: "Match Date & Time",
+        icon: FaRegCalendarPlus,
+        value: formatDateTime(match.date),
+      },
+      {
+        label: "Match Length",
+        icon: IoTime,
+        value: match.totalGameTime,
+      },
+      {
+        label: "Game Best Out of",
+        icon: FaTrophy,
+        value: match.matchType,
+      },
+      {
+        label: "Tie-Breaker Rule",
+        icon: FaBalanceScaleLeft,
+        value: match.tieBreakRule,
+      },
+      {
+        label: "Court Type",
+        icon: FaFlag,
+        value: match.indoor ? "Indoor" : "Outdoor",
+      },
+      {
+        label: "Court Surface Type",
+        icon: MdOutlineWaves,
+        value: match.courtSurface,
+      },
+    ];
+    return details;
+  };
+
+  if (!match) {
+    return;
+  }
 
   return (
     <ContentLayout name="Recent Match">
-      <div className="bg-white pt-10 min-h-[100vh] overflow-auto pb-12">
+      <div className="bg-white pt-10 min-h-[100vh] pb-12">
         <div className="w-full mx-auto mt-4">
           <div className="flex gap-x-6 flex-col gap-y-2 sm:flex-row items-center justify-center">
-            <ProfileCard name="Candace Flynn" ranking={19} />
+            <ProfileCard
+              name={match?.p1Name}
+              isObject={match.p1IsObject}
+              player={match?.p1}
+            />
             <div className="px-4 py-6 text-4xl text-white bg-gradient-to-b from-[#F8B570] font-bold rounded-xl to-[#F38C28] ">
               VS
             </div>
-            <ProfileCard name="Jene" ranking={19} />
+            <ProfileCard
+              name={match?.p2Name}
+              isObject={match.p2IsObject}
+              player={match?.p2}
+            />
           </div>
         </div>
         <div className="mt-4">
@@ -104,7 +134,7 @@ function RecentMatch() {
                 className="w-full md:w-[44rem] lg:w-[56rem] mx-auto px-4"
                 value="details"
               >
-                {details.map(({ icon: Icon, value, label }) => (
+                {getMatchDetail(match).map(({ icon: Icon, value, label }) => (
                   <div className=" w-full md:w-[70%] flex items-center justify-between my-2">
                     <div className="flex items-center gap-x-1 ">
                       <div className="p-1 rounded-md bg-[#FFF6ED]">
@@ -123,105 +153,7 @@ function RecentMatch() {
                 value="sets"
                 className="w-full md:w-[44rem] lg:w-[56rem] mx-auto px-4"
               >
-                <div className="w-full flex gap-2 mt-14">
-                  <div className="overflow-x-auto">
-                    <table className="table-auto w-full border-collapse border border-gray-300">
-                      <thead>
-                        <tr className=" text-left">
-                          <th className="border  px-4 py-2 w-[400px]">
-                            Players
-                          </th>
-                          <th className="border  px-4 py-2 w-[200px] whitespace-nowrap">
-                            Match Score
-                          </th>
-                          <th className="border  px-4 py-2 w-[200px]">
-                            1st set
-                          </th>
-                          <th className="border  px-4 py-2 w-[200px]">
-                            2nd set
-                          </th>
-                          <th className="border  px-4 py-2 w-[200px]">
-                            3rd set
-                          </th>
-                          <th className="border  px-4 py-2 w-[200px]">
-                            4th set
-                          </th>
-                          <th className="border  px-4 py-2 w-[200px]">
-                            5th set
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr className={`hover:bg-gray-50`}>
-                          <td className="border border-gray-300 px-4 py-2 flex gap-2">
-                            <img
-                              className="w-10 h-10 rounded-full"
-                              src={profile_img}
-                              alt=""
-                            />
-                            <div>
-                              <p className="text-sm font-semibold ">
-                                Candace Flynn
-                              </p>
-                              <p className="text-gray-700 text-xs">USDTA: 19</p>
-                            </div>
-                          </td>
-                          <td className="border border-gray-300 px-4 py-2">
-                            2
-                          </td>
-                          <td className="border border-gray-300 px-4 py-2 text-center bg-gradient-to-b from-[#f8b672] to-[#f2851c] text-white">
-                            6
-                          </td>
-                          <td className="border border-gray-300 px-4 py-2 text-center">
-                            5
-                          </td>
-                          <td className="border border-gray-300 px-4 py-2 text-center">
-                            2
-                          </td>
-                          <td className="border border-gray-300 px-4 py-2 text-center bg-gradient-to-b from-[#f8b672] to-[#f2851c] text-white">
-                            7
-                          </td>
-                          <td className="border border-gray-300 px-4 py-2 text-center">
-                            3
-                          </td>
-                        </tr>
-                        <tr className={`hover:bg-gray-50`}>
-                          <td className="border border-gray-300 px-4 py-2 flex gap-2 bg-gradient-to-b from-[#f8b672] to-[#f2851c] text-white">
-                            <img
-                              className="w-10 h-10 rounded-full"
-                              src={profile_img}
-                              alt=""
-                            />
-                            <div>
-                              <p className="text-sm font-semibold ">
-                                Candace Flynn
-                              </p>
-                              <p className="text-gray-200 text-xs">USDTA: 19</p>
-                            </div>
-                          </td>
-                          <td className="border border-gray-300 px-4 py-2 bg-gradient-to-b from-[#f8b672] to-[#f2851c] text-white">
-                            3
-                          </td>
-                          <td className="border border-gray-300 px-4 py-2 text-center">
-                            4
-                          </td>
-                          <td className="border border-gray-300 px-4 py-2 text-center bg-gradient-to-b from-[#f8b672] to-[#f2851c] text-white">
-                            7
-                          </td>
-                          <td className="border border-gray-300 px-4 py-2 text-center bg-gradient-to-b from-[#f8b672] to-[#f2851c] text-white">
-                            6
-                          </td>
-                          <td className="border border-gray-300 px-4 py-2 text-center ">
-                            6
-                          </td>
-                          <td className="border border-gray-300 px-4 py-2 text-center bg-gradient-to-b from-[#f8b672] to-[#f2851c] text-white">
-                            6
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
+                <MatchTable match={match} />
               </TabsContent>
               <TabsContent
                 value="momentum"
@@ -237,7 +169,7 @@ function RecentMatch() {
                 </div>
               </TabsContent>
               <TabsContent value="report" className="w-full   px-2">
-                <Report />
+                <Report match={match} />
               </TabsContent>
             </Tabs>
           </div>
