@@ -287,7 +287,7 @@ const AddMatch = () => {
             onSubmit={form.handleSubmit(onSubmit, onError)}
             className="space-y-5"
           >
-            <div className="grid grid-cols-2 gap-y-8 gap-5 mt-8 pb-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-y-8 gap-5 mt-8 pb-12">
               <div className="flex flex-col">
                 <div className="flex gap-2 items-center">
                   <div className="w-10 h-10 text-white flex rounded-full shadow shadow-primary bg-primary">
@@ -295,7 +295,7 @@ const AddMatch = () => {
                   </div>
                   <div className="font-semibold">Select Players</div>
                 </div>
-                <div className="grid grid-cols-2 gap-x-2 ">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-2 ">
                   <div>
                     {form.watch("p1IsObject") ? (
                       <FormField
@@ -968,7 +968,7 @@ const AddMatch = () => {
             </div>
             <Button
               type="submit"
-              className="bg-primary text-white px-4 py-2 rounded-lg"
+              className="bg-primary text-white px-4 py-2 rounded-lg flex gap-x-2 items-center"
             >
               Create Match
               {createMatchMut.isLoading && (
