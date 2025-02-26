@@ -141,7 +141,7 @@ const router = createBrowserRouter([
             element: <PendingMatch />,
           },
           {
-            path: "matches/recentMatch",
+            path: "matches/recentMatch/:id",
             element: <RecentMatch />,
           },
           {
@@ -152,7 +152,7 @@ const router = createBrowserRouter([
             path: "matches/trackingMatch",
             element: <TrackingMatch />,
           },
-           {
+          {
             path: "matches/:id",
             element: <AddMatch />,
           },

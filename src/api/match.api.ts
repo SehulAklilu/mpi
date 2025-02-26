@@ -1,6 +1,6 @@
 import { ChildrenResponse } from "@/types/children.type";
 import axiosInstance from "./axios";
-import { MatchData } from "@/types/match.type";
+import { Match, MatchData } from "@/types/match.type";
 
 export const getPlayers = async (type: string): Promise<ChildrenResponse> => {
   const response = await axiosInstance.get(`/api/v1/users/${type}`);
@@ -12,7 +12,7 @@ export const createMatch = async (payload: any): Promise<any> => {
   return response.data;
 };
 
-export const getMatch = async (matchId: string): Promise<MatchData> => {
+export const getMatch = async (matchId: string): Promise<Match> => {
   const response = await axiosInstance.get(`/api/v1/matches/${matchId}`);
   return response.data;
 };
@@ -28,5 +28,10 @@ export const updateMatch = async ({
     `/api/v1/matches/${matchId}`,
     payload
   );
+  return response.data;
+};
+
+export const getMatches = async (): Promise<{ matches: Match[] }> => {
+  const response = await axiosInstance.get(`/api/v1/matches`);
   return response.data;
 };
