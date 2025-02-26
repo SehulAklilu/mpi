@@ -1,5 +1,5 @@
 import { FaAngleLeft } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import {
   Select,
   SelectContent,
@@ -39,7 +39,12 @@ import { toast } from "react-toastify";
 import { DateTimePicker24hForm } from "@/components/ui/dateTimePicker";
 import { ContentLayout } from "@/components/Sidebar/contenet-layout";
 import { useMutation, useQuery } from "react-query";
-import { createMatch, getPlayers } from "@/api/match.api";
+import {
+  createMatch,
+  getMatch,
+  getPlayers,
+  updateMatch,
+} from "@/api/match.api";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { getAxiosErrorMessage, getAxiosSuccessMessage } from "@/api/axios";
@@ -48,11 +53,14 @@ import { getFriends } from "@/api/chat.api";
 import Cookies from "js-cookie";
 import { Player } from "@/types/children.type";
 import { ProfileDataInterface } from "@/components/Chat/PeopleComponent";
+import { MatchData } from "@/types/match.type";
 
 const AddMatch = () => {
   const [playerOne, setPlayerOne] = useState(true);
   const [playerTwo, setPlayerTwo] = useState(true);
   const [isTournament, setIsTournament] = useState(false);
+  const { id } = useParams<{ id: string }>();
+
   const { role } = useRole();
   const user_id = Cookies.get("user_id");
 
@@ -111,12 +119,6 @@ const AddMatch = () => {
     },
   });
 
-  function handleDateSelect(date: Date | undefined) {
-    if (date) {
-      form.setValue("date", date);
-    }
-  }
-
   function handleTimeChange(type: "hour" | "minute" | "ampm", value: string) {
     const currentDate = form.getValues("date") || new Date();
     let newDate = new Date(currentDate);
@@ -154,6 +156,54 @@ const AddMatch = () => {
     queryKey: ["friends"],
     queryFn: getFriends,
     enabled: role === "player",
+  });
+
+  const { data: match } = useQuery({
+    queryKey: ["getMatch", id],
+    queryFn: () => (id ? getMatch(id) : Promise.reject("No ID provided")),
+    enabled: !!id && !isLoading,
+    onSuccess: (response: MatchData) => {
+      form.reset({
+        date: response.date ? new Date(response.date) : undefined,
+        p1: response.p1IsObject ? response.p1?._id : undefined,
+        p2: response.p2IsObject ? response.p2?._id : undefined,
+        p1IsObject: response.p1IsObject,
+        p2IsObject: response.p2IsObject,
+        p1Name: !response.p1IsObject ? response.p1Name : undefined,
+        p2Name: !response.p2IsObject ? response.p2Name : undefined,
+        matchType: response.matchType,
+        matchCategory: response.matchCategory,
+        tieBreakRule: String(response.tieBreakRule), // Convert to string
+        courtSurface: response.courtSurface,
+        tournamentLevel: response.tournamentLevel ?? "",
+        tournamentType: response.tournamentType ?? "",
+        indoor: response.indoor,
+        note: response.note ?? "",
+      });
+      if (response.matchCategory === "tournament") {
+        setIsTournament(true);
+        if (response?.tournamentType) {
+          setAvailableLevels(
+            tournamentTypes[
+              response.tournamentType as keyof typeof tournamentTypes
+            ] || []
+          );
+        }
+      }
+
+      if (!response.p1IsObject) {
+        setTimeout(() => {
+          form.setValue("p1Name", response.p1Name);
+          setPlayerOne(false);
+        });
+      }
+      if (!response.p2IsObject) {
+        setTimeout(() => {
+          form.setValue("p2Name", response.p2Name);
+          setPlayerTwo(false);
+        });
+      }
+    },
   });
 
   const friends =
@@ -267,6 +317,19 @@ const AddMatch = () => {
     },
   });
 
+  const updateMatchMut = useMutation({
+    mutationKey: ["updateMatch"],
+    mutationFn: updateMatch,
+    onSuccess: (response) => {
+      const message = getAxiosSuccessMessage(response);
+      toast.success(message);
+    },
+    onError: (error: any) => {
+      const message = getAxiosErrorMessage(error);
+      toast.error(message);
+    },
+  });
+
   function onSubmit(data: z.infer<typeof FormSchema>) {
     // Loop through the data and replace empty strings with null
     const modifiedData = Object.fromEntries(
@@ -276,12 +339,19 @@ const AddMatch = () => {
       ])
     );
 
-    createMatchMut.mutate(modifiedData);
+    if (id) {
+      updateMatchMut.mutate({ matchId: id, payload: modifiedData });
+    } else {
+      createMatchMut.mutate(modifiedData);
+    }
   }
 
   return (
     <ContentLayout>
       <div className="flex flex-col pt-5 bg-white px-6 max-md:px-3 pb-12  w-full">
+        <p className="text-3xl font-bold my-2">
+          {id ? "Update Match" : "Add Match"}
+        </p>
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit, onError)}
@@ -312,6 +382,7 @@ const AddMatch = () => {
                                 field.onChange(value); // Update form state
                                 players?.players?.length === 1 &&
                                   form.setValue("p2IsObject", false);
+                                setPlayerTwo(false);
                               }}
                               value={field.value ?? undefined}
                               disabled={
@@ -385,7 +456,6 @@ const AddMatch = () => {
                           <FormControl>
                             <Checkbox
                               checked={field.value} // Bind the checkbox to the form value
-                              className="p-2"
                               onCheckedChange={(checked) => {
                                 field.onChange(checked);
                                 p1IsObjectChanged(checked as boolean);
@@ -416,6 +486,7 @@ const AddMatch = () => {
                                 field.onChange(value); // Update form state
                                 players?.players?.length === 1 &&
                                   form.setValue("p1IsObject", false);
+                                setPlayerOne(false);
                               }}
                               value={field.value ?? undefined}
                             >
@@ -524,7 +595,6 @@ const AddMatch = () => {
                           <FormControl>
                             <Checkbox
                               checked={field.value} // Bind the checkbox to the form value
-                              className="p-2"
                               onCheckedChange={(checked) => {
                                 field.onChange(checked);
                                 p2IsObjectChanged(checked as boolean);
@@ -550,7 +620,7 @@ const AddMatch = () => {
                     name="date"
                     render={({ field }) => (
                       <FormItem className="flex flex-col">
-                        <FormLabel>Enter your date & time (12h)</FormLabel>
+                        <FormLabel>Enter match date & time (12h)</FormLabel>
                         <Popover>
                           <PopoverTrigger asChild>
                             <FormControl>
@@ -970,8 +1040,8 @@ const AddMatch = () => {
               type="submit"
               className="bg-primary text-white px-4 py-2 rounded-lg flex gap-x-2 items-center"
             >
-              Create Match
-              {createMatchMut.isLoading && (
+              {id ? "Update Match" : "Create Match"}
+              {(createMatchMut.isLoading || updateMatchMut.isLoading) && (
                 <LoaderCircle
                   style={{
                     animation: "spin 1s linear infinite",
