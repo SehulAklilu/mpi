@@ -35,7 +35,7 @@ axiosInstance.interceptors.response.use(
         const refreshResponse = await axios.post(
           "https://mpiglobal.org/auth/refresh",
           {
-            refreshToken,
+            refreshToken: refreshToken,
           }
         );
 

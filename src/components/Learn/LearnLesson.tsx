@@ -37,7 +37,7 @@ function LearnLesson() {
         <div className="col-span-4 md:col-span-3 flex-col gap-5">
           <div className="relative w-full h-[70vh] bg-black">
             <ReactPlayer
-              url="https://www.youtube.com/watch?v=Hr2f8dmiwpU"
+              url={`https://www.youtube.com/watch?v=${selectedVideo?.url}`}
               controls={true}
               width="100%"
               height="100%"

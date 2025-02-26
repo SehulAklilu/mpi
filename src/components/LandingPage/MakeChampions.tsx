@@ -1,17 +1,17 @@
-import image1 from "../../assets/landingpage/image21.png";
+import image1 from "../../assets/landingpage/image27.webp";
 import image2 from "../../assets/landingpage/image21.png";
 import { IoPlayOutline } from "react-icons/io5";
 import CustomButton2 from "./CustomButton2";
 
 function MakeChampions() {
   return (
-    <div className="container mx-auto my-20 mb-5 md:mb-40  grid grid-cols-1 lg:grid-cols-2 gap-10 px-6 lg:px-0 justify-items-center md:justify-items-start p-1">
+    <div className="container mx-auto my-20 mb-5 md:mb-40  grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-24 px-6 lg:px-0 justify-items-center md:justify-items-start p-1">
       {/* Image Section */}
       <div className="relative flex justify-center lg:ml-14 w-full">
         <img
           src={image1}
           alt="tennis"
-          className="h-[20rem] sm:h-[24rem] md:h-[28rem] lg:h-[32rem] w-auto object-cover"
+          className="h-[20rem] sm:h-[24rem] md:h-[28rem] w-auto object-cover"
         />
         <img
           src={image2}
