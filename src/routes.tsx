@@ -152,6 +152,10 @@ const router = createBrowserRouter([
             path: "matches/trackingMatch",
             element: <TrackingMatch />,
           },
+           {
+            path: "matches/:id",
+            element: <AddMatch />,
+          },
         ],
       },
       {
