@@ -14,6 +14,12 @@ import { Input } from "../ui/input";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import { LuReply } from "react-icons/lu";
 import AddPost from "./AddPost";
+import CustomTabs from "./CustomTabs";
+
+interface ChatComponentProps {
+  setActiveTab: (tab: string) => void;
+}
+
 const posts = Array.from({ length: 10 }, (_, i) => ({
   user: {
     name: `User ${i + 1}`,
@@ -190,17 +196,22 @@ const Comment = ({ reply = false }: { reply?: boolean }) => {
   );
 };
 
-export default function SocialFeed() {
+export default function SocialFeed({ setActiveTab }: ChatComponentProps) {
   return (
-    <ScrollArea className="flex-1 relative">
-      <div className="grid grid-cols-2 gap-2 px-4">
-        {posts.map((post) => (
-          <PostCard key={post.id} post={post} className="masonry-item" />
-        ))}
+    <div>
+      <div className=" md:hidden px-1 m-1 ml-[2rem]">
+        <CustomTabs setActiveTab={setActiveTab} tab="posts" />
       </div>
-      <div className="fixed bottom-5 right-12">
-        <AddPost />
-      </div>
-    </ScrollArea>
+      <ScrollArea className="flex-1 relative">
+        <div className="grid grid-cols-2 gap-2 px-4">
+          {posts.map((post) => (
+            <PostCard key={post.id} post={post} className="masonry-item" />
+          ))}
+        </div>
+        <div className="fixed bottom-5 right-12">
+          <AddPost />
+        </div>
+      </ScrollArea>
+    </div>
   );
 }

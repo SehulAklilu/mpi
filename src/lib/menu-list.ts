@@ -53,6 +53,14 @@ export function getMenuList(
             submenus: [],
           },
           {
+            href: "/matches",
+            label: "Matches",
+            active: location.pathname.startsWith("/matches"),
+            icon: vs,
+            svgType: true,
+            submenus: [],
+          },
+          {
             href: "/progress",
             label: "Progress",
             active: location.pathname.includes("/progress"),
@@ -73,13 +81,13 @@ export function getMenuList(
             icon: RiGroupLine,
             submenus: [],
           },
-          {
-            href: "/settings",
-            label: "Settings",
-            active: location.pathname.includes("/settings"),
-            icon: Settings,
-            submenus: [],
-          },
+          // {
+          //   href: "/settings",
+          //   label: "Settings",
+          //   active: location.pathname.includes("/settings"),
+          //   icon: Settings,
+          //   submenus: [],
+          // },
         ],
       },
     ];
@@ -124,13 +132,13 @@ export function getMenuList(
             icon: RiGroupLine,
             submenus: [],
           },
-          {
-            href: "/settings",
-            label: "Settings",
-            active: location.pathname.includes("/settings"),
-            icon: Settings,
-            submenus: [],
-          },
+          // {
+          //   href: "/settings",
+          //   label: "Settings",
+          //   active: location.pathname.includes("/settings"),
+          //   icon: Settings,
+          //   submenus: [],
+          // },
         ],
       },
     ];

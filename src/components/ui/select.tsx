@@ -27,9 +27,7 @@ const SelectTrigger = React.forwardRef<
     {StartIcon && <StartIcon className="mr-2 h-4 w-4 text-gray-500" />}
     <span className="flex-grow text-left">
       <SelectPrimitive.Value
-        className={cn("text-gray-500", {
-          "text-gray-900": children != undefined,
-        })}
+        className={cn(children ? "!text-gray-900" : "text-gray-500")}
       >
         {children}
       </SelectPrimitive.Value>

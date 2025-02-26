@@ -88,6 +88,15 @@ const router = createBrowserRouter([
         ],
       },
       {
+        element: <PrivateRoute allowedRoles={["coach"]} />,
+        children: [
+          {
+            path: "players",
+            element: <Players />,
+          },
+        ],
+      },
+      {
         element: <PrivateRoute allowedRoles={["player"]} />,
         children: [
           {
@@ -121,7 +130,7 @@ const router = createBrowserRouter([
         ],
       },
       {
-        element: <PrivateRoute allowedRoles={["coach", "parent"]} />,
+        element: <PrivateRoute allowedRoles={["coach", "parent", "player"]} />,
         children: [
           {
             path: "matches",

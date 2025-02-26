@@ -78,7 +78,7 @@ function Chat() {
               )}
             </TabsContent>
             <TabsContent className="!mt-5" value="posts">
-              <SocialFeed />
+              <SocialFeed setActiveTab={setActiveTab} />
             </TabsContent>
           </Tabs>
         </div>

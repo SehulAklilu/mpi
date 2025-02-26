@@ -148,7 +148,9 @@ const ChatInput = ({
     mutationKey: ["createMessage"],
     mutationFn: createMessage,
     onSuccess: () => {
-      queryClient.invalidateQueries(["message", chatId]);
+      chatType === "DIRECT"
+        ? queryClient.invalidateQueries(["message", chatId])
+        : queryClient.invalidateQueries(["groupmessage", chatId]);
     },
   });
 

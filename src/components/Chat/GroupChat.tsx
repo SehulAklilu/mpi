@@ -35,7 +35,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { getFriends } from "@/api/chat.api";
 import Cookies from "js-cookie";
 import { extractUsers } from "@/lib/utils";
@@ -63,6 +63,7 @@ interface GroupChatProps {
 
 function GroupChat({ setActiveTab }: GroupChatProps) {
   const user_id = Cookies.get("user_id");
+  const queryClient = useQueryClient();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -103,6 +104,7 @@ function GroupChat({ setActiveTab }: GroupChatProps) {
     mutationKey: ["createGroup"],
     mutationFn: (payload: CreateGroupPayload) => createGroup(payload),
     onSuccess: (response) => {
+      queryClient.invalidateQueries(["groups"]);
       const message = getAxiosSuccessMessage(response);
       toast.success(message);
       form.reset();
@@ -211,7 +213,7 @@ function GroupChat({ setActiveTab }: GroupChatProps) {
                 }}
                 onClick={openSideBar}
               />
-              <ScrollArea className="h-[84vh] sm:h-[80vh] md:h-[71vh] !overflow-hidden ">
+              <ScrollArea className="h-[74.4vh] sm:h-[76vh] md:h-[68.8vh] !overflow-hidden ">
                 <GroupChatMessages groupId={selectedChat.id} />
               </ScrollArea>
               <ChatInput

@@ -139,7 +139,7 @@ function LessonDetail() {
       <div>
         <div className="relative w-full h-[70vh] bg-black group">
           <ReactPlayer
-            url="https://www.youtube.com/watch?v=Hr2f8dmiwpU"
+            url={`https://www.youtube.com/watch?v=${selectedVideo?.url}`}
             controls={true}
             width="100%"
             height="100%"

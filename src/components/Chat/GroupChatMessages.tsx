@@ -1,8 +1,9 @@
 import { getGroupsMessage } from "@/api/group-chat.api";
 import React, { useEffect, useRef } from "react";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import Cookies from "js-cookie";
 import styles from "./ChatMessage.module.css";
+import ChatMessagesSkeleton from "./ChatMessagesSkeleton";
 
 function GroupChatMessages({ groupId }: { groupId: string }) {
   const user_id = Cookies.get("user_id");
@@ -36,11 +37,14 @@ function GroupChatMessages({ groupId }: { groupId: string }) {
 
   return (
     <div
-      className={`flex flex-col-reverse gap-4 h-[84vh] sm:h-[80vh] md:h-[68vh]  ${styles.customScrollbar}`}
+      className={`flex flex-col-reverse gap-4 h-[84vh] sm:h-[80vh] md:h-[65vh] ${styles.customScrollbar}`}
       ref={scrollAreaRef}
       // style={{ height: "467px" }}
     >
-      {user_id &&
+      {isLoading ? (
+        <ChatMessagesSkeleton />
+      ) : (
+        user_id &&
         messages
           ?.slice()
           .reverse()
@@ -80,7 +84,8 @@ function GroupChatMessages({ groupId }: { groupId: string }) {
                 )}
               </div>
             </div>
-          ))}
+          ))
+      )}
     </div>
   );
 }

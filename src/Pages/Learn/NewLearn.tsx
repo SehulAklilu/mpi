@@ -23,6 +23,7 @@ function NewLearn() {
   const [course, setCourse] = useState<UserCourseProgress | undefined>(
     undefined
   );
+  const [showError, setShowError] = useState(false);
 
   const {
     data: allCourses,
@@ -166,16 +167,24 @@ function NewLearn() {
               </div>
             </CardContent>
 
-            <CardFooter className="flex justify-center">
+            <CardFooter className="flex flex-col items-center">
+              {course && course.status === "locked" && (
+                <small className="text-red-400">
+                  Complete previous lessons to proceed.
+                </small>
+              )}
               <Button
-                onClick={() =>
-                  course &&
-                  course.status !== "locked" &&
-                  navigate(`/course/${course?.courseId.id}`)
-                }
-                className={` px-10 py-2 mt-6 shadow rounded-3xl bg-primary text-white !w-full disabled:${
+                onClick={() => {
+                  if (course && course.status !== "locked") {
+                    navigate(`/course/${course?.courseId.id}`);
+                  }
+                }}
+                className={`px-10 py-2 mt-4 shadow rounded-3xl bg-primary text-white !w-full ${
                   course?.status === "locked"
+                    ? "opacity-50 cursor-not-allowed"
+                    : ""
                 }`}
+                disabled={course?.status === "locked"}
               >
                 Explore
               </Button>

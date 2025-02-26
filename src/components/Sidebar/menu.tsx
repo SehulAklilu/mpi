@@ -138,7 +138,8 @@ function Menu({ isOpen, setIsNotiOpen }: MenuProps) {
                 {isOpen ? <p>10 Notification</p> : null}
               </div>
 
-              <img src={nightMode} alt="night mode" className="w-12" />
+              {/* <img src={nightMode} alt="night mode" className="w-12" /> */}
+              <div className="w-12 h-6"></div>
             </div>
 
             {/* <TooltipProvider disableHoverableContent>

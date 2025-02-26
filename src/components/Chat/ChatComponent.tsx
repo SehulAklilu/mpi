@@ -169,7 +169,7 @@ function ChatComponent({ setActiveTab, openChatId }: ChatComponentProps) {
       <div className="grid grid-cols-12 gap-x-6">
         {/* Sidebar */}
         <div
-          className={`fixed inset-0 z-20 bg-white transition-transform transform md:relative md:translate-x-0 md:col-span-4 lg:col-span-3 ${
+          className={`fixed inset-0  bg-white transition-transform transform md:relative md:translate-x-0 md:col-span-4 lg:col-span-3 ${
             isSidebarOpen ? "translate-x-0" : "-translate-x-full"
           } ${isSidebarOpen ? "md:w-full" : ""} `}
         >
