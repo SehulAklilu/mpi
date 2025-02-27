@@ -18,6 +18,7 @@ import { useMutation, useQuery } from "react-query";
 import { toast } from "react-toastify";
 import axios from "@/api/axios.ts";
 import OneGame from "./TOneGame";
+import { useParams } from "react-router-dom";
 
 interface TennisMatch {
   totalGameTime: number;
@@ -189,9 +190,10 @@ const getAgainest = (
 };
 
 function TrackingMatch() {
+  const { id } = useParams<{ id: string }>();
+
   const { isLoading, mutate } = useMutation(
-    (data: any) =>
-      axios.post("/api/v1/matches/67bea425112e80c58f7861ec/submit", data),
+    (data: any) => axios.post("/api/v1/matches/" + id + "/submit", data),
     {
       onSuccess(data) {
         toast.success("Added Successfuly");
@@ -508,8 +510,8 @@ function TrackingMatch() {
             />
           </div>
         </div>
-    
-        {isLoading  ? (
+
+        {isLoading ? (
           <div className="text-center pt-12 mx-auto">Loadaing...</div>
         ) : score.serve == null ? (
           <div className="flex flex-col gap-2 mt-12">

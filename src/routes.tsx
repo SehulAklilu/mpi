@@ -149,7 +149,7 @@ const router = createBrowserRouter([
             element: <AddMatch />,
           },
           {
-            path: "matches/trackingMatch",
+            path: "matches/trackingMatch/:id",
             element: <TrackingMatch />,
           },
           {

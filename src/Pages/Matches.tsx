@@ -83,7 +83,10 @@ const page = () => {
           <div className="grid mt-3 grid-cols-2 gap-y-12 max-md:grid-cols-1 justify-center items-center mx-auto">
             {pendingMatchesToShow?.map((match) => (
               <div key={match._id}>
-                <PendingMatch match={match} link="/matches/trackingMatch" />
+                <PendingMatch
+                  match={match}
+                  link={"/matches/trackingMatch/" + match._id}
+                />
               </div>
             ))}
           </div>
