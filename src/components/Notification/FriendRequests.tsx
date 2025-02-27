@@ -93,7 +93,7 @@ const An = ({ data }: { data: Friendship }) => {
           Accept Friend Request
         </Button>
         <Button className="px-2 rounded-lg py-1 mt-2 border-primary border bg-white w-full">
-          Goto Friend Request
+          Go to Friend Request
         </Button>
       </div>
     </div>

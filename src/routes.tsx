@@ -30,7 +30,7 @@ import PrivateRoute from "./components/PrivateRoute.tsx";
 import UnauthorizedPage from "./Pages/Unauthorized.tsx";
 import Players from "./Pages/Players.tsx";
 import Dashboard from "./Pages/Dashboard.tsx";
-import TrackingMatch from "./components/Matches/TrackingMatch.tsx";
+import TrackingMatch from "./components/Matches/updated/TM.tsx";
 import AddMatch from "./Pages/AddMatch.tsx";
 import RecentMatch from "./components/Matches/RecentMatch.tsx";
 import Matches from "./Pages/Matches.tsx";
