@@ -1,0 +1,71 @@
+[
+    {
+        "p1TotalScore": 0,
+        "p2TotalScore": 0,
+        "games": [
+            {
+                "gameNumber": 1,
+                "server": "playerOne",
+                "scores": [
+                    {
+                        "p1Score": "15",
+                        "p2Score": "0",
+                        "isSecondService": false,
+                        "p1Reaction": "positiveResponse",
+                        "p2Reaction": "positiveResponse",
+                        "betweenPointDuration": 0,
+                        "type": "ace",
+                        "rallies": "",
+                        "placement": "",
+                        "missedShotWay": "",
+                        "missedShot": "",
+                        "servePlacement": "t"
+                    },
+                    {
+                        "p1Score": "30",
+                        "p2Score": "0",
+                        "isSecondService": false,
+                        "p1Reaction": "negativeResponse",
+                        "p2Reaction": "negativeResponse",
+                        "betweenPointDuration": 0,
+                        "type": "p1ForcedError",
+                        "rallies": "twentyOnePlus",
+                        "placement": "crossCourt",
+                        "missedShotWay": "backhandDropShot",
+                        "missedShot": "",
+                        "servePlacement": "t"
+                    },
+                    {
+                        "p1Score": "15",
+                        "p2Score": "30",
+                        "isSecondService": false,
+                        "p1Reaction": "neutralResponse",
+                        "p2Reaction": "neutralResponse",
+                        "betweenPointDuration": 0,
+                        "type": "",
+                        "rallies": "",
+                        "placement": "",
+                        "missedShotWay": "",
+                        "missedShot": "",
+                        "servePlacement": "net"
+                    },
+                    {
+                        "p1Score": "40",
+                        "p2Score": "15",
+                        "isSecondService": false,
+                        "p1Reaction": "positiveResponse",
+                        "p2Reaction": "positiveResponse",
+                        "betweenPointDuration": 0,
+                        "type": "p2ForcedError",
+                        "rallies": "twentyOnePlus",
+                        "placement": "crossCourt",
+                        "missedShotWay": "backhandDropShot",
+                        "missedShot": "",
+                        "servePlacement": "body"
+                    }
+                ]
+            }
+        ],
+        "tieBreak": null
+    }
+]

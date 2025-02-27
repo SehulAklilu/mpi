@@ -14,6 +14,54 @@ import Report from "./Report";
 import MatchProfile from "./MatchProfile";
 import { Button } from "../ui/button";
 import { BsArrow90DegLeft, BsArrow90DegRight } from "react-icons/bs";
+import { useMutation, useQuery } from "react-query";
+import { toast } from "react-toastify";
+import axios from "@/api/axios.ts";
+import TM from "./TM"
+interface TennisMatch {
+  totalGameTime: number;
+  sets: Set[];
+}
+
+interface Set {
+  p1TotalScore: number;
+  p2TotalScore: number;
+  games: Game[];
+  tieBreak?: TieBreak | null;
+}
+
+interface Game {
+  gameNumber: number;
+  server: "playerOne" | "playerTwo";
+  scores: Score[];
+}
+
+interface Score {
+  p1Score: string; // Changed from string to string
+  p2Score: string; // Changed from string to string
+  isSecondService: boolean;
+  p1Reaction: string; // Example: "negativeResponse"
+  p2Reaction: string; // Example: "negativeResponse"
+  missedShot?: string; // Example: "net"
+  placement?: string; // Example: "downTheLine"
+  missedShotWay?: string; // Example: "forehand"
+  betweenPointDuration: number;
+  type: string; // Example: "ace"
+  rallies: string; // Example: "oneToFour"
+  servePlacement: string; // Example: "t"
+}
+
+interface TieBreak {
+  winner: "playerOne" | "playerTwo" | null;
+  scores: TieBreakScore[];
+}
+
+interface TieBreakScore {
+  playerOnePoints: number;
+  playerTwoPoints: number;
+}
+// --------------------------------------------
+
 interface Player {
   id: number; // Unique identifier for the player
   name: string; // Player's name
@@ -88,7 +136,50 @@ interface dataTrackerType {
   errorType: "Forced" | "Unforced" | "";
   ballPosition: "Net" | "Backcourt" | "Alley" | "";
   rallyCount: number;
+
+  missedShot: "net" | "long" | "wide" | "";
+  missedShotWay:
+    | "forehand"
+    | "backhand"
+    | "forhandvolley"
+    | "backhandvolley"
+    | "forehandSwingingVolley"
+    | "backhandSwingingVolley"
+    | "forehandSlice"
+    | "backhandSlice"
+    | "overhead"
+    | "forehandDropShot"
+    | "backhandDropShot"
+    | "";
 }
+
+// {
+//   p1TotalScore: 0,
+//   p2TotalScore: 0,
+//   games: [
+//
+//       ]
+// }
+// }
+
+// {
+//       gameNumber: 1,
+//       server: "playerOne",
+//       scores: [
+//         {
+//           p1Score: 0,
+//           p2Score: 0,
+//           isSecondService: false,
+//           p1Reaction: "",
+//           p2Reaction: "",
+//           missedShot: "",
+//           placement: "",
+//           missedShotWay: "",
+//           betweenPointDuration: 0,
+//           type: "",
+//           rallies: "",
+//           servePlacement: ""
+//         }
 
 const getAgainest = (
   player: "player1" | "player2" | null
@@ -97,16 +188,67 @@ const getAgainest = (
 };
 
 function TrackingMatch() {
+  const { isLoading, mutate } = useMutation(
+    (data: any) =>
+      axios.post("/api/v1/matches/67bdc66ade058f46b3e05efe/submit", data),
+    {
+      onSuccess(data) {
+        toast.success("Added Successfuly");
+      },
+      onError(err: any) {
+        toast.error(
+          typeof err.response.data === "string"
+            ? err.response.data
+            : "Something goes wrong!"
+        );
+      },
+    }
+  );
+  const [apiData, setApiData] = useState<TennisMatch>({
+    totalGameTime: 0,
+    sets: [],
+    
+  });
+  const apiSetDataInitial: Set = {
+    p1TotalScore: 0,
+    p2TotalScore: 0,
+    games: [],
+    tieBreak :null,
+  };
+  const [apiSetData, setApiSetData] = useState<Set>(apiSetDataInitial);
+
+  const apiGameDataInitial: Game = {
+    gameNumber: 1,
+    server: "playerOne",
+    scores: [],
+  };
+  const [apiGameData, setApiGameData] = useState<Game>(apiGameDataInitial);
+  const apiScoreDataInitial = {
+    p1Score: "0",
+    p2Score: "0",
+    isSecondService: false,
+    p1Reaction: "negativeResponse",
+    p2Reaction: "positiveResponse",
+    missedShot: "wide",
+    placement: "downTheLine",
+    missedShotWay: "forehand",
+    betweenPointDuration: 0,
+    type: "ace",
+    rallies: "oneToFour",
+    servePlacement: "t",
+  };
+  const [apiScoreData, setApiScoreData] = useState<Score>(apiScoreDataInitial);
+
   const [dataTracker, setDataTracker] = useState<dataTrackerType[]>([]);
   const [isTieBreak, setIsTieBreak] = useState(false);
   const [score, setScore] = useState<ScoreInf>({
     matchScore: {
-      player1: 0,
+      player1: 1,
       player2: 0,
     },
     setScore: {
       player1: 4,
-      player2: 4,
+      player2: 0,
     },
     gameScore: {
       player1: 0,
@@ -136,6 +278,16 @@ function TrackingMatch() {
   const updateMatch = (winner: "player1" | "player2") => {
     const winnerMatchPoint = score.matchScore[winner];
     const newPoint = winnerMatchPoint + 1;
+    setApiData((d) => {
+      const x = { ...d, sets: [...d.sets, apiSetData] };
+      console.log("IIIII-I-IIIIIII", x);
+      if (newPoint == 2) {
+        mutate(x);
+      }
+      return x;
+    });
+    setApiSetData(apiSetDataInitial);
+
     setScore((data) => ({
       ...data,
       matchScore: { ...data["setScore"], [winner]: newPoint },
@@ -154,6 +306,12 @@ function TrackingMatch() {
     const againest = getAgainest(winner);
     const againestSetPoint = score.setScore[againest];
     const newPoint = winnerSetPoint + 1;
+    setApiSetData((d) => {
+      const x = { ...d, games: [...d.games, apiGameData] };
+      console.log(x, "ZZZZZZZZ");
+      return x;
+    });
+    setApiGameData(apiGameDataInitial);
     if (isTieBreak) {
       resetScore("setScore");
       setIsTieBreak(false);
@@ -174,12 +332,25 @@ function TrackingMatch() {
     }
   };
 
-  const addPoint = (winner: "player1" | "player2") => {
+  const addPoint = (
+    winner: "player1" | "player2",
+    singleData: dataTrackerType
+  ) => {
     const winnerPoint = score.gameScore[winner];
     const againest = getAgainest(winner);
     const againestPoint = score.gameScore[againest];
+    let newApiScoreData = {
+      ...apiScoreDataInitial,
+      // missedShot: singleData.missedShot,
+      // missedShotWay: singleData.missedShotWay,
+    };
     if (isTieBreak && winnerPoint != "A" && againestPoint != "A") {
       const nextpoint = winnerPoint + 1;
+      newApiScoreData = {
+        ...newApiScoreData,
+        p1Score: nextpoint.toString(),
+        p2Score: againestPoint.toString(),
+      };
       setScore((data) => ({
         ...data,
         gameScore: {
@@ -189,6 +360,7 @@ function TrackingMatch() {
         },
       }));
 
+      setApiGameData((d) => ({ ...d, scores: [...d.scores, newApiScoreData] }));
       if (nextpoint > 6 && nextpoint - againestPoint > 1) {
         resetScore("gameScore");
         updateSet(winner);
@@ -197,14 +369,30 @@ function TrackingMatch() {
     }
     if (winnerPoint != 40 && winnerPoint != "A") {
       const nextpoint = getNextPoint(winnerPoint);
+      newApiScoreData = {
+        ...newApiScoreData,
+        p1Score: nextpoint.toString(),
+        p2Score: againestPoint.toString(),
+      };
+      setApiGameData((d) => ({ ...d, scores: [...d.scores, newApiScoreData] }));
       setScore((data) => ({
         ...data,
         gameScore: { ...data.gameScore, [winner]: nextpoint },
       }));
       return;
     }
+
     if (winnerPoint == 40) {
       if (againestPoint == "A") {
+        newApiScoreData = {
+          ...newApiScoreData,
+          p1Score: "40",
+          p2Score: "40",
+        };
+        setApiGameData((d) => ({
+          ...d,
+          scores: [...d.scores, newApiScoreData],
+        }));
         setScore((data) => ({
           ...data,
           gameScore: { ...data.gameScore, [againest]: 40 },
@@ -212,6 +400,15 @@ function TrackingMatch() {
         return;
       }
       if (againestPoint == 40) {
+        newApiScoreData = {
+          ...newApiScoreData,
+          p1Score: "A",
+          p2Score: "40",
+        };
+        setApiGameData((d) => ({
+          ...d,
+          scores: [...d.scores, newApiScoreData],
+        }));
         const nextpoint = getNextPoint(winnerPoint);
         setScore((data) => ({
           ...data,
@@ -283,7 +480,10 @@ function TrackingMatch() {
             />
           </div>
         </div>
-        {score.serve == null ? (
+
+        {isLoading ? (
+          "Loadaing..."
+        ) : score.serve == null ? (
           <div className="flex flex-col gap-2 mt-12">
             <div className="text-center mb-8">Start Serve</div>
             <div className="w-full justify-center flex gap-10">
@@ -337,6 +537,8 @@ const OneGame = ({
     errorType: "",
     ballPosition: "",
     rallyCount: 1,
+    missedShot: "",
+    missedShotWay: "",
   };
 
   const [singleData, setSingleData] = useState<dataTrackerType>(initialData);
@@ -349,7 +551,7 @@ const OneGame = ({
   const [isOnFault, setIsOnFault] = useState(false);
   const leftData = [
     {
-      name: "ACE(+1)",
+      name: "ACE",
       onClick: () =>
         setSingleData((d) => ({
           ...d,
@@ -360,7 +562,7 @@ const OneGame = ({
       isActive: singleData.goalType == "ace",
     },
     {
-      name: "SERVE RETURN WIN(+1)",
+      name: "p1Winner",
       onClick: () =>
         setSingleData((d) => ({
           ...initialData,
@@ -498,6 +700,28 @@ const OneGame = ({
     }
   };
 
+  const registerScore = () => {
+    if (singleData.goalType == "") return;
+    let stack: Stack = {
+      fault: null,
+      winner: singleData.winner as Stack["winner"],
+    };
+    if (singleData.goalType == "fault") {
+      if (isOnFault) {
+        addPoint(singleData.winner, singleData);
+      } else {
+        stack.winner = null;
+      }
+      setIsOnFault((d) => !d);
+      stack.fault = true;
+    } else {
+      isOnFault && setIsOnFault(false);
+      addPoint(singleData.winner, singleData);
+    }
+    setUndoStack((d) => [...d, stack]);
+    reset();
+  };
+
   return (
     <div className="flex flex-col">
       <div className="flex w-full justify-end   gap-5 px-32 mt-4">
@@ -574,6 +798,33 @@ const OneGame = ({
         ) : (
           <>
             <div className="flex flex-col gap-1 text-sm my-auto">
+              <div className="text-center">Missed Shot</div>
+              <div className="flex flex-wrap justify-center gap-5">
+                <InnerButton
+                  name="Net"
+                  isActive={singleData.missedShot == "net"}
+                  // disabled={getDisabled("net")}
+                  onClick={() => {
+                    setSingleData((d) => ({ ...d, missedShot: "net" }));
+                  }}
+                />
+                <InnerButton
+                  name="Long"
+                  isActive={singleData.missedShot == "long"}
+                  // disabled={getDisabled("Forehand")}
+                  onClick={() => {
+                    setSingleData((d) => ({ ...d, missedShot: "long" }));
+                  }}
+                />
+                <InnerButton
+                  name="Wide"
+                  isActive={singleData.missedShot == "wide"}
+                  // disabled={getDisabled("Forehand")}
+                  onClick={() => {
+                    setSingleData((d) => ({ ...d, missedShot: "wide" }));
+                  }}
+                />
+              </div>
               <div className="text-center">Hand Position</div>
               <div className="flex flex-wrap justify-center gap-5">
                 <InnerButton
@@ -699,28 +950,7 @@ const OneGame = ({
 
       <Button
         // disabled={player == null}
-        onClick={() => {
-          if (singleData.goalType != "") {
-            let stack: Stack = {
-              fault: null,
-              winner: singleData.winner as Stack["winner"],
-            };
-            if (singleData.goalType == "fault") {
-              if (isOnFault) {
-                addPoint(singleData.winner);
-              } else {
-                stack.winner = null;
-              }
-              setIsOnFault((d) => !d);
-              stack.fault = true;
-            } else {
-              isOnFault && setIsOnFault(false);
-              addPoint(singleData.winner);
-            }
-            setUndoStack((d) => [...d, stack]);
-            reset();
-          }
-        }}
+        onClick={() => registerScore()}
         className={`px-8 py-2 rounded-full ${
           singleData.winner != "" ? "bg-primary" : "bg-primary/70"
         }  text-white w-fit mx-auto mt-2 mb-12`}
@@ -851,4 +1081,4 @@ const InnerButton = ({
   );
 };
 
-export default TrackingMatch;
+export default TM;
