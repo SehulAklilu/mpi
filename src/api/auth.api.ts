@@ -50,3 +50,11 @@ export const register = async (payload: RegisterPayload): Promise<any> => {
   );
   return response.data;
 };
+
+export const createAssessment = async (payload: any): Promise<any> => {
+  const response = await axiosInstance.post<any>(
+    "/api/v1/profile/assessment/initial",
+    payload
+  );
+  return response.data;
+};

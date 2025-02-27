@@ -1,4 +1,9 @@
-import { ChildrenResponse } from "@/types/children.type";
+import {
+  ChildrenResponse,
+  ChildResponse,
+  Periodization,
+  PeriodizationsResponse,
+} from "@/types/children.type";
 import axiosInstance from "./axios";
 import { Match, MatchData } from "@/types/match.type";
 
@@ -35,3 +40,36 @@ export const getMatches = async (): Promise<{ matches: Match[] }> => {
   const response = await axiosInstance.get(`/api/v1/matches`);
   return response.data;
 };
+
+export const search = async (type: string): Promise<ChildrenResponse> => {
+  const response = await axiosInstance.get(`/api/v1/users/${type}`);
+  return response.data;
+};
+
+export const getPlayer = async (playerId: string): Promise<ChildResponse> => {
+  const response = await axiosInstance.get(`/api/v1/users/players/${playerId}`);
+  return response.data;
+};
+
+export const getPlayerMatches = async (playerId: string): Promise<any> => {
+  const response = await axiosInstance.get(
+    `/api/v1/users/players/${playerId}/matches`
+  );
+  return response.data;
+};
+
+export const getPlayerPeriodizations = async (
+  playerId: string
+): Promise<PeriodizationsResponse> => {
+  const response = await axiosInstance.get(
+    `/api/v1/users/players/${playerId}/periodizations`
+  );
+  return response.data;
+};
+
+// /api/v1/users
+// GET /search (query) search player
+// GET /players -> coach
+// GET /players/:id/parents
+// GET /players/:id/matches
+// GET /players/:id/periodizations

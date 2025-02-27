@@ -36,6 +36,10 @@ export interface ChildrenResponse {
   players: Player[];
 }
 
+export interface ChildrenResponse {
+  player: Player;
+}
+
 // Avatar Interface
 interface Avatar {
   avatar: string;
@@ -68,9 +72,17 @@ interface Obstacle {
 }
 
 // Goal Interface
-interface Goal {
-  goal: string;
-  term: string;
+
+export type GoalType =
+  | "physical"
+  | "mental"
+  | "technical"
+  | "tactical"
+  | "nutrition";
+export type GoalTerm = "short" | "long" | "medium";
+export interface Goal {
+  goal: GoalType;
+  term: GoalTerm;
   description: string;
   measurement: string;
   achievementDate: string;
@@ -82,7 +94,7 @@ interface Goal {
 }
 
 // CoachGoal Interface
-interface CoachGoal {
+export interface CoachGoal {
   coach: Coach;
   goals: Goal[];
   _id: string;
@@ -106,4 +118,84 @@ interface Child {
 // Wrapper Interface
 export interface ChildResponse {
   player: Child;
+}
+
+export interface Periodization {
+  startingDate: string;
+  endingDate: string;
+  status: string;
+  physical: Physical;
+  technical: Technical;
+  psychological: Psychological;
+  tactical: Tactical;
+  nutrition: Nutrition;
+  recovery: Recovery;
+  _id: string;
+}
+
+interface Physical {
+  preparation: Preparation | null;
+  competition: Competition | null;
+  transition: Transition | null;
+  _id: string;
+}
+
+export interface Preparation {
+  allocatedTime: number;
+  timeType: "days" | "weeks" | "months";
+  generals: string[];
+  specifics: string[];
+  specificDescriptions: string[];
+}
+
+interface Competition {
+  allocatedTime: number;
+  timeType: "days" | "weeks" | "months";
+  precompetitions: string[];
+  tournaments: string[];
+}
+
+interface Transition {
+  allocatedTime: number;
+  timeType: "days" | "weeks" | "months";
+  activeRest: string[];
+}
+
+interface Technical {
+  preparation: Preparation | null;
+  competition: Competition | null;
+  transition: Transition | null;
+  _id: string;
+}
+
+interface Psychological {
+  preparation: Preparation | null;
+  competition: Competition | null;
+  transition: Transition | null;
+  _id: string;
+}
+
+interface Tactical {
+  preparation: Preparation | null;
+  competition: Competition | null;
+  transition: Transition | null;
+  _id: string;
+}
+
+interface Nutrition {
+  preparation: Preparation | null;
+  competition: Competition | null;
+  transition: Transition | null;
+  _id: string;
+}
+
+interface Recovery {
+  preparation: Preparation | null;
+  competition: Competition | null;
+  transition: Transition | null;
+  _id: string;
+}
+
+export interface PeriodizationsResponse {
+  periodizations: Periodization[];
 }

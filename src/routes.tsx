@@ -48,6 +48,7 @@ import AboutUsPage from "./Pages/AboutUsPage.tsx";
 import CoursesPage from "./Pages/CoursesPage.tsx";
 import ChildrenPage from "./Pages/ChildrenPage.tsx";
 import ChildrenDetailPage from "./components/Children/ChildrenDetailPage.tsx";
+import PlayersDetail from "./Pages/PlayersDetail.tsx";
 
 const router = createBrowserRouter([
   {
@@ -93,6 +94,10 @@ const router = createBrowserRouter([
           {
             path: "players",
             element: <Players />,
+          },
+          {
+            path: "players/:id",
+            element: <PlayersDetail />,
           },
         ],
       },
@@ -203,13 +208,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/assessment",
-    element: (
-      <AssessmentComponent
-        assessment={assesment}
-        assessmentPage={true}
-        onContinue={() => console.log("")}
-      />
-    ),
+    element: <AssessmentComponent />,
   },
   {
     path: "/about-us",
