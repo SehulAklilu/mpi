@@ -46,7 +46,27 @@ export function formatDateTime(dateString: string, isTime: boolean = true) {
     ...(isTime && {
       hour: "2-digit",
       minute: "2-digit",
-      hour12: false, // 24-hour format
+      hour12: false,
     }),
   });
+}
+
+export function extractDateTime(timestamp: string): {
+  date: string;
+  time: string;
+  period: string;
+} {
+  const dateObj = new Date(timestamp);
+
+  const date = dateObj.toISOString().split("T")[0]; // Extract date in YYYY-MM-DD format
+  const hours = dateObj.getUTCHours();
+  const minutes = dateObj.getUTCMinutes();
+  const seconds = dateObj.getUTCSeconds();
+  const period = hours >= 12 ? "PM" : "AM";
+
+  const formattedTime = `${String(minutes).padStart(2, "0")}:${String(
+    seconds
+  ).padStart(2, "0")} ${period}`;
+
+  return { date, time: formattedTime, period };
 }

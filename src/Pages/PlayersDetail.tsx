@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AiOutlineMail } from "react-icons/ai";
 import PlayerGoal from "@/components/Players/PlayerGoal";
 import Periodizations from "@/components/Players/Periodizations";
+import PlayerMatches from "@/components/Players/PlayerMatches";
 
 function PlayersDetail() {
   const [activeTab, setActiveTab] = useState("Profile");
@@ -133,7 +134,9 @@ function PlayersDetail() {
                 </div>
               ))}
             </TabsContent>
-            <TabsContent className="!mt-0" value="Matches"></TabsContent>
+            <TabsContent className="!mt-0" value="Matches">
+              <PlayerMatches playerId={data.player._id} />
+            </TabsContent>
             <TabsContent className="!mt-0 w-full" value="Goals">
               <PlayerGoal coachGoals={data.player.coachGoals} />
             </TabsContent>

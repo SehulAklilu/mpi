@@ -45,16 +45,18 @@ interface AddPhaseDialogProps {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
   initialData?: any;
+  setSelectedPhase?: React.Dispatch<React.SetStateAction<any | null>>;
 }
 
 export default function AddPhaseDialog({
   isOpen,
   setIsOpen,
   initialData,
+  setSelectedPhase,
 }: AddPhaseDialogProps) {
   const [phase, setPhase] = useState<
-    "preparation" | "competition" | "transition" | ""
-  >("");
+    "preparation" | "competition" | "transition" | undefined
+  >(undefined);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(FormSchema),
@@ -72,7 +74,7 @@ export default function AddPhaseDialog({
   });
 
   useEffect(() => {
-    if (initialData) {
+    if (initialData && isOpen) {
       form.reset(initialData);
       form.setValue("allocatedTime", initialData?.allocatedTime.toString());
       setPhase(initialData.for);
@@ -96,7 +98,8 @@ export default function AddPhaseDialog({
         generals: [],
         specificDescriptions: [],
       });
-      setPhase("");
+      setPhase(undefined);
+      setSelectedPhase && setSelectedPhase(null);
     }
   }, [isOpen, form]);
 

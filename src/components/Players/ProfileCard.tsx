@@ -8,7 +8,10 @@ interface ProfileCardInterface {
 function ProfileCard({ player }: ProfileCardInterface) {
   const navigate = useNavigate();
   return (
-    <div className="flex w-52 h-52 flex-col border border-[#ffb871] items-center gap-y-2 p-4 rounded-lg shadow shadow-[#F38C28]">
+    <div
+      className="flex w-52 h-40 flex-col border border-[#ffb871] items-center gap-y-2 p-4 rounded-lg shadow-md  cursor-pointer hover:shadow-[#F38C28]"
+      onClick={() => navigate(`/players/${player._id}`)}
+    >
       <img
         className="w-16 h-16 rounded-full object-cover"
         src={player.avatar}
@@ -18,12 +21,7 @@ function ProfileCard({ player }: ProfileCardInterface) {
         {player.firstName} {player.lastName}
       </p>
       <p className="text-sm text-gray-400">USTDA: 18</p>
-      <button
-        onClick={() => navigate(`/players/${player._id}`)}
-        className="bg-orange-500 text-white text-xs md:text-sm py-2 px-4 rounded-md hover:bg-orange-600 transition-colors"
-      >
-        Track Progress
-      </button>
+      {/* <button className="bg-orange-500 text-white text-xs md:text-sm py-2 px-4 rounded-md hover:bg-orange-600 transition-colors"></button> */}
     </div>
   );
 }

@@ -52,7 +52,7 @@ function Periodizations({ playerId }: { playerId: string }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const { data } = useQuery({
-    queryKey: ["getPlayerGoals"],
+    queryKey: ["getPlayerPeriodizations"],
     queryFn: () => getPlayerPeriodizations(playerId),
   });
 
@@ -73,9 +73,7 @@ function Periodizations({ playerId }: { playerId: string }) {
     resolver: zodResolver(FormSchema),
   });
 
-  const [selectedPhase, setSelectedPhase] = useState<NewPreparation | null>(
-    null
-  );
+  const [selectedPhase, setSelectedPhase] = useState<any | null>(null);
 
   const [selectedPeriodizationId, setSelectedPeriodizationId] =
     useState<string>("");
@@ -216,7 +214,27 @@ function Periodizations({ playerId }: { playerId: string }) {
                     </div>
                     <div className="">
                       {selectedPeriodization[field].competition ? (
-                        <div className="p-4 rounded-xl border shadow-lg mx-4">
+                        <div
+                          className="p-4 rounded-xl border shadow-lg mx-4 cursor-pointer"
+                          onClick={() => {
+                            setSelectedPhase({
+                              for: "competition",
+                              allocatedTime:
+                                selectedPeriodization[field].competition
+                                  ?.allocatedTime ?? 0,
+                              timeType:
+                                selectedPeriodization[field].competition
+                                  ?.timeType ?? "days",
+                              precompetitions:
+                                selectedPeriodization[field].competition
+                                  ?.precompetitions ?? [],
+                              tournaments:
+                                selectedPeriodization[field].competition
+                                  ?.tournaments ?? [],
+                            });
+                            setIsOpen(true);
+                          }}
+                        >
                           <div className="flex justify-between items-center py-2">
                             <div className="flex items-center gap-2 font-semibold text-xl">
                               <IoMdCheckboxOutline className="text-2xl" />
@@ -249,7 +267,24 @@ function Periodizations({ playerId }: { playerId: string }) {
                     </div>
                     <div className="">
                       {selectedPeriodization[field].transition ? (
-                        <div className="p-4 rounded-xl border shadow-lg mx-4">
+                        <div
+                          className="p-4 rounded-xl border shadow-lg mx-4 cursor-pointer"
+                          onClick={() => {
+                            setSelectedPhase({
+                              for: "transition",
+                              allocatedTime:
+                                selectedPeriodization[field].transition
+                                  ?.allocatedTime ?? 0,
+                              timeType:
+                                selectedPeriodization[field].transition
+                                  ?.timeType ?? "days",
+                              activeRest:
+                                selectedPeriodization[field].transition
+                                  ?.activeRest ?? [],
+                            });
+                            setIsOpen(true);
+                          }}
+                        >
                           <div className="flex justify-between items-center py-2">
                             <div className="flex items-center gap-2 font-semibold text-xl">
                               <IoMdCheckboxOutline className="text-2xl" />
@@ -312,70 +347,10 @@ function Periodizations({ playerId }: { playerId: string }) {
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         initialData={selectedPhase}
+        setSelectedPhase={setSelectedPhase}
       />
     </div>
   );
 }
 
 export default Periodizations;
-
-{
-  /* <DialogFooter>
-                {onEdit ? (
-                  <div className="flex gap-4 w-full">
-                    <button
-                      className="py-2 px-4 rounded-lg w-full text-white bg-primary border border-white hover:bg-orange-500 flex items-center justify-center "
-                      // onClick={() => updateAnnouncement()}
-                    >
-                      {updateAnnouncementMut.isLoading ? (
-                        <LoaderCircle
-                          style={{
-                            animation: "spin 1s linear infinite",
-                            fontSize: "2rem",
-                            color: "#FFFFFF",
-                          }}
-                        />
-                      ) : (
-                        <span>Update</span>
-                      )}
-                    </button>
-                    <button
-                      type="button"
-                      className="py-2 px-4 rounded-lg w-full text-white bg-red-600 border border-white hover:bg-red-400 flex items-center justify-center "
-                      onClick={deleteAnnouncement}
-                    >
-                      {deleteAnnouncemen.isLoading ? (
-                        <LoaderCircle
-                          style={{
-                            animation: "spin 1s linear infinite",
-                            fontSize: "2rem",
-                            color: "#FFFFFF",
-                          }}
-                        />
-                      ) : (
-                        <span>Delelte</span>
-                      )}
-                    </button>
-                  </div>
-                ) : (
-                  <div className="mt-6 w-full">
-                    <button
-                      className="py-2 px-4 rounded-lg w-full text-white bg-primary border border-white hover:bg-orange-500 flex items-center justify-center "
-                      onClick={() => setIsOpen(true)}
-                    >
-                      {isLoading ? (
-                        <LoaderCircle
-                          style={{
-                            animation: "spin 1s linear infinite",
-                            fontSize: "2rem",
-                            color: "#FFFFFF",
-                          }}
-                        />
-                      ) : (
-                        <span> Create Announcement</span>
-                      )}
-                    </button>
-                  </div>
-                )}
-              </DialogFooter> */
-}

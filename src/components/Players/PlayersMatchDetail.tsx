@@ -8,60 +8,89 @@ import { IoTime } from "react-icons/io5";
 import { FaRegCalendarPlus } from "react-icons/fa";
 import { MdOutlineWaves } from "react-icons/md";
 import { ContentLayout } from "@/components/Sidebar/contenet-layout";
-import { FiInfo } from "react-icons/fi";
+import Report from "../Matches/Report";
+import { formatDateTime } from "@/lib/utils";
+import { Match, MatchData } from "@/types/match.type";
+import MatchTable from "../Matches/Sets";
+import { useQuery } from "react-query";
+import { getPlayerMatchesDetail } from "@/api/match.api";
 
 interface DetailsInterface {
   icon: any;
   label: string;
-  value: string;
+  value: string | number;
 }
 
-function PendingMatch() {
+function PlayersMatchDetail({ match }: { match: Match }) {
   const [activeTab, setActiveTab] = useState("details");
 
-  const details: DetailsInterface[] = [
-    {
-      label: "Match Date & Time",
-      icon: FaRegCalendarPlus,
-      value: "Feb 05, 2025, 10:00 AM",
-    },
-    {
-      label: "Match Length",
-      icon: IoTime,
-      value: "2 Hours 23 Minutes",
-    },
-    {
-      label: "Game Best Out of",
-      icon: FaTrophy,
-      value: "3 Games",
-    },
-    {
-      label: "Tie-Breaker Rule",
-      icon: FaBalanceScaleLeft,
-      value: "7 points Tie Breaker",
-    },
-    {
-      label: "Court Type",
-      icon: FaFlag,
-      value: "Outdoor Court",
-    },
-    {
-      label: "Court Surface Type",
-      icon: MdOutlineWaves,
-      value: "Hard Court",
-    },
-  ];
+  const { data } = useQuery({
+    queryKey: ["getPlayerMatchesDetail"],
+    queryFn: () =>
+      getPlayerMatchesDetail(
+        "673b5771922706927eae7aea",
+        "67c06b8d415f5d10567ad683"
+      ),
+  });
+
+  const getMatchDetail = (match: Match): DetailsInterface[] => {
+    const details: DetailsInterface[] = [
+      {
+        label: "Match Date & Time",
+        icon: FaRegCalendarPlus,
+        value: formatDateTime(match.date),
+      },
+      {
+        label: "Match Length",
+        icon: IoTime,
+        value: match.totalGameTime,
+      },
+      {
+        label: "Game Best Out of",
+        icon: FaTrophy,
+        value: match.matchType,
+      },
+      {
+        label: "Tie-Breaker Rule",
+        icon: FaBalanceScaleLeft,
+        value: match.tieBreakRule,
+      },
+      {
+        label: "Court Type",
+        icon: FaFlag,
+        value: match.indoor ? "Indoor" : "Outdoor",
+      },
+      {
+        label: "Court Surface Type",
+        icon: MdOutlineWaves,
+        value: match.courtSurface,
+      },
+    ];
+    return details;
+  };
+
+  if (!match) {
+    return;
+  }
 
   return (
-    <ContentLayout name="Pending Match">
-      <div className="bg-white pt-10 min-h-[100vh]">
+    <ContentLayout name="Recent Match">
+      <div className="bg-white pt-10 min-h-[100vh] pb-12">
         <div className="w-full mx-auto mt-4">
           <div className="flex gap-x-6 flex-col gap-y-2 sm:flex-row items-center justify-center">
-            <ProfileCard name="Candace Flynn" />
+            <ProfileCard
+              name={match?.p1Name}
+              isObject={match.p1IsObject}
+              player={match?.p1}
+            />
             <div className="px-4 py-6 text-4xl text-white bg-gradient-to-b from-[#F8B570] font-bold rounded-xl to-[#F38C28] ">
               VS
             </div>
-            <ProfileCard name="Jene" />
+            <ProfileCard
+              name={match?.p2Name}
+              isObject={match.p2IsObject}
+              player={match?.p2}
+            />
           </div>
         </div>
         <div className="mt-4">
@@ -102,7 +131,7 @@ function PendingMatch() {
                 className="w-full md:w-[44rem] lg:w-[56rem] mx-auto px-4"
                 value="details"
               >
-                {details.map(({ icon: Icon, value, label }) => (
+                {getMatchDetail(match).map(({ icon: Icon, value, label }) => (
                   <div className=" w-full md:w-[70%] flex items-center justify-between my-2">
                     <div className="flex items-center gap-x-1 ">
                       <div className="p-1 rounded-md bg-[#FFF6ED]">
@@ -121,40 +150,23 @@ function PendingMatch() {
                 value="sets"
                 className="w-full md:w-[44rem] lg:w-[56rem] mx-auto px-4"
               >
-                <div className="w-full flex justify-center items-center flex-col gap-2 mt-14">
-                  <div className="w-12 h-12 rounded-xl bg-gray-300 flex justify-center items-center">
-                    <FiInfo className="text-primary text-3xl" />
-                  </div>
-                  <div className="mt-3">
-                    Set not Available for undone Mactch
-                  </div>
-                </div>
+                <MatchTable match={match} />
               </TabsContent>
               <TabsContent
                 value="momentum"
                 className="w-full md:w-[44rem] lg:w-[56rem] mx-auto px-4"
               >
                 <div className="w-full flex justify-center items-center flex-col gap-2 mt-14">
-                  <div className="w-12 h-12 rounded-xl bg-gray-300 flex justify-center items-center">
+                  {/* <div className="w-12 h-12 rounded-xl bg-gray-300 flex justify-center items-center">
                     <FiInfo className="text-primary text-3xl" />
                   </div>
                   <div className="mt-3">
                     Set not Available for undone Mactch
-                  </div>
+                  </div> */}
                 </div>
               </TabsContent>
-              <TabsContent
-                value="report"
-                className="w-full md:w-[44rem] lg:w-[56rem] mx-auto px-4"
-              >
-                <div className="w-full flex justify-center items-center flex-col gap-2 mt-14">
-                  <div className="w-12 h-12 rounded-xl bg-gray-300 flex justify-center items-center">
-                    <FiInfo className="text-primary text-3xl" />
-                  </div>
-                  <div className="mt-3">
-                    Set not Available for undone Mactch
-                  </div>
-                </div>
+              <TabsContent value="report" className="w-full   px-2">
+                <Report match={match} />
               </TabsContent>
             </Tabs>
           </div>
@@ -164,4 +176,10 @@ function PendingMatch() {
   );
 }
 
-export default PendingMatch;
+export default PlayersMatchDetail;
+
+// {
+//     "code": 500,
+//     "message": "refresh token not found",
+//     "stack": "Error: refresh token not found\n    at Object.refresh (/home/doti/mpi/mpi_backend_express_mongodb_redis/src/api/services/auth.service.js:612:15)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async /home/doti/mpi/mpi_backend_express_mongodb_redis/src/api/controllers/auth.controller.js:131:24"
+// }

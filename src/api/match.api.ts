@@ -51,9 +51,21 @@ export const getPlayer = async (playerId: string): Promise<ChildResponse> => {
   return response.data;
 };
 
-export const getPlayerMatches = async (playerId: string): Promise<any> => {
+export const getPlayerMatches = async (
+  playerId: string
+): Promise<{ matches: Match[] }> => {
   const response = await axiosInstance.get(
     `/api/v1/users/players/${playerId}/matches`
+  );
+  return response.data;
+};
+
+export const getPlayerMatchesDetail = async (
+  playerId: string,
+  matchId: string
+): Promise<{ matches: Match[] }> => {
+  const response = await axiosInstance.get(
+    `/api/v1/users/players/${playerId}/matches/${matchId}`
   );
   return response.data;
 };
