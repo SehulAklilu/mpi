@@ -204,7 +204,7 @@ function Periodizations({ playerId }: { playerId: string }) {
                         <div className="flex flex-col border shadow-lg rounded-xl mx-4 p-2 items-center justify-center">
                           <IoMdHourglass className="text-2xl font-bold text-primary" />
                           <h1 className="text-center font-semibold text-gray-600">
-                            No Preparation Addes
+                            No Preparation Added
                           </h1>
                           <p className="text-center text-gray-500 text-sm">
                             Start adding Preparation to track your progress.

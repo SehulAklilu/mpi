@@ -7,7 +7,7 @@ interface PhoneNumber {
   number: string;
 }
 
-interface Parent {
+export interface Parent {
   _id: string;
   firstName: string;
   lastName: string;

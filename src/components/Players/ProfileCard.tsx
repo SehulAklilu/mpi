@@ -21,7 +21,6 @@ function ProfileCard({ player }: ProfileCardInterface) {
         {player.firstName} {player.lastName}
       </p>
       <p className="text-sm text-gray-400">USTDA: 18</p>
-      {/* <button className="bg-orange-500 text-white text-xs md:text-sm py-2 px-4 rounded-md hover:bg-orange-600 transition-colors"></button> */}
     </div>
   );
 }

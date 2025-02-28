@@ -9,6 +9,7 @@ import { FaX } from "react-icons/fa6";
 import { TfiCup } from "react-icons/tfi";
 import { useQuery } from "react-query";
 import { Link, useNavigate } from "react-router-dom";
+import avater from "../assets/avater.jpg";
 
 function groupMatchesByStatus(matches: Match[]): Record<Status, Match[]> {
   return matches?.reduce((grouped, match) => {
@@ -174,7 +175,17 @@ const PersonPending = ({
         </div>
       ) : (
         <div className="w-[12rem] h-[10rem] flex flex-col items-center justify-center">
-          <p className="text-xl font-semibold">{name}</p>
+          <div className="w-[12rem] h-[10rem] flex flex-col items-center">
+            <div className="rounded-full w-24 h-24 mt-2 mx-12 max-md:mx-4">
+              <img
+                className="w-full h-full rounded-full object-cover"
+                src={avater}
+                alt="img"
+              />
+            </div>
+            <div className="text-sm font-semibold  mt-2">{name}</div>
+            <div className="text-xs mt-1">USDTA: 19</div>
+          </div>
         </div>
       )}
     </div>

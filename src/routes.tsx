@@ -213,7 +213,7 @@ const router = createBrowserRouter([
     element: <Connect />,
   },
   {
-    path: "/initialAssessment",
+    path: "/assessment",
     element: <InitialAssessment />,
   },
   {

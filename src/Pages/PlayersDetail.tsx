@@ -8,10 +8,18 @@ import { AiOutlineMail } from "react-icons/ai";
 import PlayerGoal from "@/components/Players/PlayerGoal";
 import Periodizations from "@/components/Players/Periodizations";
 import PlayerMatches from "@/components/Players/PlayerMatches";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Parent } from "@/types/children.type";
 
 function PlayersDetail() {
   const [activeTab, setActiveTab] = useState("Profile");
-
+  const [open, setOpen] = useState(false);
+  const [selectedValue, setSelectedValue] = useState<Parent | null>(null);
   const { id } = useParams<{ id: string }>();
   const { data, isLoading, isError } = useQuery({
     queryKey: ["getPlayer"],
@@ -98,7 +106,13 @@ function PlayersDetail() {
             <TabsContent className="!mt-0 p-4" value="Profile">
               <h1 className="text-xl font-bold text-gray-700 mb-2">Parents</h1>
               {data?.player.parents.map((parent) => (
-                <div className="flex items-center gap-4 bg-white p-2 rounded-xl my-2">
+                <div
+                  className="flex items-center gap-4 bg-white p-2 rounded-xl my-2 border border-white hover:border-primary cursor-pointer"
+                  onClick={() => {
+                    setSelectedValue(parent);
+                    setOpen(true);
+                  }}
+                >
                   <img
                     src={parent.avatar}
                     alt={`${parent.firstName} ${parent.lastName}`}
@@ -117,7 +131,13 @@ function PlayersDetail() {
 
               <h1 className="text-xl font-bold text-gray-700 mb-2">Coaches</h1>
               {data?.player.coaches.map((coach) => (
-                <div className="flex items-center gap-4 bg-white p-2 rounded-xl my-2">
+                <div
+                  className="flex items-center gap-4 bg-white p-2 rounded-xl my-2 border border-white hover:border-primary cursor-pointer"
+                  onClick={() => {
+                    setSelectedValue(coach);
+                    setOpen(true);
+                  }}
+                >
                   <img
                     src={coach.avatar}
                     alt={`${coach.firstName} ${coach.lastName}`}
@@ -147,7 +167,41 @@ function PlayersDetail() {
           </Tabs>
         </div>
       </div>
-      <></>
+      <>
+        <Dialog
+          open={open}
+          onOpenChange={(open) => {
+            setOpen(open);
+          }}
+        >
+          <DialogContent className="">
+            <DialogTitle className="text-lg text-primary">
+              About {selectedValue?.firstName} {selectedValue?.lastName}
+            </DialogTitle>
+            <div className="flex items-center justify-center gap-2 flex-col">
+              <img
+                className="w-20 h-20 rounded-full object-cover"
+                src={selectedValue?.avatar}
+                alt={selectedValue?.firstName}
+              />
+              <h1 className="text-xl font-bold">
+                {selectedValue?.firstName} {selectedValue?.lastName}
+              </h1>
+              <p></p>
+              <h1>{selectedValue?.emailAddress.email}</h1>
+              <p>
+                ({selectedValue?.phoneNumber.countryCode})
+                {selectedValue?.phoneNumber.number}
+              </p>
+            </div>
+            <hr />
+            <h1 className="text-xl font-semibold my-2">Area Of Expertise</h1>
+            <hr />
+
+            <h1 className="text-xl font-semibold my-2">About</h1>
+          </DialogContent>
+        </Dialog>
+      </>
     </ContentLayout>
   );
 }
