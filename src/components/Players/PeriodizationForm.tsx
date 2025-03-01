@@ -25,6 +25,24 @@ import { AiOutlineDelete } from "react-icons/ai";
 import { FiEdit2 } from "react-icons/fi";
 
 import { NewPreparation } from "./Periodizations";
+import { useMutation, useQueryClient } from "react-query";
+import {
+  createCompetition,
+  createPreparation,
+  createTransition,
+  editCompetition,
+  editPreparation,
+  editTransition,
+} from "@/api/match.api";
+import { toast } from "react-toastify";
+import { getAxiosErrorMessage, getAxiosSuccessMessage } from "@/api/axios";
+import {
+  CompetitionPayload,
+  FieldType,
+  PreparationPayload,
+  TransitionPayload,
+} from "@/types/children.type";
+import { LoaderCircle } from "lucide-react";
 
 // Define TypeScript Interfaces for Backend Compatibility
 
@@ -34,6 +52,7 @@ const FormSchema = z.object({
   allocatedTime: z.string().min(1, "Time must be at least 1"),
   timeType: z.enum(["days", "weeks", "months"]),
   generals: z.array(z.string()).optional(),
+  specifics: z.array(z.string()).optional(),
   specificDescriptions: z.array(z.string()).optional(),
   precompetitions: z.array(z.string()).optional(),
   tournaments: z.array(z.string()).optional(),
@@ -46,6 +65,9 @@ interface AddPhaseDialogProps {
   setIsOpen: (open: boolean) => void;
   initialData?: any;
   setSelectedPhase?: React.Dispatch<React.SetStateAction<any | null>>;
+  playerId: string;
+  periodizationId: string;
+  forType: FieldType | undefined;
 }
 
 export default function AddPhaseDialog({
@@ -53,6 +75,9 @@ export default function AddPhaseDialog({
   setIsOpen,
   initialData,
   setSelectedPhase,
+  playerId,
+  periodizationId,
+  forType,
 }: AddPhaseDialogProps) {
   const [phase, setPhase] = useState<
     "preparation" | "competition" | "transition" | undefined
@@ -65,7 +90,7 @@ export default function AddPhaseDialog({
       allocatedTime: "1",
       timeType: "days",
       generals: [],
-      //   specifics: [],
+      specifics: [],
       specificDescriptions: [],
       precompetitions: [],
       tournaments: [],
@@ -81,8 +106,237 @@ export default function AddPhaseDialog({
     }
   }, [initialData, form]);
 
+  const queryClient = useQueryClient();
+
+  const createPreparationMutation = useMutation(
+    ({
+      playerId,
+      periodizationId,
+      payload,
+    }: {
+      playerId: string;
+      periodizationId: string;
+      payload: PreparationPayload;
+    }) => createPreparation(playerId, periodizationId, payload),
+    {
+      onSuccess: (response) => {
+        toast.success(getAxiosSuccessMessage(response));
+        queryClient.invalidateQueries("getPlayerPeriodizations");
+      },
+      onError: (error) => {
+        toast.error(getAxiosErrorMessage(error));
+      },
+    }
+  );
+
+  const editPreparationMutation = useMutation(
+    ({
+      playerId,
+      periodizationId,
+      payload,
+    }: {
+      playerId: string;
+      periodizationId: string;
+      payload: PreparationPayload;
+    }) => editPreparation(playerId, periodizationId, payload),
+    {
+      onSuccess: (response) => {
+        toast.success(getAxiosSuccessMessage(response));
+        queryClient.invalidateQueries("getPlayerPeriodizations");
+      },
+      onError: (error) => {
+        toast.error(getAxiosErrorMessage(error));
+      },
+    }
+  );
+
+  const createCompetitionMutation = useMutation(
+    ({
+      playerId,
+      periodizationId,
+      payload,
+    }: {
+      playerId: string;
+      periodizationId: string;
+      payload: CompetitionPayload;
+    }) => createCompetition(playerId, periodizationId, payload),
+    {
+      onSuccess: (response) => {
+        toast.success(getAxiosSuccessMessage(response));
+        queryClient.invalidateQueries("getPlayerPeriodizations");
+      },
+      onError: (error) => {
+        toast.error(getAxiosErrorMessage(error));
+      },
+    }
+  );
+
+  const editCompetitionMutation = useMutation(
+    ({
+      playerId,
+      periodizationId,
+      payload,
+    }: {
+      playerId: string;
+      periodizationId: string;
+      payload: CompetitionPayload;
+    }) => editCompetition(playerId, periodizationId, payload),
+    {
+      onSuccess: (response) => {
+        toast.success(getAxiosSuccessMessage(response));
+        queryClient.invalidateQueries("getPlayerPeriodizations");
+      },
+      onError: (error) => {
+        toast.error(getAxiosErrorMessage(error));
+      },
+    }
+  );
+
+  const createTransitionMutation = useMutation(
+    ({
+      playerId,
+      periodizationId,
+      payload,
+    }: {
+      playerId: string;
+      periodizationId: string;
+      payload: TransitionPayload;
+    }) => createTransition(playerId, periodizationId, payload),
+    {
+      onSuccess: (response) => {
+        toast.success(getAxiosSuccessMessage(response));
+        queryClient.invalidateQueries("getPlayerPeriodizations");
+      },
+      onError: (error) => {
+        toast.error(getAxiosErrorMessage(error));
+      },
+    }
+  );
+
+  const editTransitionMutation = useMutation(
+    ({
+      playerId,
+      periodizationId,
+      payload,
+    }: {
+      playerId: string;
+      periodizationId: string;
+      payload: TransitionPayload;
+    }) => editTransition(playerId, periodizationId, payload),
+    {
+      onSuccess: (response) => {
+        toast.success(getAxiosSuccessMessage(response));
+        queryClient.invalidateQueries("getPlayerPeriodizations");
+      },
+      onError: (error) => {
+        toast.error(getAxiosErrorMessage(error));
+      },
+    }
+  );
+
+  const isLoading =
+    createPreparationMutation.isLoading ||
+    createCompetitionMutation.isLoading ||
+    createTransitionMutation.isLoading ||
+    editCompetitionMutation.isLoading ||
+    editTransitionMutation.isLoading ||
+    editPreparationMutation.isLoading;
+
   const onSubmit = (data: FormValues) => {
-    console.log("3333333333333", data);
+    console.log("Submitting data:", data);
+    if (!forType) {
+      return;
+    }
+
+    if (initialData) {
+      if (phase === "preparation") {
+        editPreparationMutation.mutate({
+          playerId: playerId,
+          periodizationId: periodizationId,
+          payload: {
+            preparationType: forType,
+            preparation: {
+              allocatedTime: parseInt(data.allocatedTime),
+              timeType: data.timeType,
+              generals: data.generals ?? [],
+              specifics: data.specifics ?? [],
+              specificDescriptions: data.specificDescriptions ?? [],
+            },
+          },
+        });
+      } else if (phase === "competition") {
+        editCompetitionMutation.mutate({
+          playerId: playerId,
+          periodizationId: periodizationId,
+          payload: {
+            competitionType: forType,
+            competition: {
+              allocatedTime: parseInt(data.allocatedTime),
+              timeType: data.timeType,
+              precompetitions: data.precompetitions ?? [],
+              tournaments: data.tournaments ?? [],
+            },
+          },
+        });
+      } else if (phase === "transition") {
+        editTransitionMutation.mutate({
+          playerId: playerId,
+          periodizationId: periodizationId,
+          payload: {
+            transitionType: forType,
+            transition: {
+              allocatedTime: parseInt(data.allocatedTime),
+              timeType: data.timeType,
+              activeRest: data.activeRest ?? [],
+            },
+          },
+        });
+      }
+    } else {
+      if (phase === "preparation") {
+        createPreparationMutation.mutate({
+          playerId: playerId,
+          periodizationId: periodizationId,
+          payload: {
+            preparationType: forType,
+            preparation: {
+              allocatedTime: parseInt(data.allocatedTime),
+              timeType: data.timeType,
+              generals: data.generals ?? [],
+              specifics: data.specifics ?? [],
+              specificDescriptions: data.specificDescriptions ?? [],
+            },
+          },
+        });
+      } else if (phase === "competition") {
+        createCompetitionMutation.mutate({
+          playerId: playerId,
+          periodizationId: periodizationId,
+          payload: {
+            competitionType: forType,
+            competition: {
+              allocatedTime: parseInt(data.allocatedTime),
+              timeType: data.timeType,
+              precompetitions: data.precompetitions ?? [],
+              tournaments: data.tournaments ?? [],
+            },
+          },
+        });
+      } else if (phase === "transition") {
+        createTransitionMutation.mutate({
+          playerId: playerId,
+          periodizationId: periodizationId,
+          payload: {
+            transitionType: forType,
+            transition: {
+              allocatedTime: parseInt(data.allocatedTime),
+              timeType: data.timeType,
+              activeRest: data.activeRest ?? [],
+            },
+          },
+        });
+      }
+    }
   };
 
   const onError = (error: any) => {
@@ -233,9 +487,18 @@ export default function AddPhaseDialog({
 
             <button
               type="submit"
-              className="bg-primary text-white px-4 py-2 rounded"
+              className="bg-primary flex gap-4 text-white px-4 py-2 rounded"
             >
               {initialData ? "Update" : "Submit"}
+              {isLoading && (
+                <LoaderCircle
+                  style={{
+                    animation: "spin 1s linear infinite",
+                    fontSize: "2rem",
+                    color: "#FFFFFF",
+                  }}
+                />
+              )}
             </button>
           </form>
         </Form>

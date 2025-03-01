@@ -1,0 +1,101 @@
+POST /:playerId --> Create Periodization: body--> {
+  startingDate: required,
+  endingDate: required,
+  timezone: required
+}
+Patch /:playerId/:periodizationId --> Update Periodization, only timezone required
+DELETE /:playerId/:periodizationId --> Delete Periodization
+
+---------------------------------
+/:playerId/:periodizationId/preparation
+POST --> preparationType:reqiured, ('physical', 'technical', 'psychological', 'tactical', 'nutrition', 'recovery'),
+  preparation:{
+    allocatedTime:number, required
+    timeType: ('days', 'weeks', 'months'), required
+    generals: ['string'],
+    specifics: ['string'], //specific player goals,
+    specificDescriptions: ['goals id']
+  }
+    
+Patch: preparationType is required
+DELETE: preparationType   is required  
+----------------------------------------------------
+/:playerId/:periodizationId/competition
+POST --> competitionType --> required
+  competition:{
+    allocatedTime: required,
+    timeType: required,
+    preCompetitions: ['string'],
+    tournaments: ['string'],
+--------------------------------------------------------
+/:playerId/:periodizationId/transition
+POST --> transitionType: required
+  transition:{
+    allocatedTime: required,
+    timeType: required,
+    activeRest: ['string'],
+    }
+
+
+---------------------------------
+Periodization model:{
+startingDate, endingDate, status ('active', 'completed', 'inactive', 'cancelled', 'pending'), physical, technical, psychological, tactical, nutrition, recovery.... (preparation, competition,transition),,,,, 
+
+
+----------------------------------------------------------------
+PATCH /:playerId/:periodizationId/status
+status: 
+
+
+
+
+
+////////////////////////////////////////////////Player Goal//////////////////////////
+
+users
+/playerGoal/:playerId
+
+Post -- add playergoal
+
+{
+  goal: required, 'technical', 'tactical, 'physical', 'mental', 'nutrition', 'recovery',
+  description: required,
+  term: 'short', 'medium', 'long' (required
+  measurement: 'string'required
+  achievementDate: date, required,
+  actions: [{description, date, isDone}], required,
+  obstacles: [{description, date, isOvercome], required
+  addon: string (null, optional)
+}
+
+/playerGoal/:playerId/:goalId
+Patch, delete
+
+
+
+for player
+/myGoals/:coachId post, patch, delete
+the same with the above
+/myGoals -> get
+
+
+coach to fetch player classes
+/api/v1/classes/player/:id, /api/v1/classes/child/:id
+
+
+
+coach invite a player by email
+post /api/v1/users/invite {
+'email': , 'relationship': 'player'}
+parent invite a player, 'child'
+
+player invite a coach
+  'coach'
+player invite a parent 'parent
+
+////////////////TODO
+Post /api/v1/todos
+{'title', 'dueDate', timezone}
+/api/v1/latest
+
+String id, String title, Date dueDate, bool isCompleted,

@@ -12,6 +12,7 @@ import { logout } from "@/api/auth.api";
 import { BsPerson } from "react-icons/bs";
 import { TbLogout2 } from "react-icons/tb";
 import { LoaderCircle } from "lucide-react";
+import { getGoogleProfileColor } from "@/lib/utils";
 
 interface ContentLayoutProps {
   children: React.ReactNode;
@@ -23,6 +24,9 @@ export function ContentLayout({ children, name }: ContentLayoutProps) {
   const location = useLocation();
   const userId = Cookies.get("user_id");
   const excludeNavbar = ["/assessment", "/video"];
+  const avater = Cookies.get("avatar");
+  const userName = Cookies.get("user_name");
+  const firstLetter = userName?.trim().charAt(0).toUpperCase();
 
   const profile = useRef<HTMLDivElement | null>(null);
 
@@ -109,8 +113,17 @@ export function ContentLayout({ children, name }: ContentLayoutProps) {
             onMouseEnter={() => setShowProfile(true)}
             onMouseLeave={() => setShowProfile(false)}
           >
-            <div className="w-10 h-10 border-2 rounded-full border-primary cursor-pointer">
-              <img src={userImage} className="w-full h-full rounded-full" />
+            <div className="w-10 h-10 border-2 rounded-full cursor-pointer">
+              {avater ? (
+                <img src={avater} className="w-full h-full rounded-full" />
+              ) : (
+                <div
+                  style={{ backgroundColor: getGoogleProfileColor(userName) }}
+                  className="w-full h-full rounded-full flex items-center justify-center text-white capitalize"
+                >
+                  {firstLetter}
+                </div>
+              )}
             </div>
             <FaCaretDown className="text-xl text-primary" />
 

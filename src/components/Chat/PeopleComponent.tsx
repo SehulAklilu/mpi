@@ -12,7 +12,7 @@ import PeopleSkeleton from "./PeopleSkeleton";
 import { MenuIcon } from "lucide-react";
 import CustomTabs from "./CustomTabs";
 import NotificationCard from "../PendingMatch/NotificationCard";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 export interface ProfileDataInterface {
   user_id: string;
   friendship_id: string;
@@ -39,6 +39,7 @@ import FriendRequestCard from "../PendingMatch/NotificationCard";
 import { getAxiosErrorMessage, getAxiosSuccessMessage } from "@/api/axios";
 import { toast } from "react-toastify";
 import { extractUsers } from "@/lib/utils";
+import { searchUsers } from "@/api/auth.api";
 
 interface PeopleComponentProps {
   setActiveTab: (tab: string) => void;
@@ -56,6 +57,9 @@ const PeopleComponent: React.FC<PeopleComponentProps> = ({
   const [showFollowing, setShowFollowing] = useState(true);
   const [showFollowers, setShowFollowers] = useState(false);
   const user_id = Cookies.get("user_id");
+  const [searchString, setSearchString] = useState<string>("");
+  const [searchInput, setSearchInput] = useState(""); // User input
+  const [debouncedSearch, setDebouncedSearch] = useState("");
 
   const {
     data: friends_data,
@@ -83,6 +87,25 @@ const PeopleComponent: React.FC<PeopleComponentProps> = ({
       const message = getAxiosErrorMessage(error);
       toast.error(message);
     },
+  });
+  // ✅ Ensure `searchInput` is used in `useEffect`
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(searchInput);
+    }, 300);
+
+    return () => clearTimeout(handler);
+  }, [searchInput]); // ✅ FIX: Use `searchInput` not `searchString`
+
+  // Fetch user data with debounced search term
+  const {
+    data,
+    isLoading: searchingUser,
+    error,
+  } = useQuery({
+    queryKey: ["searchUser", debouncedSearch],
+    queryFn: () => searchUsers(debouncedSearch),
+    enabled: !!debouncedSearch, // Run only when there's a search term
   });
 
   const onMessage = (otherUserId: string) => {
@@ -142,6 +165,8 @@ const PeopleComponent: React.FC<PeopleComponentProps> = ({
           type="text"
           id="full_name"
           placeholder="Search..."
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
           className={"py-2 w-full !rounded-lg !outline-none !bg-white"}
           startIcon={FaSearch}
         />

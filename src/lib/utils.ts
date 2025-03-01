@@ -70,3 +70,39 @@ export function extractDateTime(timestamp: string): {
 
   return { date, time: formattedTime, period };
 }
+
+const GOOGLE_PROFILE_COLORS: Record<string, string> = {
+  A: "#F44336",
+  B: "#E91E63",
+  C: "#9C27B0",
+  D: "#673AB7",
+  E: "#3F51B5",
+  F: "#2196F3",
+  G: "#03A9F4",
+  H: "#00BCD4",
+  I: "#009688",
+  J: "#4CAF50",
+  K: "#8BC34A",
+  L: "#CDDC39",
+  M: "#FFEB3B",
+  N: "#FFC107",
+  O: "#FF9800",
+  P: "#FF5722",
+  Q: "#795548",
+  R: "#9E9E9E",
+  S: "#607D8B",
+  T: "#FF5722",
+  U: "#F44336",
+  V: "#E91E63",
+  W: "#9C27B0",
+  X: "#673AB7",
+  Y: "#3F51B5",
+  Z: "#2196F3",
+};
+
+export function getGoogleProfileColor(name: string | undefined): string {
+  if (!name) return "#000000"; // Default black for empty names
+
+  const firstLetter = name.trim().charAt(0).toUpperCase();
+  return GOOGLE_PROFILE_COLORS[firstLetter] || "#607D8B"; // Default gray
+}

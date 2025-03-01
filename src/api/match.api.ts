@@ -1,8 +1,12 @@
 import {
   ChildrenResponse,
   ChildResponse,
+  CompetitionPayload,
+  Goal,
   Periodization,
   PeriodizationsResponse,
+  PreparationPayload,
+  TransitionPayload,
 } from "@/types/children.type";
 import axiosInstance from "./axios";
 import { Match, MatchData } from "@/types/match.type";
@@ -79,9 +83,251 @@ export const getPlayerPeriodizations = async (
   return response.data;
 };
 
-// /api/v1/users
-// GET /search (query) search player
-// GET /players -> coach
-// GET /players/:id/parents
-// GET /players/:id/matches
-// GET /players/:id/periodizations
+export const createPlayerPeriodizations = async (
+  playerId: string,
+  payload: { endingDate: string; startingDate: string; timeZone: string }
+): Promise<PeriodizationsResponse> => {
+  const response = await axiosInstance.post(
+    `/api/v1/users/players/${playerId}/periodizations`,
+    payload
+  );
+  return response.data;
+};
+
+export const editPlayerPeriodizations = async (
+  playerId: string,
+  periodizationId: string,
+  payload: { endingDate: string; startingDate: string; timeZone: string }
+): Promise<PeriodizationsResponse> => {
+  const response = await axiosInstance.patch(
+    `/api/v1/users/players/${playerId}/periodizations/${periodizationId}`,
+    payload
+  );
+  return response.data;
+};
+
+export const deletePlayerPeriodizations = async (
+  playerId: string,
+  periodizationId: string
+): Promise<PeriodizationsResponse> => {
+  const response = await axiosInstance.delete(
+    `/api/v1/users/players/${playerId}/periodizations/${periodizationId}`
+  );
+  return response.data;
+};
+
+// Preparation
+
+export const createPreparation = async (
+  playerId: string,
+  periodizationId: string,
+  payload: PreparationPayload
+): Promise<any> => {
+  const response = await axiosInstance.post(
+    `/api/v1/users/players/${playerId}/periodizations/${periodizationId}/preparation`,
+    payload
+  );
+  return response.data;
+};
+
+export const editPreparation = async (
+  playerId: string,
+  periodizationId: string,
+  payload: PreparationPayload
+): Promise<any> => {
+  const response = await axiosInstance.patch(
+    `/api/v1/users/players/${playerId}/periodizations${periodizationId}/preparation`,
+    payload
+  );
+  return response.data;
+};
+
+export const deletePreparation = async (
+  playerId: string,
+  periodizationId: string,
+  payload: PreparationPayload
+): Promise<any> => {
+  const response = await axiosInstance.delete(
+    `/api/v1/users/players/${playerId}/periodizations/${periodizationId}/preparation`
+  );
+  return response.data;
+};
+
+// competition
+export const createCompetition = async (
+  playerId: string,
+  periodizationId: string,
+  payload: CompetitionPayload
+): Promise<any> => {
+  const response = await axiosInstance.post(
+    `/api/v1/users/players/${playerId}/periodizations/${periodizationId}/competition`,
+    payload
+  );
+  return response.data;
+};
+
+export const editCompetition = async (
+  playerId: string,
+  periodizationId: string,
+  payload: CompetitionPayload
+): Promise<any> => {
+  const response = await axiosInstance.patch(
+    `/api/v1/users/players/${playerId}/periodizations/${periodizationId}/competition`,
+    payload
+  );
+  return response.data;
+};
+
+export const deleteCompetition = async (
+  playerId: string,
+  periodizationId: string,
+  payload: CompetitionPayload
+): Promise<any> => {
+  const response = await axiosInstance.delete(
+    `/api/v1/users/players/${playerId}/periodizations/${periodizationId}/competition`
+  );
+  return response.data;
+};
+
+// Transition
+export const createTransition = async (
+  playerId: string,
+  periodizationId: string,
+  payload: TransitionPayload
+): Promise<any> => {
+  const response = await axiosInstance.post(
+    `/api/v1/users/players/${playerId}/periodizations/${periodizationId}/transition`,
+    payload
+  );
+  return response.data;
+};
+
+export const editTransition = async (
+  playerId: string,
+  periodizationId: string,
+  payload: TransitionPayload
+): Promise<any> => {
+  const response = await axiosInstance.patch(
+    `/api/v1/users/players/${playerId}/periodizations/${periodizationId}/transition`,
+    payload
+  );
+  return response.data;
+};
+
+export const deleteTransition = async (
+  playerId: string,
+  periodizationId: string,
+  payload: TransitionPayload
+): Promise<any> => {
+  const response = await axiosInstance.delete(
+    `/api/v1/users/players/${playerId}/periodizations/${periodizationId}/transition`
+  );
+  return response.data;
+};
+
+// player goad coatch crating
+export const createPlayerGoal = async (
+  playerId: string,
+  payload: Goal
+): Promise<any> => {
+  const response = await axiosInstance.post(
+    `/api/v1/users/playerGoal/${playerId}`,
+    payload
+  );
+  return response.data;
+};
+
+export const editPlayerGoal = async (
+  playerId: string,
+  goalId: string,
+  payload: Goal
+): Promise<any> => {
+  const response = await axiosInstance.patch(
+    `/api/v1/users/playerGoal/${playerId}/${goalId}`,
+    payload
+  );
+  return response.data;
+};
+
+// player goal player role
+
+export const getGoals = async (): Promise<Goal[]> => {
+  const response = await axiosInstance.get(`/api/v1/users/myGoals`);
+  return response.data;
+};
+
+export const createGoal = async (
+  coatchId: string,
+  payload: Goal
+): Promise<any> => {
+  const response = await axiosInstance.post(
+    `/api/v1/users/myGoals/${coatchId}`,
+    payload
+  );
+  return response.data;
+};
+
+export const editGoal = async (
+  coatchId: string,
+  goalId: string,
+  payload: Goal
+): Promise<any> => {
+  const response = await axiosInstance.patch(
+    `/api/v1/users/myGoals/${coatchId}/${goalId}`,
+    payload
+  );
+  return response.data;
+};
+
+export const delelteGoal = async (
+  coatchId: string,
+  goalId: string
+): Promise<any> => {
+  const response = await axiosInstance.delete(
+    `/api/v1/users/myGoals/${coatchId}/${goalId}`
+  );
+  return response.data;
+};
+
+// get players classes -- coatch
+export const getClassesCoatch = async (playerId: string): Promise<any[]> => {
+  const response = await axiosInstance.get(
+    `/api/v1/classes/player/${playerId},`
+  );
+  return response.data;
+};
+
+// get players classes -- coatch
+export const getClassesParent = async (playerId: string): Promise<any[]> => {
+  const response = await axiosInstance.get(
+    `/api/v1/classes/child/${playerId},`
+  );
+  return response.data;
+};
+
+// invite a player
+export const invitePlayer = async (payload: {
+  email: string;
+  relationship: "player" | "coach" | "player";
+}): Promise<any> => {
+  const response = await axiosInstance.post(`/api/v1/users/invite`, payload);
+  return response.data;
+};
+
+export const todo = async (payload: {
+  title: string;
+  dueDate: string;
+  timezone: string;
+}): Promise<any> => {
+  const response = await axiosInstance.post(`/api/v1/todos`, payload);
+  return response.data;
+};
+
+export const latestTodo = async (payload: {
+  title: string;
+  dueDate: string;
+  timezone: string;
+}): Promise<any> => {
+  const response = await axiosInstance.post(`/api/v1/latest`, payload);
+  return response.data;
+};

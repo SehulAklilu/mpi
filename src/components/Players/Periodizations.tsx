@@ -1,8 +1,13 @@
-import { getPlayerPeriodizations } from "@/api/match.api";
+import {
+  createPlayerPeriodizations,
+  deletePlayerPeriodizations,
+  editPlayerPeriodizations,
+  getPlayerPeriodizations,
+} from "@/api/match.api";
 import { formatDateTime } from "@/lib/utils";
-import { Periodization, Preparation } from "@/types/children.type";
+import { FieldType, Periodization, Preparation } from "@/types/children.type";
 import React, { useEffect, useState } from "react";
-import { useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import PeriodizationCard from "./PeriodizationCard";
 import { Progress } from "@/components/ui/progress";
 import { IoMdCheckboxOutline } from "react-icons/io";
@@ -42,6 +47,10 @@ import AddPhaseDialog from "./PeriodizationForm";
 import { DatePickerDialog } from "./DatePickerDialog";
 import { DateRange } from "react-day-picker";
 import { addDays } from "date-fns";
+import { getAxiosErrorMessage, getAxiosSuccessMessage } from "@/api/axios";
+import { toast } from "react-toastify";
+import { MdEdit, MdDelete } from "react-icons/md";
+import { SelectLabel } from "@radix-ui/react-select";
 
 export interface NewPreparation extends Preparation {
   for: string; // Allows flexibility if needed
@@ -51,11 +60,14 @@ function Periodizations({ playerId }: { playerId: string }) {
   const [onEdit, setOnEdit] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+  const [selectedField, setSelectedField] = useState<FieldType | undefined>(
+    undefined
+  );
+  const queryClient = useQueryClient();
   const { data } = useQuery({
     queryKey: ["getPlayerPeriodizations"],
     queryFn: () => getPlayerPeriodizations(playerId),
   });
-
   const FormSchema = z.object({
     id: z.string().optional(),
     title: z.string().min(3, {
@@ -87,6 +99,87 @@ function Periodizations({ playerId }: { playerId: string }) {
     setSelectedPeriodization(periodization);
   };
 
+  const createSOT = useMutation({
+    mutationKey: ["createSOT", playerId],
+    mutationFn: ({ playerId, payload }: { playerId: string; payload: any }) =>
+      createPlayerPeriodizations(playerId, payload),
+    onSuccess: (response) => {
+      const message = getAxiosSuccessMessage(response);
+      toast.success(message);
+      queryClient.invalidateQueries("getPlayerPeriodizations");
+      setIsDatePickerOpen(false);
+    },
+    onError: (error: any) => {
+      const message = getAxiosErrorMessage(error);
+      toast.error(message);
+    },
+  });
+
+  const editSOT = useMutation({
+    mutationKey: ["editSOT", playerId, selectedPeriodizationId],
+    mutationFn: ({
+      playerId,
+      periodizationId,
+      payload,
+    }: {
+      playerId: string;
+      periodizationId: string;
+      payload: any;
+    }) => editPlayerPeriodizations(playerId, periodizationId, payload),
+    onSuccess: (response) => {
+      const message = getAxiosSuccessMessage(response);
+      toast.success(message);
+      queryClient.invalidateQueries("getPlayerPeriodizations");
+      setIsDatePickerOpen(false);
+      setOnEdit(false);
+    },
+    onError: (error: any) => {
+      const message = getAxiosErrorMessage(error);
+      toast.error(message);
+    },
+  });
+
+  const deleteSOT = useMutation({
+    mutationKey: ["deleteSOT", playerId, selectedPeriodizationId],
+    mutationFn: ({
+      playerId,
+      periodizationId,
+    }: {
+      playerId: string;
+      periodizationId: string;
+    }) => deletePlayerPeriodizations(playerId, periodizationId),
+    onSuccess: (response) => {
+      const message = getAxiosSuccessMessage(response);
+      toast.success(message);
+      queryClient.invalidateQueries("getPlayerPeriodizations");
+      setIsDatePickerOpen(false);
+      setOnEdit(false);
+    },
+    onError: (error: any) => {
+      const message = getAxiosErrorMessage(error);
+      toast.error(message);
+    },
+  });
+
+  const handleConfirm = (dates: { startDate: Date; endDate: Date }) => {
+    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+    const payload = {
+      startingDate: dates.startDate,
+      endingDate: dates.endDate,
+      timezone: timeZone,
+    };
+    if (onEdit) {
+      editSOT.mutate({
+        playerId,
+        periodizationId: selectedPeriodizationId,
+        payload,
+      });
+      return;
+    }
+    createSOT.mutate({ playerId, payload: payload });
+  };
+
   useEffect(() => {
     if (data) {
       setSelectedPeriodization(data.periodizations[0]);
@@ -98,10 +191,6 @@ function Periodizations({ playerId }: { playerId: string }) {
     from: new Date(),
     to: addDays(new Date(), 3),
   });
-
-  const handleConfirm = (dates: { startDate: Date; endDate: Date }) => {
-    console.log("Selected Dates:", dates);
-  };
 
   const fields = [
     "physical",
@@ -135,9 +224,39 @@ function Periodizations({ playerId }: { playerId: string }) {
             </option>
           ))}
         </select>
+        <div className="w-10 h-10 flex  flex-none items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 cursor-pointer">
+          <MdEdit
+            className="text-gray-600 text-xl"
+            onClick={() => {
+              setDate({
+                from: selectedPeriodization?.startingDate
+                  ? new Date(selectedPeriodization.startingDate)
+                  : undefined,
+                to: selectedPeriodization?.endingDate
+                  ? new Date(selectedPeriodization.endingDate)
+                  : undefined,
+              });
+              setIsDatePickerOpen(true);
+              setOnEdit(true);
+            }}
+          />
+        </div>
+        <div className="w-10 h-10 flex  flex-none items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 cursor-pointer">
+          <MdDelete
+            className="text-gray-600 text-xl"
+            onClick={() =>
+              deleteSOT.mutate({
+                playerId,
+                periodizationId: selectedPeriodizationId,
+              })
+            }
+          />
+        </div>
         <FaCirclePlus
           className="text-4xl flex-none mb-2 text-primary cursor-pointer"
-          onClick={() => setIsDatePickerOpen(true)}
+          onClick={() => {
+            setIsDatePickerOpen(true);
+          }}
         />
       </div>
       {selectedPeriodization && (
@@ -180,6 +299,7 @@ function Periodizations({ playerId }: { playerId: string }) {
                                   ?.specificDescriptions ?? [],
                             });
                             setIsOpen(true);
+                            setSelectedField(field);
                           }}
                         >
                           <div className="flex justify-between items-center py-2">
@@ -233,6 +353,7 @@ function Periodizations({ playerId }: { playerId: string }) {
                                   ?.tournaments ?? [],
                             });
                             setIsOpen(true);
+                            setSelectedField(field);
                           }}
                         >
                           <div className="flex justify-between items-center py-2">
@@ -283,6 +404,7 @@ function Periodizations({ playerId }: { playerId: string }) {
                                   ?.activeRest ?? [],
                             });
                             setIsOpen(true);
+                            setSelectedField(field);
                           }}
                         >
                           <div className="flex justify-between items-center py-2">
@@ -348,6 +470,9 @@ function Periodizations({ playerId }: { playerId: string }) {
         setIsOpen={setIsOpen}
         initialData={selectedPhase}
         setSelectedPhase={setSelectedPhase}
+        playerId={playerId}
+        periodizationId={selectedPeriodizationId}
+        forType={selectedField}
       />
     </div>
   );

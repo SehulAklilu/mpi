@@ -79,6 +79,15 @@ export type GoalType =
   | "technical"
   | "tactical"
   | "nutrition";
+
+export type FieldType =
+  | "physical"
+  | "technical"
+  | "psychological"
+  | "tactical"
+  | "nutrition"
+  | "recovery";
+
 export type GoalTerm = "short" | "long" | "medium";
 export interface Goal {
   goal: GoalType;
@@ -90,7 +99,7 @@ export interface Goal {
   obstacles: Obstacle[];
   addOn: string;
   _id: string;
-  progress: any[];
+  progress?: any[];
 }
 
 // CoachGoal Interface
@@ -145,7 +154,7 @@ export interface Preparation {
   timeType: "days" | "weeks" | "months";
   generals: string[];
   specifics: string[];
-  specificDescriptions: string[];
+  specificDescriptions: string[]; // play goal
 }
 
 interface Competition {
@@ -198,4 +207,19 @@ interface Recovery {
 
 export interface PeriodizationsResponse {
   periodizations: Periodization[];
+}
+
+export interface PreparationPayload {
+  preparationType: FieldType;
+  preparation: Preparation;
+}
+
+export interface CompetitionPayload {
+  competitionType: FieldType;
+  competition: Competition;
+}
+
+export interface TransitionPayload {
+  transitionType: FieldType;
+  transition: Transition;
 }

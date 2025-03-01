@@ -48,17 +48,24 @@ export function DatePickerDialog({
           numberOfMonths={2}
           disabled={{ before: today }}
         />
-        <Button
-          onClick={() => {
-            if (date?.from && date?.to) {
-              onConfirm({ startDate: date.from, endDate: date.to });
-              setIsOpen(false);
-            }
-          }}
-          className="mt-4 py-2 px-4 rounded-full bg-primary text-white"
-        >
-          Create
-        </Button>
+        <div className="flex items-center gap-4 w-full">
+          <Button
+            onClick={() => setIsOpen(false)}
+            className="mt-4 py-2 w-full px-4 rounded-full bg-white  text-primary"
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={() => {
+              if (date?.from && date?.to) {
+                onConfirm({ startDate: date.from, endDate: date.to });
+              }
+            }}
+            className="mt-4 py-2 px-4 w-full rounded-full bg-primary text-white"
+          >
+            Create
+          </Button>
+        </div>
       </DialogContent>
     </Dialog>
   );
