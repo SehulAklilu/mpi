@@ -5,7 +5,12 @@ import {
   getPlayerPeriodizations,
 } from "@/api/match.api";
 import { formatDateTime } from "@/lib/utils";
-import { FieldType, Periodization, Preparation } from "@/types/children.type";
+import {
+  CoachGoal,
+  FieldType,
+  Periodization,
+  Preparation,
+} from "@/types/children.type";
 import React, { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import PeriodizationCard from "./PeriodizationCard";
@@ -56,7 +61,13 @@ export interface NewPreparation extends Preparation {
   for: string; // Allows flexibility if needed
 }
 
-function Periodizations({ playerId }: { playerId: string }) {
+function Periodizations({
+  playerId,
+  coachGoals,
+}: {
+  playerId: string;
+  coachGoals: CoachGoal[];
+}) {
   const [onEdit, setOnEdit] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
@@ -298,8 +309,8 @@ function Periodizations({ playerId }: { playerId: string }) {
                                 selectedPeriodization[field].preparation
                                   ?.specificDescriptions ?? [],
                             });
-                            setIsOpen(true);
                             setSelectedField(field);
+                            setIsOpen(true);
                           }}
                         >
                           <div className="flex justify-between items-center py-2">
@@ -352,8 +363,8 @@ function Periodizations({ playerId }: { playerId: string }) {
                                 selectedPeriodization[field].competition
                                   ?.tournaments ?? [],
                             });
-                            setIsOpen(true);
                             setSelectedField(field);
+                            setIsOpen(true);
                           }}
                         >
                           <div className="flex justify-between items-center py-2">
@@ -403,8 +414,8 @@ function Periodizations({ playerId }: { playerId: string }) {
                                 selectedPeriodization[field].transition
                                   ?.activeRest ?? [],
                             });
-                            setIsOpen(true);
                             setSelectedField(field);
+                            setIsOpen(true);
                           }}
                         >
                           <div className="flex justify-between items-center py-2">
@@ -443,6 +454,7 @@ function Periodizations({ playerId }: { playerId: string }) {
                     <button
                       onClick={() => {
                         setSelectedPhase(null);
+                        setSelectedField(field);
                         setIsOpen(true);
                       }}
                       className="py-1 px-4 rounded-full shadow-lg border text-primary font-medium hover:bg-primary hover:text-white"
@@ -473,6 +485,7 @@ function Periodizations({ playerId }: { playerId: string }) {
         playerId={playerId}
         periodizationId={selectedPeriodizationId}
         forType={selectedField}
+        coachGoals={coachGoals}
       />
     </div>
   );

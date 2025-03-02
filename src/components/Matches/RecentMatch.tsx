@@ -18,6 +18,8 @@ import { getMatch } from "@/api/match.api";
 import { formatDateTime } from "@/lib/utils";
 import { Match } from "@/types/match.type";
 import MatchTable from "./Sets";
+import SetsTable from "./SetsTable";
+import MatchReportTabs from "../Players/MatchReportTabs";
 
 interface DetailsInterface {
   icon: any;
@@ -154,9 +156,10 @@ function RecentMatch() {
 
                 <TabsContent
                   value="sets"
-                  className="w-full md:w-[44rem] lg:w-[56rem] mx-auto px-4"
+                  className="w-full md:w-[54rem] lg:w-[64rem] mx-auto px-4"
                 >
-                  <MatchTable match={match} />
+                  {/* <MatchTable match={match} /> */}
+                  <SetsTable match={match} />
                 </TabsContent>
                 <TabsContent
                   value="momentum"
@@ -172,7 +175,8 @@ function RecentMatch() {
                   </div>
                 </TabsContent>
                 <TabsContent value="report" className="w-full   px-2">
-                  <Report match={match} />
+                  {/* <Report match={match} /> */}
+                  <MatchReportTabs match={match} />
                 </TabsContent>
               </Tabs>
             </div>

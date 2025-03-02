@@ -5,11 +5,26 @@ import { formatDateTime } from "@/lib/utils";
 import { Dialog, DialogContent, DialogTitle, DialogFooter } from "../ui/dialog";
 import { FiChevronDown } from "react-icons/fi";
 import PlayerGoalForm from "./PlayerGoalForm";
+import { useQuery } from "react-query";
+import Cookies from "js-cookie";
 
-function PlayerGoal({ coachGoals }: { coachGoals: CoachGoal[] }) {
+function PlayerGoal({
+  coachGoals,
+  playerId,
+}: {
+  coachGoals: CoachGoal[];
+  playerId: string;
+}) {
+  const user_id = Cookies.get("user_id");
+
   const sortedGoals = useMemo(() => {
-    const allGoals = coachGoals.flatMap((coachGoal) => coachGoal.goals);
-    const groupedByTerm: Record<string, Goal[]> = allGoals.reduce(
+    const coach = coachGoals.find(
+      (coachGoal) => coachGoal.coach._id === user_id
+    );
+
+    if (!coach) return {}; // Return an empty object if no matching coach is found
+
+    const groupedByTerm: Record<string, Goal[]> = coach.goals.reduce(
       (acc, goal) => {
         acc[goal.term] = acc[goal.term] || [];
         acc[goal.term].push(goal);
@@ -17,8 +32,10 @@ function PlayerGoal({ coachGoals }: { coachGoals: CoachGoal[] }) {
       },
       {} as Record<string, Goal[]>
     );
+
     return groupedByTerm;
-  }, [coachGoals]);
+  }, [coachGoals, user_id]);
+
   const [initialGoal, setInitialGoal] = useState<Goal | undefined>(undefined);
 
   const [isOpen, setIsOpen] = useState(false);
@@ -92,6 +109,8 @@ function PlayerGoal({ coachGoals }: { coachGoals: CoachGoal[] }) {
           isOpen={isOpen}
           setIsOpen={setIsOpen}
           initialData={initialGoal}
+          setInitialGoal={setInitialGoal}
+          playerId={playerId}
         />
       </div>
     </div>

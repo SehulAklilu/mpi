@@ -97,7 +97,7 @@ export interface Goal {
   achievementDate: string;
   actions: Action[];
   obstacles: Obstacle[];
-  addOn: string;
+  addOns: string;
   _id: string;
   progress?: any[];
 }
@@ -222,4 +222,19 @@ export interface CompetitionPayload {
 export interface TransitionPayload {
   transitionType: FieldType;
   transition: Transition;
+}
+
+export interface GoalPayload {
+  goal: GoalType;
+  term: GoalTerm;
+  description: string;
+  measurement: string;
+  achievementDate: Date;
+  actions: {
+    description: string;
+    date: Date;
+    isDone?: boolean;
+  }[];
+  obstacles: { description: string; isOvercome: boolean }[];
+  addOns?: string | null;
 }

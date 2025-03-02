@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -37,12 +37,16 @@ import {
 import { toast } from "react-toastify";
 import { getAxiosErrorMessage, getAxiosSuccessMessage } from "@/api/axios";
 import {
+  CoachGoal,
   CompetitionPayload,
   FieldType,
   PreparationPayload,
   TransitionPayload,
 } from "@/types/children.type";
 import { LoaderCircle } from "lucide-react";
+import Cookies from "js-cookie";
+import { extractDateTime } from "@/lib/utils";
+import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 
 // Define TypeScript Interfaces for Backend Compatibility
 
@@ -68,6 +72,7 @@ interface AddPhaseDialogProps {
   playerId: string;
   periodizationId: string;
   forType: FieldType | undefined;
+  coachGoals: CoachGoal[];
 }
 
 export default function AddPhaseDialog({
@@ -78,10 +83,13 @@ export default function AddPhaseDialog({
   playerId,
   periodizationId,
   forType,
+  coachGoals,
 }: AddPhaseDialogProps) {
   const [phase, setPhase] = useState<
     "preparation" | "competition" | "transition" | undefined
   >(undefined);
+  const [addGoal, setAddGoal] = useState(false);
+  const user_id = Cookies.get("user_id");
 
   const form = useForm<FormValues>({
     resolver: zodResolver(FormSchema),
@@ -103,6 +111,10 @@ export default function AddPhaseDialog({
       form.reset(initialData);
       form.setValue("allocatedTime", initialData?.allocatedTime.toString());
       setPhase(initialData.for);
+      if (initialData.specifics?.length > 0) {
+        setSelectedGoals(initialData.specifics);
+        setAddGoal(true);
+      }
     }
   }, [initialData, form]);
 
@@ -122,6 +134,7 @@ export default function AddPhaseDialog({
       onSuccess: (response) => {
         toast.success(getAxiosSuccessMessage(response));
         queryClient.invalidateQueries("getPlayerPeriodizations");
+        resetForm();
       },
       onError: (error) => {
         toast.error(getAxiosErrorMessage(error));
@@ -143,6 +156,7 @@ export default function AddPhaseDialog({
       onSuccess: (response) => {
         toast.success(getAxiosSuccessMessage(response));
         queryClient.invalidateQueries("getPlayerPeriodizations");
+        resetForm();
       },
       onError: (error) => {
         toast.error(getAxiosErrorMessage(error));
@@ -164,6 +178,7 @@ export default function AddPhaseDialog({
       onSuccess: (response) => {
         toast.success(getAxiosSuccessMessage(response));
         queryClient.invalidateQueries("getPlayerPeriodizations");
+        resetForm();
       },
       onError: (error) => {
         toast.error(getAxiosErrorMessage(error));
@@ -185,6 +200,7 @@ export default function AddPhaseDialog({
       onSuccess: (response) => {
         toast.success(getAxiosSuccessMessage(response));
         queryClient.invalidateQueries("getPlayerPeriodizations");
+        resetForm();
       },
       onError: (error) => {
         toast.error(getAxiosErrorMessage(error));
@@ -206,6 +222,7 @@ export default function AddPhaseDialog({
       onSuccess: (response) => {
         toast.success(getAxiosSuccessMessage(response));
         queryClient.invalidateQueries("getPlayerPeriodizations");
+        resetForm();
       },
       onError: (error) => {
         toast.error(getAxiosErrorMessage(error));
@@ -227,6 +244,7 @@ export default function AddPhaseDialog({
       onSuccess: (response) => {
         toast.success(getAxiosSuccessMessage(response));
         queryClient.invalidateQueries("getPlayerPeriodizations");
+        resetForm();
       },
       onError: (error) => {
         toast.error(getAxiosErrorMessage(error));
@@ -243,7 +261,7 @@ export default function AddPhaseDialog({
     editPreparationMutation.isLoading;
 
   const onSubmit = (data: FormValues) => {
-    console.log("Submitting data:", data);
+    console.log("Submitting data:", data, forType);
     if (!forType) {
       return;
     }
@@ -259,7 +277,7 @@ export default function AddPhaseDialog({
               allocatedTime: parseInt(data.allocatedTime),
               timeType: data.timeType,
               generals: data.generals ?? [],
-              specifics: data.specifics ?? [],
+              specifics: selectedGoals ?? [],
               specificDescriptions: data.specificDescriptions ?? [],
             },
           },
@@ -303,7 +321,7 @@ export default function AddPhaseDialog({
               allocatedTime: parseInt(data.allocatedTime),
               timeType: data.timeType,
               generals: data.generals ?? [],
-              specifics: data.specifics ?? [],
+              specifics: selectedGoals ?? [],
               specificDescriptions: data.specificDescriptions ?? [],
             },
           },
@@ -343,17 +361,44 @@ export default function AddPhaseDialog({
     console.log("eeeeeeeeeeeee", error);
   };
 
+  const [coachGoal, setcoachGoal] = useState<CoachGoal | undefined>(undefined);
+  const [selectedGoals, setSelectedGoals] = useState<string[] | undefined>(
+    undefined
+  );
+
+  const toggleGoal = (goalId: string) => {
+    setSelectedGoals((pres) => {
+      if (pres?.includes(goalId)) {
+        return pres.filter((pre) => pre !== goalId);
+      } else {
+        return pres ? [...pres, goalId] : [goalId];
+      }
+    });
+  };
+
+  useEffect(() => {
+    const coachGoal = coachGoals.find(
+      (coachGoal) => coachGoal.coach._id === user_id
+    );
+    setcoachGoal(coachGoal);
+  }, [useId, coachGoals]);
+
+  const resetForm = () => {
+    form.reset({
+      for: undefined,
+      allocatedTime: "1",
+      timeType: "days",
+      generals: [],
+      specificDescriptions: [],
+    });
+    setPhase(undefined);
+    setSelectedPhase && setSelectedPhase(null);
+    setIsOpen(false);
+  };
+
   useEffect(() => {
     if (!isOpen) {
-      form.reset({
-        for: undefined,
-        allocatedTime: "1",
-        timeType: "days",
-        generals: [],
-        specificDescriptions: [],
-      });
-      setPhase(undefined);
-      setSelectedPhase && setSelectedPhase(null);
+      resetForm();
     }
   }, [isOpen, form]);
 
@@ -459,6 +504,47 @@ export default function AddPhaseDialog({
                   label="Specific Descriptions"
                   form={form}
                 />
+                <div
+                  className="text-primary font-semibold cursor-pointer text-center flex gap-4 items-center justify-center"
+                  onClick={() => setAddGoal((pre) => !pre)}
+                >
+                  Add Player Goal{" "}
+                  {addGoal ? (
+                    <IoIosArrowUp className="text-primary text-lg" />
+                  ) : (
+                    <IoIosArrowDown className="text-primary text-lg" />
+                  )}
+                </div>
+                {addGoal && coachGoal && (
+                  <div>
+                    {coachGoal.goals.map((goal) => (
+                      <div
+                        className={`my-2 border py-1 px-2  rounded-lg hover:border-primary cursor-pointer ${
+                          selectedGoals?.includes(goal._id)
+                            ? "bg-primary text-white"
+                            : "bg-white text-black"
+                        }`}
+                        onClick={() => toggleGoal(goal._id)}
+                      >
+                        <h1 className="font-semibold">{goal.description}</h1>
+                        <p className="text-sm">
+                          <span className="font-medium">Goal Type</span>:{" "}
+                          <span>{goal.goal}</span>{" "}
+                        </p>
+                        <p className="text-sm">
+                          <span className="font-medium">Goal Term</span>:{" "}
+                          <span>{goal.term}</span>{" "}
+                        </p>
+                        <p className="text-sm">
+                          <span className="font-medium">Achievement Date</span>:{" "}
+                          <span>
+                            {extractDateTime(goal.achievementDate)?.date}
+                          </span>{" "}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </>
             )}
             {phase === "competition" && (

@@ -158,11 +158,17 @@ function PlayersDetail() {
               <PlayerMatches playerId={data.player._id} />
             </TabsContent>
             <TabsContent className="!mt-0 w-full" value="Goals">
-              <PlayerGoal coachGoals={data.player.coachGoals} />
+              <PlayerGoal
+                coachGoals={data.player.coachGoals}
+                playerId={data.player._id}
+              />
             </TabsContent>
             <TabsContent className="!mt-0" value="Classes"></TabsContent>
             <TabsContent className="!mt-0" value="SOT">
-              <Periodizations playerId={data.player._id} />
+              <Periodizations
+                playerId={data.player._id}
+                coachGoals={data.player.coachGoals}
+              />
             </TabsContent>
           </Tabs>
         </div>

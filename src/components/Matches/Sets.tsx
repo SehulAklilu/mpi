@@ -1,4 +1,5 @@
 import { Match } from "@/types/match.type";
+import avater from "../../assets/avater.jpg";
 
 const MatchTable = ({ match }: { match: Match }) => {
   const {
@@ -15,6 +16,24 @@ const MatchTable = ({ match }: { match: Match }) => {
 
   const player1Name = p1IsObject ? p1?.firstName + " " + p1?.lastName : p1Name;
   const player2Name = p2IsObject ? p2?.firstName + " " + p2?.lastName : p2Name;
+  const plMatchScore = match?.sets?.filter(
+    (set) => set?.winner === "playerOne"
+  )?.length;
+  const p2MatchScore = match?.sets?.filter(
+    (set) => set?.winner === "playerTwo"
+  )?.length;
+  const colCount: number = (() => {
+    switch (match?.matchType) {
+      case "one":
+        return 1;
+      case "tree":
+        return 3;
+      case "five":
+        return 5;
+      default:
+        return 3;
+    }
+  })();
 
   return (
     <div>
@@ -32,7 +51,7 @@ const MatchTable = ({ match }: { match: Match }) => {
                 <tr className="text-left">
                   <th className="border px-4 py-2 w-[400px]">Players</th>
                   <th className="border px-4 py-2 w-[200px]">Match Score</th>
-                  {[...Array(5)].map((_, index) => (
+                  {[...Array(colCount)].map((_, index) => (
                     <th key={index} className="border px-4 py-2 w-[200px]">{`${
                       index + 1
                     }st set`}</th>
@@ -63,12 +82,16 @@ const MatchTable = ({ match }: { match: Match }) => {
                             src={player.data.avatar}
                             alt={player.name}
                           />
-                        ) : null}
+                        ) : (
+                          <img
+                            className="w-10 h-10 rounded-full"
+                            src={avater}
+                            alt={player.name}
+                          />
+                        )}
                         <div>
                           <p className="text-sm font-semibold">{player.name}</p>
-                          {player.object && (
-                            <p className="text-gray-700 text-xs">USDTA: 18</p>
-                          )}
+                          <p className="text-gray-700 text-xs">USDTA: 18</p>
                         </div>
                       </td>
                       {/* Match Score */}
@@ -79,10 +102,30 @@ const MatchTable = ({ match }: { match: Match }) => {
                             : ""
                         }`}
                       >
-                        {index === 0 ? "2" : "3"}
+                        {index === 0 ? (
+                          <span
+                            className={
+                              plMatchScore > p2MatchScore
+                                ? "font-semibold text-lg"
+                                : ""
+                            }
+                          >
+                            {plMatchScore}
+                          </span>
+                        ) : (
+                          <span
+                            className={
+                              p2MatchScore > plMatchScore
+                                ? "font-semibold text-lg"
+                                : ""
+                            }
+                          >
+                            {p2MatchScore}
+                          </span>
+                        )}
                       </td>
                       {/* Set Scores */}
-                      {[...Array(5)].map((_, setIndex) => {
+                      {[...Array(colCount)].map((_, setIndex) => {
                         const set = sets[setIndex];
                         const score = set
                           ? index === 0
@@ -90,16 +133,14 @@ const MatchTable = ({ match }: { match: Match }) => {
                             : set.p2TotalScore
                           : "-";
                         const isSetWinner =
-                          set?.winner ===
-                          (player.object ? player.data?._id : "");
+                          (index === 0 && set?.winner === "playerOne") ||
+                          (index === 1 && set?.winner === "playerTwo");
 
                         return (
                           <td
                             key={setIndex}
                             className={`border border-gray-300 px-4 py-2 text-center ${
-                              isSetWinner
-                                ? "bg-gradient-to-b from-[#f8b672] to-[#f2851c] text-white"
-                                : ""
+                              isSetWinner ? "text-xl font-semibold" : ""
                             }`}
                           >
                             {score}

@@ -3,6 +3,7 @@ import {
   ChildResponse,
   CompetitionPayload,
   Goal,
+  GoalPayload,
   Periodization,
   PeriodizationsResponse,
   PreparationPayload,
@@ -88,7 +89,7 @@ export const createPlayerPeriodizations = async (
   payload: { endingDate: string; startingDate: string; timeZone: string }
 ): Promise<PeriodizationsResponse> => {
   const response = await axiosInstance.post(
-    `/api/v1/users/players/${playerId}/periodizations`,
+    `/api/v1/periodizations/${playerId}`,
     payload
   );
   return response.data;
@@ -100,7 +101,7 @@ export const editPlayerPeriodizations = async (
   payload: { endingDate: string; startingDate: string; timeZone: string }
 ): Promise<PeriodizationsResponse> => {
   const response = await axiosInstance.patch(
-    `/api/v1/users/players/${playerId}/periodizations/${periodizationId}`,
+    `/api/v1/periodizations/${playerId}/${periodizationId}`,
     payload
   );
   return response.data;
@@ -111,7 +112,7 @@ export const deletePlayerPeriodizations = async (
   periodizationId: string
 ): Promise<PeriodizationsResponse> => {
   const response = await axiosInstance.delete(
-    `/api/v1/users/players/${playerId}/periodizations/${periodizationId}`
+    `/api/v1/periodizations/${playerId}/${periodizationId}`
   );
   return response.data;
 };
@@ -124,7 +125,7 @@ export const createPreparation = async (
   payload: PreparationPayload
 ): Promise<any> => {
   const response = await axiosInstance.post(
-    `/api/v1/users/players/${playerId}/periodizations/${periodizationId}/preparation`,
+    `/api/v1/periodizations/${playerId}/${periodizationId}/preparation`,
     payload
   );
   return response.data;
@@ -136,7 +137,7 @@ export const editPreparation = async (
   payload: PreparationPayload
 ): Promise<any> => {
   const response = await axiosInstance.patch(
-    `/api/v1/users/players/${playerId}/periodizations${periodizationId}/preparation`,
+    `/api/v1/periodizations/${playerId}/${periodizationId}/preparation`,
     payload
   );
   return response.data;
@@ -148,7 +149,7 @@ export const deletePreparation = async (
   payload: PreparationPayload
 ): Promise<any> => {
   const response = await axiosInstance.delete(
-    `/api/v1/users/players/${playerId}/periodizations/${periodizationId}/preparation`
+    `/api/v1/periodizations/${playerId}/${periodizationId}/preparation`
   );
   return response.data;
 };
@@ -160,7 +161,7 @@ export const createCompetition = async (
   payload: CompetitionPayload
 ): Promise<any> => {
   const response = await axiosInstance.post(
-    `/api/v1/users/players/${playerId}/periodizations/${periodizationId}/competition`,
+    `/api/v1/periodizations/${playerId}/${periodizationId}/competition`,
     payload
   );
   return response.data;
@@ -172,7 +173,7 @@ export const editCompetition = async (
   payload: CompetitionPayload
 ): Promise<any> => {
   const response = await axiosInstance.patch(
-    `/api/v1/users/players/${playerId}/periodizations/${periodizationId}/competition`,
+    `/api/v1/periodizations/${playerId}/${periodizationId}/competition`,
     payload
   );
   return response.data;
@@ -184,7 +185,7 @@ export const deleteCompetition = async (
   payload: CompetitionPayload
 ): Promise<any> => {
   const response = await axiosInstance.delete(
-    `/api/v1/users/players/${playerId}/periodizations/${periodizationId}/competition`
+    `/api/v1/periodizations/${playerId}/${periodizationId}/competition`
   );
   return response.data;
 };
@@ -196,7 +197,7 @@ export const createTransition = async (
   payload: TransitionPayload
 ): Promise<any> => {
   const response = await axiosInstance.post(
-    `/api/v1/users/players/${playerId}/periodizations/${periodizationId}/transition`,
+    `/api/v1/periodizations/${playerId}/${periodizationId}/transition`,
     payload
   );
   return response.data;
@@ -208,7 +209,7 @@ export const editTransition = async (
   payload: TransitionPayload
 ): Promise<any> => {
   const response = await axiosInstance.patch(
-    `/api/v1/users/players/${playerId}/periodizations/${periodizationId}/transition`,
+    `/api/v1/periodizations/${playerId}/${periodizationId}/transition`,
     payload
   );
   return response.data;
@@ -220,7 +221,15 @@ export const deleteTransition = async (
   payload: TransitionPayload
 ): Promise<any> => {
   const response = await axiosInstance.delete(
-    `/api/v1/users/players/${playerId}/periodizations/${periodizationId}/transition`
+    `/api/v1/periodizations/${playerId}/${periodizationId}/transition`
+  );
+  return response.data;
+};
+
+// player goad coatch crating
+export const getPlayerGoal = async (playerId: string): Promise<any> => {
+  const response = await axiosInstance.get(
+    `/api/v1/users/playerGoal/${playerId}`
   );
   return response.data;
 };
@@ -228,7 +237,7 @@ export const deleteTransition = async (
 // player goad coatch crating
 export const createPlayerGoal = async (
   playerId: string,
-  payload: Goal
+  payload: GoalPayload
 ): Promise<any> => {
   const response = await axiosInstance.post(
     `/api/v1/users/playerGoal/${playerId}`,
@@ -240,7 +249,7 @@ export const createPlayerGoal = async (
 export const editPlayerGoal = async (
   playerId: string,
   goalId: string,
-  payload: Goal
+  payload: GoalPayload
 ): Promise<any> => {
   const response = await axiosInstance.patch(
     `/api/v1/users/playerGoal/${playerId}/${goalId}`,
@@ -258,7 +267,7 @@ export const getGoals = async (): Promise<Goal[]> => {
 
 export const createGoal = async (
   coatchId: string,
-  payload: Goal
+  payload: GoalPayload
 ): Promise<any> => {
   const response = await axiosInstance.post(
     `/api/v1/users/myGoals/${coatchId}`,
@@ -270,7 +279,7 @@ export const createGoal = async (
 export const editGoal = async (
   coatchId: string,
   goalId: string,
-  payload: Goal
+  payload: GoalPayload
 ): Promise<any> => {
   const response = await axiosInstance.patch(
     `/api/v1/users/myGoals/${coatchId}/${goalId}`,

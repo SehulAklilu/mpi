@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { z } from "zod";
+import React, { useEffect, useState } from "react";
+import { string, z } from "zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
@@ -25,7 +25,7 @@ import { FiEdit2 } from "react-icons/fi";
 import { Button } from "@/components/ui/button";
 import { MdDelete } from "react-icons/md";
 
-import { Calendar as CalendarIcon } from "lucide-react";
+import { Calendar as CalendarIcon, LoaderCircle } from "lucide-react";
 import { format } from "date-fns";
 
 import { cn } from "@/lib/utils";
@@ -35,7 +35,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Goal } from "@/types/children.type";
+import { Goal, GoalPayload } from "@/types/children.type";
+import { useMutation } from "react-query";
+import { createPlayerGoal, editPlayerGoal } from "@/api/match.api";
+import { toast } from "react-toastify";
+import { getAxiosErrorMessage, getAxiosSuccessMessage } from "@/api/axios";
+// import { useParams } from "react-router-dom";
 
 // Define Zod Schema
 const FormSchema = z.object({
@@ -61,7 +66,7 @@ const FormSchema = z.object({
       })
     )
     .optional(),
-  addOn: z.string().optional(),
+  addOns: z.string().optional(),
 });
 type FormValues = z.infer<typeof FormSchema>;
 
@@ -69,12 +74,16 @@ interface AddPhaseDialogProps {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
   initialData?: Goal;
+  playerId: string;
+  setInitialGoal: React.Dispatch<React.SetStateAction<Goal | undefined>>;
 }
 
 export default function PlayerGoalForm({
   isOpen,
   setIsOpen,
   initialData,
+  playerId,
+  setInitialGoal,
 }: AddPhaseDialogProps) {
   const form = useForm<FormValues>({
     resolver: zodResolver(FormSchema),
@@ -94,12 +103,78 @@ export default function PlayerGoalForm({
     }
   }, [initialData, form]);
 
+  const createGoal = useMutation({
+    mutationKey: ["createPlayerGoal"],
+    mutationFn: ({
+      playerId,
+      payload,
+    }: {
+      playerId: string;
+      payload: GoalPayload;
+    }) => createPlayerGoal(playerId, payload),
+    onSuccess: (response) => {
+      toast.success(getAxiosSuccessMessage(response));
+      setIsOpen(false);
+      setInitialGoal(undefined);
+      // queryClient.invalidateQueries("");
+    },
+    onError: (error) => {
+      toast.error(getAxiosErrorMessage(error));
+      setInitialGoal(undefined);
+    },
+  });
+
+  const editGoal = useMutation({
+    mutationKey: ["createPlayerGoal"],
+    mutationFn: ({
+      playerId,
+      goalId,
+      payload,
+    }: {
+      playerId: string;
+      goalId: string;
+      payload: GoalPayload;
+    }) => editPlayerGoal(playerId, goalId, payload),
+    onSuccess: (response) => {
+      toast.success(getAxiosSuccessMessage(response));
+      setIsOpen(false);
+      setInitialGoal(undefined);
+      // queryClient.invalidateQueries("");
+    },
+    onError: (error) => {
+      toast.error(getAxiosErrorMessage(error));
+      setInitialGoal(undefined);
+    },
+  });
+
   const onSubmit = (data: FormValues) => {
-    console.log("3333333333333", data);
+    console.log("3333333333333", initialData, playerId);
+    if (initialData && playerId) {
+      editGoal.mutate({
+        playerId,
+        goalId: initialData._id,
+        payload: {
+          ...data,
+          actions: data?.actions ?? [],
+          obstacles: data?.obstacles ?? [],
+          addOns: data.addOns ?? null,
+        },
+      });
+    } else if (playerId) {
+      createGoal.mutate({
+        playerId,
+        payload: {
+          ...data,
+          actions: data?.actions ?? [],
+          obstacles: data?.obstacles ?? [],
+          addOns: data.addOns ?? null,
+        },
+      });
+    }
   };
 
   const onError = (error: any) => {
-    console.log("eeeeeeeeeeeee", error);
+    console.log("eeeeeeeeeeeee", error, initialData);
   };
 
   useEffect(() => {
@@ -112,7 +187,7 @@ export default function PlayerGoalForm({
         achievementDate: new Date(),
         actions: [],
         obstacles: [],
-        addOn: "",
+        addOns: "",
       });
     }
   }, [isOpen, form]);
@@ -408,9 +483,18 @@ export default function PlayerGoalForm({
 
             <button
               type="submit"
-              className="bg-primary text-white px-4 py-2 rounded"
+              className="bg-primary flex gap-4 text-white px-4 py-2 rounded"
             >
               {initialData ? "Update" : "Submit"}
+              {(createGoal.isLoading || editGoal.isLoading) && (
+                <LoaderCircle
+                  style={{
+                    animation: "spin 1s linear infinite",
+                    fontSize: "2rem",
+                    color: "#FFFFFF",
+                  }}
+                />
+              )}
             </button>
           </form>
         </Form>

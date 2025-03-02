@@ -179,6 +179,12 @@ function ProfileSetting() {
                 <BsPerson className="hidden sm:block" /> Profile
               </TabsTrigger>
               <TabsTrigger
+                value="myGoals"
+                className="flex-1 text-center gap-x-0 sm:gap-x-2 py-1 text-sm md:text-base lg:text-lg rounded-md transition-colors border border-[#152946] data-[state=active]:border-[#F2851C] text-[#152946]"
+              >
+                <BsPerson className="hidden sm:block" /> My Goals
+              </TabsTrigger>
+              <TabsTrigger
                 value="Privacy & Security"
                 className="flex-1 text-center gap-x-0 sm:gap-x-2 py-1 text-sm md:text-base lg:text-lg rounded-md transition-colors border border-[#152946] data-[state=active]:border-[#F2851C] text-[#152946]"
               >
@@ -625,6 +631,9 @@ function ProfileSetting() {
                   </button>
                 </form>
               </Form>
+            </TabsContent>
+            <TabsContent className="!mt-0" value="myGoals">
+              <PrivacySecurity />
             </TabsContent>
             <TabsContent className="!mt-0" value="Privacy & Security">
               <PrivacySecurity />
