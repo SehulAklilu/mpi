@@ -48,6 +48,9 @@ import AboutUsPage from "./Pages/AboutUsPage.tsx";
 import CoursesPage from "./Pages/CoursesPage.tsx";
 import ChildrenPage from "./Pages/ChildrenPage.tsx";
 import ChildrenDetailPage from "./components/Children/ChildrenDetailPage.tsx";
+import PlayersDetail from "./Pages/PlayersDetail.tsx";
+import InitialAssessment from "./components/Assessment/InitialAssessment.tsx";
+import PlayersMatchDetail from "./components/Players/PlayersMatchDetail.tsx";
 
 const router = createBrowserRouter([
   {
@@ -94,6 +97,14 @@ const router = createBrowserRouter([
             path: "players",
             element: <Players />,
           },
+          {
+            path: "players/:id",
+            element: <PlayersDetail />,
+          },
+          {
+            path: "players/matchDetail/:id",
+            element: <RecentMatch />,
+          },
         ],
       },
       {
@@ -136,10 +147,10 @@ const router = createBrowserRouter([
             path: "matches",
             element: <Matches />,
           },
-          {
-            path: "matches/pendingMatch",
-            element: <PendingMatch />,
-          },
+          // {
+          //   path: "matches/pendingMatch",
+          //   element: <PendingMatch />,
+          // },
           {
             path: "matches/recentMatch/:id",
             element: <RecentMatch />,
@@ -203,13 +214,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/assessment",
-    element: (
-      <AssessmentComponent
-        assessment={assesment}
-        assessmentPage={true}
-        onContinue={() => console.log("")}
-      />
-    ),
+    element: <InitialAssessment />,
   },
   {
     path: "/about-us",

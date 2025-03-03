@@ -9,6 +9,7 @@ import {
   RegisterPayload,
   VerifyOtpPayload,
 } from "@/types/auth.type";
+import { User } from "@/types/user.types";
 
 export const login = async (
   credentials: LoginPayload
@@ -47,6 +48,36 @@ export const register = async (payload: RegisterPayload): Promise<any> => {
   const response = await axiosInstance.post<RegisterPayload>(
     "/auth/register",
     payload
+  );
+  return response.data;
+};
+
+export const createAssessment = async (payload: any): Promise<any> => {
+  const response = await axiosInstance.post<any>(
+    "/api/v1/user/profile/assessment/initial",
+    payload
+  );
+  return response.data;
+};
+
+export const getUserProfile = async (): Promise<User> => {
+  const response = await axiosInstance.get<any>("/api/v1/users/profile");
+  return response.data;
+};
+
+export const updateUserProfile = async (payload: any): Promise<any> => {
+  const response = await axiosInstance.patch<any>(
+    "/api/v1/users/profile",
+    payload
+  );
+  return response.data;
+};
+
+export const searchUsers = async (
+  searchQuery: string
+): Promise<{ result: number; users: User[] }> => {
+  const response = await axiosInstance.get(
+    `/api/v1/users/search?name=${searchQuery}`
   );
   return response.data;
 };

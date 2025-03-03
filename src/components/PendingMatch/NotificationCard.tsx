@@ -17,6 +17,7 @@ interface FriendRequestCardProps {
   status: "pending" | "request" | "accepted" | "rejected";
   profilePicture: string;
   onMessage: () => void;
+  buttonText?: string;
 }
 
 const FriendRequestCard: React.FC<FriendRequestCardProps> = ({
@@ -27,6 +28,7 @@ const FriendRequestCard: React.FC<FriendRequestCardProps> = ({
   status,
   profilePicture,
   onMessage,
+  buttonText,
 }) => {
   const queryClient = useQueryClient();
 
@@ -122,7 +124,7 @@ const FriendRequestCard: React.FC<FriendRequestCardProps> = ({
             onClick={onMessage}
             className="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 w-full sm:w-auto"
           >
-            Message
+            {buttonText ? buttonText : "Message"}
           </button>
         )}
       </div>

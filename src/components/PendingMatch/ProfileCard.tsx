@@ -1,5 +1,5 @@
 import React from "react";
-import profile_img from "../../assets/user.jpeg";
+import profile_img from "../../assets/avater.jpg";
 import { Player } from "@/types/match.type";
 
 interface ProfileCardInterface {
@@ -18,19 +18,13 @@ function ProfileCard({ player, name, isObject }: ProfileCardInterface) {
             {player?.firstName} {player?.lastName}
           </p>
           <p className="text-xs text-gray-400">USTDA: 18</p>
-          {/* {onClick && (
-          <button
-            onClick={onClick}
-            className="bg-orange-500 text-white text-xs md:text-sm py-2 px-3 rounded-md hover:bg-orange-600 transition-colors"
-          >
-            Track Progress
-          </button>
-        )} */}
         </>
       ) : (
-        <div className="flex items-center justify-center font-bold text-xl">
-          {name}
-        </div>
+        <>
+          <img className="w-16 h-16 rounded-full" src={profile_img} alt="" />
+          <p>{name}</p>
+          <p className="text-xs text-gray-400">USTDA: 18</p>
+        </>
       )}
     </div>
   );

@@ -32,7 +32,7 @@ import {
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
-import { cn } from "@/lib/utils";
+import { cn, getGoogleProfileColor } from "@/lib/utils";
 import { City, Country, ICity, IState, State } from "country-state-city";
 // import PhoneInput, {
 //   isValidPhoneNumber,
@@ -49,6 +49,12 @@ import "./ChatMessage.module.css";
 import PrivacySecurity from "./PrivacySecurity";
 import Purchases from "./Purchases";
 import { ContentLayout } from "../Sidebar/contenet-layout";
+import { useQuery } from "react-query";
+import { getUserProfile } from "@/api/auth.api";
+import Cookies from "js-cookie";
+import { getMyGoals } from "@/api/children.api";
+import MyGoal from "../Players/MyGoals";
+import { useRole } from "@/RoleContext";
 
 const FormSchema = z.object({
   firstName: z.string().min(3, {
@@ -60,7 +66,7 @@ const FormSchema = z.object({
   avatar: z.any().optional(),
   gender: z.string(),
   dateOfBirth: z.date(),
-  placeOfBith: z.string(),
+  // placeOfBith: z.string(),
   phoneNumber: z.string().nonempty("Phone number is required"),
   phoneNumberCountryCode: z.string(),
   country: z.string(),
@@ -77,11 +83,51 @@ const onSubmit = () => {};
 
 function ProfileSetting() {
   const [activeTab, setActiveTab] = useState("Profile");
+  const { role } = useRole();
 
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   });
+
+  const {
+    data: profileData,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["userProfile"],
+    queryFn: getUserProfile,
+  });
+
+  const { data } = useQuery({
+    queryKey: ["myGoals"],
+    queryFn: getMyGoals,
+  });
+
+  console.log("33333333 ttttt", data);
+
+  const { reset } = form;
+
+  useEffect(() => {
+    if (profileData) {
+      reset({
+        firstName: profileData.firstName || "",
+        lastName: profileData.lastName || "",
+        avatar: profileData.avatar || null,
+        gender: profileData.gender || "",
+        dateOfBirth: profileData.dateOfBirth
+          ? new Date(profileData.dateOfBirth)
+          : new Date(),
+        phoneNumber: profileData.phoneNumber?.number || "",
+        phoneNumberCountryCode: profileData.phoneNumber?.countryCode || "",
+        country: profileData.address.country || "",
+        stateProvince: profileData.address.stateProvince || "",
+        city: profileData.address.city || "",
+        streetAddress: profileData.address.streetAddress || "",
+        zipCode: profileData.address.zipCode || "",
+      });
+    }
+  }, [profileData, reset]);
 
   const countryData = Country.getAllCountries();
 
@@ -96,13 +142,14 @@ function ProfileSetting() {
       // }
     }
   };
-
+  const firstLetter = profileData?.firstName?.trim().charAt(0).toUpperCase();
   const [stateData, setStateData] = useState<IState[]>();
   const [cityData, setCityData] = useState<ICity[]>();
   const [selectCountry, setSelectCountry] = useState<string>();
   const [selectedState, setSelectedState] = useState<string>();
   const [selectedCity, setSelectedCity] = useState<ICity>();
   const [phone, setPhone] = useState("");
+  const avater = Cookies.get("avatar");
   useEffect(() => {
     setStateData(State.getStatesOfCountry(selectCountry));
     setCityData([]);
@@ -122,12 +169,7 @@ function ProfileSetting() {
 
   return (
     <ContentLayout>
-      <div className="px-2 sm:px-4 md:px-10">
-        <div className="flex items-center justify-end my-2">
-          <button className="py-2 hidden sm:block px-4 rounded-md bg-primary text-white mx-4 ">
-            Save Changes
-          </button>
-        </div>
+      <div className="px-2 sm:px-4 md:px-10 mb-10">
         <div className="flex items-center justify-center mt-4">
           <Tabs
             value={activeTab}
@@ -142,6 +184,14 @@ function ProfileSetting() {
               >
                 <BsPerson className="hidden sm:block" /> Profile
               </TabsTrigger>
+              {role && role === "player" && (
+                <TabsTrigger
+                  value="myGoals"
+                  className="flex-1 text-center gap-x-0 sm:gap-x-2 py-1 text-sm md:text-base lg:text-lg rounded-md transition-colors border border-[#152946] data-[state=active]:border-[#F2851C] text-[#152946]"
+                >
+                  <BsPerson className="hidden sm:block" /> My Goals
+                </TabsTrigger>
+              )}
               <TabsTrigger
                 value="Privacy & Security"
                 className="flex-1 text-center gap-x-0 sm:gap-x-2 py-1 text-sm md:text-base lg:text-lg rounded-md transition-colors border border-[#152946] data-[state=active]:border-[#F2851C] text-[#152946]"
@@ -176,10 +226,30 @@ function ProfileSetting() {
                           className="w-full h-full rounded-full object-cover"
                         />
                       ) : (
-                        <img
-                          src={userImage}
-                          className="w-full h-full rounded-full object-cover"
-                        />
+                        <div className="h-full w-full">
+                          {avater ? (
+                            <img
+                              src={avater}
+                              className="w-full h-full rounded-full"
+                            />
+                          ) : (
+                            <div
+                              style={{
+                                backgroundColor: getGoogleProfileColor(
+                                  profileData?.firstName
+                                ),
+                              }}
+                              className="w-full h-full rounded-full flex items-center justify-center text-white capitalize"
+                            >
+                              {firstLetter}
+                            </div>
+                          )}
+                        </div>
+
+                        // <img
+                        //   src={userImage}
+                        //   className="w-full h-full rounded-full object-cover"
+                        // />
                       )}
                     </div>
                     <FormField
@@ -342,7 +412,7 @@ function ProfileSetting() {
                           </FormItem>
                         )}
                       />
-                      <FormField
+                      {/* <FormField
                         control={form.control}
                         name="placeOfBith"
                         render={({ field }) => (
@@ -375,7 +445,7 @@ function ProfileSetting() {
                             <FormMessage />
                           </FormItem>
                         )}
-                      />
+                      /> */}
                       <Controller
                         name="phoneNumber"
                         control={form.control}
@@ -564,11 +634,20 @@ function ProfileSetting() {
                       />
                     </div>
                   </div>
-                  <button className="py-2 w-full sm:w-fit sm:hidden px-4 rounded-md bg-primary text-white mx:0 sm:mx-4 ">
-                    Save Changes
-                  </button>
+                  <div className="flex items-center justify-end">
+                    <button className="py-2 px-4 rounded-md bg-primary text-white mx:0 sm:mx-4 ">
+                      Save Changes
+                    </button>
+                  </div>
                 </form>
               </Form>
+            </TabsContent>
+            <TabsContent className="!mt-0" value="myGoals">
+              {data?.goals ? (
+                <MyGoal coachGoals={data?.goals} />
+              ) : (
+                <div>No Goal Found</div>
+              )}
             </TabsContent>
             <TabsContent className="!mt-0" value="Privacy & Security">
               <PrivacySecurity />

@@ -54,11 +54,16 @@ function NewLogin() {
       } else if (data.user.role === "parent") {
         navigate("/dashboard");
       } else {
-        if (lastAttemptedRoute !== "/") {
-          navigate(`${lastAttemptedRoute}`);
-        } else {
+        if (data.user.isRegistrationComplete) {
           navigate("/course");
+        } else {
+          navigate("/assessment");
         }
+        // if (lastAttemptedRoute !== "/") {
+        //   navigate(`${lastAttemptedRoute}`);
+        // } else {
+
+        // }
       }
     },
     onError: (error: any) => {

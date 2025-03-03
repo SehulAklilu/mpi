@@ -12,7 +12,7 @@ import PeopleSkeleton from "./PeopleSkeleton";
 import { MenuIcon } from "lucide-react";
 import CustomTabs from "./CustomTabs";
 import NotificationCard from "../PendingMatch/NotificationCard";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 export interface ProfileDataInterface {
   user_id: string;
   friendship_id: string;
@@ -39,6 +39,8 @@ import FriendRequestCard from "../PendingMatch/NotificationCard";
 import { getAxiosErrorMessage, getAxiosSuccessMessage } from "@/api/axios";
 import { toast } from "react-toastify";
 import { extractUsers } from "@/lib/utils";
+import { searchUsers } from "@/api/auth.api";
+import ProfileCardNew from "./ProfileCardNew";
 
 interface PeopleComponentProps {
   setActiveTab: (tab: string) => void;
@@ -56,6 +58,9 @@ const PeopleComponent: React.FC<PeopleComponentProps> = ({
   const [showFollowing, setShowFollowing] = useState(true);
   const [showFollowers, setShowFollowers] = useState(false);
   const user_id = Cookies.get("user_id");
+  const [searchString, setSearchString] = useState<string>("");
+  const [searchInput, setSearchInput] = useState(""); // User input
+  const [debouncedSearch, setDebouncedSearch] = useState("");
 
   const {
     data: friends_data,
@@ -83,6 +88,23 @@ const PeopleComponent: React.FC<PeopleComponentProps> = ({
       const message = getAxiosErrorMessage(error);
       toast.error(message);
     },
+  });
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(searchInput);
+    }, 300);
+
+    return () => clearTimeout(handler);
+  }, [searchInput]);
+
+  const {
+    data,
+    isLoading: searchingUser,
+    error,
+  } = useQuery({
+    queryKey: ["searchUser", debouncedSearch],
+    queryFn: () => searchUsers(debouncedSearch),
+    enabled: !!debouncedSearch,
   });
 
   const onMessage = (otherUserId: string) => {
@@ -142,11 +164,46 @@ const PeopleComponent: React.FC<PeopleComponentProps> = ({
           type="text"
           id="full_name"
           placeholder="Search..."
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
           className={"py-2 w-full !rounded-lg !outline-none !bg-white"}
           startIcon={FaSearch}
         />
       </div>
+      {/* export interface ProfileDataInterface {
+  user2Id?: string;
+  user_id: string;
+  friendship_id: string;
+  name: string;
+  role: string;
+  status: "friends" | "pending" | "blocked";
+  profilePicture: string;
+  otherUserBlocked: boolean;
+  relationshipType: "following" | "follower";
+  setActiveTab?: (tab: string) => void;
+  message?: string;
+  buttonText?: string;
+} */}
       <ScrollArea className="h-[70vh] rounded-md">
+        <section className="p-4">
+          <div className="space-y-2">
+            {data?.users?.map((user, index) => (
+              <ProfileCardNew
+                key={user.id}
+                user2Id={user._id}
+                user_id={user.id}
+                friendship_id="1"
+                name={user.firstName + " " + user.lastName}
+                role={user.role}
+                status="search"
+                profilePicture={user.avatar}
+                otherUserBlocked={false}
+                relationshipType="following"
+              />
+            ))}
+          </div>
+        </section>
+
         <section className="p-4">
           {/* Friend Requests */}
           <div className="border-b">
@@ -209,18 +266,7 @@ const PeopleComponent: React.FC<PeopleComponentProps> = ({
               <div className="space-y-4">
                 <div className="space-y-2 mt-2">
                   {friends?.map((friend) => (
-                    <FriendRequestCard
-                      key={friend.friendship_id}
-                      friendshipId={friend.friendship_id}
-                      name={friend.name}
-                      role={friend.role}
-                      message={`Say hi to ${friend.name}`}
-                      profilePicture={friend.profilePicture}
-                      status={
-                        friend.status === "friends" ? "accepted" : "rejected"
-                      }
-                      onMessage={() => onMessage(friend.user_id)}
-                    />
+                    <ProfileCardNew key={friend.friendship_id} {...friend} />
                   ))}
                   {/* <div className="flex items-center justify-center">
                         <button className="border rounded-lg px-6 py-2">

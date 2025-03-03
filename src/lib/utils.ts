@@ -36,15 +36,73 @@ export function extractUsers(
   return users;
 }
 
-export function formatDateTime(dateString: string) {
+export function formatDateTime(dateString: string, isTime: boolean = true) {
   const date = new Date(dateString);
 
   return date.toLocaleString("en-GB", {
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false, // 24-hour format
+    ...(isTime && {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    }),
   });
+}
+
+export function extractDateTime(timestamp: string): {
+  date: string;
+  time: string;
+  period: string;
+} {
+  const dateObj = new Date(timestamp);
+
+  const date = dateObj.toISOString().split("T")[0]; // Extract date in YYYY-MM-DD format
+  const hours = dateObj.getUTCHours();
+  const minutes = dateObj.getUTCMinutes();
+  const seconds = dateObj.getUTCSeconds();
+  const period = hours >= 12 ? "PM" : "AM";
+
+  const formattedTime = `${String(minutes).padStart(2, "0")}:${String(
+    seconds
+  ).padStart(2, "0")} ${period}`;
+
+  return { date, time: formattedTime, period };
+}
+
+const GOOGLE_PROFILE_COLORS: Record<string, string> = {
+  A: "#F44336",
+  B: "#E91E63",
+  C: "#9C27B0",
+  D: "#673AB7",
+  E: "#3F51B5",
+  F: "#2196F3",
+  G: "#03A9F4",
+  H: "#00BCD4",
+  I: "#009688",
+  J: "#4CAF50",
+  K: "#8BC34A",
+  L: "#CDDC39",
+  M: "#FFEB3B",
+  N: "#FFC107",
+  O: "#FF9800",
+  P: "#FF5722",
+  Q: "#795548",
+  R: "#9E9E9E",
+  S: "#607D8B",
+  T: "#FF5722",
+  U: "#F44336",
+  V: "#E91E63",
+  W: "#9C27B0",
+  X: "#673AB7",
+  Y: "#3F51B5",
+  Z: "#2196F3",
+};
+
+export function getGoogleProfileColor(name: string | undefined): string {
+  if (!name) return "#000000"; // Default black for empty names
+
+  const firstLetter = name.trim().charAt(0).toUpperCase();
+  return GOOGLE_PROFILE_COLORS[firstLetter] || "#607D8B"; // Default gray
 }

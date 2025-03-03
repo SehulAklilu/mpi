@@ -13,6 +13,7 @@ import { Role } from "@/types/auth.type";
 import { useMutation } from "react-query";
 import { logout } from "@/api/auth.api";
 import { LoaderCircle } from "lucide-react";
+import { getGoogleProfileColor } from "@/lib/utils";
 
 interface LinkItem {
   title: string;
@@ -182,26 +183,7 @@ function LandingPageNavBar() {
     }
   };
 
-  const initials = userName
-    ? userName
-        .split(" ")
-        .map((name) => name[0])
-        .join("")
-        .toUpperCase()
-    : "";
-
-  const getColorByLetter = (letter: string) => {
-    if (!letter) return "bg-gray-500"; // Default color if no letter
-    const firstLetter = letter.toUpperCase();
-    if (firstLetter >= "A" && firstLetter <= "E") return "bg-red-500";
-    if (firstLetter >= "F" && firstLetter <= "J") return "bg-blue-500";
-    if (firstLetter >= "K" && firstLetter <= "O") return "bg-green-500";
-    if (firstLetter >= "P" && firstLetter <= "T") return "bg-yellow-500";
-    if (firstLetter >= "U" && firstLetter <= "Z") return "bg-purple-500";
-    return "bg-gray-500"; // Fallback color
-  };
-
-  const bgColor = initials ? getColorByLetter(initials[0]) : "bg-gray-500";
+  const firstLetter = userName?.trim().charAt(0).toUpperCase();
 
   return (
     <div className="flex !sticky top-0 left-0 w-full p-4 z-50 bg-transparent items-center">
@@ -230,19 +212,18 @@ function LandingPageNavBar() {
             {/* Profile Button */}
             <div className="flex items-center gap-1 md:gap-2 px-4 py-[0.2rem]  bg-white border rounded-full cursor-pointer">
               <p className="text-xs md:text-base font-medium">{userName}</p>
-              {avater ? (
-                <img
-                  src={avater}
-                  alt="User"
-                  className="w-8 h-8 md:w-10 md:h-10 rounded-full border"
-                />
-              ) : (
-                <div
-                  className={`w-8 h-8 md:w-10 md:h-10 ${bgColor} flex-none flex items-center justify-center text-white font-bold text-sm md:text-base rounded-full`}
-                >
-                  {initials}
-                </div>
-              )}
+              <div className="w-10 h-10 border-2 rounded-full cursor-pointer">
+                {avater ? (
+                  <img src={avater} className="w-full h-full rounded-full" />
+                ) : (
+                  <div
+                    style={{ backgroundColor: getGoogleProfileColor(userName) }}
+                    className="w-full h-full rounded-full flex items-center justify-center text-white capitalize"
+                  >
+                    {firstLetter}
+                  </div>
+                )}
+              </div>
               {isMenuOpen ? (
                 <IoIosArrowUp className="sm:text-xs md:text-base lg:text-lg" />
               ) : (

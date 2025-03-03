@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import { motion } from "framer-motion";
-import { Progress } from "@/components/ui/progress"; // Assuming you're using shadcn/ui
-import { Checkbox } from "@/components/ui/checkbox"; // Import Checkbox from shadcn
 import { Assessment } from "@/types/course.types";
 import Congrats from "../auth/Congrates";
 import { LoaderCircle } from "lucide-react";
+import React, { useState } from "react";
+import { Progress } from "../ui/progress";
+import { motion } from "framer-motion";
+import { Checkbox } from "../ui/checkbox";
 
 interface Question {
   questionId: string;

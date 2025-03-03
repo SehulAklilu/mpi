@@ -1,36 +1,26 @@
-import React from "react";
-import profile_img from "../../assets/user.jpeg";
+import { Player } from "@/types/match.type";
+import { useNavigate } from "react-router-dom";
 
 interface ProfileCardInterface {
-  profile_url?: string;
-  name: string;
-  ranking: number;
-  onClick?: () => void;
+  player: Player;
 }
 
-function ProfileCard({
-  profile_url,
-  name,
-  ranking,
-  onClick,
-}: ProfileCardInterface) {
+function ProfileCard({ player }: ProfileCardInterface) {
+  const navigate = useNavigate();
   return (
-    <div className="flex flex-col border border-[#ffb871] items-center gap-y-2 p-4 rounded-lg shadow shadow-[#F38C28]">
+    <div
+      className="flex w-52 h-40 flex-col border border-[#ffb871] items-center gap-y-2 p-4 rounded-lg shadow-md  cursor-pointer hover:shadow-[#F38C28]"
+      onClick={() => navigate(`/players/${player._id}`)}
+    >
       <img
         className="w-16 h-16 rounded-full object-cover"
-        src={profile_img}
+        src={player.avatar}
         alt={`${name}'s profile`}
       />
-      <p className="text-lg font-medium">{name}</p>
-      <p className="text-sm text-gray-400">USTDA: {ranking}</p>
-      {onClick && (
-        <button
-          onClick={onClick}
-          className="bg-orange-500 text-white text-xs md:text-sm py-2 px-4 rounded-md hover:bg-orange-600 transition-colors"
-        >
-          Track Progress
-        </button>
-      )}
+      <p className="text-lg font-medium">
+        {player.firstName} {player.lastName}
+      </p>
+      <p className="text-sm text-gray-400">USTDA: 18</p>
     </div>
   );
 }

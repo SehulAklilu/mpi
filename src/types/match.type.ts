@@ -585,3 +585,7 @@ export interface Match {
   p2MatchReport: MatchReport;
   report: Report;
 }
+
+export interface MatchResponse {
+  matches: Match[];
+}

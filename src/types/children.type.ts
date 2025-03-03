@@ -7,7 +7,7 @@ interface PhoneNumber {
   number: string;
 }
 
-interface Parent {
+export interface Parent {
   _id: string;
   firstName: string;
   lastName: string;
@@ -34,6 +34,10 @@ export interface Player {
 
 export interface ChildrenResponse {
   players: Player[];
+}
+
+export interface ChildrenResponse {
+  player: Player;
 }
 
 // Avatar Interface
@@ -68,21 +72,38 @@ interface Obstacle {
 }
 
 // Goal Interface
-interface Goal {
-  goal: string;
-  term: string;
+
+export type GoalType =
+  | "physical"
+  | "mental"
+  | "technical"
+  | "tactical"
+  | "nutrition";
+
+export type FieldType =
+  | "physical"
+  | "technical"
+  | "psychological"
+  | "tactical"
+  | "nutrition"
+  | "recovery";
+
+export type GoalTerm = "short" | "long" | "medium";
+export interface Goal {
+  goal: GoalType;
+  term: GoalTerm;
   description: string;
   measurement: string;
   achievementDate: string;
   actions: Action[];
   obstacles: Obstacle[];
-  addOn: string;
+  addOns: string;
   _id: string;
-  progress: any[];
+  progress?: any[];
 }
 
 // CoachGoal Interface
-interface CoachGoal {
+export interface CoachGoal {
   coach: Coach;
   goals: Goal[];
   _id: string;
@@ -106,4 +127,118 @@ interface Child {
 // Wrapper Interface
 export interface ChildResponse {
   player: Child;
+}
+
+export interface Periodization {
+  startingDate: string;
+  endingDate: string;
+  status: string;
+  physical: Physical;
+  technical: Technical;
+  psychological: Psychological;
+  tactical: Tactical;
+  nutrition: Nutrition;
+  recovery: Recovery;
+  _id: string;
+}
+
+interface Physical {
+  preparation: Preparation | null;
+  competition: Competition | null;
+  transition: Transition | null;
+  _id: string;
+}
+
+export interface Preparation {
+  allocatedTime: number;
+  timeType: "days" | "weeks" | "months";
+  generals: string[];
+  specifics: string[];
+  specificDescriptions: string[]; // play goal
+}
+
+interface Competition {
+  allocatedTime: number;
+  timeType: "days" | "weeks" | "months";
+  precompetitions: string[];
+  tournaments: string[];
+}
+
+interface Transition {
+  allocatedTime: number;
+  timeType: "days" | "weeks" | "months";
+  activeRest: string[];
+}
+
+interface Technical {
+  preparation: Preparation | null;
+  competition: Competition | null;
+  transition: Transition | null;
+  _id: string;
+}
+
+interface Psychological {
+  preparation: Preparation | null;
+  competition: Competition | null;
+  transition: Transition | null;
+  _id: string;
+}
+
+interface Tactical {
+  preparation: Preparation | null;
+  competition: Competition | null;
+  transition: Transition | null;
+  _id: string;
+}
+
+interface Nutrition {
+  preparation: Preparation | null;
+  competition: Competition | null;
+  transition: Transition | null;
+  _id: string;
+}
+
+interface Recovery {
+  preparation: Preparation | null;
+  competition: Competition | null;
+  transition: Transition | null;
+  _id: string;
+}
+
+export interface PeriodizationsResponse {
+  periodizations: Periodization[];
+}
+
+export interface PreparationPayload {
+  preparationType: FieldType;
+  preparation: Preparation;
+}
+
+export interface CompetitionPayload {
+  competitionType: FieldType;
+  competition: Competition;
+}
+
+export interface TransitionPayload {
+  transitionType: FieldType;
+  transition: Transition;
+}
+
+export interface GoalPayload {
+  goal: GoalType;
+  term: GoalTerm;
+  description: string;
+  measurement: string;
+  achievementDate: Date;
+  actions: {
+    description: string;
+    date: Date;
+    isDone?: boolean;
+  }[];
+  obstacles: { description: string; isOvercome: boolean }[];
+  addOns?: string | null;
+}
+
+export interface MyGoals {
+  goals: CoachGoal[];
 }
