@@ -155,7 +155,8 @@ export default function MatchReportTabs({ match }: MatchReportProps) {
                         />
                         <Progress
                           value={(Number(p2Value) / maxValue) * 100}
-                          className="flex-1 h-2 bg-gray-200"
+                          className="flex-1  h-2 bg-gray-200"
+                          style={{ transform: "scaleX(-1)" }}
                         />
                         <span className="text-red-600 font-bold w-6 text-left">
                           {p2Value}

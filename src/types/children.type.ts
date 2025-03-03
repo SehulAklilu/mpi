@@ -238,3 +238,7 @@ export interface GoalPayload {
   obstacles: { description: string; isOvercome: boolean }[];
   addOns?: string | null;
 }
+
+export interface MyGoals {
+  goals: CoachGoal[];
+}

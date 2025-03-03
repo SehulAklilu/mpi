@@ -73,9 +73,11 @@ export const updateUserProfile = async (payload: any): Promise<any> => {
   return response.data;
 };
 
-export const searchUsers = async (searchQuery: string): Promise<User[]> => {
+export const searchUsers = async (
+  searchQuery: string
+): Promise<{ result: number; users: User[] }> => {
   const response = await axiosInstance.get(
-    `/api/v1/users/search?${searchQuery}`
+    `/api/v1/users/search?name=${searchQuery}`
   );
   return response.data;
 };

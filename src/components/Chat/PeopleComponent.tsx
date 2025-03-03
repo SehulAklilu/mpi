@@ -40,6 +40,7 @@ import { getAxiosErrorMessage, getAxiosSuccessMessage } from "@/api/axios";
 import { toast } from "react-toastify";
 import { extractUsers } from "@/lib/utils";
 import { searchUsers } from "@/api/auth.api";
+import ProfileCardNew from "./ProfileCardNew";
 
 interface PeopleComponentProps {
   setActiveTab: (tab: string) => void;
@@ -88,16 +89,14 @@ const PeopleComponent: React.FC<PeopleComponentProps> = ({
       toast.error(message);
     },
   });
-  // ✅ Ensure `searchInput` is used in `useEffect`
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearch(searchInput);
     }, 300);
 
     return () => clearTimeout(handler);
-  }, [searchInput]); // ✅ FIX: Use `searchInput` not `searchString`
+  }, [searchInput]);
 
-  // Fetch user data with debounced search term
   const {
     data,
     isLoading: searchingUser,
@@ -105,7 +104,7 @@ const PeopleComponent: React.FC<PeopleComponentProps> = ({
   } = useQuery({
     queryKey: ["searchUser", debouncedSearch],
     queryFn: () => searchUsers(debouncedSearch),
-    enabled: !!debouncedSearch, // Run only when there's a search term
+    enabled: !!debouncedSearch,
   });
 
   const onMessage = (otherUserId: string) => {
@@ -171,7 +170,40 @@ const PeopleComponent: React.FC<PeopleComponentProps> = ({
           startIcon={FaSearch}
         />
       </div>
+      {/* export interface ProfileDataInterface {
+  user2Id?: string;
+  user_id: string;
+  friendship_id: string;
+  name: string;
+  role: string;
+  status: "friends" | "pending" | "blocked";
+  profilePicture: string;
+  otherUserBlocked: boolean;
+  relationshipType: "following" | "follower";
+  setActiveTab?: (tab: string) => void;
+  message?: string;
+  buttonText?: string;
+} */}
       <ScrollArea className="h-[70vh] rounded-md">
+        <section className="p-4">
+          <div className="space-y-2">
+            {data?.users?.map((user, index) => (
+              <ProfileCardNew
+                key={user.id}
+                user2Id={user._id}
+                user_id={user.id}
+                friendship_id="1"
+                name={user.firstName + " " + user.lastName}
+                role={user.role}
+                status="search"
+                profilePicture={user.avatar}
+                otherUserBlocked={false}
+                relationshipType="following"
+              />
+            ))}
+          </div>
+        </section>
+
         <section className="p-4">
           {/* Friend Requests */}
           <div className="border-b">
@@ -234,18 +266,7 @@ const PeopleComponent: React.FC<PeopleComponentProps> = ({
               <div className="space-y-4">
                 <div className="space-y-2 mt-2">
                   {friends?.map((friend) => (
-                    <FriendRequestCard
-                      key={friend.friendship_id}
-                      friendshipId={friend.friendship_id}
-                      name={friend.name}
-                      role={friend.role}
-                      message={`Say hi to ${friend.name}`}
-                      profilePicture={friend.profilePicture}
-                      status={
-                        friend.status === "friends" ? "accepted" : "rejected"
-                      }
-                      onMessage={() => onMessage(friend.user_id)}
-                    />
+                    <ProfileCardNew key={friend.friendship_id} {...friend} />
                   ))}
                   {/* <div className="flex items-center justify-center">
                         <button className="border rounded-lg px-6 py-2">

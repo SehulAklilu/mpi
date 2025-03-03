@@ -226,7 +226,7 @@ export const deleteTransition = async (
   return response.data;
 };
 
-// player goad coatch crating
+// player goad coach crating
 export const getPlayerGoal = async (playerId: string): Promise<any> => {
   const response = await axiosInstance.get(
     `/api/v1/users/playerGoal/${playerId}`
@@ -234,7 +234,7 @@ export const getPlayerGoal = async (playerId: string): Promise<any> => {
   return response.data;
 };
 
-// player goad coatch crating
+// player goad coach crating
 export const createPlayerGoal = async (
   playerId: string,
   payload: GoalPayload
@@ -266,39 +266,39 @@ export const getGoals = async (): Promise<Goal[]> => {
 };
 
 export const createGoal = async (
-  coatchId: string,
+  coachId: string,
   payload: GoalPayload
 ): Promise<any> => {
   const response = await axiosInstance.post(
-    `/api/v1/users/myGoals/${coatchId}`,
+    `/api/v1/users/myGoals/${coachId}`,
     payload
   );
   return response.data;
 };
 
 export const editGoal = async (
-  coatchId: string,
+  coachId: string,
   goalId: string,
   payload: GoalPayload
 ): Promise<any> => {
   const response = await axiosInstance.patch(
-    `/api/v1/users/myGoals/${coatchId}/${goalId}`,
+    `/api/v1/users/myGoals/${coachId}/${goalId}`,
     payload
   );
   return response.data;
 };
 
 export const delelteGoal = async (
-  coatchId: string,
+  coachId: string,
   goalId: string
 ): Promise<any> => {
   const response = await axiosInstance.delete(
-    `/api/v1/users/myGoals/${coatchId}/${goalId}`
+    `/api/v1/users/myGoals/${coachId}/${goalId}`
   );
   return response.data;
 };
 
-// get players classes -- coatch
+// get players classes -- coach
 export const getClassesCoatch = async (playerId: string): Promise<any[]> => {
   const response = await axiosInstance.get(
     `/api/v1/classes/player/${playerId},`
@@ -306,7 +306,7 @@ export const getClassesCoatch = async (playerId: string): Promise<any[]> => {
   return response.data;
 };
 
-// get players classes -- coatch
+// get players classes -- coach
 export const getClassesParent = async (playerId: string): Promise<any[]> => {
   const response = await axiosInstance.get(
     `/api/v1/classes/child/${playerId},`
