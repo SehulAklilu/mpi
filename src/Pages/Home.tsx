@@ -3,6 +3,7 @@ import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import Cookies from "js-cookie";
 import { useRole } from "@/RoleContext";
 import AdminPanelLayout from "@/components/Sidebar/mainLayout";
+import { setNavigateFunction } from "@/api/axios";
 
 function Home() {
   const navigate = useNavigate();
@@ -11,6 +12,7 @@ function Home() {
   const [authToken, setAuthToken] = useState<string | undefined>(
     Cookies.get("authToken")
   );
+  setNavigateFunction(navigate);
 
   useEffect(() => {
     const handleStorageChange = () => {
