@@ -6,11 +6,21 @@ interface ProfileCardInterface {
   player?: Player;
   name?: string;
   isObject: boolean;
+  showBorder?: boolean;
 }
 
-function ProfileCard({ player, name, isObject }: ProfileCardInterface) {
+function ProfileCard({
+  player,
+  name,
+  isObject,
+  showBorder = true,
+}: ProfileCardInterface) {
   return (
-    <div className="w-64 h-44 flex flex-col border border-[#ffb871] items-center gap-y-1 justify-center rounded-lg shadow shadow-[#F38C28]">
+    <div
+      className={`w-64 h-44 flex flex-col border justify-center  items-center gap-y-1  rounded-lg shadow ${
+        showBorder ? "shadow-[#F38C28] border-[#ffb871] " : ""
+      } `}
+    >
       {isObject ? (
         <>
           <img className="w-16 h-16 rounded-full" src={player?.avatar} alt="" />

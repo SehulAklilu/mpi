@@ -10,13 +10,14 @@ import {
 } from "@/components/ui/select";
 import { extractDateTime } from "@/lib/utils";
 import { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import {
   FaUserGraduate,
   FaUsers,
   FaChalkboardTeacher,
   FaTruck,
   FaTrash,
+  FaStar,
 } from "react-icons/fa";
 import { MdOutlineSportsTennis } from "react-icons/md";
 import { GiTennisCourt } from "react-icons/gi";
@@ -51,10 +52,15 @@ import {
 import {
   createTodo,
   deleteTodo,
+  getDashboard,
   getRecentTodos,
   updateTodo,
 } from "@/api/dashboard.api";
-import { Todo, TodoPayload } from "@/types/dashboard.type";
+import {
+  DashboardResponseData,
+  Todo,
+  TodoPayload,
+} from "@/types/dashboard.type";
 import { format } from "date-fns";
 import {
   Popover,
@@ -65,6 +71,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { getAxiosErrorMessage, getAxiosSuccessMessage } from "@/api/axios";
 import { toast } from "react-toastify";
 import DashboardByPlayer from "./DashboardByPlayer";
+import ProfileCard from "../PendingMatch/ProfileCard";
 
 function CoachDashboard() {
   const { role } = useRole();
@@ -88,9 +95,17 @@ function CoachDashboard() {
     queryFn: getMatches,
   });
 
+  const { data: dashboard, isLoading: dashboardIsLoading } = useQuery({
+    queryKey: ["dashboardData"],
+    queryFn: getDashboard,
+  });
+
   const onPlayerSeleted = (value: string) => {
     setSelectedPlayer(value);
   };
+  if (!dashboard) {
+    return <>No Data Avalable</>;
+  }
   return (
     <div className="px-14 mb-[8rem]">
       <div className="flex gap-4 mt-4 ">
@@ -139,27 +154,87 @@ function CoachDashboard() {
         <DashboardByPlayer playerId={selectedPlayer} />
       ) : (
         <>
-          <div className="mt-2">
+          <div className="my-8">
             <TimeRangeSelector />
           </div>
 
           {/* status cards */}
-          <div className="mt-2">
-            <StatsCards />
+          <div className="my-8">
+            <StatsCards reportData={dashboard} />
           </div>
 
           {/* weekly sessions graph */}
-          <div className="mt-2">
-            <WeeklySessions />
+          <div className="my-8">
+            <WeeklySessions reportData={dashboard} />
           </div>
 
           {/* Todos */}
-          <div className="mt-2">
+          <div className="my-8">
             <TodoList />
           </div>
 
-          <div className="mt-2">
-            <p>No Upcoming Match Scheduled</p>
+          {/* Top players */}
+          <div className="grid gap-6 md:grid-cols-2">
+            {dashboard?.topPlayer && (
+              <Card className="p-6 shadow-lg flex items-center">
+                <CardContent className="p-0 w-full">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-6">
+                      <img
+                        src={dashboard?.topPlayer.avatar}
+                        className="w-20 h-20 rounded-full object-cover border-2 border-gray-200"
+                        alt="Top Player"
+                      />
+                      <div>
+                        <h1 className="text-2xl font-bold text-gray-800">
+                          Top Player
+                        </h1>
+                        <p className="text-xl text-gray-600">
+                          {dashboard?.topPlayer.firstName}{" "}
+                          {dashboard?.topPlayer.lastName}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-primary font-bold flex items-center gap-2 text-lg">
+                      <FaStar className="text-yellow-500" /> MVP
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            <div className="flex flex-col items-center md:items-start">
+              {dashboard?.upcomingMatch ? (
+                <Card className="p-6 shadow-lg w-full">
+                  <CardTitle className="text-2xl font-semibold mb-4 text-gray-800">
+                    Next Upcoming Match
+                  </CardTitle>
+                  <CardContent className="p-0 w-full">
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+                      <ProfileCard
+                        name={dashboard?.upcomingMatch?.p1Name}
+                        isObject={dashboard?.upcomingMatch?.p1IsObject}
+                        player={dashboard?.upcomingMatch?.p1}
+                        showBorder={false}
+                      />
+                      <div className="px-5 py-4 text-3xl text-white font-bold bg-gradient-to-b from-orange-400 to-orange-600 rounded-xl shadow-md">
+                        VS
+                      </div>
+                      <ProfileCard
+                        name={dashboard?.upcomingMatch?.p2Name}
+                        isObject={dashboard?.upcomingMatch?.p2IsObject}
+                        player={dashboard?.upcomingMatch?.p2}
+                        showBorder={false}
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="mt-4 text-center md:text-left text-gray-600 text-lg">
+                  <p>No Upcoming Match Scheduled</p>
+                </div>
+              )}
+            </div>
           </div>
         </>
       )}
@@ -193,21 +268,21 @@ export const TimeRangeSelector = () => {
   );
 };
 
-const StatsCards = () => {
+const StatsCards = ({ reportData }: { reportData: DashboardResponseData }) => {
   const stats = [
     {
       label: "Total Students",
-      value: 1200,
+      value: reportData?.totalPlayers ?? 0,
       icon: <FaUserGraduate className="text-blue-500 text-3xl" />,
     },
     {
       label: "Total Matches",
-      value: 450,
+      value: reportData?.totalMatches ?? 0,
       icon: <MdOutlineSportsTennis className="text-green-500 text-3xl" />,
     },
     {
       label: "Total Sessions",
-      value: 320,
+      value: reportData?.totalSessions ?? 0,
       icon: <GiTennisCourt className="text-red-500 text-3xl" />,
     },
   ];
@@ -227,20 +302,29 @@ const StatsCards = () => {
   );
 };
 
-const WeeklySessions = () => {
+const WeeklySessions = ({
+  reportData,
+}: {
+  reportData: DashboardResponseData;
+}) => {
   const data = [
-    { day: "Monday", value: 30 },
-    { day: "Tuesday", value: 50 },
-    { day: "Wednesday", value: 40 },
-    { day: "Thursday", value: 70 },
-    { day: "Friday", value: 60 },
-    { day: "Saturday", value: 90 },
-    { day: "Sunday", value: 80 },
+    { day: "Monday", value: reportData.weeklySession.Monday },
+    { day: "Tuesday", value: reportData.weeklySession.Tuesday },
+    { day: "Wednesday", value: reportData.weeklySession.Wednesday },
+    { day: "Thursday", value: reportData.weeklySession.Thursday },
+    { day: "Friday", value: reportData.weeklySession.Friday },
+    { day: "Saturday", value: reportData.weeklySession.Saturday },
+    { day: "Sunday", value: reportData.weeklySession.Sunday },
   ];
 
   return (
     <Card className="p-4 shadow-md">
-      <h2 className="text-lg font-bold mb-4">Weekly Sessions</h2>
+      <div className="flex items-center justify-between w-full">
+        <h2 className="text-lg font-bold mb-4">Weekly Sessions</h2>
+        <h2 className="text-lg font-bold mb-4 text-primary">
+          Total: {reportData?.totalSessions ?? 0} Sessions
+        </h2>
+      </div>
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />

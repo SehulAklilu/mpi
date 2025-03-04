@@ -1,7 +1,20 @@
 import React, { useMemo } from "react";
 import { useState } from "react";
 import { Check, TrendingUp } from "lucide-react";
-import { Label, Pie, PieChart, Tooltip, Cell } from "recharts";
+import {
+  Label,
+  Pie,
+  PieChart,
+  Tooltip,
+  Cell,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Line,
+  LineChart,
+} from "recharts";
 
 import {
   Card,
@@ -21,9 +34,20 @@ import {
 } from "@/components/ui/chart";
 import { TiDelete } from "react-icons/ti";
 import { FaRegCheckCircle } from "react-icons/fa";
+import { useQuery } from "react-query";
+import { getDashboardByPlayerId } from "@/api/dashboard.api";
+import { TennisMatchStats } from "@/types/dashboard.type";
 
 function DashboardByPlayer({ playerId }: { playerId: string }) {
-  console.log("ddddddddd", playerId);
+  const [selected, setSelected] = useState("Overview");
+
+  const { data, isLoading: dashboardIsLoading } = useQuery({
+    queryKey: ["getDashboardByPlayerId", playerId],
+    queryFn: () => getDashboardByPlayerId(playerId),
+  });
+  if (!data) {
+    return <p>Data Not Avalable</p>;
+  }
   return (
     <div>
       <div className="my-6">
@@ -33,22 +57,73 @@ function DashboardByPlayer({ playerId }: { playerId: string }) {
         <TimeRangeSelector />
       </div> */}
       <div className="my-6">
-        <MenuGroup />
+        <div className="flex items-center space-x-4 bg-gray-100 p-4 rounded-xl shadow-md">
+          {["Overview", "Serves", "Points", "Return", "Rally"].map((option) => (
+            <label
+              key={option}
+              className={`flex items-center justify-center cursor-pointer px-4 py-2 rounded-lg transition-all
+            ${
+              selected === option
+                ? "bg-primary text-white shadow-lg"
+                : "bg-white text-gray-700 hover:bg-gray-200"
+            }`}
+            >
+              <input
+                type="radio"
+                value={option}
+                checked={selected === option}
+                onChange={() => setSelected(option)}
+                className="hidden"
+              />
+              {option}
+            </label>
+          ))}
+        </div>
       </div>
 
-      <div className="my-6 flex  gap-4">
-        <ChartComponent />
-        <WinnersChart />
-      </div>
+      {selected === "Overview" && (
+        <>
+          <div className="my-6 flex  gap-4">
+            <ChartComponent data={data} />
+            <WinnersChart data={data} />
+          </div>
+          <div className="my-6 flex gap-4">
+            <ErrorsChart data={data} />
+          </div>
+          <div className="my-6 flex gap-4">
+            <LastShotAnalysis data={data} />
+            {/* <BrakingPoints /> */}
+          </div>
+        </>
+      )}
+      {selected === "Serves" && (
+        <div>
+          <div className="grid grid-cols-2">
+            <FirstServePlacement data={data} type="first" />
+            <FirstServePlacement data={data} type="second" />
+          </div>
+          <div className="grid grid-cols-2">
+            <FirstServePlacement data={data} type="ace" />
+            <ServeStats data={data} />
+          </div>
+        </div>
+      )}
+      {selected === "Points" && (
+        <div>
+          <div className="grid grid-cols-2">
+            <BrakingPoints data={data} />
+            <FirstServePlacement data={data} type="gamePoint" />
+          </div>
+        </div>
+      )}
 
-      <div className="my-6 flex gap-4">
-        <ErrorsChart />
-      </div>
-
-      <div className="my-6 flex gap-4">
-        <LastShotAnalysis />
-        <AverageRally />
-      </div>
+      {selected === "Rally" && (
+        <div>
+          <div className="grid grid-cols-2">
+            <FirstServePlacement data={data} type="rally" />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -126,18 +201,35 @@ const RadioButtonGroup = () => {
   );
 };
 
-const ChartComponent = () => {
+const ChartComponent = ({ data }: { data: TennisMatchStats }) => {
+  const [selected, setSelected] = useState("Points");
+
   const chartData = [
-    { browser: "pointsWon", visitors: 275, fill: "#8884d8" },
-    { browser: "pointsLost", visitors: 200, fill: "#F8B36D" },
+    {
+      browser: "pointsWon",
+      totalPoint:
+        selected === "Percentage"
+          ? data?.points.p1.wonPercentage * 100
+          : data?.points.p1.won,
+      fill: "#8884d8",
+    },
+    {
+      browser: "pointsLost",
+      totalPoint:
+        selected === "Percentage"
+          ? data?.points.p2.wonPercentage * 100
+          : data?.points.p2.won,
+
+      fill: "#F8B36D",
+    },
   ];
   const totalVisitors = React.useMemo(() => {
-    return chartData.reduce((acc, curr) => acc + curr.visitors, 0);
-  }, []);
+    return chartData.reduce((acc, curr) => acc + curr.totalPoint, 0);
+  }, [selected, data]);
 
   const chartConfig = {
-    visitors: {
-      label: "Visitors",
+    totalPoint: {
+      label: "Total Point",
     },
     pointsWon: {
       label: "Points Won",
@@ -148,7 +240,6 @@ const ChartComponent = () => {
       color: "hsl(var(--chart-2))",
     },
   } satisfies ChartConfig;
-  const [selected, setSelected] = useState("Percentage");
 
   return (
     <Card className="flex flex-col justify-center flex-1 border p-4 rounded-3xl bg-white shadow-lg">
@@ -160,7 +251,7 @@ const ChartComponent = () => {
           Total Points
         </CardTitle>
         <CardDescription className="text-xl text-green-700 text-center font-bold">
-          Total : 1000
+          Total : {data?.points.total}
         </CardDescription>
 
         <div className="flex text-center justify-center">
@@ -198,7 +289,7 @@ const ChartComponent = () => {
             />
             <Pie
               data={chartData}
-              dataKey="visitors"
+              dataKey="totalPoint"
               nameKey="browser"
               innerRadius={60}
               strokeWidth={5}
@@ -225,7 +316,7 @@ const ChartComponent = () => {
                           y={(viewBox.cy || 0) + 24}
                           className="fill-muted-foreground"
                         >
-                          Visitors
+                          Total Points
                         </tspan>
                       </text>
                     );
@@ -244,7 +335,7 @@ const ChartComponent = () => {
             </div>
             <div>
               <p className="text-gray-800 text-lg">Won</p>
-              <p className="text-600">478 Points</p>
+              <p className="text-600">{data?.points.p1.won} Points</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -253,7 +344,7 @@ const ChartComponent = () => {
             </div>
             <div>
               <p className="text-gray-800 text-lg">Lost</p>
-              <p className="text-600">78 Points</p>
+              <p className="text-600">{data?.points.p2.won} Points</p>
             </div>
           </div>
         </div>
@@ -262,12 +353,29 @@ const ChartComponent = () => {
   );
 };
 
-const WinnersChart = () => {
+const WinnersChart = ({ data: dashboard }: { data: TennisMatchStats }) => {
   const data = [
-    { name: "Forehand", value: 1, color: "#8884d8" },
-    { name: "Total", value: 1, color: "#F8B36D" },
-    { name: "Return Forehand", value: 1, color: "#e3e3fd" },
-    { name: "Backhand", value: 1, color: "#F2851C" },
+    {
+      name: "Forehand",
+      value: dashboard?.winners.p1.forehand,
+      color: "#8884d8",
+    },
+    { name: "Total", value: dashboard?.winners.total, color: "#F8B36D" },
+    {
+      name: "Return Forehand",
+      value: dashboard?.winners.p1.returnForehand,
+      color: "#e3e3fd",
+    },
+    {
+      name: "Backhand",
+      value: dashboard?.winners.p1.backhand,
+      color: "#F2851C",
+    },
+    {
+      name: "Return Backhand",
+      value: dashboard?.winners.p1.returnBackhand,
+      color: "#F2851C",
+    },
   ];
   const totalWinners = useMemo(
     () => data.reduce((acc, curr) => acc + curr.value, 0),
@@ -283,7 +391,7 @@ const WinnersChart = () => {
           Total Winners
         </CardTitle>
         <p className="text-2xl font-bold text-blue-700">
-          Total: {totalWinners}
+          Total: {dashboard?.winners.total}
         </p>
         <p className="text-sm text-blue-400">Win Rate: 213%</p>
       </CardHeader>
@@ -342,10 +450,18 @@ const WinnersChart = () => {
   );
 };
 
-const ErrorsChart = () => {
+const ErrorsChart = ({ data }: { data: TennisMatchStats }) => {
   const chartData = [
-    { type: "Forced Errors", count: 150, fill: "#FF6B6B" },
-    { type: "Unforced Errors", count: 100, fill: "#FFD93D" },
+    {
+      type: "Forced Errors",
+      count: data.errorss.p1.forced.percentage,
+      fill: "#FF6B6B",
+    },
+    {
+      type: "Unforced Errors",
+      count: data.errorss.p1.unforced.percentage,
+      fill: "#FFD93D",
+    },
   ];
 
   const totalErrors = useMemo(() => {
@@ -431,20 +547,15 @@ const ErrorsChart = () => {
                 Forehand Details
               </CardTitle>
               <CardContent>
-                <p>Volley: 0</p>
-                <p>Slice: 0</p>
-              </CardContent>
-            </Card>
-
-            <Card className="p-4 bg-red-100 border border-red-300 rounded-xl">
-              <CardTitle className="text-red-500 font-bold">
-                Forehand Details
-              </CardTitle>
-              <CardContent>
-                <p>Volley: 0</p>
-                <p>Slice: 0</p>
-                <p>Swinging Volley: 0</p>
-                <p>Drop Shot: 0</p>
+                <p>Volley: {data.errorss.p1.forced.forehand.volley}</p>
+                <p>Slice: {data.errorss.p1.forced.forehand.slice}</p>
+                <p>
+                  Swinging Volley:{" "}
+                  {data.errorss.p1.forced.forehand?.swingingVolley ?? 0}
+                </p>
+                <p>
+                  Drop Shot: {data.errorss.p1.forced.forehand?.dropShot ?? 0}
+                </p>
               </CardContent>
             </Card>
 
@@ -453,8 +564,32 @@ const ErrorsChart = () => {
                 Backhand Details
               </CardTitle>
               <CardContent>
-                <p>Volley: 0</p>
-                <p>Slice: 0</p>
+                <p>Volley: {data.errorss.p1.forced.backhand.volley}</p>
+                <p>Slice: {data.errorss.p1.forced.backhand.slice}</p>
+                <p>
+                  Swinging Volley:{" "}
+                  {data.errorss.p1.forced.backhand?.swingingVolley ?? 0}
+                </p>
+                <p>
+                  Drop Shot: {data.errorss.p1.forced.backhand?.dropShot ?? 0}
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="p-4 bg-red-100 border border-red-300 rounded-xl">
+              <CardTitle className="text-red-500 font-bold">
+                Forehand Details
+              </CardTitle>
+              <CardContent>
+                <p>Volley: {data.errorss.p1.unforced.forehand.volley}</p>
+                <p>Slice: {data.errorss.p1.unforced.forehand.slice}</p>
+                <p>
+                  Swinging Volley:{" "}
+                  {data.errorss.p1.unforced.forehand?.swingingVolley ?? 0}
+                </p>
+                <p>
+                  Drop Shot: {data.errorss.p1.unforced.forehand?.dropShot ?? 0}
+                </p>
               </CardContent>
             </Card>
 
@@ -463,9 +598,15 @@ const ErrorsChart = () => {
                 Backhand Details
               </CardTitle>
               <CardContent>
-                <p>Volley: 0</p>
-                <p>Slice: 0</p>
-                <p>Swinging Volley: 0</p>
+                <p>Volley: {data.errorss.p1.unforced.backhand.volley}</p>
+                <p>Slice: {data.errorss.p1.unforced.backhand.slice}</p>
+                <p>
+                  Swinging Volley:{" "}
+                  {data.errorss.p1.unforced.backhand?.swingingVolley ?? 0}
+                </p>
+                <p>
+                  Drop Shot: {data.errorss.p1.unforced.backhand?.dropShot ?? 0}
+                </p>
               </CardContent>
             </Card>
           </div>
@@ -475,14 +616,29 @@ const ErrorsChart = () => {
   );
 };
 
-const LastShotAnalysis = () => {
-  const chartData = [{ browser: "win", visitors: 275, fill: "#8884d8" }];
+const LastShotAnalysis = ({ data }: { data: TennisMatchStats }) => {
+  const chartData = [
+    {
+      browser: "win",
+      visitors: data.lastShot.p1.winPercentage,
+      fill: "#8884d8",
+    },
+    {
+      browser: "lose",
+      visitors: data.lastShot.p1.losePercentage,
+      fill: "#82ca9d",
+    },
+  ];
   const chartConfig = {
     visitors: {
       label: "Visitors",
     },
     win: {
       label: "Win",
+      color: "hsl(var(--chart-1))",
+    },
+    lose: {
+      label: "Lose",
       color: "hsl(var(--chart-1))",
     },
   } satisfies ChartConfig;
@@ -510,14 +666,36 @@ const LastShotAnalysis = () => {
   );
 };
 
-const AverageRally = () => {
-  const chartData = [{ browser: "win", visitors: 275, fill: "#F28822" }];
+const BrakingPoints = ({ data }: { data: TennisMatchStats }) => {
+  const chartData = [
+    { browser: "saved", visitors: data.breakPoints.p1.saved, fill: "#F28822" },
+    {
+      browser: "converted",
+      visitors: data.breakPoints.p1.converted,
+      fill: "#8884d8",
+    },
+  ];
+
+  const savedPercentage = data.breakPoints.p1.total
+    ? ((data.breakPoints.p1.saved / data.breakPoints.p1.total) * 100).toFixed(2)
+    : "0";
+
+  const convertedPercentage = data.breakPoints.p1.total
+    ? (
+        (data.breakPoints.p1.converted / data.breakPoints.p1.total) *
+        100
+      ).toFixed(2)
+    : "0";
   const chartConfig = {
     visitors: {
       label: "Visitors",
     },
-    win: {
-      label: "Win",
+    saved: {
+      label: "Saved",
+      color: "hsl(var(--chart-1))",
+    },
+    converted: {
+      label: "Converted",
       color: "hsl(var(--chart-1))",
     },
   } satisfies ChartConfig;
@@ -541,6 +719,271 @@ const AverageRally = () => {
           </PieChart>
         </ChartContainer>
       </CardContent>
+      <CardFooter>
+        <div>
+          <h1 className="text-lg">Statistics</h1>
+          <p className="text-sm">
+            Break Points Saved:{" "}
+            <span className="font-semibold">{savedPercentage}%</span>
+          </p>
+          <p className="text-sm">
+            Break Points Converted:{" "}
+            <span className="font-semibold">{convertedPercentage}%</span>
+          </p>
+        </div>
+      </CardFooter>
     </Card>
   );
 };
+
+export function FirstServePlacement({
+  data,
+  type,
+}: {
+  data: TennisMatchStats;
+  type: "first" | "second" | "ace" | "gamePoint" | "rally";
+}) {
+  const total =
+    type === "first"
+      ? data.firstServePlacement.p1.wide +
+        data.firstServePlacement.p1.body +
+        data.firstServePlacement.p1.t +
+        data.firstServePlacement.p1.net
+      : type === "second"
+      ? data.secondServePlacement.p1.wide +
+        data.secondServePlacement.p1.body +
+        data.secondServePlacement.p1.t +
+        data.secondServePlacement.p1.net
+      : type === "ace"
+      ? data.acesPlacement.p1.wide +
+        data.acesPlacement.p1.body +
+        data.acesPlacement.p1.t +
+        data.acesPlacement.p1.net
+      : type === "gamePoint"
+      ? data.gamePoints.p1.total
+      : data.rallyLengthFrequency.oneToFour +
+        data.rallyLengthFrequency.fiveToEight +
+        data.rallyLengthFrequency.nineToTwelve +
+        data.rallyLengthFrequency.thirteenToTwenty +
+        data.rallyLengthFrequency.twentyOnePlus;
+
+  const serveData =
+    type === "first"
+      ? [
+          {
+            category: "Wide",
+            percentage: (data.firstServePlacement.p1.wide / total) * 100,
+          },
+          {
+            category: "Body",
+            percentage: (data.firstServePlacement.p1.body / total) * 100,
+          },
+          {
+            category: "T",
+            percentage: (data.firstServePlacement.p1.t / total) * 100,
+          },
+          {
+            category: "Net",
+            percentage: (data.firstServePlacement.p1.net / total) * 100,
+          },
+        ]
+      : type === "second"
+      ? [
+          {
+            category: "Wide",
+            percentage: (data.secondServePlacement.p1.wide / total) * 100,
+          },
+          {
+            category: "Body",
+            percentage: (data.secondServePlacement.p1.body / total) * 100,
+          },
+          {
+            category: "T",
+            percentage: (data.secondServePlacement.p1.t / total) * 100,
+          },
+          {
+            category: "Net",
+            percentage: (data.secondServePlacement.p1.net / total) * 100,
+          },
+        ]
+      : type === "ace"
+      ? [
+          {
+            category: "Wide",
+            percentage: (data.acesPlacement.p1.wide / total) * 100,
+          },
+          {
+            category: "Body",
+            percentage: (data.acesPlacement.p1.body / total) * 100,
+          },
+          {
+            category: "T",
+            percentage: (data.acesPlacement.p1.t / total) * 100,
+          },
+          {
+            category: "Net",
+            percentage: (data.acesPlacement.p1.net / total) * 100,
+          },
+        ]
+      : type === "gamePoint"
+      ? [
+          {
+            category: "Saved",
+            percentage: (data.gamePoints.p1.saved / total) * 100,
+          },
+          {
+            category: "Converted",
+            percentage: (data.gamePoints.p1.converted / total) * 100,
+          },
+        ]
+      : [
+          {
+            category: "1 - 4",
+            percentage: (data.rallyLengthFrequency.oneToFour / total) * 100,
+          },
+          {
+            category: "5 - 8",
+            percentage: (data.rallyLengthFrequency.fiveToEight / total) * 100,
+          },
+          {
+            category: "9 - 12",
+            percentage: (data.rallyLengthFrequency.nineToTwelve / total) * 100,
+          },
+          {
+            category: "13 - 20",
+            percentage:
+              (data.rallyLengthFrequency.thirteenToTwenty / total) * 100,
+          },
+          {
+            category: "20+",
+            percentage: (data.rallyLengthFrequency.twentyOnePlus / total) * 100,
+          },
+        ];
+
+  const chartConfig = {
+    totalPoint: {
+      label: "Total Point",
+      color: "hsl(var(--chart-2))",
+    },
+    pointsWon: {
+      label: "Points Won",
+      color: "hsl(var(--chart-1))",
+    },
+    pointsLost: {
+      label: "Points Lost",
+      color: "hsl(var(--chart-2))",
+    },
+  } satisfies ChartConfig;
+
+  return (
+    <Card className="">
+      <CardHeader>
+        <CardTitle className="text-2xl font-bold my-2">
+          {type === "first"
+            ? "First Serve Placement"
+            : type === "second"
+            ? "Second Serve Placement"
+            : type === "ace"
+            ? "Aces Placement"
+            : type === "gamePoint"
+            ? "Game Points"
+            : "Rally Length"}
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <ChartContainer config={chartConfig}>
+          <BarChart accessibilityLayer data={serveData}>
+            <CartesianGrid vertical={false} />
+            <XAxis dataKey="category" tickLine={false} axisLine={false} />
+            <YAxis
+              domain={[0, 100]}
+              ticks={[0, 20, 40, 60, 80, 100]}
+              tickFormatter={(tick) => `${tick}%`}
+            />
+            <ChartTooltip
+              cursor={false}
+              content={<ChartTooltipContent indicator="dashed" />}
+            />
+            <Bar dataKey="percentage" fill="hsl(var(--chart-1))" radius={1} />
+          </BarChart>
+        </ChartContainer>
+      </CardContent>
+    </Card>
+  );
+}
+
+export function ServeStats({ data }: { data: TennisMatchStats }) {
+  const chartData = [
+    // { serveType: "First Serve", count: data?.serves.p1. },
+    { serveType: "First Serve Won", count: data?.serves.p1.firstServesWon },
+    { serveType: "First Serve Lost", count: data?.serves.p1.firstServesLost },
+    // { serveType: "Second Serve", count: 0 },
+    { serveType: "Second Serve Won", count: data?.serves.p1.secondServesWon },
+    { serveType: "Second Serve Lost", count: data?.serves.p1.secondServesLost },
+  ];
+
+  const chartConfig = {
+    serveType: {
+      label: "Serve Type",
+      color: "hsl(var(--chart-1))",
+    },
+    count: {
+      label: "Count",
+      color: "hsl(var(--chart-2))",
+    },
+  } satisfies ChartConfig;
+  return (
+    <Card className="">
+      <CardHeader>
+        <CardTitle>Serves Chart</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <ChartContainer config={chartConfig}>
+          <LineChart
+            accessibilityLayer
+            data={chartData}
+            margin={{
+              left: 12,
+              right: 12,
+            }}
+          >
+            <CartesianGrid vertical={false} />
+            <XAxis
+              dataKey="serveType"
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+            />
+            <YAxis
+              type="number"
+              domain={[0, 100]} // Range from 0 to 100 as requested
+              tickCount={6} // To show tick marks from 0, 20, 40, ... 100
+            />
+            <ChartTooltip
+              cursor={false}
+              content={<ChartTooltipContent hideLabel />}
+            />
+            <Line
+              dataKey="count"
+              type="natural"
+              stroke="#F28822"
+              strokeWidth={2}
+              dot={false} // No dots for each data point
+              activeDot={{
+                r: 6,
+              }}
+            />
+          </LineChart>
+        </ChartContainer>
+      </CardContent>
+      {/* <CardFooter className="flex-col items-start gap-2 text-sm">
+        <div className="flex gap-2 font-medium leading-none">
+          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+        </div>
+        <div className="leading-none text-muted-foreground">
+          Showing serve stats for Player 1
+        </div>
+      </CardFooter> */}
+    </Card>
+  );
+}

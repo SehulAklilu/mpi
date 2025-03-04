@@ -99,3 +99,19 @@ Post /api/v1/todos
 /api/v1/latest
 
 String id, String title, Date dueDate, bool isCompleted,
+
+
+api/v1/dashboard:
+get-» get my dashboard
+
+api/v1/dashboard/:playerId/matches?months=:months&matchType: (practice, tournament)
+GET get player matches
+
+api/v1/dashboard/matches/:matchId
+get matchData
+
+/api/v1/dashboard/me
+get general report
+
+/api/v1/dashboard/:playerId/matches/:matchId
+get player matchdata
