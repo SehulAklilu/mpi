@@ -135,6 +135,7 @@ export const LABELS: Record<string, string> = {
   negativeSelfTalks: "Negative Self Talks",
   positiveSelfTalks: "Positive Self Talks",
   noResponses: "No Responses",
+  noResponse: "No Response",
   fault: "Fault",
   p1Winner: "Player One Winner",
   p1UnforcedError: "Player One Unforced Error",

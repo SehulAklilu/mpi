@@ -69,6 +69,31 @@ const SetsTable: React.FC<{ match: Match }> = ({ match }) => {
     );
   };
 
+  const getPlayerName = (key: string): JSX.Element | null => {
+    const player: string | Player | undefined =
+      key === "playerOne"
+        ? playerOne
+        : key === "playerTwo"
+        ? playerTwo
+        : undefined;
+
+    if (!player) {
+      return null;
+    }
+
+    return (
+      <div className="flex items-center gap-2">
+        <div>
+          <p className="text-sm">
+            {isPlayer(player)
+              ? `${player.firstName} ${player.lastName}`
+              : player}
+          </p>
+        </div>
+      </div>
+    );
+  };
+
   // Total columns in the parent table: 1 for "Player" plus one for each set.
   const totalColumns = match.sets.length + 1;
 
@@ -291,11 +316,31 @@ const SetsTable: React.FC<{ match: Match }> = ({ match }) => {
                                               </div>
                                             </th>
                                             <th className="border font-medium border-gray-300 p-1">
+                                              <div className="flex flex-col items-center justify-center">
+                                                {getPlayerName("playerOne")}{" "}
+                                                Reaction
+                                              </div>
+                                            </th>
+                                            <th className="border font-medium border-gray-300 p-1">
+                                              <div className="flex flex-col items-center justify-center">
+                                                {getPlayerName("playerTwo")}{" "}
+                                                Reaction
+                                              </div>
+                                            </th>
+                                            <th className="border font-medium border-gray-300 p-1">
                                               Type
                                             </th>
                                             <th className="border font-medium border-gray-300 p-1">
+                                              Missed Shot
+                                            </th>
+                                            <th className="border font-medium border-gray-300 p-1">
+                                              Missed Shot Way
+                                            </th>
+
+                                            <th className="border font-medium border-gray-300 p-1">
                                               Serve
                                             </th>
+
                                             <th className="border font-medium border-gray-300 p-1">
                                               Rally Count
                                             </th>
@@ -314,7 +359,24 @@ const SetsTable: React.FC<{ match: Match }> = ({ match }) => {
                                                 {score.p2Score}
                                               </td>
                                               <td className="border border-gray-300 p-1 text-center">
+                                                {LABELS[score.p1Reaction] ??
+                                                  "-"}
+                                              </td>
+                                              <td className="border border-gray-300 p-1 text-center">
+                                                {LABELS[score.p2Reaction] ??
+                                                  "-"}
+                                              </td>
+                                              <td className="border border-gray-300 p-1 text-center">
                                                 {LABELS[score.type]}
+                                              </td>
+                                              <td className="border border-gray-300 p-1 text-center">
+                                                {/* {score.missedShot} */}
+                                                {LABELS[score.missedShot] ??
+                                                  "-"}
+                                              </td>
+                                              <td className="border border-gray-300 p-1 text-center">
+                                                {LABELS[score.missedShotWay] ??
+                                                  "-"}
                                               </td>
                                               <td className="border border-gray-300 p-1 text-center">
                                                 {LABELS[score.servePlacement]}

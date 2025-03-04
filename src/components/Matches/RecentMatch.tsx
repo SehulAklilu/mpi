@@ -11,7 +11,7 @@ import { ContentLayout } from "@/components/Sidebar/contenet-layout";
 import { FiInfo } from "react-icons/fi";
 import profile_img from "../../assets/user.jpeg";
 import Report from "./Report";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { string } from "zod";
 import { useQuery } from "react-query";
 import { getMatch } from "@/api/match.api";
@@ -33,6 +33,7 @@ interface DetailsInterface {
 function RecentMatch() {
   const [activeTab, setActiveTab] = useState("details");
   const user_id = Cookies.get("user_id");
+  const navigate = useNavigate();
 
   const { id } = useParams<{ id: string }>();
 
@@ -98,7 +99,12 @@ function RecentMatch() {
             user_id === match.matchCreator._id &&
             match.status !== "completed" ? (
               <div className="flex items-center justify-end pr-4">
-                <button className="py-2 px-6 rounded-3xl bg-primary text-white">
+                <button
+                  className="py-2 px-6 rounded-3xl bg-primary text-white"
+                  onClick={() =>
+                    navigate(`/matches/trackingMatch/${match._id}`)
+                  }
+                >
                   Track Match
                 </button>
               </div>
@@ -185,7 +191,7 @@ function RecentMatch() {
 
                 <TabsContent
                   value="sets"
-                  className="w-full md:w-[54rem] lg:w-[64rem] mx-auto px-4"
+                  className="w-full md:w-[64rem] lg:w-[74rem] mx-auto px-4"
                 >
                   {match?.status === "completed" ? (
                     <SetsTable match={match} />
@@ -198,9 +204,17 @@ function RecentMatch() {
                   )}
                 </TabsContent>
                 <TabsContent value="momentum" className="w-full mx-auto px-4">
-                  <div className="w-full flex justify-center items-center flex-col gap-2 mt-14">
-                    <MatchDetails match={match} />
-                  </div>
+                  {match?.status === "completed" ? (
+                    <div className="w-full flex justify-center items-center flex-col gap-2 mt-14">
+                      <MatchDetails match={match} />
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-center min-h-[10rem]">
+                      <p className="text-xl text-gray-400">
+                        Match Not Completed
+                      </p>
+                    </div>
+                  )}
                 </TabsContent>
                 <TabsContent value="report" className="w-full   px-2">
                   {match?.status === "completed" ? (
