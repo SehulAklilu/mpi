@@ -1,0 +1,4 @@
+- timers
+- adjust collecting data
+- tieBreak
+- redo 

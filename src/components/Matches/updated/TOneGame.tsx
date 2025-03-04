@@ -235,29 +235,30 @@ const OneGame = ({
   const [isOnFault, setIsOnFault] = useState(false);
   const typeData = [
     {
-      name: "ace",
+      name: "Ace",
+      value: "ace",
       disabled: singleData.rallyCount > 1,
-      isActive: true,
+      isActive: score.serve != "player1",
     },
     {
-      name: "returnWinner",
-      disabled: false,
-      isActive: true,
+      name: "Return Winner",
+      value: "returnWinner",
+      isActive: score.serve != "player1",
     },
     {
-      name: "returnError",
-      disabled: false,
-      isActive: true,
+      name: "Return Error",
+      value: "returnError",
+      isActive: score.serve == "player1",
     },
     {
-      name: "forcedReturnError",
-      disabled: false,
-      isActive: true,
+      name: "Forced Return Error",
+      value: "forcedReturnError",
+      isActive: score.serve != "player1",
     },
     {
-      name: "ballInCourt",
-      disabled: false,
-      isActive: true,
+      name: "Ball In Court",
+      value: "ballInCourt",
+      isActive: false,
     },
   ];
   const winner1Data = [
@@ -266,22 +267,21 @@ const OneGame = ({
       winner: score.serve,
       value: "p1Winner",
       disabled: false,
-      isActive: false,
+      isActive: score.serve != "player1",
     },
     {
       name: "Forced Error",
       winner: score.serve,
       value: "p1ForcedError",
       disabled: false,
-      isActive: false,
+      isActive: score.serve != "player1",
     },
     {
       name: "Unforced Error",
       winner: score.serve,
-
       value: "p1UnforcedError",
       disabled: false,
-      isActive: false,
+      isActive: score.serve != "player1",
     },
   ];
   const winner2Data = [
@@ -290,21 +290,21 @@ const OneGame = ({
       winner: getAgainest(score.serve),
       value: "p2Winner",
       disabled: false,
-      isActive: true,
+      isActive: score.serve == "player1",
     },
     {
       name: "Forced Error",
       value: "p2ForcedError",
       winner: getAgainest(score.serve),
       disabled: false,
-      isActive: true,
+      isActive: score.serve == "player1",
     },
     {
       name: "Unforced Error",
       value: "p2UnforcedError",
       winner: getAgainest(score.serve),
       disabled: false,
-      isActive: true,
+      isActive: score.serve == "player1",
     },
   ];
 
@@ -326,7 +326,7 @@ const OneGame = ({
   }
   const [undoStack, setUndoStack] = useState<Stack[]>([]);
   // const [redoStack, setUndoStack] = useState<Stack[]>([]);
-
+  const [lastServer, setLastServer] = useState(score.serve);
   const undoLastAction = () => {
     if (undoStack.length === 0) return;
     const lastAction = undoStack.pop();
@@ -339,84 +339,125 @@ const OneGame = ({
   };
 
   const registerScore = (finalData: Score, updatedCheck: dataTrackerType) => {
+    console.log(timers, "TT", lastBPT);
+
     if (updatedCheck.goalType == "") {
       return;
     }
+    let updatedFinalData = { ...finalData, betweenPointDuration: lastBPT };
 
     if (updatedCheck.goalType == "fault") {
       if (isOnFault) {
-        addPoint(updatedCheck.winner, finalData);
+        setStartedServing(true);
+        setIsFirstServe(true);
+        setShowServe(false);
+        addPoint(updatedCheck.winner, updatedFinalData, getTimers);
       }
       setIsOnFault((d) => !d);
     } else {
+      setStartedServing(true);
+      setIsFirstServe(true);
+      setShowServe(false);
       isOnFault && setIsOnFault(false);
-      addPoint(updatedCheck.winner, finalData);
+      addPoint(updatedCheck.winner, updatedFinalData, getTimers);
     }
-    console.log(finalData, updatedCheck);
+    console.log(updatedFinalData, updatedCheck);
     reset();
+  };
+
+  const [startedServing, setStartedServing] = useState(false);
+  const [firstServing, setFirstServing] = useState(false);
+  const [showServe, setShowServe] = useState(false);
+  const [isFirstServe, setIsFirstServe] = useState(false);
+  const [showChangeOverTimer, setShowChangeOverTimer] = useState(false);
+  const [lastBPT, setLastBPT] = useState(0);
+  const [lastCOT, setLastCOT] = useState(0);
+
+  const [timers, setTimers] = useState({
+    mainTimer: 0,
+    betweenPointTimer: 0,
+    changeOverTimer: 0,
+  });
+
+  useEffect(() => {
+    const func = () => {
+      if (score.serve != lastServer) {
+        setStartedServing(false);
+        setShowChangeOverTimer(true);
+        setLastServer(score.serve);
+      }
+    };
+
+    func();
+  }, [score.serve]);
+
+  const getTimers = () => {
+    return { timers, lastCOT, lastBPT };
+  };
+
+  const resetTempScore = (name: keyof Score, value = "") => {
+    setTempScore((d) => ({ ...d, [name]: value }));
   };
 
   return (
     <div className="flex flex-col">
-      {/* 
-      <div className="flex w-full justify-end   gap-5 px-32 mt-4">
-        <Button
-          onClick={undoLastAction}
-          className="flex gap-2 items-center justify-center capitalize text-sm"
-        >
-          <div>undo</div>
-          <BsArrow90DegLeft className="text-primary font-bold" />
-        </Button>
-        <Button
-          onClick={() => {}}
-          className="flex gap-2 items-center justify-center capitalize text-sm"
-        >
-          <BsArrow90DegRight className="text-primary" />
-          <div>Redo</div>
-        </Button>
-      </div> */}
-      {/* <div className="mx-auto mt-8 mb-8">
-        <div className="text-center mb-1">Rally Count</div>
-        <div className="border rounded-lg flex">
-          <Button
-            onClick={() => {
-              setSingleData((d) => ({ ...d, rallyCount: d.rallyCount - 1 }));
-            }}
-            disabled={singleData.rallyCount == 1}
-            className={`px-12 py-6 rounded-l-lg bg-primary ${
-              singleData.rallyCount == 1 && "bg-primary/50"
-            } text-white flex justify-center items-center`}
-          >
-            <FaMinus />
-          </Button>
-          <div className="px-12 py-6 bg-white flex justify-center items-center">
-            <div className="w-6 flex justify-center ">
-              {singleData.rallyCount}
-            </div>
-          </div>
-          <Button
-            onClick={() => {
-              setSingleData((d) => ({ ...d, rallyCount: d.rallyCount + 1 }));
-            }}
-            className="px-12 py-6 rounded-r-lg bg-primary text-white flex justify-center items-center"
-          >
-            <FaPlus />
-          </Button>
-        </div>
-      </div> */}
+      <div className=""></div>
+      <div className="flex flex-col items-center">
+        <MainTimer
+          start={firstServing}
+          mainTimer={timers.mainTimer}
+          setTimers={setTimers}
+        />
 
-      <Button
+        {isFirstServe && (
+          <BetweenPointTimer
+            start={startedServing}
+            betweenPointTimer={timers.betweenPointTimer}
+            setTimers={setTimers}
+          />
+        )}
+
+        <ChangeOverTimer
+          start={showChangeOverTimer}
+          changeOverTimer={timers.changeOverTimer}
+          setTimers={setTimers}
+        />
+      </div>
+
+      {/* <Button
         className="bg-primary text-white py-1 px-4 text-sm rounded-lg w-fit mx-auto"
         onClick={() => {
           reset();
         }}
       >
         Clear
-      </Button>
+      </Button> */}
 
-      <div className="flex justify-center my-5 gap-8 px-1 mt-4">
-        {tempScore.servePlacement == "" ? (
+      <div className="flex  justify-center my-5 gap-8 px-1 mt-4">
+        {!showServe ? (
+          <Button
+            className="px-7 py-4 mt-5 rounded-lg border bg-white"
+            onClick={() => {
+              if (firstServing) {
+                setLastBPT(timers.betweenPointTimer);
+                console.log(timers.betweenPointTimer, "Last");
+                setStartedServing(false);
+              } else {
+                setFirstServing(true);
+              }
+              setShowServe(true);
+              if (showChangeOverTimer) {
+                setLastCOT(timers.changeOverTimer);
+                setShowChangeOverTimer(false);
+              }
+            }}
+          >
+            {score.serve} start Serving
+          </Button>
+        ) : tempScore.servePlacement == "" ? (
           <ServePlacementBody
+            reset={reset}
+            back={reset}
             score={score}
             tempScore={tempScore}
             singleData={singleData}
@@ -429,6 +470,10 @@ const OneGame = ({
           tempScore.servePlacement == "fault" ? (
           !tempScore.p1Reaction || !tempScore.p2Reaction ? (
             <PlayerReaction
+              reset={reset}
+              back={() => {
+                resetTempScore("servePlacement");
+              }}
               tempScore={tempScore}
               singleData={singleData}
               setTempScore={setTempScore}
@@ -439,23 +484,27 @@ const OneGame = ({
             <>{JSON.stringify(tempScore)}</>
           )
         ) : tempScore.type == "" ? (
-          <div className="col-span-3 grid grid-cols-3  gap-4">
-            {typeData.map((data) => (
-              <GamePointButtons
-                key={data.name}
-                onClick={() => {
-                  setTempScore((d) => ({ ...d, type: data.name }));
-                }}
-                isActive={data.isActive}
-                disabled={data.disabled}
-                name={data.name}
-                type={score.serve == "player1" ? "server" : "againest"}
-              />
-            ))}
+          <div>
+            <ClearDivs reset={reset} back={reset} />
+            <div className=" grid grid-cols-2 place-items-center   gap-4">
+              {typeData.map((data) => (
+                <GamePointButtons
+                  key={data.name}
+                  onClick={() => {
+                    setTempScore((d) => ({ ...d, type: data.value }));
+                  }}
+                  name={data.name}
+                  isActive={data.isActive}
+                  wf={data.value == "ballInCourt" ? "col-span-2 w-full" : ""}
+                />
+              ))}
+            </div>
           </div>
         ) : tempScore.type == "ace" ? (
           <div>
             <PlayerReaction
+              reset={reset}
+              back={() => resetTempScore("type")}
               tempScore={tempScore}
               singleData={singleData}
               setTempScore={setTempScore}
@@ -468,6 +517,8 @@ const OneGame = ({
           ) ? (
           !tempScore.placement || !tempScore.missedShotWay ? (
             <Shots
+              reset={reset}
+              back={() => resetTempScore("type")}
               setTempScore={setTempScore}
               setSingleData={setSingleData}
               registerScore={registerScore}
@@ -475,6 +526,11 @@ const OneGame = ({
           ) : (
             <div>
               <PlayerReaction
+                reset={reset}
+                back={() => {
+                  resetTempScore("placement");
+                  resetTempScore("missedShotWay");
+                }}
                 tempScore={tempScore}
                 singleData={singleData}
                 setTempScore={setTempScore}
@@ -484,43 +540,48 @@ const OneGame = ({
             </div>
           )
         ) : tempScore.type == "ballInCourt" ? (
-          <div className="col-span-3 grid grid-cols-2 gap-5">
-            <div className="flex flex-col gap-3">
-              {winner1Data.map((data) => (
-                <GamePointButtons
-                  key={data.name}
-                  onClick={() => {
-                    setSingleData((d) => ({
-                      ...d,
-                      winner: data.winner as any,
-                    }));
-                    setTempScore((d) => ({ ...d, type: data.value }));
-                  }}
-                  isActive={data.isActive}
-                  disabled={data.disabled}
-                  name={data.name}
-                  type={score.serve == "player1" ? "server" : "againest"}
-                />
-              ))}
-            </div>
-            <div className="flex flex-col gap-3">
-              {winner2Data.map((data) => (
-                <GamePointButtons
-                  key={data.name}
-                  onClick={() => {
-                    setSingleData((d) => ({ ...d, winner: data.winner }));
-                    setTempScore((d) => ({ ...d, type: data.value }));
-                  }}
-                  isActive={data.isActive}
-                  disabled={data.disabled}
-                  name={data.name}
-                  type={score.serve == "player1" ? "server" : "againest"}
-                />
-              ))}
+          <div className="flex flex-col">
+            <ClearDivs reset={reset} back={() => resetTempScore("type")} />
+            <div className="col-span-3 grid grid-cols-2 gap-5">
+              <div className="flex flex-col gap-3">
+                {winner1Data.map((data) => (
+                  <GamePointButtons
+                    key={data.name}
+                    onClick={() => {
+                      setSingleData((d) => ({
+                        ...d,
+                        winner: data.winner as any,
+                      }));
+                      setTempScore((d) => ({ ...d, type: data.value }));
+                    }}
+                    isActive={score.serve != "player1"}
+                    disabled={data.disabled}
+                    name={data.name}
+                  />
+                ))}
+              </div>
+              <div className="flex flex-col gap-3">
+                {winner2Data.map((data) => (
+                  <GamePointButtons
+                    key={data.name}
+                    onClick={() => {
+                      setSingleData((d) => ({ ...d, winner: data.winner }));
+                      setTempScore((d) => ({ ...d, type: data.value }));
+                    }}
+                    isActive={score.serve == "player1"}
+                    disabled={data.disabled}
+                    name={data.name}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         ) : tempScore.rallies == "" ? (
           <ChooseRally
+            reset={reset}
+            back={() => {
+              resetTempScore("type", "ballInCourt");
+            }}
             tempScore={tempScore}
             singleData={singleData}
             setTempScore={setTempScore}
@@ -529,6 +590,8 @@ const OneGame = ({
           />
         ) : !tempScore.placement || !tempScore.missedShotWay ? (
           <Shots
+            reset={reset}
+            back={() => resetTempScore("rallies")}
             setTempScore={setTempScore}
             setSingleData={setSingleData}
             registerScore={registerScore}
@@ -536,6 +599,11 @@ const OneGame = ({
         ) : (
           <div>
             <PlayerReaction
+              reset={reset}
+              back={() => {
+                resetTempScore("rallies");
+                resetTempScore("missedShotWay");
+              }}
               tempScore={tempScore}
               singleData={singleData}
               setTempScore={setTempScore}
@@ -545,17 +613,146 @@ const OneGame = ({
           </div>
         )}
       </div>
-
-      {/* <Button
-        // disabled={player == null}
-        onClick={() => registerScore()}
-        className={`px-8 py-2 rounded-full ${
-          singleData.winner != "" ? "bg-primary" : "bg-primary/70"
-        }  text-white w-fit mx-auto mt-2 mb-12`}
-      >
-        Register Score
-      </Button> */}
     </div>
+  );
+};
+
+const MainTimer = ({
+  start,
+  mainTimer,
+  setTimers,
+}: {
+  start: boolean;
+  mainTimer: number;
+  setTimers: Function;
+}) => {
+  useEffect(() => {
+    let timer: NodeJS.Timeout | any;
+    if (start) {
+      timer = setInterval(() => {
+        setTimers((prevTime: any) => ({
+          ...prevTime,
+          mainTimer: prevTime.mainTimer + 1,
+        }));
+      }, 1000);
+    } else {
+      timer && clearInterval(timer);
+    }
+    return () => clearInterval(timer);
+  }, [start]);
+
+  const formatTime = (time: number) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
+    return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(
+      2,
+      "0"
+    )}`;
+  };
+
+  return (
+    <div className=" py-4 flex flex-col items-center justify-center">
+      <div>Main Timer</div>
+      <div>{formatTime(mainTimer)}</div>
+    </div>
+  );
+};
+
+const BetweenPointTimer = ({
+  start,
+  betweenPointTimer,
+  setTimers,
+}: {
+  start: boolean;
+  betweenPointTimer: number;
+  setTimers: Function;
+}) => {
+  useEffect(() => {
+    let timer: NodeJS.Timeout | any;
+    if (start) {
+      timer = setInterval(() => {
+        setTimers((prevTime: any) => ({
+          ...prevTime,
+          betweenPointTimer: prevTime.betweenPointTimer + 1,
+        }));
+      }, 1000);
+    } else {
+      timer && clearInterval(timer);
+      setTimers((prevTime: any) => ({
+        ...prevTime,
+        betweenPointTimer: 0,
+      }));
+    }
+    return () => clearInterval(timer);
+  }, [start]);
+
+  const formatTime = (time: number) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
+    return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(
+      2,
+      "0"
+    )}`;
+  };
+
+  return start ? (
+    <div className=" py-2 border border-primary w-fit px-4 my-2  flex justify-center">
+      <div className="w-full py-4 flex flex-col items-center justify-center">
+        <div>Between Point Timer</div>
+        <div>{formatTime(betweenPointTimer)}</div>
+      </div>
+    </div>
+  ) : (
+    <></>
+  );
+};
+
+const ChangeOverTimer = ({
+  start,
+  changeOverTimer,
+  setTimers,
+}: {
+  start: boolean;
+  changeOverTimer: number;
+  setTimers: Function;
+}) => {
+  useEffect(() => {
+    let timer: NodeJS.Timeout | any;
+    if (start) {
+      timer = setInterval(() => {
+        setTimers((prevTime: any) => ({
+          ...prevTime,
+          changeOverTimer: prevTime.changeOverTimer + 1,
+        }));
+      }, 1000);
+    } else {
+      timer && clearInterval(timer);
+      setTimers((prevTime: any) => ({
+        ...prevTime,
+        changeOverTimer: 0,
+      }));
+    }
+    return () => clearInterval(timer);
+  }, [start]);
+
+  const formatTime = (time: number) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
+    return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(
+      2,
+      "0"
+    )}`;
+  };
+
+  return start ? (
+    <div className=" py-2 border border-primary w-fit px-4 my-2  flex justify-center">
+      <div className="w-full py-4 flex flex-col items-center justify-center">
+        <div>Change Over Timer </div>
+        <div>{formatTime(changeOverTimer)}</div>
+      </div>
+    </div>
+  ) : (
+    <></>
   );
 };
 
@@ -567,6 +764,8 @@ const ServePlacementBody = ({
   tempScore,
   singleData,
   score,
+  reset,
+  back,
 }: {
   setTempScore: Function;
   setSingleData: Function;
@@ -575,41 +774,81 @@ const ServePlacementBody = ({
   singleData: dataTrackerType;
   isOnFault: boolean;
   score: ScoreInf;
+  reset: Function;
+  back: Function;
 }) => {
   const servePlacements = [
-    { name: "wide", value: "wide", winner: score.serve },
-    { name: "body", value: "body", winner: score.serve },
-    { name: "t", value: "t", winner: score.serve },
+    {
+      name: "wide",
+      value: "wide",
+      winner: score.serve,
+      isActive: score.serve != "player1",
+    },
+    {
+      name: "body",
+      value: "body",
+      winner: score.serve,
+      isActive: score.serve != "player1",
+    },
+    {
+      name: "t",
+      value: "t",
+      winner: score.serve,
+      isActive: score.serve != "player1",
+    },
     {
       name: !isOnFault ? "Fault" : "Double Fault",
       value: "net",
       winner: getAgainest(score.serve),
+      isActive: score.serve == "player1",
     },
   ];
   return (
-    <>
-      {servePlacements.map((data) => (
-        <GamePointButtons
-          key={data.name}
+    <div className="flex flex-col gap-2">
+      <div className="flex w-fit mx-auto gap-5 mb-4">
+        <Button
+          className="bg-primary text-white py-1 px-4 text-sm rounded-lg w-fit mx-auto"
           onClick={() => {
-            if (!isOnFault && data.value == "net") {
-              registerScore(tempScore, { ...singleData, goalType: "fault" });
-              return;
-            }
-            setTempScore((d: Score) => ({
-              ...d,
-              servePlacement: data.value as any,
-            }));
-            setSingleData((d: dataTrackerType) => ({
-              ...d,
-              winner: data.winner,
-              goalType: data.value == "net" ? "fault" : "pass",
-            }));
+            reset();
           }}
-          name={data.name}
-        />
-      ))}
-    </>
+        >
+          Clear
+        </Button>
+        <Button
+          className="bg-primary text-white py-1 px-4 text-sm rounded-lg w-fit mx-auto"
+          onClick={() => {
+            back();
+          }}
+        >
+          Back
+        </Button>
+      </div>
+      <div className="grid grid-cols-3 justify-center items-center gap-5 mx-auto">
+        {servePlacements.map((data) => (
+          <GamePointButtons
+            key={data.name}
+            onClick={() => {
+              if (!isOnFault && data.value == "net") {
+                registerScore(tempScore, { ...singleData, goalType: "fault" });
+                return;
+              }
+              setTempScore((d: Score) => ({
+                ...d,
+                servePlacement: data.value as any,
+              }));
+              setSingleData((d: dataTrackerType) => ({
+                ...d,
+                winner: data.winner,
+                goalType: data.value == "net" ? "fault" : "pass",
+              }));
+            }}
+            isActive={data.isActive}
+            wf={data.value == "net" ? " col-span-3 w-full mx-auto " : ""}
+            name={data.name}
+          />
+        ))}
+      </div>
+    </div>
   );
 };
 
@@ -619,12 +858,16 @@ const PlayerReaction = ({
   singleData,
   setSingleData,
   registerScore,
+  reset,
+  back,
 }: {
   setTempScore: Function;
   tempScore: Score;
   singleData: dataTrackerType;
   setSingleData: Function;
   registerScore: Function;
+  reset: Function;
+  back: Function;
 }) => {
   const reactions = [
     { value: "negativeResponse", label: "Negative Response" },
@@ -649,6 +892,24 @@ const PlayerReaction = ({
 
   return (
     <div className="flex flex-col">
+      <div className="flex w-fit mx-auto gap-5 mb-4">
+        <Button
+          className="bg-primary text-white py-1 px-4 text-sm rounded-lg w-fit mx-auto"
+          onClick={() => {
+            reset();
+          }}
+        >
+          Clear
+        </Button>
+        <Button
+          className="bg-primary text-white py-1 px-4 text-sm rounded-lg w-fit mx-auto"
+          onClick={() => {
+            back();
+          }}
+        >
+          Back
+        </Button>
+      </div>
       <div className="flex gap-4">
         <div className="flex flex-col">
           <label htmlFor="p1Reaction" className="mb-2">
@@ -677,7 +938,6 @@ const PlayerReaction = ({
             onChange={(e) => setP2Reaction(e.target.value)}
             className="p-2 border rounded"
             value={p2Reaction}
-
           >
             <option value="">Select Reaction</option>
             {reactions.map((reaction) => (
@@ -702,10 +962,14 @@ const Shots = ({
   setTempScore,
   setSingleData,
   registerScore,
+  reset,
+  back,
 }: {
   setTempScore: Function;
   setSingleData: Function;
   registerScore: Function;
+  reset: Function;
+  back: Function;
 }) => {
   const placements = ["downTheLine", "crossCourt", "dropShot"];
   const shotTypes = [
@@ -722,8 +986,8 @@ const Shots = ({
     "backhandDropShot",
   ];
 
-  const [placement, setPlacement] = useState<string>("");
-  const [shotType, setShotType] = useState<string>("");
+  const [placement, setPlacement] = useState<string>("downTheLine");
+  const [shotType, setShotType] = useState<string>("forehand");
 
   const handleNextClick = () => {
     if (placement && shotType) {
@@ -736,6 +1000,7 @@ const Shots = ({
 
   return (
     <div className="flex flex-col">
+      <ClearDivs reset={reset} back={back} />
       <div className="flex gap-4">
         <div className="flex flex-col">
           <label htmlFor="placement" className="mb-2">
@@ -746,9 +1011,15 @@ const Shots = ({
             onChange={(e) => setPlacement(e.target.value)}
             className="p-2 border rounded"
           >
-            <option value="">Select Placement</option>
+            <option value="" disabled>
+              Select Placement
+            </option>
             {placements.map((placement) => (
-              <option key={placement} value={placement}>
+              <option
+                defaultChecked={placement == "downTheLine"}
+                key={placement}
+                value={placement}
+              >
                 {placement}
               </option>
             ))}
@@ -763,9 +1034,15 @@ const Shots = ({
             onChange={(e) => setShotType(e.target.value)}
             className="p-2 border rounded"
           >
-            <option value="">Select Shot Type</option>
+            <option value="" disabled>
+              Select Shot Type
+            </option>
             {shotTypes.map((shotType) => (
-              <option key={shotType} value={shotType}>
+              <option
+                key={shotType}
+                defaultChecked={shotType == "forehand"}
+                value={shotType}
+              >
                 {shotType}
               </option>
             ))}
@@ -788,14 +1065,18 @@ const ChooseRally = ({
   singleData,
   setSingleData,
   registerScore,
+  reset,
+  back,
 }: {
   setTempScore: Function;
   tempScore: Score;
   singleData: dataTrackerType;
   setSingleData: Function;
   registerScore: Function;
+  reset: Function;
+  back: Function;
 }) => {
-  const [rallies, setRallies] = useState("");
+  const [rallies, setRallies] = useState("oneToFour");
   const rallyChoices = [
     "oneToFour",
     "fiveToEight",
@@ -814,6 +1095,7 @@ const ChooseRally = ({
   };
   return (
     <div>
+      <ClearDivs back={back} reset={reset} />
       <div className="flex flex-col">
         <label htmlFor="RallyCount" className="mb-2">
           Rally Count
@@ -823,9 +1105,11 @@ const ChooseRally = ({
           onChange={(e) => setRallies(e.target.value)}
           className="p-2 border rounded"
         >
-          <option value="">Select Rally Count</option>
+          <option value="" disabled>
+            Select Rally Count
+          </option>
           {rallyChoices.map((r) => (
-            <option key={r} value={r}>
+            <option defaultChecked={r == "oneToFour"} key={r} value={r}>
               {r}
             </option>
           ))}
@@ -833,7 +1117,7 @@ const ChooseRally = ({
       </div>
       <Button
         onClick={handleNextClick}
-        className="my-3 py-2 rounded mt-5 bg-primary text-white px-4"
+        className="my-3 py-2 w-full rounded mt-5 bg-primary text-white px-4"
       >
         Next
       </Button>
@@ -875,27 +1159,30 @@ const GamePointButtons = ({
   onClick = () => {},
   type = "server",
   disabled = false,
+  wf,
 }: {
   name: string;
   isActive?: boolean;
   disabled?: boolean;
   onClick?: Function;
   type?: "server" | "againest";
+  wf?: string | null;
 }) => {
   const css = isActive
-    ? "bg-[#FBC15D] text-black border-2 border-[#FDB332FF]"
+    ? "bg-primary text-white border-2 border-[#FDB332FF]"
     : type == "againest"
-    ? "text-white bg-primary"
+    ? "text-white bg-primary "
     : "";
+
   return (
     <Button
       disabled={disabled}
       onClick={() => onClick()}
-      className={`px-1 w-40 h-24  shadow rounded-xl  ${css} ${
+      className={`px-1 capitalize w-40 h-24  shadow rounded-xl  ${css} ${
         disabled
           ? "cursor-not-allowed bg-white text-gray-400 border border-gray-300 "
           : "shadow-primary"
-      }`}
+      } ${wf}`}
     >
       {name} {disabled}
     </Button>
@@ -903,3 +1190,26 @@ const GamePointButtons = ({
 };
 
 export default OneGame;
+
+const ClearDivs = ({ reset, back }: { reset: Function; back: Function }) => {
+  return (
+    <div className="flex w-fit mx-auto gap-5 mb-4">
+      <Button
+        className="bg-primary text-white py-1 px-4 text-sm rounded-lg w-fit mx-auto"
+        onClick={() => {
+          reset();
+        }}
+      >
+        Clear
+      </Button>
+      <Button
+        className="bg-primary text-white py-1 px-4 text-sm rounded-lg w-fit mx-auto"
+        onClick={() => {
+          back();
+        }}
+      >
+        Back
+      </Button>
+    </div>
+  );
+};
