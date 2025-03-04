@@ -3,7 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React, { useState } from "react";
 import { FaFlag, FaInfoCircle } from "react-icons/fa";
 import { FaBalanceScaleLeft } from "react-icons/fa";
-import { FaTrophy } from "react-icons/fa6";
+import { FaPerson, FaTrophy } from "react-icons/fa6";
 import { IoTime } from "react-icons/io5";
 import { FaRegCalendarPlus } from "react-icons/fa";
 import { MdOutlineWaves } from "react-icons/md";
@@ -15,11 +15,14 @@ import { useParams } from "react-router-dom";
 import { string } from "zod";
 import { useQuery } from "react-query";
 import { getMatch } from "@/api/match.api";
-import { formatDateTime } from "@/lib/utils";
+import { formatDateTime, getStatusColors, LABELS } from "@/lib/utils";
 import { Match } from "@/types/match.type";
 import MatchTable from "./Sets";
 import SetsTable from "./SetsTable";
 import MatchReportTabs from "../Players/MatchReportTabs";
+import Cookies from "js-cookie";
+import { MatchDetails } from "../Players/Momentum";
+// import MomentumReport from "../Players/Momentum";
 
 interface DetailsInterface {
   icon: any;
@@ -29,6 +32,7 @@ interface DetailsInterface {
 
 function RecentMatch() {
   const [activeTab, setActiveTab] = useState("details");
+  const user_id = Cookies.get("user_id");
 
   const { id } = useParams<{ id: string }>();
 
@@ -48,12 +52,12 @@ function RecentMatch() {
       {
         label: "Match Length",
         icon: IoTime,
-        value: match.totalGameTime,
+        value: match.totalGameTime + " Min",
       },
       {
         label: "Game Best Out of",
         icon: FaTrophy,
-        value: match.matchType,
+        value: LABELS[match.matchType],
       },
       {
         label: "Tie-Breaker Rule",
@@ -70,6 +74,11 @@ function RecentMatch() {
         icon: MdOutlineWaves,
         value: match.courtSurface,
       },
+      {
+        label: "Match Creater",
+        icon: FaPerson,
+        value: match.matchCreator.firstName + " " + match.matchCreator.lastName,
+      },
     ];
     return details;
   };
@@ -85,6 +94,15 @@ function RecentMatch() {
       ) : (
         <div className="bg-white pt-10 min-h-[100vh] pb-12">
           <div className="w-full mx-auto mt-4">
+            {user_id &&
+            user_id === match.matchCreator._id &&
+            match.status !== "completed" ? (
+              <div className="flex items-center justify-end pr-4">
+                <button className="py-2 px-6 rounded-3xl bg-primary text-white">
+                  Track Match
+                </button>
+              </div>
+            ) : null}
             <div className="flex gap-x-6 flex-col gap-y-2 sm:flex-row items-center justify-center">
               <ProfileCard
                 name={match?.p1Name}
@@ -99,6 +117,17 @@ function RecentMatch() {
                 isObject={match.p2IsObject}
                 player={match?.p2}
               />
+            </div>
+            <div className="flex items-center justify-center">
+              <p
+                className="capitalize px-4 py-1 rounded-full"
+                style={{
+                  color: getStatusColors(match.status).text,
+                  backgroundColor: getStatusColors(match.status).bg,
+                }}
+              >
+                {match?.status}
+              </p>
             </div>
           </div>
           <div className="mt-4">
@@ -158,25 +187,31 @@ function RecentMatch() {
                   value="sets"
                   className="w-full md:w-[54rem] lg:w-[64rem] mx-auto px-4"
                 >
-                  {/* <MatchTable match={match} /> */}
-                  <SetsTable match={match} />
+                  {match?.status === "completed" ? (
+                    <SetsTable match={match} />
+                  ) : (
+                    <div className="flex items-center justify-center min-h-[10rem]">
+                      <p className="text-xl text-gray-400">
+                        Match Not Completed
+                      </p>
+                    </div>
+                  )}
                 </TabsContent>
-                <TabsContent
-                  value="momentum"
-                  className="w-full md:w-[44rem] lg:w-[56rem] mx-auto px-4"
-                >
+                <TabsContent value="momentum" className="w-full mx-auto px-4">
                   <div className="w-full flex justify-center items-center flex-col gap-2 mt-14">
-                    {/* <div className="w-12 h-12 rounded-xl bg-gray-300 flex justify-center items-center">
-                    <FiInfo className="text-primary text-3xl" />
-                  </div>
-                  <div className="mt-3">
-                    Set not Available for undone Mactch
-                  </div> */}
+                    <MatchDetails match={match} />
                   </div>
                 </TabsContent>
                 <TabsContent value="report" className="w-full   px-2">
-                  {/* <Report match={match} /> */}
-                  <MatchReportTabs match={match} />
+                  {match?.status === "completed" ? (
+                    <MatchReportTabs match={match} />
+                  ) : (
+                    <div className="flex items-center justify-center min-h-[10rem]">
+                      <p className="text-xl text-gray-400">
+                        Match Not Completed
+                      </p>
+                    </div>
+                  )}
                 </TabsContent>
               </Tabs>
             </div>

@@ -71,7 +71,7 @@ interface Score {
   rallies: string;
 }
 
-interface Game {
+export interface Game {
   gameNumber: number;
   scores: Score[];
   winner: string;
@@ -129,7 +129,7 @@ interface SetReport {
   response: ResponseReport;
 }
 
-interface Set {
+export interface Set {
   p1TotalScore: number;
   p2TotalScore: number;
   winner: string;

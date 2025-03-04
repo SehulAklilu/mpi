@@ -7,6 +7,7 @@ import { FiChevronDown } from "react-icons/fi";
 import PlayerGoalForm from "./PlayerGoalForm";
 import { useQuery } from "react-query";
 import Cookies from "js-cookie";
+import { useRole } from "@/RoleContext";
 
 function PlayerGoal({
   coachGoals,
@@ -16,15 +17,22 @@ function PlayerGoal({
   playerId: string;
 }) {
   const user_id = Cookies.get("user_id");
+  const { role } = useRole();
 
   const sortedGoals = useMemo(() => {
-    const coach = coachGoals.find(
-      (coachGoal) => coachGoal.coach._id === user_id
-    );
+    let coachGoalsList: Goal[] = [];
 
-    if (!coach) return {}; // Return an empty object if no matching coach is found
+    if (role === "coach") {
+      coachGoalsList = coachGoals
+        .filter((coachGoal) => coachGoal.coach._id === user_id)
+        .flatMap((coachGoal) => coachGoal.goals);
+    } else {
+      coachGoalsList = coachGoals.flatMap((coachGoal) => coachGoal.goals);
+    }
 
-    const groupedByTerm: Record<string, Goal[]> = coach.goals.reduce(
+    if (!coachGoalsList.length) return {};
+
+    const groupedByTerm: Record<string, Goal[]> = coachGoalsList.reduce(
       (acc, goal) => {
         acc[goal.term] = acc[goal.term] || [];
         acc[goal.term].push(goal);
@@ -34,7 +42,7 @@ function PlayerGoal({
     );
 
     return groupedByTerm;
-  }, [coachGoals, user_id]);
+  }, [coachGoals, user_id, role]);
 
   const [initialGoal, setInitialGoal] = useState<Goal | undefined>(undefined);
 

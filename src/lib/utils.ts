@@ -106,3 +106,93 @@ export function getGoogleProfileColor(name: string | undefined): string {
   const firstLetter = name.trim().charAt(0).toUpperCase();
   return GOOGLE_PROFILE_COLORS[firstLetter] || "#607D8B"; // Default gray
 }
+
+export const LABELS: Record<string, string> = {
+  totalServices: "Total Services",
+  firstServicePercentage: "First Service %",
+  secondServicePercentage: "Second Service %",
+  aces: "Aces",
+  ace: "Ace",
+  doubleFaults: "Double Faults",
+  firstServices: "First Services",
+  secondServices: "Second Services",
+  totalPointsWon: "Total Points Won",
+  winners: "Winners",
+  unforcedErrors: "Unforced Errors",
+  forcedErrors: "Forced Errors",
+  oneToFour: "1-4 Shots",
+  fiveToEight: "5-8 Shots",
+  nineToTwelve: "9-12 Shots",
+  thirteenToTwenty: "13-20 Shots",
+  twentyOnePlus: "21+ Shots",
+  firstServicePointsWon: "1st Serve Points Won",
+  secondServicePointsWon: "2nd Serve Points Won",
+  receivingPointsWon: "Receiving Points Won",
+  breakPoints: "Break Points",
+  gamePoints: "Game Points",
+  negativeResponses: "Negative Responses",
+  positiveResponses: "Positive Responses",
+  negativeSelfTalks: "Negative Self Talks",
+  positiveSelfTalks: "Positive Self Talks",
+  noResponses: "No Responses",
+  fault: "Fault",
+  p1Winner: "Player One Winner",
+  p1UnforcedError: "Player One Unforced Error",
+  p1ForcedError: "Player One Forced Error",
+  p2Winner: "Player Two Winner",
+  p2UnforcedError: "Player Two Unforced Error",
+  p2ForcedError: "Player Two Forced Error",
+  doubleFault: "Double Fault",
+  returnWinner: "Return Winner",
+  returnError: "Return Error",
+  forcedError: "Forced Error",
+  forcedReturnError: "Forced Return Error",
+
+  forehand: "Forehand",
+  backhand: "Backhand",
+  forehandVolley: "Forehand Volley",
+  backhandVolley: "Backhand Volley",
+  forehandSwingingVolley: "Forehand Swinging Volley",
+  backhandSwingingVolley: "Backhand Swinging Volley",
+  forehandSlice: "Forehand Slice",
+  backhandSlice: "Backhand Slice",
+  overhead: "Overhead",
+  forehandDropShot: "Forehand Drop Shot",
+  backhandDropShot: "Backhand Drop Shot",
+
+  wide: "Wide",
+  body: "Body",
+  t: "T",
+  net: "Net",
+  one: "1 Set",
+  three: "2 out of 3",
+  five: "3 out of 5",
+};
+
+export type Status =
+  | "pending"
+  | "confirmed"
+  | "inProgress"
+  | "completed"
+  | "cancelled"
+  | "postponed"
+  | "forfeited";
+
+interface StatusColor {
+  bg: string;
+  text: string;
+}
+
+export const getStatusColors = (status: Status): StatusColor => {
+  const statusColors: Record<Status, StatusColor> = {
+    pending: { bg: "#FFF3CD", text: "#856404" }, // Light yellow bg, dark yellow text
+    confirmed: { bg: "#D1ECF1", text: "#0C5460" }, // Light blue bg, dark blue text
+    inProgress: { bg: "#D4EDDA", text: "#155724" }, // Light green bg, dark green text
+    completed: { bg: "#C3E6CB", text: "#155724" }, // Light green bg, dark green text
+    cancelled: { bg: "#F8D7DA", text: "#721C24" }, // Light red bg, dark red text
+    postponed: { bg: "#E2E3E5", text: "#383D41" }, // Light gray bg, dark gray text
+    forfeited: { bg: "#F5C6CB", text: "#721C24" }, // Lighter red bg, dark red text
+  };
+
+  return statusColors[status];
+};

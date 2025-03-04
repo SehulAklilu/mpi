@@ -4,40 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Match, Player } from "@/types/match.type";
 import avater from "../../assets/avater.jpg";
+import { LABELS } from "@/lib/utils";
 interface MatchReportProps {
   match: Match;
 }
 
 const TABS = ["Service", "Points", "Rallies", "Conversion", "Response"];
-
-const LABELS: Record<string, string> = {
-  totalServices: "Total Services",
-  firstServicePercentage: "First Service %",
-  secondServicePercentage: "Second Service %",
-  aces: "Aces",
-  doubleFaults: "Double Faults",
-  firstServices: "First Services",
-  secondServices: "Second Services",
-  totalPointsWon: "Total Points Won",
-  winners: "Winners",
-  unforcedErrors: "Unforced Errors",
-  forcedErrors: "Forced Errors",
-  oneToFour: "1-4 Shots",
-  fiveToEight: "5-8 Shots",
-  nineToTwelve: "9-12 Shots",
-  thirteenToTwenty: "13-20 Shots",
-  twentyOnePlus: "21+ Shots",
-  firstServicePointsWon: "1st Serve Points Won",
-  secondServicePointsWon: "2nd Serve Points Won",
-  receivingPointsWon: "Receiving Points Won",
-  breakPoints: "Break Points",
-  gamePoints: "Game Points",
-  negativeResponses: "Negative Responses",
-  positiveResponses: "Positive Responses",
-  negativeSelfTalks: "Negative Self Talks",
-  positiveSelfTalks: "Positive Self Talks",
-  noResponses: "No Responses",
-};
 
 export default function MatchReportTabs({ match }: MatchReportProps) {
   const [selectedTab, setSelectedTab] = useState(0);

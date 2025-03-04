@@ -213,6 +213,9 @@ export interface PreparationPayload {
   preparationType: FieldType;
   preparation: Preparation;
 }
+export type PreparationPayloadDelete = Omit<PreparationPayload, "preparation">;
+export type CompetitionPayloadDelete = Omit<CompetitionPayload, "competition">;
+export type TransitionPayloadDelete = Omit<TransitionPayload, "transition">;
 
 export interface CompetitionPayload {
   competitionType: FieldType;
@@ -241,4 +244,40 @@ export interface GoalPayload {
 
 export interface MyGoals {
   goals: CoachGoal[];
+}
+
+interface Attendance {
+  player: string;
+  response: string;
+  status: string;
+  _id: string;
+  id: string;
+}
+
+interface Class {
+  videos: any[];
+  photos: any[];
+  playersCanReflect: boolean;
+  sessionType: string;
+  _id: string;
+  coach: string;
+  players: string[];
+  date: string;
+  to: string;
+  levelPlan: string;
+  attendance: Attendance[];
+  status: string;
+  goal: any;
+  createdAt: string;
+  updatedAt: string;
+  evaluations: any[];
+  objectives: any[];
+  reflections: any[];
+  preSessionQuestions: any[];
+  checkList: any[];
+  id: string;
+}
+
+export interface ClassData {
+  classes: Class[];
 }

@@ -2,12 +2,15 @@ import {
   ChildrenResponse,
   ChildResponse,
   CompetitionPayload,
+  CompetitionPayloadDelete,
   Goal,
   GoalPayload,
   Periodization,
   PeriodizationsResponse,
   PreparationPayload,
+  PreparationPayloadDelete,
   TransitionPayload,
+  TransitionPayloadDelete,
 } from "@/types/children.type";
 import axiosInstance from "./axios";
 import { Match, MatchData } from "@/types/match.type";
@@ -75,11 +78,20 @@ export const getPlayerMatchesDetail = async (
   return response.data;
 };
 
+// export const getPlayerPeriodizations = async (
+//   playerId: string
+// ): Promise<PeriodizationsResponse> => {
+//   const response = await axiosInstance.get(
+//     `/api/v1/users/players/${playerId}/periodizations`
+//   );
+//   return response.data;
+// };
+
 export const getPlayerPeriodizations = async (
   playerId: string
 ): Promise<PeriodizationsResponse> => {
   const response = await axiosInstance.get(
-    `/api/v1/users/players/${playerId}/periodizations`
+    `/api/v1/periodizations/${playerId}`
   );
   return response.data;
 };
@@ -146,10 +158,11 @@ export const editPreparation = async (
 export const deletePreparation = async (
   playerId: string,
   periodizationId: string,
-  payload: PreparationPayload
+  payload: PreparationPayloadDelete
 ): Promise<any> => {
   const response = await axiosInstance.delete(
-    `/api/v1/periodizations/${playerId}/${periodizationId}/preparation`
+    `/api/v1/periodizations/${playerId}/${periodizationId}/preparation`,
+    { data: payload }
   );
   return response.data;
 };
@@ -182,7 +195,7 @@ export const editCompetition = async (
 export const deleteCompetition = async (
   playerId: string,
   periodizationId: string,
-  payload: CompetitionPayload
+  payload: CompetitionPayloadDelete
 ): Promise<any> => {
   const response = await axiosInstance.delete(
     `/api/v1/periodizations/${playerId}/${periodizationId}/competition`
@@ -218,7 +231,7 @@ export const editTransition = async (
 export const deleteTransition = async (
   playerId: string,
   periodizationId: string,
-  payload: TransitionPayload
+  payload: TransitionPayloadDelete
 ): Promise<any> => {
   const response = await axiosInstance.delete(
     `/api/v1/periodizations/${playerId}/${periodizationId}/transition`
@@ -227,7 +240,7 @@ export const deleteTransition = async (
 };
 
 // player goad coach crating
-export const getPlayerGoal = async (playerId: string): Promise<any> => {
+export const getPlayerGoals = async (playerId: string): Promise<any> => {
   const response = await axiosInstance.get(
     `/api/v1/users/playerGoal/${playerId}`
   );

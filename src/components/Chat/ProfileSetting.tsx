@@ -29,7 +29,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, LoaderCircle } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { cn, getGoogleProfileColor } from "@/lib/utils";
@@ -49,12 +49,15 @@ import "./ChatMessage.module.css";
 import PrivacySecurity from "./PrivacySecurity";
 import Purchases from "./Purchases";
 import { ContentLayout } from "../Sidebar/contenet-layout";
-import { useQuery } from "react-query";
-import { getUserProfile } from "@/api/auth.api";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import { getUserProfile, updateUserProfile } from "@/api/auth.api";
 import Cookies from "js-cookie";
 import { getMyGoals } from "@/api/children.api";
 import MyGoal from "../Players/MyGoals";
 import { useRole } from "@/RoleContext";
+import { User } from "@/types/user.types";
+import { getAxiosErrorMessage, getAxiosSuccessMessage } from "@/api/axios";
+import { toast } from "react-toastify";
 
 const FormSchema = z.object({
   firstName: z.string().min(3, {
@@ -79,16 +82,23 @@ const FormSchema = z.object({
   zipCode: z.string(),
 });
 
-const onSubmit = () => {};
-
 function ProfileSetting() {
   const [activeTab, setActiveTab] = useState("Profile");
   const { role } = useRole();
+  const [countryPlaceholder, setCountryPlaceholder] =
+    useState("Select Country");
+  const [cityPlaceholder, setCityPlaceholder] = useState("Select City");
+  const [statePlaceholder, setStatePlaceholder] = useState("Select State");
+
+  const [countryValue, setCountryValue] = useState("");
+  const [cityValue, setCityValue] = useState("");
+  const [stateValue, setStateValue] = useState("");
 
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   });
+  const queryClient = useQueryClient();
 
   const {
     data: profileData,
@@ -102,6 +112,16 @@ function ProfileSetting() {
   const { data } = useQuery({
     queryKey: ["myGoals"],
     queryFn: getMyGoals,
+    enabled: role === "player",
+    onSuccess: (response) => {
+      const message = getAxiosSuccessMessage(response);
+      queryClient.invalidateQueries("userProfile");
+      toast.success(message);
+    },
+    onError: (error: any) => {
+      const message = getAxiosErrorMessage(error);
+      toast.error(message);
+    },
   });
 
   console.log("33333333 ttttt", data);
@@ -126,8 +146,51 @@ function ProfileSetting() {
         streetAddress: profileData.address.streetAddress || "",
         zipCode: profileData.address.zipCode || "",
       });
+      setCountryPlaceholder(profileData.address.country);
+      setCityPlaceholder(profileData.address.city);
+      setStatePlaceholder(profileData.address.stateProvince);
+
+      setCountryValue(profileData.address.country);
+      setCityValue(profileData.address.city);
+      setStateValue(profileData.address.stateProvince);
     }
   }, [profileData, reset]);
+
+  const updateProfile = useMutation({
+    mutationKey: ["updateProfile"],
+    mutationFn: updateUserProfile,
+  });
+
+  const onSubmit = (data: any) => {
+    const payload = {
+      firstName: data.firstName,
+      lastName: data.lastName,
+      dateOfBirth: data.dateOfBirth?.toISOString(),
+      gender: data.gender,
+      emailAddress: {
+        email: data.email,
+        verified: profileData?.emailAddress.verified ?? false,
+      },
+      phoneNumber: {
+        countryCode:
+          data.phoneNumberCountryCode ??
+          profileData?.phoneNumber.countryCode ??
+          "",
+        number: data.phoneNumber,
+      },
+      address: {
+        country: countryValue,
+        stateProvince: stateValue,
+        city: cityValue,
+        zipCode: data.zipCode,
+        streetAddress: data.streetAddress,
+        streetAddress2: profileData?.address.streetAddress2 ?? "",
+      },
+      avatar: data.avatar || undefined,
+    };
+
+    updateProfile.mutate(payload);
+  };
 
   const countryData = Country.getAllCountries();
 
@@ -412,40 +475,6 @@ function ProfileSetting() {
                           </FormItem>
                         )}
                       />
-                      {/* <FormField
-                        control={form.control}
-                        name="placeOfBith"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Place of Birth</FormLabel>
-                            <Select
-                              onValueChange={(value) => {
-                                field.onChange(value);
-                              }}
-                              value={field.value}
-                            >
-                              <SelectTrigger
-                                className={
-                                  "!rounded-3xl  shadow !h-10 !py-4 !px-4 !bg-[#F0F0FF]"
-                                }
-                              >
-                                <SelectValue placeholder="Place of Birth" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {countryData.map((country) => (
-                                  <SelectItem
-                                    value={country.isoCode}
-                                    key={country.isoCode}
-                                  >
-                                    {country.name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      /> */}
                       <Controller
                         name="phoneNumber"
                         control={form.control}
@@ -502,6 +531,7 @@ function ProfileSetting() {
                             <Select
                               onValueChange={(value) => {
                                 field.onChange(value);
+                                setCountryValue(field.name);
                                 setSelectCountry(value);
                               }}
                               defaultValue={field.value}
@@ -510,7 +540,7 @@ function ProfileSetting() {
                                 startIcon={FaFlag}
                                 className={"!rounded-3xl shadow !bg-[#F0F0FF]"}
                               >
-                                <SelectValue placeholder="Select your country" />
+                                <SelectValue placeholder={countryPlaceholder} />
                               </SelectTrigger>
                               <SelectContent>
                                 {countryData.map((country) => (
@@ -537,6 +567,7 @@ function ProfileSetting() {
                               onValueChange={(value) => {
                                 field.onChange(value);
                                 setSelectedState(value);
+                                setStateValue(field.name);
                               }}
                               defaultValue={field.value}
                             >
@@ -544,7 +575,7 @@ function ProfileSetting() {
                                 startIcon={FaMapMarkerAlt}
                                 className={"!rounded-3xl shadow !bg-[#F0F0FF]"}
                               >
-                                <SelectValue placeholder="Select your country" />
+                                <SelectValue placeholder={statePlaceholder} />
                               </SelectTrigger>
                               <SelectContent>
                                 {stateData?.map((state) => (
@@ -568,14 +599,17 @@ function ProfileSetting() {
                           <FormItem>
                             <FormLabel>City</FormLabel>
                             <Select
-                              onValueChange={field.onChange}
+                              onValueChange={(value) => {
+                                field.onChange(value);
+                                setCityValue(field.name);
+                              }}
                               defaultValue={field.value}
                             >
                               <SelectTrigger
                                 startIcon={FaCity}
                                 className={"!rounded-3xl shadow !bg-[#F0F0FF]"}
                               >
-                                <SelectValue placeholder="Select your city" />
+                                <SelectValue placeholder={cityPlaceholder} />
                               </SelectTrigger>
                               <SelectContent>
                                 {cityData?.map((city) => (
@@ -635,15 +669,24 @@ function ProfileSetting() {
                     </div>
                   </div>
                   <div className="flex items-center justify-end">
-                    <button className="py-2 px-4 rounded-md bg-primary text-white mx:0 sm:mx-4 ">
+                    <button className="py-2 flex gap-2 px-4 rounded-md bg-primary text-white mx:0 sm:mx-4 ">
                       Save Changes
+                      {updateProfile.isLoading && (
+                        <LoaderCircle
+                          style={{
+                            animation: "spin 1s linear infinite",
+                            fontSize: "2rem",
+                            color: "#FFFFFF",
+                          }}
+                        />
+                      )}
                     </button>
                   </div>
                 </form>
               </Form>
             </TabsContent>
             <TabsContent className="!mt-0" value="myGoals">
-              {data?.goals ? (
+              {data?.goals && role && role === "player" ? (
                 <MyGoal coachGoals={data?.goals} />
               ) : (
                 <div>No Goal Found</div>

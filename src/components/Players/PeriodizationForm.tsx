@@ -30,6 +30,9 @@ import {
   createCompetition,
   createPreparation,
   createTransition,
+  deleteCompetition,
+  deletePreparation,
+  deleteTransition,
   editCompetition,
   editPreparation,
   editTransition,
@@ -39,14 +42,19 @@ import { getAxiosErrorMessage, getAxiosSuccessMessage } from "@/api/axios";
 import {
   CoachGoal,
   CompetitionPayload,
+  CompetitionPayloadDelete,
   FieldType,
   PreparationPayload,
+  PreparationPayloadDelete,
   TransitionPayload,
+  TransitionPayloadDelete,
 } from "@/types/children.type";
 import { LoaderCircle } from "lucide-react";
 import Cookies from "js-cookie";
 import { extractDateTime } from "@/lib/utils";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import { useRole } from "@/RoleContext";
+import { Role } from "@/types/auth.type";
 
 // Define TypeScript Interfaces for Backend Compatibility
 
@@ -90,6 +98,7 @@ export default function AddPhaseDialog({
   >(undefined);
   const [addGoal, setAddGoal] = useState(false);
   const user_id = Cookies.get("user_id");
+  const { role } = useRole();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(FormSchema),
@@ -112,7 +121,7 @@ export default function AddPhaseDialog({
       form.setValue("allocatedTime", initialData?.allocatedTime.toString());
       setPhase(initialData.for);
       if (initialData.specifics?.length > 0) {
-        setSelectedGoals(initialData.specifics);
+        setSelectedGoals(initialData.specifics.map((item: any) => item?._id));
         setAddGoal(true);
       }
     }
@@ -152,6 +161,28 @@ export default function AddPhaseDialog({
       periodizationId: string;
       payload: PreparationPayload;
     }) => editPreparation(playerId, periodizationId, payload),
+    {
+      onSuccess: (response) => {
+        toast.success(getAxiosSuccessMessage(response));
+        queryClient.invalidateQueries("getPlayerPeriodizations");
+        resetForm();
+      },
+      onError: (error) => {
+        toast.error(getAxiosErrorMessage(error));
+      },
+    }
+  );
+
+  const deletePreparationMutation = useMutation(
+    ({
+      playerId,
+      periodizationId,
+      payload,
+    }: {
+      playerId: string;
+      periodizationId: string;
+      payload: PreparationPayloadDelete;
+    }) => deletePreparation(playerId, periodizationId, payload),
     {
       onSuccess: (response) => {
         toast.success(getAxiosSuccessMessage(response));
@@ -208,6 +239,28 @@ export default function AddPhaseDialog({
     }
   );
 
+  const deleteCompetitionMutation = useMutation(
+    ({
+      playerId,
+      periodizationId,
+      payload,
+    }: {
+      playerId: string;
+      periodizationId: string;
+      payload: CompetitionPayloadDelete;
+    }) => deleteCompetition(playerId, periodizationId, payload),
+    {
+      onSuccess: (response) => {
+        toast.success(getAxiosSuccessMessage(response));
+        queryClient.invalidateQueries("getPlayerPeriodizations");
+        resetForm();
+      },
+      onError: (error) => {
+        toast.error(getAxiosErrorMessage(error));
+      },
+    }
+  );
+
   const createTransitionMutation = useMutation(
     ({
       playerId,
@@ -252,6 +305,28 @@ export default function AddPhaseDialog({
     }
   );
 
+  const delteTransitionMutation = useMutation(
+    ({
+      playerId,
+      periodizationId,
+      payload,
+    }: {
+      playerId: string;
+      periodizationId: string;
+      payload: TransitionPayloadDelete;
+    }) => deleteTransition(playerId, periodizationId, payload),
+    {
+      onSuccess: (response) => {
+        toast.success(getAxiosSuccessMessage(response));
+        queryClient.invalidateQueries("getPlayerPeriodizations");
+        resetForm();
+      },
+      onError: (error) => {
+        toast.error(getAxiosErrorMessage(error));
+      },
+    }
+  );
+
   const isLoading =
     createPreparationMutation.isLoading ||
     createCompetitionMutation.isLoading ||
@@ -260,8 +335,12 @@ export default function AddPhaseDialog({
     editTransitionMutation.isLoading ||
     editPreparationMutation.isLoading;
 
+  const isDeleteLoading =
+    deleteCompetitionMutation.isLoading ||
+    deletePreparationMutation.isLoading ||
+    deleteCompetitionMutation.isLoading;
+
   const onSubmit = (data: FormValues) => {
-    console.log("Submitting data:", data, forType);
     if (!forType) {
       return;
     }
@@ -357,6 +436,29 @@ export default function AddPhaseDialog({
     }
   };
 
+  const onDelete = () => {
+    if (phase === "preparation" && forType) {
+      deletePreparationMutation.mutate({
+        playerId,
+        periodizationId,
+        payload: { preparationType: forType },
+      });
+    }
+    if (phase === "competition" && forType) {
+      deleteCompetitionMutation.mutate({
+        playerId,
+        periodizationId,
+        payload: { competitionType: forType },
+      });
+    }
+    if (phase === "transition" && forType) {
+      delteTransitionMutation.mutate({
+        playerId,
+        periodizationId,
+        payload: { transitionType: forType },
+      });
+    }
+  };
   const onError = (error: any) => {
     console.log("eeeeeeeeeeeee", error);
   };
@@ -428,6 +530,7 @@ export default function AddPhaseDialog({
                       );
                     }}
                     value={field.value}
+                    disabled={role !== "coach"}
                   >
                     <SelectTrigger className="shadow !h-10 !py-4 !px-4 !bg-white !text-black">
                       <SelectValue
@@ -465,6 +568,7 @@ export default function AddPhaseDialog({
                       placeholder="Enter Time"
                       className="shadow !bg-white"
                       {...field}
+                      disabled={role !== "coach"}
                     />
                   </FormControl>
                   <FormMessage />
@@ -477,7 +581,11 @@ export default function AddPhaseDialog({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Time Type</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    disabled={role !== "coach"}
+                  >
                     <SelectTrigger className="shadow !h-10 !py-4 !px-4 !bg-white !text-black">
                       <SelectValue
                         placeholder="Select Time Type"
@@ -498,11 +606,17 @@ export default function AddPhaseDialog({
             {/* Conditional Inputs Based on Phase */}
             {phase === "preparation" && (
               <>
-                <DynamicList name="generals" label="Objectives" form={form} />
+                <DynamicList
+                  name="generals"
+                  label="Objectives"
+                  form={form}
+                  role={role}
+                />
                 <DynamicList
                   name="specificDescriptions"
                   label="Specific Descriptions"
                   form={form}
+                  role={role}
                 />
                 <div
                   className="text-primary font-semibold cursor-pointer text-center flex gap-4 items-center justify-center"
@@ -553,11 +667,13 @@ export default function AddPhaseDialog({
                   name="precompetitions"
                   label="Pre-Competitions"
                   form={form}
+                  role={role}
                 />
                 <DynamicList
                   name="tournaments"
                   label="Tournaments"
                   form={form}
+                  role={role}
                 />
               </>
             )}
@@ -567,25 +683,50 @@ export default function AddPhaseDialog({
                   name="activeRest"
                   label="Active Rest Activities"
                   form={form}
+                  role={role}
                 />
               </>
             )}
 
-            <button
-              type="submit"
-              className="bg-primary flex gap-4 text-white px-4 py-2 rounded"
-            >
-              {initialData ? "Update" : "Submit"}
-              {isLoading && (
-                <LoaderCircle
-                  style={{
-                    animation: "spin 1s linear infinite",
-                    fontSize: "2rem",
-                    color: "#FFFFFF",
-                  }}
-                />
+            <div className="flex justify-end items-center">
+              {role && role === "coach" && (
+                <div className="flex items-center gap-4">
+                  {initialData && (
+                    <button
+                      type="button"
+                      className="bg-red-400 flex gap-4 text-white px-4 py-2 rounded"
+                      onClick={() => onDelete()}
+                    >
+                      Delete
+                      {isDeleteLoading && (
+                        <LoaderCircle
+                          style={{
+                            animation: "spin 1s linear infinite",
+                            fontSize: "2rem",
+                            color: "#FFFFFF",
+                          }}
+                        />
+                      )}
+                    </button>
+                  )}
+                  <button
+                    type="submit"
+                    className="bg-primary flex gap-4 text-white px-4 py-2 rounded"
+                  >
+                    {initialData ? "Update" : "Submit"}
+                    {isLoading && (
+                      <LoaderCircle
+                        style={{
+                          animation: "spin 1s linear infinite",
+                          fontSize: "2rem",
+                          color: "#FFFFFF",
+                        }}
+                      />
+                    )}
+                  </button>
+                </div>
               )}
-            </button>
+            </div>
           </form>
         </Form>
       </DialogContent>
@@ -598,9 +739,10 @@ interface DynamicListProps {
   name: keyof FormValues;
   label: string;
   form: ReturnType<typeof useForm<FormValues>>;
+  role: Role | null;
 }
 
-function DynamicList({ name, label, form }: DynamicListProps) {
+export function DynamicList({ name, label, form, role }: DynamicListProps) {
   const fieldValue = form.watch(name) || []; // Watch field value to trigger re-renders
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [inputValue, setInputValue] = useState("");
@@ -609,13 +751,13 @@ function DynamicList({ name, label, form }: DynamicListProps) {
     if (!inputValue.trim()) return;
 
     if (editIndex !== null) {
-      // If editIndex is set, update the existing item
+      // Update existing item
       const updatedList = [...fieldValue];
       updatedList[editIndex] = inputValue.trim();
       form.setValue(name, updatedList);
-      setEditIndex(null); // Reset edit mode
+      setEditIndex(null);
     } else {
-      // Otherwise, add new item
+      // Add new item
       form.setValue(name, [...fieldValue, inputValue.trim()]);
     }
 
@@ -623,6 +765,13 @@ function DynamicList({ name, label, form }: DynamicListProps) {
   };
 
   const onEdit = (index: number) => {
+    if (editIndex !== null && inputValue.trim()) {
+      // Save previous edit before switching
+      const updatedList = [...fieldValue];
+      updatedList[editIndex] = inputValue.trim();
+      form.setValue(name, updatedList);
+    }
+
     setEditIndex(index);
     setInputValue(fieldValue[index]); // Populate input field with selected item
   };
@@ -636,12 +785,16 @@ function DynamicList({ name, label, form }: DynamicListProps) {
     setEditIndex(null); // Reset edit mode if deleting the currently edited item
   };
 
+  const onBlur = () => {
+    if (inputValue.trim()) {
+      onAddOrUpdate(); // Automatically save input when losing focus
+    }
+  };
+
   return (
     <div>
       <div className="flex items-end justify-between gap-4">
         <div className="flex-1">
-          {" "}
-          {/* This makes the form field take up the rest of the width */}
           <FormField
             control={form.control}
             name={name}
@@ -655,12 +808,14 @@ function DynamicList({ name, label, form }: DynamicListProps) {
                     className="shadow w-full bg-white"
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
+                    disabled={role !== "coach"}
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
                         e.preventDefault();
                         onAddOrUpdate();
                       }
                     }}
+                    onBlur={onBlur} // Save automatically on blur
                   />
                 </FormControl>
                 <FormMessage />
@@ -686,19 +841,124 @@ function DynamicList({ name, label, form }: DynamicListProps) {
             >
               <span className="flex-1">{item}</span>
 
-              <div className="flex gap-2">
-                <FiEdit2
-                  className="cursor-pointer text-base"
-                  onClick={() => onEdit(index)}
-                />
-                <AiOutlineDelete
-                  className="text-red-500 text-xl cursor-pointer"
-                  onClick={() => onDelete(index)}
-                />
-              </div>
+              {role && role === "coach" && (
+                <div className="flex gap-2">
+                  <FiEdit2
+                    className="cursor-pointer text-base"
+                    onClick={() => onEdit(index)}
+                  />
+                  <AiOutlineDelete
+                    className="text-red-500 text-xl cursor-pointer"
+                    onClick={() => onDelete(index)}
+                  />
+                </div>
+              )}
             </li>
           ))}
       </ul>
     </div>
   );
 }
+
+// function DynamicList({ name, label, form }: DynamicListProps) {
+//   const fieldValue = form.watch(name) || []; // Watch field value to trigger re-renders
+//   const [editIndex, setEditIndex] = useState<number | null>(null);
+//   const [inputValue, setInputValue] = useState("");
+
+//   const onAddOrUpdate = () => {
+//     if (!inputValue.trim()) return;
+
+//     if (editIndex !== null) {
+//       // If editIndex is set, update the existing item
+//       const updatedList = [...fieldValue];
+//       updatedList[editIndex] = inputValue.trim();
+//       form.setValue(name, updatedList);
+//       setEditIndex(null); // Reset edit mode
+//     } else {
+//       // Otherwise, add new item
+//       form.setValue(name, [...fieldValue, inputValue.trim()]);
+//     }
+
+//     setInputValue(""); // Clear input field
+//   };
+
+//   const onEdit = (index: number) => {
+//     setEditIndex(index);
+//     setInputValue(fieldValue[index]); // Populate input field with selected item
+//   };
+
+//   const onDelete = (index: number) => {
+//     if (!Array.isArray(fieldValue)) {
+//       return;
+//     }
+//     const updatedList = fieldValue.filter((_, i) => i !== index);
+//     form.setValue(name, updatedList);
+//     setEditIndex(null); // Reset edit mode if deleting the currently edited item
+//   };
+
+//   return (
+//     <div>
+//       <div className="flex items-end justify-between gap-4">
+//         <div className="flex-1">
+//           {" "}
+//           {/* This makes the form field take up the rest of the width */}
+//           <FormField
+//             control={form.control}
+//             name={name}
+//             render={() => (
+//               <FormItem>
+//                 <FormLabel>{label}</FormLabel>
+//                 <FormControl>
+//                   <Input
+//                     type="text"
+//                     placeholder={label}
+//                     className="shadow w-full bg-white"
+//                     value={inputValue}
+//                     onChange={(e) => setInputValue(e.target.value)}
+//                     onKeyDown={(e) => {
+//                       if (e.key === "Enter") {
+//                         e.preventDefault();
+//                         onAddOrUpdate();
+//                       }
+//                     }}
+//                   />
+//                 </FormControl>
+//                 <FormMessage />
+//               </FormItem>
+//             )}
+//           />
+//         </div>
+//         <FaCirclePlus
+//           className="text-2xl flex-none mb-2 text-primary cursor-pointer"
+//           onClick={onAddOrUpdate}
+//         />
+//       </div>
+
+//       {/* List of added items with Edit & Delete */}
+//       <ul className="mt-2 space-y-2">
+//         {Array.isArray(fieldValue) &&
+//           fieldValue.map((item: string, index: number) => (
+//             <li
+//               key={index}
+//               className={`flex items-center justify-between px-3 py-2 rounded-md ${
+//                 editIndex === index ? "bg-[#fff6ec]" : "bg-gray-100"
+//               }`}
+//             >
+//               <span className="flex-1">{item}</span>
+
+//               <div className="flex gap-2">
+//                 <FiEdit2
+//                   className="cursor-pointer text-base"
+//                   onClick={() => onEdit(index)}
+//                 />
+//                 <AiOutlineDelete
+//                   className="text-red-500 text-xl cursor-pointer"
+//                   onClick={() => onDelete(index)}
+//                 />
+//               </div>
+//             </li>
+//           ))}
+//       </ul>
+//     </div>
+//   );
+// }

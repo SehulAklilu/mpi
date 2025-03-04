@@ -56,6 +56,7 @@ import { getAxiosErrorMessage, getAxiosSuccessMessage } from "@/api/axios";
 import { toast } from "react-toastify";
 import { MdEdit, MdDelete } from "react-icons/md";
 import { SelectLabel } from "@radix-ui/react-select";
+import { useRole } from "@/RoleContext";
 
 export interface NewPreparation extends Preparation {
   for: string; // Allows flexibility if needed
@@ -68,6 +69,7 @@ function Periodizations({
   playerId: string;
   coachGoals: CoachGoal[];
 }) {
+  const { role } = useRole();
   const [onEdit, setOnEdit] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
@@ -235,40 +237,44 @@ function Periodizations({
             </option>
           ))}
         </select>
-        <div className="w-10 h-10 flex  flex-none items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 cursor-pointer">
-          <MdEdit
-            className="text-gray-600 text-xl"
-            onClick={() => {
-              setDate({
-                from: selectedPeriodization?.startingDate
-                  ? new Date(selectedPeriodization.startingDate)
-                  : undefined,
-                to: selectedPeriodization?.endingDate
-                  ? new Date(selectedPeriodization.endingDate)
-                  : undefined,
-              });
-              setIsDatePickerOpen(true);
-              setOnEdit(true);
-            }}
-          />
-        </div>
-        <div className="w-10 h-10 flex  flex-none items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 cursor-pointer">
-          <MdDelete
-            className="text-gray-600 text-xl"
-            onClick={() =>
-              deleteSOT.mutate({
-                playerId,
-                periodizationId: selectedPeriodizationId,
-              })
-            }
-          />
-        </div>
-        <FaCirclePlus
-          className="text-4xl flex-none mb-2 text-primary cursor-pointer"
-          onClick={() => {
-            setIsDatePickerOpen(true);
-          }}
-        />
+        {role && role === "coach" && (
+          <>
+            <div className="w-10 h-10 flex  flex-none items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 cursor-pointer">
+              <MdEdit
+                className="text-gray-600 text-xl"
+                onClick={() => {
+                  setDate({
+                    from: selectedPeriodization?.startingDate
+                      ? new Date(selectedPeriodization.startingDate)
+                      : undefined,
+                    to: selectedPeriodization?.endingDate
+                      ? new Date(selectedPeriodization.endingDate)
+                      : undefined,
+                  });
+                  setIsDatePickerOpen(true);
+                  setOnEdit(true);
+                }}
+              />
+            </div>
+            <div className="w-10 h-10 flex  flex-none items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 cursor-pointer">
+              <MdDelete
+                className="text-gray-600 text-xl"
+                onClick={() =>
+                  deleteSOT.mutate({
+                    playerId,
+                    periodizationId: selectedPeriodizationId,
+                  })
+                }
+              />
+            </div>
+            <FaCirclePlus
+              className="text-4xl flex-none mb-2 text-primary cursor-pointer"
+              onClick={() => {
+                setIsDatePickerOpen(true);
+              }}
+            />
+          </>
+        )}
       </div>
       {selectedPeriodization && (
         <div>
@@ -450,18 +456,20 @@ function Periodizations({
                     "No data available"} */}
                 </CardContent>
                 <CardFooter>
-                  <div className="flex items-center justify-center mt-1 ">
-                    <button
-                      onClick={() => {
-                        setSelectedPhase(null);
-                        setSelectedField(field);
-                        setIsOpen(true);
-                      }}
-                      className="py-1 px-4 rounded-full shadow-lg border text-primary font-medium hover:bg-primary hover:text-white"
-                    >
-                      Add Phase
-                    </button>
-                  </div>
+                  {role && role === "coach" && (
+                    <div className="flex items-center justify-center mt-1 ">
+                      <button
+                        onClick={() => {
+                          setSelectedPhase(null);
+                          setSelectedField(field);
+                          setIsOpen(true);
+                        }}
+                        className="py-1 px-4 rounded-full shadow-lg border text-primary font-medium hover:bg-primary hover:text-white"
+                      >
+                        Add Phase
+                      </button>
+                    </div>
+                  )}
                 </CardFooter>
               </Card>
             ))}

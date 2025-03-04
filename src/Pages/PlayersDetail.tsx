@@ -1,4 +1,4 @@
-import { getPlayer } from "@/api/match.api";
+import { getPlayer, getPlayerGoals } from "@/api/match.api";
 import { ContentLayout } from "@/components/Sidebar/contenet-layout";
 import React, { useState } from "react";
 import { useQuery } from "react-query";
@@ -15,17 +15,27 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Parent } from "@/types/children.type";
+import { useRole } from "@/RoleContext";
+import { getChild } from "@/api/children.api";
+import PlayerClasses from "@/components/Players/PlayerClasses";
 
 function PlayersDetail() {
   const [activeTab, setActiveTab] = useState("Profile");
   const [open, setOpen] = useState(false);
   const [selectedValue, setSelectedValue] = useState<Parent | null>(null);
   const { id } = useParams<{ id: string }>();
+  const { role } = useRole();
+
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["getPlayer"],
-    queryFn: () => getPlayer(id as string),
+    queryKey: role === "parent" ? ["children", id] : ["getPlayer", id],
+    queryFn:
+      role === "parent"
+        ? () => getChild(id as string)
+        : () => getPlayer(id as string),
     enabled: !!id,
   });
+
+  console.log("333333333333333333333", data?.player.coachGoals);
 
   if (!data) {
     return;
@@ -163,7 +173,9 @@ function PlayersDetail() {
                 playerId={data.player._id}
               />
             </TabsContent>
-            <TabsContent className="!mt-0" value="Classes"></TabsContent>
+            <TabsContent className="!mt-0" value="Classes">
+              <PlayerClasses playerId={data.player._id} />
+            </TabsContent>
             <TabsContent className="!mt-0" value="SOT">
               <Periodizations
                 playerId={data.player._id}

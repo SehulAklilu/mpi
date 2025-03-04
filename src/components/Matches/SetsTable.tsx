@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Match, Player } from "@/types/match.type";
 import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 import avater from "../../assets/avater.jpg";
+import { LABELS } from "@/lib/utils";
 
 const SetsTable: React.FC<{ match: Match }> = ({ match }) => {
   // Determine display names for player one and player two.
@@ -278,10 +279,16 @@ const SetsTable: React.FC<{ match: Match }> = ({ match }) => {
                                         <thead>
                                           <tr>
                                             <th className="border font-medium border-gray-300 p-1">
-                                              P1 Score
+                                              <div className="flex flex-col items-center justify-center">
+                                                {getPlayerDetail("playerOne")}{" "}
+                                                Scores
+                                              </div>
                                             </th>
                                             <th className="border font-medium border-gray-300 p-1">
-                                              P2 Score
+                                              <div className="flex flex-col items-center justify-center">
+                                                {getPlayerDetail("playerTwo")}{" "}
+                                                Scores
+                                              </div>
                                             </th>
                                             <th className="border font-medium border-gray-300 p-1">
                                               Type
@@ -307,13 +314,13 @@ const SetsTable: React.FC<{ match: Match }> = ({ match }) => {
                                                 {score.p2Score}
                                               </td>
                                               <td className="border border-gray-300 p-1 text-center">
-                                                {score.type}
+                                                {LABELS[score.type]}
                                               </td>
                                               <td className="border border-gray-300 p-1 text-center">
-                                                {score.servePlacement}
+                                                {LABELS[score.servePlacement]}
                                               </td>
                                               <td className="border border-gray-300 p-1 text-center">
-                                                {score.rallies}
+                                                {LABELS[score.rallies]}
                                               </td>
                                               <td className="border border-gray-300 p-1 text-center">
                                                 {score.isSecondService

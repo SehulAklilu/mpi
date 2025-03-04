@@ -21,7 +21,6 @@ import NewLogin from "./Pages/NewLogin.tsx";
 import CourseDetail from "./components/Learn/CourseDetail.tsx";
 import LessonDetail from "./components/Learn/LessonDetail.tsx";
 import AssessmentComponent from "./components/Assessment/assessment.tsx";
-import { assesment } from "./types/course.types.ts";
 import NewLearn from "./Pages/Learn/NewLearn.tsx";
 import Assessment from "./Pages/Assessment.tsx";
 import Chat from "./Pages/Chat.tsx";
@@ -152,7 +151,7 @@ const router = createBrowserRouter([
           //   element: <PendingMatch />,
           // },
           {
-            path: "matches/recentMatch/:id",
+            path: "matches/:id",
             element: <RecentMatch />,
           },
           {
@@ -164,7 +163,11 @@ const router = createBrowserRouter([
             element: <TrackingMatch />,
           },
           {
-            path: "matches/:id",
+            path: "matches/new",
+            element: <AddMatch />,
+          },
+          {
+            path: "matches/edit/:id",
             element: <AddMatch />,
           },
         ],
@@ -178,7 +181,11 @@ const router = createBrowserRouter([
           },
           {
             path: "children/:id",
-            element: <ChildrenDetailPage />,
+            element: <PlayersDetail />,
+          },
+          {
+            path: "child/matchDetail/:id",
+            element: <RecentMatch />,
           },
         ],
       },

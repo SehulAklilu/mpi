@@ -1,7 +1,7 @@
 import { getMatches } from "@/api/match.api";
 import { ContentLayout } from "@/components/Sidebar/contenet-layout";
 import { Input } from "@/components/ui/input";
-import { formatDateTime } from "@/lib/utils";
+import { formatDateTime, getStatusColors } from "@/lib/utils";
 import { Match, Player, Status } from "@/types/match.type";
 import { useState } from "react";
 import { FaPlusCircle, FaSearch } from "react-icons/fa";
@@ -58,7 +58,7 @@ const page = () => {
     <ContentLayout>
       <div className="pt-5 pb-20  px-4 bg-white w-full min-h-screen">
         <Link
-          to="/matches/addmatch"
+          to="/matches/new"
           className="bg-gradient-to-b z-20 hover:scale-105 duration-200 from-[#F8B672] to-[#F2851C] rounded-full shadow-lg shadow-primary p-5 w-fit fixed bottom-0 right-0 mb-12 mr-12"
         >
           <FaPlusCircle className="text-white text-2xl" />
@@ -73,7 +73,9 @@ const page = () => {
         </div>
         <div className="mt-5">
           <div className="flex justify-between">
-            <div className="font-semibold">Pending Match</div>
+            <div className="font-semibold text-xl text-primary pl-4">
+              Pending Match
+            </div>
             <div
               className="text-primary font-semibold cursor-pointer text-sm underline"
               onClick={() => setShowAll((prev) => !prev)}
@@ -84,17 +86,16 @@ const page = () => {
           <div className="grid mt-3 grid-cols-2 gap-y-12 max-md:grid-cols-1 justify-center items-center mx-auto">
             {pendingMatchesToShow?.map((match) => (
               <div key={match._id}>
-                <PendingMatch
-                  match={match}
-                  link={"/matches/trackingMatch/" + match._id}
-                />
+                <PendingMatch match={match} link={`/matches/${match._id}`} />
               </div>
             ))}
           </div>
         </div>
         <div className="mt-12">
           <div className="mb-2 flex justify-between">
-            <div className="font-semibold">Recent Matches</div>
+            <div className="font-semibold text-xl text-primary pl-4">
+              Recent Matches
+            </div>
             <div
               className="text-primary font-semibold cursor-pointer text-sm underline"
               onClick={() => setShowAllRecent((prev) => !prev)}
@@ -105,10 +106,7 @@ const page = () => {
           <div className="grid mt-3 grid-cols-2 gap-y-12 max-md:grid-cols-1">
             {recentMatchesToShow?.map((match) => (
               <div key={match._id}>
-                <PendingMatch
-                  match={match}
-                  link={`/matches/recentMatch/${match._id}`}
-                />
+                <PendingMatch match={match} link={`/matches/${match._id}`} />
               </div>
             ))}
           </div>
@@ -137,7 +135,18 @@ const PendingMatch = ({ match, link }: { match: Match; link: string }) => {
             name={match?.p2Name}
           />
         </div>
-        <div className="font-semibold text-xs text-center mt-4">
+        <div className="flex items-center justify-center mt-2">
+          <p
+            className="capitalize px-4 py-1 font-semibold text-sm rounded-full"
+            style={{
+              color: getStatusColors(match.status).text,
+              backgroundColor: getStatusColors(match.status).bg,
+            }}
+          >
+            {match?.status}
+          </p>
+        </div>
+        <div className="font-semibold text-xs text-center mt-2">
           {formatDateTime(match.date)}
         </div>
       </div>

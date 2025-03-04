@@ -6,13 +6,19 @@ import avater from "../../assets/avater.jpg";
 import { extractDateTime } from "@/lib/utils";
 import { GiTennisRacket } from "react-icons/gi";
 import { useNavigate } from "react-router-dom";
+import { useRole } from "@/RoleContext";
 
 const PlayerMatcheCard = ({ match }: { match: Match }) => {
   const navigate = useNavigate();
+  const { role } = useRole();
   return (
     <div
       className="w-[30rem] items-center rounded-2xl shadow-lg bg-white my-4 h-[9rem] grid grid-cols-3 hover:border hover:border-primary cursor-pointer"
-      onClick={() => navigate(`/players/matchDetail/${match._id}`)}
+      onClick={() =>
+        role && role === "parent"
+          ? navigate(`/child/matchDetail/${match._id}`)
+          : navigate(`/players/matchDetail/${match._id}`)
+      }
     >
       <div>
         {match.p1IsObject ? (
