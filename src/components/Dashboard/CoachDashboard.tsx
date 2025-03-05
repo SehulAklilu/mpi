@@ -107,7 +107,7 @@ function CoachDashboard() {
     queryFn: getDashboard,
   });
 
-  const onPlayerSeleted = (value: string) => {
+  const onPlayerSelected = (value: string) => {
     setSelectedPlayer(value);
   };
   const onMatchSelected = (value: string) => {
@@ -132,11 +132,12 @@ function CoachDashboard() {
   return (
     <div className="px-4 md:px-14 pt-10 rounded-lg pb-[8rem] bg-white ">
       <div className="flex gap-4 mt-4 ">
-        <Select onValueChange={onPlayerSeleted}>
+        <Select onValueChange={onPlayerSelected}>
           <SelectTrigger className="!w-full flex-1 h-12 !py-4">
             <SelectValue placeholder="Select Player" />
           </SelectTrigger>
           <SelectContent>
+            <SelectItem value="all">All</SelectItem>
             {players?.players.map((player) => (
               <SelectItem value={player._id} key={player._id}>
                 <div className="flex items-center gap-x-2">
@@ -158,6 +159,7 @@ function CoachDashboard() {
             <SelectValue placeholder="Select Match" />
           </SelectTrigger>
           <SelectContent>
+            <SelectItem value="all">All</SelectItem>
             {data?.matches
               ?.filter((match) => match.status === "completed")
               .map((match) => (
@@ -180,9 +182,11 @@ function CoachDashboard() {
 
       {/* Time Range */}
 
-      {selectedPlayer ? (
+      {selectedPlayer && selectedPlayer !== "all" ? (
         <DashboardByPlayer playerId={selectedPlayer} />
-      ) : selectedMatch && (matchPlayerId || selectedPlayer) ? (
+      ) : selectedMatch &&
+        selectedMatch !== "all" &&
+        (matchPlayerId || selectedPlayer) ? (
         <DashboardByPlayer
           playerId={matchPlayerId || selectedPlayer}
           matchId={selectedMatch}

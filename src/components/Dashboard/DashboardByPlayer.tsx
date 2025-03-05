@@ -498,7 +498,7 @@ const WinnersChart = ({ data: dashboard }: { data: TennisMatchStats }) => {
         <p className="text-2xl font-bold text-blue-700">
           Total: {dashboard?.winners.total}
         </p>
-        <p className="text-sm text-blue-400">Win Rate: 213%</p>
+        {/* <p className="text-sm text-blue-400">Win Rate: 213%</p> */}
       </CardHeader>
 
       <CardContent className="flex flex-col items-center gap-4">

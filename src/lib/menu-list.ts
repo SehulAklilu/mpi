@@ -60,13 +60,13 @@ export function getMenuList(
             svgType: true,
             submenus: [],
           },
-          // {
-          //   href: "/progress",
-          //   label: "Progress",
-          //   active: location.pathname.includes("/progress"),
-          //   icon: FiPieChart,
-          //   submenus: [],
-          // },
+          {
+            href: "/progress",
+            label: "Progress",
+            active: location.pathname.includes("/progress"),
+            icon: FiPieChart,
+            submenus: [],
+          },
           {
             href: "/calendar",
             label: "Calendar",

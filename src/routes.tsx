@@ -131,7 +131,7 @@ const router = createBrowserRouter([
           },
           {
             path: "progress",
-            element: <Progress />,
+            element: <Dashboard />,
           },
           {
             path: "journal/new",

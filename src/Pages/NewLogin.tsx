@@ -50,7 +50,7 @@ function NewLogin() {
       Cookies.set("avater", data.user?.avatar);
       localStorage.setItem("authUpdate", Date.now().toString());
       if (data.user.role === "coach") {
-        navigate("/matches");
+        navigate("/dashboard");
       } else if (data.user.role === "parent") {
         navigate("/dashboard");
       } else {

@@ -2,6 +2,7 @@ import { useQuery } from "react-query";
 import axios from "@/api/axios";
 import { toast } from "react-toastify";
 import { Skeleton } from "../ui/skeleton";
+import avater from "../../assets/avater.jpg";
 interface User {
   _id: string;
   firstName: string;
@@ -68,7 +69,7 @@ const An = ({ data }: { data: Announcement }) => {
     <div className="w-full relative border border-primary/20 shadow flex py-2 px-2 gap-3 rounded-lg">
       <div>
         <img
-          src={data.createdBy.avatar}
+          src={data?.createdBy?.avatar ?? avater}
           width={100}
           height={100}
           className="rounded-full w-12 h-12"

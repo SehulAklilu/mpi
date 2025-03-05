@@ -95,7 +95,7 @@ function ChatComponent({ setActiveTab, openChatId }: ChatComponentProps) {
             ? chat.latestMessage.isRead
               ? 0
               : chat.latestMessage.content
-              ? 1
+              ? 0
               : 0
             : 0,
           isRead: chat?.latestMessage?.isRead ?? false,

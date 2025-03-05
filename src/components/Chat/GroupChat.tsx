@@ -54,7 +54,7 @@ const FormSchema = z.object({
   group_name: z.string(),
   group_type: z.string(),
   bio: z.string().optional(),
-  avatar: z.string().optional(),
+  avatar: z.any().optional(),
   members: z.array(z.string()).min(1, "At least one member is required"),
 });
 interface GroupChatProps {
@@ -128,8 +128,6 @@ function GroupChat({ setActiveTab }: GroupChatProps) {
     };
     mutate(payload);
   };
-
-  console.log("333333333333333", groups);
 
   return (
     <div className="relative">

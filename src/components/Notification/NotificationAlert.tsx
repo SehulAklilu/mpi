@@ -64,7 +64,7 @@ const NotificationAlert = ({ setIsNotiOpen }: { setIsNotiOpen: Function }) => {
             <FaArrowLeft className="text-lg" />
           </Button>
           <Button>
-            <MoreVertical className="text-lg text-primary" />
+            {/* <MoreVertical className="text-lg text-primary" /> */}
           </Button>
         </div>
         <div className="w-full flex gap-4 mt-3">

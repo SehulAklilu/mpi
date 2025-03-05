@@ -135,7 +135,7 @@ function Menu({ isOpen, setIsNotiOpen }: MenuProps) {
                 className="flex items-center gap-1 cursor-pointer"
               >
                 <img src={notification} alt="night mode" className="w-12" />
-                {isOpen ? <p>10 Notification</p> : null}
+                {isOpen ? <p>Notifications</p> : null}
               </div>
 
               {/* <img src={nightMode} alt="night mode" className="w-12" /> */}
