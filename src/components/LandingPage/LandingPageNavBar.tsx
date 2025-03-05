@@ -110,7 +110,7 @@ function LandingPageNavBar() {
 
   const playerLinks: LinkItem[] = [
     { title: "Course", href: "/course" },
-    { title: "Progress", href: "/progress" },
+    // { title: "Progress", href: "/progress" },
     { title: "Journal", href: "/journal" },
     { title: "Connect", href: "/chat" },
   ];
@@ -122,9 +122,17 @@ function LandingPageNavBar() {
     { title: "Connect", href: "/chat" },
   ];
 
+  const parentLinks: LinkItem[] = [
+    { title: "Matches", href: "/matches" },
+    { title: "Players", href: "/players" },
+    { title: "Connect", href: "/chat" },
+  ];
+
   const getLinksForRole = (role: string): LinkItem[] => {
     if (role === "coach") {
       return coachLinks;
+    } else if (role === "parent") {
+      return parentLinks;
     }
     return playerLinks;
   };

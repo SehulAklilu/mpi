@@ -290,10 +290,10 @@ export const heroLinks = [
     title: "ABOUT US",
     href: "/about-us",
   },
-  {
-    title: "SERVICES",
-    href: "/services",
-  },
+  // {
+  //   title: "SERVICES",
+  //   href: "/services",
+  // },
   {
     title: "COURSES",
     href: "/courses",
