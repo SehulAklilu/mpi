@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useState } from "react";
 import { Check, TrendingUp } from "lucide-react";
 import {
@@ -37,27 +37,121 @@ import { FaRegCheckCircle } from "react-icons/fa";
 import { useQuery } from "react-query";
 import { getDashboardByPlayerId } from "@/api/dashboard.api";
 import { TennisMatchStats } from "@/types/dashboard.type";
+import { Skeleton } from "../ui/skeleton";
 
 function DashboardByPlayer({ playerId }: { playerId: string }) {
   const [selected, setSelected] = useState("Overview");
+  const [selectedType, setSelectedType] = useState<
+    "practice" | "tournament" | "all"
+  >("all");
+  const [returnPlacementFirstServe, setReturnPlacementFirstServe] =
+    useState("First Serve");
 
-  const { data, isLoading: dashboardIsLoading } = useQuery({
-    queryKey: ["getDashboardByPlayerId", playerId],
-    queryFn: () => getDashboardByPlayerId(playerId),
+  const [selectedMonth, setSelectedMonth] = useState(1);
+  const options = [
+    { label: "ALL", value: 12 },
+    { label: "1M", value: 1 },
+    { label: "3M", value: 3 },
+    { label: "6M", value: 6 },
+    { label: "1Y", value: 12 },
+  ];
+
+  const typeOptions: {
+    label: string;
+    value: "practice" | "tournament" | "all";
+  }[] = [
+    { label: "All", value: "all" },
+    { label: "Practice", value: "practice" },
+    { label: "Match", value: "tournament" },
+  ];
+
+  const {
+    data,
+    isLoading: dashboardIsLoading,
+    refetch,
+  } = useQuery({
+    queryKey: ["getDashboardByPlayerId", playerId, selectedType, selectedMonth], // Include dependencies
+    queryFn: () =>
+      getDashboardByPlayerId(playerId, selectedMonth.toString(), selectedType),
   });
+
+  useEffect(() => {
+    refetch();
+  }, [selectedType, selectedMonth]);
+
+  if (dashboardIsLoading) {
+    return (
+      <div className="flex h-screen w-screen items-center justify-center bg-gray-100 dark:bg-gray-900">
+        <div className="flex flex-col space-y-4 min-h-[30rem] w-[80%] max-w-xl">
+          <Skeleton className="h-full mt-6 w-full" />
+        </div>
+      </div>
+    );
+  }
+
   if (!data) {
     return <p>Data Not Avalable</p>;
   }
   return (
     <div>
-      <div className="my-6">
-        <RadioButtonGroup />
+      <div className="mt-6 flex justify-between flex-wrap items-center mb-2">
+        <div className="flex space-x-6 p-4">
+          {typeOptions.map((option) => (
+            <label
+              key={option.value}
+              className="flex items-center space-x-2 cursor-pointer"
+            >
+              <input
+                type="radio"
+                value={option.value}
+                checked={selectedType === option.value}
+                onChange={() => setSelectedType(option.value)}
+                className="hidden"
+              />
+              <div
+                className={`w-5 h-5 flex items-center justify-center rounded-full border-2 transition-all
+              ${
+                selectedType === option.value
+                  ? "border-primary bg-primary"
+                  : "border-gray-400 bg-white"
+              }`}
+              >
+                {selectedType === option.value && (
+                  <div className="w-2.5 h-2.5 bg-white rounded-full"></div>
+                )}
+              </div>
+              <span
+                className={`text-sm font-medium transition-all ${
+                  selectedType === option.value
+                    ? "text-blue-600"
+                    : "text-gray-700"
+                }`}
+              >
+                {option.label}
+              </span>
+            </label>
+          ))}
+        </div>
+        <div className="flex space-x-2 p-2 w-fit rounded-lg">
+          {options.map((option) => (
+            <button
+              key={option.label}
+              onClick={() => setSelectedMonth(option.value)}
+              className={`px-4 py-2 rounded-full text-sm font-medium border transition-all duration-200
+            ${
+              selectedMonth === option.value
+                ? "bg-primary text-white"
+                : "bg-white text-gray-700 hover:bg-gray-200"
+            }`}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
       </div>
-      {/* <div className="mt-2">
-        <TimeRangeSelector />
-      </div> */}
+
       <div className="my-6">
-        <div className="flex items-center space-x-4 bg-gray-100 p-4 rounded-xl shadow-md">
+        <div className="flex items-center flex-wrap gap-y-2 space-x-4 bg-gray-100 p-4 rounded-xl shadow-md">
           {["Overview", "Serves", "Points", "Return", "Rally"].map((option) => (
             <label
               key={option}
@@ -98,28 +192,73 @@ function DashboardByPlayer({ playerId }: { playerId: string }) {
       )}
       {selected === "Serves" && (
         <div>
-          <div className="grid grid-cols-2">
+          <div className="grid grid-cols-1 md:grid-cols-2">
             <FirstServePlacement data={data} type="first" />
             <FirstServePlacement data={data} type="second" />
           </div>
-          <div className="grid grid-cols-2">
+          <div className="grid grid-cols-1 md:grid-cols-2">
             <FirstServePlacement data={data} type="ace" />
-            <ServeStats data={data} />
+            <ServeStats data={data} type="serve" />
           </div>
         </div>
       )}
       {selected === "Points" && (
         <div>
-          <div className="grid grid-cols-2">
+          <div className="grid grid-cols-1 md:grid-cols-2">
             <BrakingPoints data={data} />
             <FirstServePlacement data={data} type="gamePoint" />
           </div>
         </div>
       )}
 
+      {selected === "Return" && (
+        <div>
+          <div className="grid grid-cols-1 md:grid-cols-2">
+            <ServeStats data={data} type="return" />
+          </div>
+          <div className="flex items-center space-x-4 p-4 ">
+            {["First Serve", "Second Serve"].map((option) => (
+              <label
+                key={option}
+                className={`flex items-center justify-center cursor-pointer px-4 py-2 rounded-lg transition-all
+            ${
+              returnPlacementFirstServe === option
+                ? "bg-primary text-white shadow-lg"
+                : "bg-white text-gray-700 hover:bg-gray-200"
+            }`}
+              >
+                <input
+                  type="radio"
+                  value={option}
+                  checked={returnPlacementFirstServe === option}
+                  onChange={() => setReturnPlacementFirstServe(option)}
+                  className="hidden"
+                />
+                {option}
+              </label>
+            ))}
+          </div>
+          <hr />
+          <h1 className="text-2xl font-bold my-2">Return Placement</h1>
+          {returnPlacementFirstServe === "First Serve" ? (
+            <div className="grid grid-cols-3">
+              <ReturnPlacement data={data} type="firstServe" />
+              <ReturnPlacement data={data} type="firstServeForehand" />
+              <ReturnPlacement data={data} type="firstServeBackhand" />
+            </div>
+          ) : (
+            <div className="grid grid-cols-3">
+              <ReturnPlacement data={data} type="secondServe" />
+              <ReturnPlacement data={data} type="secondServeForehand" />
+              <ReturnPlacement data={data} type="secondServeBackhand" />
+            </div>
+          )}
+        </div>
+      )}
+
       {selected === "Rally" && (
         <div>
-          <div className="grid grid-cols-2">
+          <div className="grid grid-cols-1 md:grid-cols-2">
             <FirstServePlacement data={data} type="rally" />
           </div>
         </div>
@@ -129,77 +268,6 @@ function DashboardByPlayer({ playerId }: { playerId: string }) {
 }
 
 export default DashboardByPlayer;
-
-const MenuGroup = () => {
-  const [selected, setSelected] = useState("All");
-
-  return (
-    <div className="flex items-center space-x-4 bg-gray-100 p-4 rounded-xl shadow-md">
-      {["Overview", "Serves", "Points", "Return", "Rally"].map((option) => (
-        <label
-          key={option}
-          className={`flex items-center justify-center cursor-pointer px-4 py-2 rounded-lg transition-all
-            ${
-              selected === option
-                ? "bg-primary text-white shadow-lg"
-                : "bg-white text-gray-700 hover:bg-gray-200"
-            }`}
-        >
-          <input
-            type="radio"
-            value={option}
-            checked={selected === option}
-            onChange={() => setSelected(option)}
-            className="hidden"
-          />
-          {option}
-        </label>
-      ))}
-    </div>
-  );
-};
-
-const RadioButtonGroup = () => {
-  const [selected, setSelected] = useState("All");
-
-  return (
-    <div className="flex space-x-6 p-4">
-      {["All", "Practice", "Match"].map((option) => (
-        <label
-          key={option}
-          className="flex items-center space-x-2 cursor-pointer"
-        >
-          <input
-            type="radio"
-            value={option}
-            checked={selected === option}
-            onChange={() => setSelected(option)}
-            className="hidden"
-          />
-          <div
-            className={`w-5 h-5 flex items-center justify-center rounded-full border-2 transition-all
-              ${
-                selected === option
-                  ? "border-primary bg-primary"
-                  : "border-gray-400 bg-white"
-              }`}
-          >
-            {selected === option && (
-              <div className="w-2.5 h-2.5 bg-white rounded-full"></div>
-            )}
-          </div>
-          <span
-            className={`text-sm font-medium transition-all ${
-              selected === option ? "text-blue-600" : "text-gray-700"
-            }`}
-          >
-            {option}
-          </span>
-        </label>
-      ))}
-    </div>
-  );
-};
 
 const ChartComponent = ({ data }: { data: TennisMatchStats }) => {
   const [selected, setSelected] = useState("Points");
@@ -428,7 +496,7 @@ const WinnersChart = ({ data: dashboard }: { data: TennisMatchStats }) => {
           </PieChart>
         </div>
 
-        <div className="grid grid-cols-2 gap-2 w-full text-sm">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 w-full text-sm">
           {data.map((item, index) => (
             <div
               key={index}
@@ -451,23 +519,23 @@ const WinnersChart = ({ data: dashboard }: { data: TennisMatchStats }) => {
 };
 
 const ErrorsChart = ({ data }: { data: TennisMatchStats }) => {
-  const chartData = [
+  const chartDataForced = [
     {
       type: "Forced Errors",
       count: data.errorss.p1.forced.percentage,
       fill: "#FF6B6B",
     },
+  ];
+
+  const chartDataUnforced = [
     {
       type: "Unforced Errors",
       count: data.errorss.p1.unforced.percentage,
-      fill: "#FFD93D",
+      fill: "#FF6B6B",
     },
   ];
 
-  const totalErrors = useMemo(() => {
-    return chartData.reduce((acc, curr) => acc + curr.count, 0);
-  }, [chartData]);
-
+  const totalErrors = 100;
   return (
     <div className="flex flex-col w-full items-center space-y-4  ">
       <Card className="w-full  p-4 shadow-lg rounded-xl bg-white">
@@ -482,7 +550,7 @@ const ErrorsChart = ({ data }: { data: TennisMatchStats }) => {
               </h1>
               <PieChart width={350} height={350}>
                 <Pie
-                  data={chartData}
+                  data={chartDataForced}
                   dataKey="count"
                   nameKey="type"
                   innerRadius={60}
@@ -514,7 +582,7 @@ const ErrorsChart = ({ data }: { data: TennisMatchStats }) => {
               </h1>
               <PieChart width={350} height={350}>
                 <Pie
-                  data={chartData}
+                  data={chartDataUnforced}
                   dataKey="count"
                   nameKey="type"
                   innerRadius={60}
@@ -701,7 +769,7 @@ const BrakingPoints = ({ data }: { data: TennisMatchStats }) => {
   } satisfies ChartConfig;
 
   return (
-    <Card className="flex flex-col flex-1 justify-around  border px-4 rounded-xl bg-white shadow-lg">
+    <Card className="flex flex-col flex-1 justify-around ">
       <h1 className="text-2xl font-bold">Average Rally</h1>
       <CardHeader className="space-y-2 text-center"></CardHeader>
 
@@ -912,15 +980,64 @@ export function FirstServePlacement({
   );
 }
 
-export function ServeStats({ data }: { data: TennisMatchStats }) {
-  const chartData = [
-    // { serveType: "First Serve", count: data?.serves.p1. },
-    { serveType: "First Serve Won", count: data?.serves.p1.firstServesWon },
-    { serveType: "First Serve Lost", count: data?.serves.p1.firstServesLost },
-    // { serveType: "Second Serve", count: 0 },
-    { serveType: "Second Serve Won", count: data?.serves.p1.secondServesWon },
-    { serveType: "Second Serve Lost", count: data?.serves.p1.secondServesLost },
-  ];
+export function ServeStats({
+  data,
+  type,
+}: {
+  data: TennisMatchStats;
+  type: "return" | "serve";
+}) {
+  const chartData =
+    type === "serve"
+      ? [
+          { serveType: "First Serve", count: data?.serves.p1?.firstServe ?? 0 },
+          {
+            serveType: "First Serve Won",
+            count: data?.serves.p1.firstServesWon,
+          },
+          {
+            serveType: "First Serve Lost",
+            count: data?.serves.p1.firstServesLost,
+          },
+          {
+            serveType: "Second Serve",
+            count: data?.serves.p1?.secondServe ?? 0,
+          },
+          {
+            serveType: "Second Serve Won",
+            count: data?.serves.p1.secondServesWon,
+          },
+          {
+            serveType: "Second Serve Lost",
+            count: data?.serves.p1.secondServesLost,
+          },
+        ]
+      : [
+          {
+            serveType: "First Serve",
+            count: data?.returnStats.p1?.firstServe ?? 0,
+          },
+          {
+            serveType: "First Serve Won",
+            count: data?.returnStats.p1?.firstServeWon ?? 0,
+          },
+          {
+            serveType: "First Serve Lost",
+            count: data?.returnStats.p1?.firstServeLost ?? 0,
+          },
+          {
+            serveType: "Second Serve",
+            count: data?.returnStats.p1?.secondServe ?? 0,
+          },
+          {
+            serveType: "Second Serve Won",
+            count: data?.returnStats.p1?.secondServeWon ?? 0,
+          },
+          {
+            serveType: "Second Serve Lost",
+            count: data?.returnStats.p1?.secondServeLost ?? 0,
+          },
+        ];
 
   const chartConfig = {
     serveType: {
@@ -935,7 +1052,9 @@ export function ServeStats({ data }: { data: TennisMatchStats }) {
   return (
     <Card className="">
       <CardHeader>
-        <CardTitle>Serves Chart</CardTitle>
+        <CardTitle className="text-2xl font-bold my-2">
+          {type === "serve" ? "Serves Chart" : "Return Stats"}
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
@@ -958,6 +1077,7 @@ export function ServeStats({ data }: { data: TennisMatchStats }) {
               type="number"
               domain={[0, 100]} // Range from 0 to 100 as requested
               tickCount={6} // To show tick marks from 0, 20, 40, ... 100
+              tickFormatter={(tick) => `${tick}%`}
             />
             <ChartTooltip
               cursor={false}
@@ -984,6 +1104,237 @@ export function ServeStats({ data }: { data: TennisMatchStats }) {
           Showing serve stats for Player 1
         </div>
       </CardFooter> */}
+    </Card>
+  );
+}
+
+export function ReturnPlacement({
+  data,
+  type,
+}: {
+  data: TennisMatchStats;
+  type:
+    | "firstServe"
+    | "firstServeForehand"
+    | "firstServeBackhand"
+    | "secondServe"
+    | "secondServeForehand"
+    | "secondServeBackhand";
+}) {
+  const total =
+    type === "firstServe"
+      ? data.returnPlacement.p1.firstServe.wide +
+        data.returnPlacement.p1.firstServe.body +
+        data.returnPlacement.p1.firstServe.t +
+        data.returnPlacement.p1.firstServe.net
+      : type === "firstServeForehand"
+      ? data.returnPlacement.p1.firstServeForehand.wide +
+        data.returnPlacement.p1.firstServeForehand.body +
+        data.returnPlacement.p1.firstServeForehand.t +
+        data.returnPlacement.p1.firstServeForehand.net
+      : type === "firstServeBackhand"
+      ? data.returnPlacement.p1.firstServeBackhand.wide +
+        data.returnPlacement.p1.firstServeBackhand.body +
+        data.returnPlacement.p1.firstServeBackhand.t +
+        data.returnPlacement.p1.firstServeBackhand.net
+      : type === "secondServe"
+      ? data.returnPlacement.p1.secondServe.wide +
+        data.returnPlacement.p1.secondServe.body +
+        data.returnPlacement.p1.secondServe.t +
+        data.returnPlacement.p1.secondServe.net
+      : type === "secondServeForehand"
+      ? data.returnPlacement.p1.secondServeForehand.wide +
+        data.returnPlacement.p1.secondServeForehand.body +
+        data.returnPlacement.p1.secondServeForehand.t +
+        data.returnPlacement.p1.secondServeForehand.net
+      : data.returnPlacement.p1.secondServeBackhand.wide +
+        data.returnPlacement.p1.secondServeBackhand.body +
+        data.returnPlacement.p1.secondServeBackhand.t +
+        data.returnPlacement.p1.secondServeBackhand.net;
+
+  const serveData =
+    type === "firstServe"
+      ? [
+          {
+            category: "Wide",
+            percentage: (data.returnPlacement.p1.firstServe.wide / total) * 100,
+          },
+          {
+            category: "Body",
+            percentage: (data.returnPlacement.p1.firstServe.body / total) * 100,
+          },
+          {
+            category: "T",
+            percentage: (data.returnPlacement.p1.firstServe.t / total) * 100,
+          },
+          {
+            category: "Net",
+            percentage: (data.returnPlacement.p1.firstServe.net / total) * 100,
+          },
+        ]
+      : type === "firstServeForehand"
+      ? [
+          {
+            category: "Wide",
+            percentage:
+              (data.returnPlacement.p1.firstServeForehand.wide / total) * 100,
+          },
+          {
+            category: "Body",
+            percentage:
+              (data.returnPlacement.p1.firstServeForehand.body / total) * 100,
+          },
+          {
+            category: "T",
+            percentage:
+              (data.returnPlacement.p1.firstServeForehand.t / total) * 100,
+          },
+          {
+            category: "Net",
+            percentage:
+              (data.returnPlacement.p1.firstServeForehand.net / total) * 100,
+          },
+        ]
+      : type === "firstServeBackhand"
+      ? [
+          {
+            category: "Wide",
+            percentage:
+              (data.returnPlacement.p1.firstServeBackhand.wide / total) * 100,
+          },
+          {
+            category: "Body",
+            percentage:
+              (data.returnPlacement.p1.firstServeBackhand.body / total) * 100,
+          },
+          {
+            category: "T",
+            percentage:
+              (data.returnPlacement.p1.firstServeBackhand.t / total) * 100,
+          },
+          {
+            category: "Net",
+            percentage:
+              (data.returnPlacement.p1.firstServeBackhand.net / total) * 100,
+          },
+        ]
+      : type === "secondServe"
+      ? [
+          {
+            category: "Wide",
+            percentage:
+              (data.returnPlacement.p1.secondServe.wide / total) * 100,
+          },
+          {
+            category: "Body",
+            percentage:
+              (data.returnPlacement.p1.secondServe.body / total) * 100,
+          },
+          {
+            category: "T",
+            percentage: (data.returnPlacement.p1.secondServe.t / total) * 100,
+          },
+          {
+            category: "Net",
+            percentage: (data.returnPlacement.p1.secondServe.net / total) * 100,
+          },
+        ]
+      : type === "secondServeForehand"
+      ? [
+          {
+            category: "Wide",
+            percentage:
+              (data.returnPlacement.p1.secondServeForehand.wide / total) * 100,
+          },
+          {
+            category: "Body",
+            percentage:
+              (data.returnPlacement.p1.secondServeForehand.body / total) * 100,
+          },
+          {
+            category: "T",
+            percentage:
+              (data.returnPlacement.p1.secondServeForehand.t / total) * 100,
+          },
+          {
+            category: "Net",
+            percentage:
+              (data.returnPlacement.p1.secondServeForehand.net / total) * 100,
+          },
+        ]
+      : [
+          {
+            category: "Wide",
+            percentage:
+              (data.returnPlacement.p1.secondServeBackhand.wide / total) * 100,
+          },
+          {
+            category: "Body",
+            percentage:
+              (data.returnPlacement.p1.secondServeBackhand.body / total) * 100,
+          },
+          {
+            category: "T",
+            percentage:
+              (data.returnPlacement.p1.secondServeBackhand.t / total) * 100,
+          },
+          {
+            category: "Net",
+            percentage:
+              (data.returnPlacement.p1.secondServeBackhand.net / total) * 100,
+          },
+        ];
+
+  const chartConfig = {
+    totalPoint: {
+      label: "Total Point",
+      color: "hsl(var(--chart-2))",
+    },
+    pointsWon: {
+      label: "Points Won",
+      color: "hsl(var(--chart-1))",
+    },
+    pointsLost: {
+      label: "Points Lost",
+      color: "hsl(var(--chart-2))",
+    },
+  } satisfies ChartConfig;
+
+  return (
+    <Card className="">
+      <CardHeader>
+        <CardTitle className="text-xl font-medium my-2">
+          {type === "firstServe"
+            ? "First Serve"
+            : type === "firstServeForehand"
+            ? "First Serve Forehand"
+            : type === "firstServeBackhand"
+            ? "First Serve Backhand"
+            : type === "secondServe"
+            ? "Second Serve"
+            : type === "secondServeForehand"
+            ? "Second Serve Forehand"
+            : "Second Serve Backhand"}
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <ChartContainer config={chartConfig}>
+          <BarChart accessibilityLayer data={serveData}>
+            <CartesianGrid vertical={false} />
+            <XAxis dataKey="category" tickLine={false} axisLine={false} />
+            <YAxis
+              domain={[0, 100]}
+              ticks={[0, 20, 40, 60, 80, 100]}
+              tickFormatter={(tick) => `${tick}%`}
+            />
+            <ChartTooltip
+              cursor={false}
+              content={<ChartTooltipContent indicator="dashed" />}
+            />
+            <Bar dataKey="percentage" fill="hsl(var(--chart-1))" radius={1} />
+          </BarChart>
+        </ChartContainer>
+      </CardContent>
     </Card>
   );
 }

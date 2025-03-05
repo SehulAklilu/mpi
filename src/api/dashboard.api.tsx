@@ -38,10 +38,12 @@ export const getDashboard = async (): Promise<DashboardResponseData> => {
 };
 
 export const getDashboardByPlayerId = async (
-  playerId: string
+  playerId: string,
+  month?: string,
+  type?: "practice" | "tournament" | "all"
 ): Promise<TennisMatchStats> => {
   const response = await axiosInstance.get(
-    `api/v1/dashboard/${playerId}/matches?months=3`
+    `api/v1/dashboard/${playerId}/matches?months=${month}&matchType=${type}`
   );
   return response.data;
 };

@@ -107,7 +107,7 @@ function CoachDashboard() {
     return <>No Data Avalable</>;
   }
   return (
-    <div className="px-14 mb-[8rem]">
+    <div className="px-4 md:px-14 pt-10 rounded-lg pb-[8rem] bg-white ">
       <div className="flex gap-4 mt-4 ">
         <Select onValueChange={onPlayerSeleted}>
           <SelectTrigger className="!w-full flex-1 h-12 !py-4">
@@ -174,7 +174,7 @@ function CoachDashboard() {
           </div>
 
           {/* Top players */}
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
             {dashboard?.topPlayer && (
               <Card className="p-6 shadow-lg flex items-center">
                 <CardContent className="p-0 w-full">

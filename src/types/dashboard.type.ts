@@ -191,6 +191,8 @@ interface GamePoints {
 }
 
 interface PlayerServes {
+  secondServe?: number;
+  firstServe?: number;
   firstServesWon: number;
   firstServesWonPercentage: number;
   firstServesLost: number;
