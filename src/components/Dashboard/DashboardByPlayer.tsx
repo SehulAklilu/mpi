@@ -35,11 +35,20 @@ import {
 import { TiDelete } from "react-icons/ti";
 import { FaRegCheckCircle } from "react-icons/fa";
 import { useQuery } from "react-query";
-import { getDashboardByPlayerId } from "@/api/dashboard.api";
+import {
+  getDashboardByMatchId,
+  getDashboardByPlayerId,
+} from "@/api/dashboard.api";
 import { TennisMatchStats } from "@/types/dashboard.type";
 import { Skeleton } from "../ui/skeleton";
 
-function DashboardByPlayer({ playerId }: { playerId: string }) {
+function DashboardByPlayer({
+  playerId,
+  matchId,
+}: {
+  playerId?: string;
+  matchId?: string;
+}) {
   const [selected, setSelected] = useState("Overview");
   const [selectedType, setSelectedType] = useState<
     "practice" | "tournament" | "all"
@@ -65,14 +74,42 @@ function DashboardByPlayer({ playerId }: { playerId: string }) {
     { label: "Match", value: "tournament" },
   ];
 
+  // const {
+  //   data,
+  //   isLoading: dashboardIsLoading,
+  //   refetch,
+  // } = useQuery({
+  //   queryKey: ["getDashboardByPlayerId", playerId, selectedType, selectedMonth], // Include dependencies
+  //   queryFn: () =>
+  //     getDashboardByPlayerId(playerId, selectedMonth.toString(), selectedType),
+  //   enabled: !!playerId,
+  // });
+
   const {
     data,
     isLoading: dashboardIsLoading,
     refetch,
   } = useQuery({
-    queryKey: ["getDashboardByPlayerId", playerId, selectedType, selectedMonth], // Include dependencies
-    queryFn: () =>
-      getDashboardByPlayerId(playerId, selectedMonth.toString(), selectedType),
+    queryKey: ["getDashboard", playerId, matchId, selectedType, selectedMonth], // Updated key
+    queryFn: () => {
+      if (matchId && playerId) {
+        return getDashboardByMatchId(
+          playerId,
+          matchId,
+          selectedMonth.toString(),
+          selectedType
+        );
+      }
+      if (playerId) {
+        return getDashboardByPlayerId(
+          playerId,
+          selectedMonth.toString(),
+          selectedType
+        );
+      }
+      return Promise.resolve(null);
+    },
+    enabled: !!playerId,
   });
 
   useEffect(() => {
@@ -535,7 +572,13 @@ const ErrorsChart = ({ data }: { data: TennisMatchStats }) => {
     },
   ];
 
-  const totalErrors = 100;
+  const totalErrorsForced = useMemo(() => {
+    return chartDataForced.reduce((acc, curr) => acc + curr.count, 0);
+  }, [chartDataForced]);
+
+  const totalErrorsUnForced = useMemo(() => {
+    return chartDataUnforced.reduce((acc, curr) => acc + curr.count, 0);
+  }, [chartDataUnforced]);
   return (
     <div className="flex flex-col w-full items-center space-y-4  ">
       <Card className="w-full  p-4 shadow-lg rounded-xl bg-white">
@@ -567,7 +610,7 @@ const ErrorsChart = ({ data }: { data: TennisMatchStats }) => {
                             dominantBaseline="middle"
                             className="text-3xl font-bold"
                           >
-                            {totalErrors}
+                            {totalErrorsForced}
                           </text>
                         );
                       }
@@ -599,7 +642,7 @@ const ErrorsChart = ({ data }: { data: TennisMatchStats }) => {
                             dominantBaseline="middle"
                             className="text-3xl font-bold"
                           >
-                            {totalErrors}
+                            {totalErrorsUnForced}
                           </text>
                         );
                       }

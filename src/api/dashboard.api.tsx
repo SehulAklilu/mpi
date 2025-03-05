@@ -47,3 +47,15 @@ export const getDashboardByPlayerId = async (
   );
   return response.data;
 };
+
+export const getDashboardByMatchId = async (
+  playerId: string,
+  matchId: string,
+  month?: string,
+  type?: "practice" | "tournament" | "all"
+): Promise<TennisMatchStats> => {
+  const response = await axiosInstance.get(
+    `api/v1/dashboard/${playerId}/matches/${matchId}?months=${month}&matchType=${type}`
+  );
+  return response.data;
+};

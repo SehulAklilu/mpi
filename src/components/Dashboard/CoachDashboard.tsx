@@ -80,6 +80,12 @@ function CoachDashboard() {
   const [selectedPlayer, setSelectedPlayer] = useState<string | undefined>(
     undefined
   );
+  const [selectedMatch, setSelectedMatch] = useState<string | undefined>(
+    undefined
+  );
+  const [matchPlayerId, setMatchPlayerId] = useState<string | undefined>(
+    undefined
+  );
 
   const {
     data: players,
@@ -102,6 +108,18 @@ function CoachDashboard() {
 
   const onPlayerSeleted = (value: string) => {
     setSelectedPlayer(value);
+  };
+  const onMatchSelected = (value: string) => {
+    setSelectedMatch(value);
+    const selectedMatch = data?.matches.find((match) => match._id === value);
+
+    if (selectedMatch) {
+      const playerId = selectedMatch.p1IsObject
+        ? selectedMatch.p1._id
+        : selectedMatch.p2._id;
+
+      setMatchPlayerId(playerId);
+    }
   };
   if (!dashboard) {
     return <>No Data Avalable</>;
@@ -130,7 +148,7 @@ function CoachDashboard() {
             ))}
           </SelectContent>
         </Select>
-        <Select onValueChange={onPlayerSeleted}>
+        <Select onValueChange={onMatchSelected}>
           <SelectTrigger className="!w-full flex-1  h-12 !py-4">
             <SelectValue placeholder="Select Match" />
           </SelectTrigger>
@@ -139,8 +157,15 @@ function CoachDashboard() {
               ?.filter((match) => match.status === "completed")
               .map((match) => (
                 <SelectItem value={match._id} key={match._id}>
-                  <div className="flex items-center gap-x-2">
-                    {extractDateTime(match.date)?.date}
+                  <div className="flex items-center  gap-x-2">
+                    <div>
+                      {match?.p1IsObject ? match?.p1.firstName : match?.p1Name}{" "}
+                      VS{" "}
+                      {match?.p2IsObject ? match?.p2.firstName : match?.p2Name}
+                    </div>
+                    <p>
+                      {" - "} {extractDateTime(match.date)?.date}
+                    </p>
                   </div>
                 </SelectItem>
               ))}
@@ -152,6 +177,11 @@ function CoachDashboard() {
 
       {selectedPlayer ? (
         <DashboardByPlayer playerId={selectedPlayer} />
+      ) : selectedMatch && (matchPlayerId || selectedPlayer) ? (
+        <DashboardByPlayer
+          playerId={matchPlayerId || selectedPlayer}
+          matchId={selectedMatch}
+        />
       ) : (
         <>
           <div className="my-8">
