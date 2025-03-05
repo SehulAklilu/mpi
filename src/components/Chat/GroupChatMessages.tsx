@@ -1,9 +1,11 @@
-import { getGroupsMessage } from "@/api/group-chat.api";
+import { getGroups, getGroupsMessage, Group } from "@/api/group-chat.api";
 import React, { useEffect, useRef } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import Cookies from "js-cookie";
 import styles from "./ChatMessage.module.css";
 import ChatMessagesSkeleton from "./ChatMessagesSkeleton";
+import { GroupChatItemProps } from "./GroupChatItem";
+import { group } from "console";
 
 function GroupChatMessages({ groupId }: { groupId: string }) {
   const user_id = Cookies.get("user_id");
@@ -17,6 +19,11 @@ function GroupChatMessages({ groupId }: { groupId: string }) {
     enabled: !!groupId,
   });
 
+  const { data: groups } = useQuery({
+    queryKey: ["groups"],
+    queryFn: getGroups,
+  });
+
   function formatTime(createdAt: string): string {
     const date = new Date(createdAt);
     const options: Intl.DateTimeFormatOptions = {
@@ -27,6 +34,39 @@ function GroupChatMessages({ groupId }: { groupId: string }) {
     return date.toLocaleTimeString([], options);
   }
 
+  const getProfile = (
+    senderId: string,
+    groups: Group[] | undefined,
+    groupId: string | undefined
+  ) => {
+    if (senderId === user_id) {
+      return null;
+    }
+
+    if (groupId && groups) {
+      const selectedGroup = groups?.find((group) => group?._id === groupId);
+      if (selectedGroup) {
+        const sender = selectedGroup?.members.find(
+          (member) => member?.user?._id === senderId
+        );
+
+        if (sender) {
+          return (
+            <div className="flex gap-1 items-center">
+              <img
+                src={sender.user.avatar}
+                className="w-8 h-8 rounded-full object-cover"
+                alt={sender.user.firstName}
+              />
+              <p className="text-sm font-medium">{sender.user.firstName}</p>
+            </div>
+          );
+        }
+      }
+    }
+
+    return null;
+  };
   const scrollAreaRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -56,7 +96,11 @@ function GroupChatMessages({ groupId }: { groupId: string }) {
               }`}
             >
               <div className="max-w-xs p-3 rounded-lg">
-                <span className="text-lg">{formatTime(message.createdAt)}</span>
+                <span className="flex  items-center gap-1">
+                  {" "}
+                  {getProfile(message.sender, groups, groupId)}{" "}
+                  {formatTime(message.createdAt)}
+                </span>
 
                 {message.type === "message" && (
                   <div
