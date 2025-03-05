@@ -465,7 +465,6 @@ const WinnersChart = ({ data: dashboard }: { data: TennisMatchStats }) => {
       value: dashboard?.winners.p1.forehand,
       color: "#8884d8",
     },
-    { name: "Total", value: dashboard?.winners.total, color: "#F8B36D" },
     {
       name: "Return Forehand",
       value: dashboard?.winners.p1.returnForehand,
@@ -832,12 +831,12 @@ const BrakingPoints = ({ data }: { data: TennisMatchStats }) => {
       </CardContent>
       <CardFooter>
         <div>
-          <h1 className="text-lg">Statistics</h1>
-          <p className="text-sm">
+          <h1 className="font-semibold my-1 px-4">Statistics</h1>
+          <p className="text-sm px-4 py-1 text-[#F28822] bg-[#fff2e6] font-semibold my-1 rounded-lg w-fit">
             Break Points Saved:{" "}
             <span className="font-semibold">{savedPercentage}%</span>
           </p>
-          <p className="text-sm">
+          <p className="text-sm px-4 py-1 text-[#8884d8] bg-[rgb(234,233,255)] font-semibold my-1 rounded-lg w-fit">
             Break Points Converted:{" "}
             <span className="font-semibold">{convertedPercentage}%</span>
           </p>
