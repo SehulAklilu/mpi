@@ -72,6 +72,7 @@ import { getAxiosErrorMessage, getAxiosSuccessMessage } from "@/api/axios";
 import { toast } from "react-toastify";
 import DashboardByPlayer from "./DashboardByPlayer";
 import ProfileCard from "../PendingMatch/ProfileCard";
+import SkeletonLoader from "./DashboardSkelton";
 
 function CoachDashboard() {
   const { role } = useRole();
@@ -121,6 +122,10 @@ function CoachDashboard() {
       setMatchPlayerId(playerId);
     }
   };
+
+  if (dashboardIsLoading) {
+    return <SkeletonLoader />;
+  }
   if (!dashboard) {
     return <>No Data Avalable</>;
   }

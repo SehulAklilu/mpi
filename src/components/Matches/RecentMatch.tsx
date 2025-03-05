@@ -22,6 +22,7 @@ import SetsTable from "./SetsTable";
 import MatchReportTabs from "../Players/MatchReportTabs";
 import Cookies from "js-cookie";
 import { MatchDetails } from "../Players/Momentum";
+import MatchSkeleton from "./MatchDetelSkeleton";
 // import MomentumReport from "../Players/Momentum";
 
 interface DetailsInterface {
@@ -37,7 +38,7 @@ function RecentMatch() {
 
   const { id } = useParams<{ id: string }>();
 
-  const { data: match } = useQuery({
+  const { data: match, isLoading } = useQuery({
     queryKey: ["getMatch", id],
     queryFn: () => (id ? getMatch(id) : Promise.reject("No ID provided")),
     enabled: !!id,
@@ -84,9 +85,9 @@ function RecentMatch() {
     return details;
   };
 
-  // if (!match) {
-  //   return;
-  // }
+  if (isLoading) {
+    return <MatchSkeleton />;
+  }
 
   return (
     <ContentLayout name="Recent Match">

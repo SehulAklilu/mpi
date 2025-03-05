@@ -10,6 +10,10 @@ import { TfiCup } from "react-icons/tfi";
 import { useQuery } from "react-query";
 import { Link, useNavigate } from "react-router-dom";
 import avater from "../assets/avater.jpg";
+import {
+  MatchSkeleton,
+  PendingMatchSkeleton,
+} from "@/components/Matches/PendingMatchSkeleton";
 
 function groupMatchesByStatus(matches: Match[]): Record<Status, Match[]> {
   return matches?.reduce((grouped, match) => {
@@ -23,7 +27,7 @@ function groupMatchesByStatus(matches: Match[]): Record<Status, Match[]> {
 }
 
 const page = () => {
-  const { data: matches } = useQuery({
+  const { data: matches, isLoading } = useQuery({
     queryKey: ["matches"],
     queryFn: getMatches,
   });
@@ -53,6 +57,10 @@ const page = () => {
   const recentMatchesToShow = showAll
     ? categorizedMatchs?.["completed"]
     : categorizedMatchs?.["completed"]?.slice(0, 4);
+
+  if (isLoading) {
+    return <MatchSkeleton />;
+  }
 
   return (
     <ContentLayout>
