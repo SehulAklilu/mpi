@@ -116,15 +116,13 @@ function ProfileSetting() {
     onSuccess: (response) => {
       const message = getAxiosSuccessMessage(response);
       queryClient.invalidateQueries("userProfile");
-      toast.success(message);
+      // toast.success(message);
     },
     onError: (error: any) => {
       const message = getAxiosErrorMessage(error);
-      toast.error(message);
+      // toast.error(message);
     },
   });
-
-  console.log("33333333 ttttt", data);
 
   const { reset } = form;
 

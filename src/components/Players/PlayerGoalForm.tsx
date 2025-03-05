@@ -36,10 +36,17 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Goal, GoalPayload } from "@/types/children.type";
-import { useMutation } from "react-query";
-import { createPlayerGoal, editPlayerGoal } from "@/api/match.api";
+import { useMutation, useQueryClient } from "react-query";
+import {
+  createGoal,
+  createPlayerGoal,
+  editGoal,
+  editPlayerGoal,
+} from "@/api/match.api";
 import { toast } from "react-toastify";
 import { getAxiosErrorMessage, getAxiosSuccessMessage } from "@/api/axios";
+import Cookies from "js-cookie";
+import { useRole } from "@/RoleContext";
 // import { useParams } from "react-router-dom";
 
 // Define Zod Schema
@@ -74,8 +81,9 @@ interface AddPhaseDialogProps {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
   initialData?: Goal;
-  playerId: string;
+  playerId?: string;
   setInitialGoal: React.Dispatch<React.SetStateAction<Goal | undefined>>;
+  coachId?: string;
 }
 
 export default function PlayerGoalForm({
@@ -84,10 +92,14 @@ export default function PlayerGoalForm({
   initialData,
   playerId,
   setInitialGoal,
+  coachId,
 }: AddPhaseDialogProps) {
   const form = useForm<FormValues>({
     resolver: zodResolver(FormSchema),
   });
+  const queryClient = useQueryClient();
+  const user_id = Cookies.get("user_id");
+  const { role } = useRole();
 
   useEffect(() => {
     if (initialData) {
@@ -103,20 +115,37 @@ export default function PlayerGoalForm({
     }
   }, [initialData, form]);
 
-  const createGoal = useMutation({
-    mutationKey: ["createPlayerGoal"],
+  const createGoalMutaion = useMutation({
+    mutationKey: ["createGoal"],
     mutationFn: ({
       playerId,
+      coachId,
       payload,
     }: {
-      playerId: string;
+      playerId?: string;
+      coachId?: string;
       payload: GoalPayload;
-    }) => createPlayerGoal(playerId, payload),
+    }) => {
+      if (playerId) {
+        return createPlayerGoal(playerId, payload); // for player goals
+      } else if (coachId) {
+        return createGoal(coachId, payload); // for coach goals
+      }
+      throw new Error("Either playerId or coachId must be provided");
+    },
     onSuccess: (response) => {
       toast.success(getAxiosSuccessMessage(response));
       setIsOpen(false);
       setInitialGoal(undefined);
-      // queryClient.invalidateQueries("");
+      if (playerId) {
+        queryClient.invalidateQueries(
+          role === "parent" ? ["children", playerId] : ["getPlayer", playerId]
+        );
+      }
+
+      if (coachId) {
+        queryClient.invalidateQueries("myGoals");
+      }
     },
     onError: (error) => {
       toast.error(getAxiosErrorMessage(error));
@@ -124,22 +153,39 @@ export default function PlayerGoalForm({
     },
   });
 
-  const editGoal = useMutation({
-    mutationKey: ["createPlayerGoal"],
+  const editGoalMutation = useMutation({
+    mutationKey: ["editGoal"],
     mutationFn: ({
       playerId,
+      coachId,
       goalId,
       payload,
     }: {
-      playerId: string;
+      playerId?: string;
+      coachId?: string;
       goalId: string;
       payload: GoalPayload;
-    }) => editPlayerGoal(playerId, goalId, payload),
+    }) => {
+      if (playerId) {
+        return editPlayerGoal(playerId, goalId, payload); // for player goal editing
+      } else if (coachId) {
+        return editGoal(coachId, goalId, payload); // for coach goal editi
+      }
+      throw new Error("Either playerId or coachId must be provided");
+    },
     onSuccess: (response) => {
       toast.success(getAxiosSuccessMessage(response));
       setIsOpen(false);
       setInitialGoal(undefined);
-      // queryClient.invalidateQueries("");
+      if (playerId) {
+        queryClient.invalidateQueries(
+          role === "parent" ? ["children", playerId] : ["getPlayer", playerId]
+        );
+      }
+
+      if (coachId) {
+        queryClient.invalidateQueries("myGoals");
+      }
     },
     onError: (error) => {
       toast.error(getAxiosErrorMessage(error));
@@ -149,8 +195,29 @@ export default function PlayerGoalForm({
 
   const onSubmit = (data: FormValues) => {
     console.log("3333333333333", initialData, playerId);
-    if (initialData && playerId) {
-      editGoal.mutate({
+    if (initialData && coachId) {
+      editGoalMutation.mutate({
+        coachId,
+        goalId: initialData._id,
+        payload: {
+          ...data,
+          actions: data?.actions ?? [],
+          obstacles: data?.obstacles ?? [],
+          addOns: data.addOns ?? null,
+        },
+      });
+    } else if (coachId) {
+      createGoalMutaion.mutate({
+        coachId,
+        payload: {
+          ...data,
+          actions: data?.actions ?? [],
+          obstacles: data?.obstacles ?? [],
+          addOns: data.addOns ?? null,
+        },
+      });
+    } else if (initialData && playerId) {
+      editGoalMutation.mutate({
         playerId,
         goalId: initialData._id,
         payload: {
@@ -161,7 +228,7 @@ export default function PlayerGoalForm({
         },
       });
     } else if (playerId) {
-      createGoal.mutate({
+      createGoalMutaion.mutate({
         playerId,
         payload: {
           ...data,
@@ -486,7 +553,7 @@ export default function PlayerGoalForm({
               className="bg-primary flex gap-4 text-white px-4 py-2 rounded"
             >
               {initialData ? "Update" : "Submit"}
-              {(createGoal.isLoading || editGoal.isLoading) && (
+              {(createGoalMutaion.isLoading || editGoalMutation.isLoading) && (
                 <LoaderCircle
                   style={{
                     animation: "spin 1s linear infinite",

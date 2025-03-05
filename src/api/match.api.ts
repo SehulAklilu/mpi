@@ -240,12 +240,12 @@ export const deleteTransition = async (
 };
 
 // player goad coach crating
-export const getPlayerGoals = async (playerId: string): Promise<any> => {
-  const response = await axiosInstance.get(
-    `/api/v1/users/playerGoal/${playerId}`
-  );
-  return response.data;
-};
+// export const getPlayerGoals = async (playerId: string): Promise<any> => {
+//   const response = await axiosInstance.get(
+//     `/api/v1/users/playerGoal/${playerId}`
+//   );
+//   return response.data;
+// };
 
 // player goad coach crating
 export const createPlayerGoal = async (

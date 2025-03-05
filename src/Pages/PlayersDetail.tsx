@@ -1,4 +1,4 @@
-import { getPlayer, getPlayerGoals } from "@/api/match.api";
+import { getPlayer } from "@/api/match.api";
 import { ContentLayout } from "@/components/Sidebar/contenet-layout";
 import React, { useState } from "react";
 import { useQuery } from "react-query";
@@ -34,8 +34,6 @@ function PlayersDetail() {
         : () => getPlayer(id as string),
     enabled: !!id,
   });
-
-  console.log("333333333333333333333", data?.player.coachGoals);
 
   if (!data) {
     return;
