@@ -9,6 +9,7 @@ import { LoaderCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { journalColors } from "@/components/Notes/JournalCard";
 import QuillEditor from "./Quill";
+import { ContentLayout } from "../Sidebar/contenet-layout";
 
 interface NewJournalInf {
   title: string;
@@ -47,9 +48,11 @@ const NewJournal: React.FC = () => {
   };
 
   return (
-    <div className="px-2 pt-12 min-h-screen">
-      <QuillEditor />
-    </div>
+    <ContentLayout>
+      <div className="px-2 pt-12 min-h-screen">
+        <QuillEditor />
+      </div>
+    </ContentLayout>
   );
 };
 

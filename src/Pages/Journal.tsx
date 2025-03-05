@@ -105,14 +105,14 @@ const Journal = () => {
         </div>
       </div> */}
         <Link
-          to="/newJournal"
+          to="/journal/new"
           className="bg-gradient-to-b z-20 hover:scale-105 duration-200 from-[#F8B672] to-[#F2851C] rounded-full shadow-lg shadow-primary p-5 w-fit fixed bottom-0 right-0 mb-12 mr-12"
         >
           <CiEdit className="text-white text-2xl" />
         </Link>
         <div className="text-xl font-semibold pt-2 pl-8 sm:pl-0">Journals</div>
         <div className="grid grid-cols-3 max-md:grid-cols-1 gap-3 pb-32">
-          {journals.map((journal) => (
+          {[...journals].reverse().map((journal) => (
             <JournalCard key={journal._id} journal={journal} />
           ))}
           {isLoading &&
