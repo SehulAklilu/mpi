@@ -16,7 +16,7 @@ interface DetailsInterface {
   value: string;
 }
 
-function PendingMatch() {
+function PendingMatchOld() {
   const [activeTab, setActiveTab] = useState("details");
 
   const details: DetailsInterface[] = [
@@ -57,11 +57,11 @@ function PendingMatch() {
       <div className="bg-white pt-10 min-h-[100vh]">
         <div className="w-full mx-auto mt-4">
           <div className="flex gap-x-6 flex-col gap-y-2 sm:flex-row items-center justify-center">
-            <ProfileCard name="Candace Flynn" />
+            {/* <ProfileCard name="Candace Flynn" /> */}
             <div className="px-4 py-6 text-4xl text-white bg-gradient-to-b from-[#F8B570] font-bold rounded-xl to-[#F38C28] ">
               VS
             </div>
-            <ProfileCard name="Jene" />
+            {/* <ProfileCard name="Jene" /> */}
           </div>
         </div>
         <div className="mt-4">
@@ -164,4 +164,4 @@ function PendingMatch() {
   );
 }
 
-export default PendingMatch;
+export default PendingMatchOld;
