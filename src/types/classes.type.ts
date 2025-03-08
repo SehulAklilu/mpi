@@ -85,6 +85,42 @@ export interface Evaluation {
   _id: string;
 }
 
+interface Player {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  emailAddress: {
+    email: string;
+    verified: boolean;
+  };
+  phoneNumber: {
+    countryCode: string;
+    number: string;
+  };
+  avatar: string;
+  lastOnline: string;
+  __t: string;
+  id: string;
+}
+
+export interface PreSessionQuestions {
+  player: Player;
+  emotion: number;
+  energy: number;
+  engagement: number;
+  additionalInfo: string;
+  _id: string;
+}
+
+export interface CheckList {
+  player: Player;
+  survey: boolean;
+  mindfulness: boolean;
+  imagery: boolean;
+  stretching: boolean;
+  _id: string;
+}
+
 export interface Session {
   videos: any[];
   photos: any[];
@@ -105,7 +141,7 @@ export interface Session {
   updatedAt: string;
   feedback: string;
   evaluations: Evaluation[];
-  preSessionQuestions: any[];
-  checkList: any[];
+  preSessionQuestions: PreSessionQuestions[];
+  checkList: CheckList[];
   id: string;
 }

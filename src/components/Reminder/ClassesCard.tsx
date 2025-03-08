@@ -1,5 +1,5 @@
 import { extractDateTime } from "@/lib/utils";
-import { Session } from "@/types/classes.type";
+import { CheckList, PreSessionQuestions, Session } from "@/types/classes.type";
 import React, { useState } from "react";
 import { Dialog, DialogContent, DialogTitle, DialogFooter } from "../ui/dialog";
 import { Switch } from "../ui/switch";
@@ -26,6 +26,7 @@ import { toast } from "react-toastify";
 import { LoaderCircle } from "lucide-react";
 import { useRole } from "@/RoleContext";
 import PlayerClassDialog from "./PlayerClassDialog";
+import { FaCircleCheck } from "react-icons/fa6";
 
 function SessionCard({ session }: { session: Session }) {
   const { role } = useRole();
@@ -219,8 +220,34 @@ function SessionCard({ session }: { session: Session }) {
     setVideoFiles((prevFiles) => [...prevFiles, ...files]);
   };
 
+  const renderScale = (value: number) => {
+    return (
+      <div className="flex gap-1">
+        {[1, 2, 3, 4, 5].map((num) => (
+          <div
+            key={num}
+            className={`w-4 h-4 flex items-center justify-center rounded-full text-white 
+            ${num <= value ? "bg-primary" : "bg-gray-300"}`}
+          ></div>
+        ))}
+      </div>
+    );
+  };
+
   const removeVideo = (index: number) => {
     setVideoFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+  };
+
+  const getCheckList = (playerId: string): CheckList | undefined => {
+    return session?.checkList?.find((list) => list.player._id === playerId);
+  };
+
+  const getPreSessionQuestions = (
+    playerId: string
+  ): PreSessionQuestions | undefined => {
+    return session?.preSessionQuestions?.find(
+      (list) => list.player._id === playerId
+    );
   };
 
   const handleVideoUploadSubmit = () => {
@@ -229,7 +256,6 @@ function SessionCard({ session }: { session: Session }) {
     setUploadVideo(false);
   };
 
-  console.log("333", role);
   return (
     <>
       <div
@@ -668,10 +694,12 @@ function SessionCard({ session }: { session: Session }) {
                                 </div>
                               )}
                             </div>
-                            <MdModeEdit
-                              className="text-xl  text-primary mt-2  cursor-pointer"
-                              onClick={() => setPlayerStatus((pre) => !pre)}
-                            />
+                            {session.status === "activate" && (
+                              <MdModeEdit
+                                className="text-xl  text-primary mt-2  cursor-pointer"
+                                onClick={() => setPlayerStatus((pre) => !pre)}
+                              />
+                            )}
                           </div>
                         </div>
 
@@ -684,10 +712,14 @@ function SessionCard({ session }: { session: Session }) {
                             </h1>
                             <p className="text-sm">Add Summary here!</p>
                           </div>
-                          <FaRegFileAlt
-                            className="text-xl text-primary cursor-pointer"
-                            onClick={() => setEvaluationSummary((pre) => !pre)}
-                          />
+                          {session.status === "complete" && (
+                            <FaRegFileAlt
+                              className="text-xl text-primary cursor-pointer"
+                              onClick={() =>
+                                setEvaluationSummary((pre) => !pre)
+                              }
+                            />
+                          )}
                         </div>
 
                         <div>
@@ -728,25 +760,70 @@ function SessionCard({ session }: { session: Session }) {
                             <h1 className="text-sm"></h1>
                             <div className="grid grid-cols-2 gap-4">
                               <div>
-                                <h1 className="font-medium underline">
-                                  Pre Game Survey Results
-                                </h1>
-                                <div className="my-1">Emotional State :</div>
-                                <div className="my-1">Energy Level :</div>
-                                <div className="my-1">Engatement :</div>
+                                <div>
+                                  <h1 className="font-medium underline">
+                                    Pre Game Survey Results
+                                  </h1>
+                                  <div className="my-2 flex gap-2">
+                                    Emotional State
+                                    {renderScale(
+                                      getPreSessionQuestions(att.player._id)
+                                        ?.emotion || 0
+                                    )}
+                                  </div>
+                                  <div className="my-2 flex gap-2">
+                                    Energy Level
+                                    {renderScale(
+                                      getPreSessionQuestions(att.player._id)
+                                        ?.energy || 0
+                                    )}
+                                  </div>
+                                  <div className="my-2 flex gap-2">
+                                    Engagement
+                                    {renderScale(
+                                      getPreSessionQuestions(att.player._id)
+                                        ?.engagement || 0
+                                    )}
+                                  </div>
+                                </div>
                               </div>
                               <div>
                                 <h1 className="font-medium underline">
                                   Pre Game Checklist Results
                                 </h1>
-                                <div className="my-1">
+                                <div className="my-2 flex gap-2">
+                                  {getCheckList(att.player._id)?.survey ? (
+                                    <FaCircleCheck className="text-lg text-green-700" />
+                                  ) : (
+                                    <MdCancel className="text-xl text-red-600" />
+                                  )}
                                   Self Assessment Evaluation{" "}
                                 </div>
-                                <div className="my-1">
+                                <div className="my-2 flex gap-2">
+                                  {getCheckList(att.player._id)?.mindfulness ? (
+                                    <FaCircleCheck className="text-lg text-green-700" />
+                                  ) : (
+                                    <MdCancel className="text-xl text-red-600" />
+                                  )}
                                   Quick Grounding Mindfulness Exercises
                                 </div>
-                                <div className="my-1">Imagery Work</div>
-                                <div className="my-1">Dynamic Stretching</div>
+                                <div className="my-2 flex gap-2">
+                                  {" "}
+                                  {getCheckList(att.player._id)?.imagery ? (
+                                    <FaCircleCheck className="text-lg text-green-700" />
+                                  ) : (
+                                    <MdCancel className="text-xl text-red-600" />
+                                  )}
+                                  Imagery Work
+                                </div>
+                                <div className="my-2 flex gap-2">
+                                  {getCheckList(att.player._id)?.stretching ? (
+                                    <FaCircleCheck className="text-lg text-green-700" />
+                                  ) : (
+                                    <MdCancel className="text-xl text-red-600" />
+                                  )}
+                                  Dynamic Stretching
+                                </div>
                               </div>
                             </div>
                           </div>

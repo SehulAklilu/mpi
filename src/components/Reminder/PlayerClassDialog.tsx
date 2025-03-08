@@ -163,6 +163,8 @@ function PlayerClassDialog({ session }: { session: Session }) {
     }
   );
 
+  console.log("3333333", playerSession);
+
   const { data: user } = useQuery("userProfile", getUserProfile);
 
   return (
@@ -222,7 +224,7 @@ function PlayerClassDialog({ session }: { session: Session }) {
         </div>
       </div>
 
-      {playerSession.status === "activate" ? (
+      {playerSession.status !== "completed" ? (
         <div className=" w-[80%] ">
           <div className="flex gap-4 justify-between items-start">
             <div className="flex flex-col">
@@ -433,38 +435,41 @@ function PlayerClassDialog({ session }: { session: Session }) {
       ) : null}
 
       <div>
-        {playerSession?.playersCanReflect && (
-          <>
-            <div className="flex justify-between items-center">
-              <h1 className="text-lg font-bold">Player Evaluation</h1>
-              <div onClick={() => setPlayerEvaluation((pre) => !pre)}>
-                {playerEvaluation ? (
-                  <FaChevronUp className="text-lg text-primary cursor-pointer" />
-                ) : (
-                  <FaChevronDown className="text-lg text-primary cursor-pointer" />
+        {playerSession?.playersCanReflect &&
+          playerSession.status === "completed" && (
+            <>
+              <div className="flex justify-between items-center my-4">
+                <h1 className="text-lg font-bold">Player Evaluation</h1>
+                <div onClick={() => setPlayerEvaluation((pre) => !pre)}>
+                  {playerEvaluation ? (
+                    <FaChevronUp className="text-lg text-primary cursor-pointer" />
+                  ) : (
+                    <FaChevronDown className="text-lg text-primary cursor-pointer" />
+                  )}
+                </div>
+              </div>
+              <div>
+                {playerEvaluation && (
+                  <PlayerEvaluation session={playerSession} />
                 )}
               </div>
-            </div>
-            <div>
-              {playerEvaluation && <PlayerEvaluation session={playerSession} />}
-            </div>
-            <div className="flex justify-between items-center">
-              <h1 className="text-lg font-bold">Player Reflection PRIM</h1>
-              <div onClick={() => setPlayerReflection((pre) => !pre)}>
-                {playerReflection ? (
-                  <FaChevronUp className="text-lg text-primary cursor-pointer" />
-                ) : (
-                  <FaChevronDown className="text-lg text-primary cursor-pointer" />
+              <div className="flex justify-between items-center">
+                <h1 className="text-lg font-bold">Player Reflection PRIM</h1>
+                <div onClick={() => setPlayerReflection((pre) => !pre)}>
+                  {playerReflection ? (
+                    <FaChevronUp className="text-lg text-primary cursor-pointer" />
+                  ) : (
+                    <FaChevronDown className="text-lg text-primary cursor-pointer" />
+                  )}
+                </div>
+              </div>
+              <div>
+                {playerReflection && (
+                  <PostMatchPlayerReflection playerSession={playerSession} />
                 )}
               </div>
-            </div>
-            <div>
-              {playerReflection && (
-                <PostMatchPlayerReflection playerSession={playerSession} />
-              )}
-            </div>
-          </>
-        )}
+            </>
+          )}
       </div>
     </div>
   );
