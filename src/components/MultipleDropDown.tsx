@@ -107,7 +107,7 @@ const MultiSelectDropdown: React.FC<MultiSelectProps> = ({
             className="w-full px-4 py-2 border-b border-gray-200 focus:outline-none"
           />
           <ul className="max-h-40 overflow-y-auto">
-            {filteredOptions.length > 0 ? (
+            {filteredOptions?.length > 0 ? (
               filteredOptions.map((option) => (
                 <li
                   key={option.value}

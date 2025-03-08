@@ -130,7 +130,7 @@ function Address({ setCurr }: any) {
                         field.onChange(value);
                         setSelectCountry(value);
                       }}
-                      defaultValue="Endalk"
+                      defaultValue=""
                     >
                       <SelectTrigger
                         startIcon={FaFlag}

@@ -18,13 +18,16 @@ import { IoIosArrowForward } from "react-icons/io";
 import { Input } from "@/components/ui/input";
 import { ContentLayout } from "@/components/Sidebar/contenet-layout";
 import { useRole } from "@/RoleContext";
+import { Session } from "@/types/classes.type";
+import SessionCard from "@/components/Reminder/ClassesCard";
+import { extractDateTime, formatDate } from "@/lib/utils";
 export interface ReminderInf {
   _id?: string;
   isCompleted?: boolean;
   title: string; // The title of the reminder
   description: string; // A description of the task or reminder
   date: string; // The date in YYYY-MM-DD format
-  type: "reminder" | "match"; // The type of the reminder (can be "reminder" or "match")
+  type: "reminder" | "match" | "session"; // The type of the reminder (can be "reminder" or "match")
   timezone: string; // The timezone or time in HH:mm format
   time: string; // The timezone or time in HH:mm format
 }
@@ -47,6 +50,7 @@ const Reminders = () => {
 
   const [search, setSearch] = useState<string>("");
   const [reminders, setReminders] = useState<ReminderInf[]>([]);
+  const [sessions, setSessions] = useState<Session[]>([]);
   const [allReminders, setAllReminder] = useState<ReminderInf[]>([]);
   const {
     isLoading,
@@ -56,6 +60,23 @@ const Reminders = () => {
     onSuccess(data) {
       const m = data.data.map((a: any) => ({ ...a, time: "12AM" }));
       setAllReminder(m);
+    },
+    onError(err: any) {
+      toast.error(
+        typeof err.response.data === "string"
+          ? err.response.data
+          : "Error loading reminders"
+      );
+    },
+  });
+
+  const {
+    isLoading: isClassLoading,
+    data: classes,
+    isSuccess: isClassesSuccess,
+  } = useQuery("classes", () => axios.get<Session[]>("/api/v1/classes"), {
+    onSuccess(data) {
+      // setSessions(data.data);
     },
     onError(err: any) {
       toast.error(
@@ -81,6 +102,27 @@ const Reminders = () => {
     return () => {};
   }, [dateFilter, allReminders, search]);
 
+  useEffect(() => {
+    const filterSessions = () => {
+      const filteredSessions = classes?.data.filter((session: Session) => {
+        if (search.length > 0) {
+          return session.levelPlan.toLowerCase().includes(search.toLowerCase());
+        } else {
+          const sessionDate = extractDateTime(session.date).date;
+          const filterDate = formatDate(dateFilter);
+
+          return sessionDate == filterDate;
+        }
+      });
+
+      filteredSessions && setSessions(filteredSessions);
+    };
+
+    filterSessions();
+
+    return () => {};
+  }, [search, dateFilter, isClassLoading]);
+
   const ref = useRef<any>(null);
   const timeMap: any = {};
 
@@ -97,11 +139,30 @@ const Reminders = () => {
       ])
   );
 
-  reminders.map((reminder, ind) =>
-    timeMap[reminder.time].push(
-      <ReminderCard ind={ind} setDate={setDate} reminder={reminder} />
-    )
-  );
+  const combinedData = [
+    ...reminders.map((reminder) => ({ type: "reminder", data: reminder })),
+    ...sessions.map((session) => ({ type: "session", data: session })),
+  ];
+
+  combinedData.map(({ type, data }, ind) => {
+    if (type === "session") {
+      const session = data as Session;
+      const timeObj = extractDateTime(session.date);
+      // const time = timeObj ? timeObj.hours + timeObj.period : "12AM";
+      // console.log("sssssssssss", time + 1);
+      timeMap["12AM"].push(<SessionCard key={session._id} session={session} />);
+    } else if (type === "reminder") {
+      const reminder = data as ReminderInf;
+      timeMap[reminder.time].push(
+        <ReminderCard
+          key={ind}
+          ind={ind}
+          setDate={setDate}
+          reminder={reminder}
+        />
+      );
+    }
+  });
 
   return (
     <ContentLayout>
@@ -137,12 +198,14 @@ const Reminders = () => {
             <div>
               <div className="w-full flex-1 flex flex-col gap-4 mt-8 px-4 ">
                 {isSuccess &&
+                  isClassesSuccess &&
                   Object.keys(timeMap).map((k) => {
                     return timeMap[k].map((rem: any, ind: number) => {
                       return search.length > 0 && ind == 0 ? <></> : rem;
                     });
                   })}
                 {isLoading &&
+                  isClassLoading &&
                   [1, 2, 3, 4, 4, 4, 4, 4, 4, 4].map(() => {
                     return (
                       <Skeleton className="w-full py-12 h-44 bg-primary" />

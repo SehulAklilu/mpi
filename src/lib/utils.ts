@@ -71,6 +71,12 @@ export function extractDateTime(timestamp: string): {
   return { date, time: formattedTime, period };
 }
 
+export function formatDate(date: Date) {
+  const newDate = new Date(date);
+  newDate.setDate(newDate.getDate() + 1);
+  return newDate.toISOString().split("T")[0];
+}
+
 const GOOGLE_PROFILE_COLORS: Record<string, string> = {
   A: "#F44336",
   B: "#E91E63",

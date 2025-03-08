@@ -19,14 +19,20 @@ interface RatingProgressBarProps {
   value: number;
   onChange: (newValue: number) => void;
   useAlternativeLabels?: boolean; // Toggle for different labels
+  customLabel?: string[];
 }
 
 const RatingProgressBar: React.FC<RatingProgressBarProps> = ({
   value,
   onChange,
   useAlternativeLabels = false, // Default to false, uses normal labels
+  customLabel,
 }) => {
-  const labels = useAlternativeLabels ? alternativeLabels : defaultLabels;
+  const labels = customLabel
+    ? customLabel
+    : useAlternativeLabels
+    ? alternativeLabels
+    : defaultLabels;
 
   return (
     <TooltipProvider>

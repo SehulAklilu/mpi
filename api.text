@@ -115,3 +115,149 @@ get general report
 
 /api/v1/dashboard/:playerId/matches/:matchId
 get player matchdata
+
+
+
+
+
+
+
+//////////// classes
+
+api/v1/classes' GeT —> get my classes 
+'api/v1/classes/:id/availability': Patch -> data {'response': on of the following ['confirmed', 'rejected', 'pending'] —> update availability
+
+after class ended 'api/v1/classes/:id/addPlayerEvaluation': post
+
+data:{
+'engagement': [stronglyDisagree, disagree, neutral, agree, stronglyAgree]
+'effort': the same
+'execution': the same
+'additionalInfo': optional
+}—> add player evaluation
+
+
+after class ended 'api/v1/classes/:id/addPlayerReflection': Post
+data:{
+'P': int
+'R': int
+'I': int
+'M': int
+'stepsTaken': optional 
+'feelTowardsGoal': optional
+'additionalInfo': optional
+} —> add player reflection
+
+
+
+
+before class is ended about to start 'api/v1/classes/:id/addPreSessionQuestions':Post
+data:{
+'energy': int
+'engagement': int
+'emotion': int
+'additionalInfo': optional
+}—> add presession questions
+
+
+before class is ended 'api/v1/classes/:id/checkList/imagery': patch—> update checkList Imagery
+before class is ended 'api/v1/classes/:id/checkList/mindfulness': patch —> update CheckList mindfulness
+before class is ended 'api/v1/classes/:id/checkList/stretching': patch —> update checklist stretching
+
+
+
+
+
+
+
+
+
+
+
+
+
+this is for coach
+'api/v1/classes/:id/players': post
+data:{ 'players': List of ids} —> add players into a class
+'api/v1/classes/:id/cancel': patch —> cancel class
+'api/v1/classes/:id/activate': patch —> activate class
+'api/v1/classes/:id/complete: patch —> complete class
+
+'api/v1/classes':post
+data:{
+'date': date
+'objectives':{
+  'objective': objectiveName,
+  'subObjective': subObjectiveName,
+  'nestedSubObjective': sometimes a nested subobjective name, for some subobjectives
+},
+'to': to, (1 hour, 1:30 hour etc),
+'levelPlan': string,
+'players': list of ids
+'goal': goal name if players length is 1.
+}—> create class
+
+'api/v1/classes/:id': delete —> delete class
+'api/v1/classes/:id': get —> get class
+'api/v1/classes': get —> get my classes
+
+'api/v1/classes/:id/players/:playerId': patch
+data{'status': one of these ['present', 'absent', pending, 'late', excused]} —> update player attendance
+
+'api/v1/classes/:id/players/:playerId': delete —>delete palayer
+
+'api/v1/classes/:id': patch 
+data: {
+'date': date,
+'to': to,
+'levelPlan': levelPlan,
+'feedback': feedback
+} —> update class
+
+'after class ended' 'api/v1/classes/:id/addCoachEvaluation/:playerId': post
+data: {
+'measurement': string,
+'achievable': bool,
+'isRelevant': bool,
+'isTimeBound': bool,
+'performance':{
+  engagment:   [stronglyDisagree, disagree, neutral, agree, stronglyAgree]
+  'effort': the same,
+  'execution': the same
+},
+'additionalInfo': optional string,
+'goal': optional string
+}—> add coach evaluation
+
+'api/v1/classes/:id/addObjective': post
+data:{ 
+  'objective': objective,
+  'subObjective': subObjective,
+  'nestedSubObjective': for some subObjective, for others its null
+ 'additionalInfo': optional string
+} —> add class Objective
+
+'/api/v1/classes/:id/classVideo': post
+data:{'videos': list of video files} —-> add class videos
+
+'/api/v1/classes/:id/classVideos': delete —> delete class videos
+
+'/api/v1/classes/:id/classPhotos': post 
+data:{'photos': list of photo files} —> add class photos
+
+
+'/api/v1/classes/:id/classPhotos': delete —> delete class photos
+
+'api/v1/classes/:id/playersCanReflect': patch —> toggle players can reflect
+
+
+objectives: physical, technical, tactics, mental, recovery
+
+physical —> [endurance, speed, agility, flexibility, coordination, balance, recovery, other]
+technical —> [grips, serve, return, forehand, backhand, volley, overhead, dropShot *, lob, approachShot *,  passingShot *, emergencyShots *]
+tactics —> [consistency, gamePlan, gameStyle, fiveGameSituations, anticipation, percentagePlay, reducingUnforcedErrors, ruleNumberOne, workingWeakness],
+mental —> [motivation, concentration, emotionRegulation, selfTalk, selfConfidence, relaxation, routine, goalSetting, mindfulness, momentum]
+recovery —> [sleep, coldTherapy, mental, nutrition, hydration, physical]
+ ———————-nested sub objective—————
+tactics (fiveGameSituation) —> [serving, returning, rallyingFromTheBaseline, passing, approachingVolleying]
+tactics (gameStyle) —> [serveAndVolley, aggressiveBaseLiner, counterPuncher, allAround]
