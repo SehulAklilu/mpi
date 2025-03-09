@@ -261,3 +261,8 @@ recovery —> [sleep, coldTherapy, mental, nutrition, hydration, physical]
  ———————-nested sub objective—————
 tactics (fiveGameSituation) —> [serving, returning, rallyingFromTheBaseline, passing, approachingVolleying]
 tactics (gameStyle) —> [serveAndVolley, aggressiveBaseLiner, counterPuncher, allAround]
+
+
+Notes
+1, periodization progress for all phases and auto selection of the date once created
+2, 

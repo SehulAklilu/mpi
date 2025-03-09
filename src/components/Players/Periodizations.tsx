@@ -107,7 +107,7 @@ function Periodizations({
   >(data?.periodizations[0]);
   const onSelect = (id: string) => {
     const periodization = data?.periodizations.find(
-      (periodization) => periodization._id === id
+      (periodization) => periodization?._id === id
     );
     setSelectedPeriodization(periodization);
   };
@@ -197,7 +197,7 @@ function Periodizations({
   useEffect(() => {
     if (data) {
       setSelectedPeriodization(data.periodizations[0]);
-      setSelectedPeriodizationId(data.periodizations[0]._id);
+      setSelectedPeriodizationId(data.periodizations[0]?._id);
     }
   }, [data]);
 

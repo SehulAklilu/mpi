@@ -255,7 +255,7 @@ function SessionCard({ session }: { session: Session }) {
     console.log("Videos uploaded:", videoFiles);
     setUploadVideo(false);
   };
-
+  console.log("444", session);
   return (
     <>
       <div
@@ -712,7 +712,7 @@ function SessionCard({ session }: { session: Session }) {
                             </h1>
                             <p className="text-sm">Add Summary here!</p>
                           </div>
-                          {session.status === "complete" && (
+                          {session.status === "completed" && (
                             <FaRegFileAlt
                               className="text-xl text-primary cursor-pointer"
                               onClick={() =>

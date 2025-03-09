@@ -88,17 +88,17 @@ function AddCoachEvaluation({
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      measurement: evaluation?.coachEvaluation.measurement,
-      achievable: evaluation?.coachEvaluation.achievable,
-      isRelevant: evaluation?.coachEvaluation.isRelevant,
-      isTimeBound: evaluation?.coachEvaluation.isTimeBound,
+      measurement: evaluation?.coachEvaluation?.measurement,
+      achievable: evaluation?.coachEvaluation?.achievable,
+      isRelevant: evaluation?.coachEvaluation?.isRelevant,
+      isTimeBound: evaluation?.coachEvaluation?.isTimeBound,
       performance: {
-        engagement: evaluation?.coachEvaluation.performance.engagement,
-        effort: evaluation?.coachEvaluation.performance.effort,
-        execution: evaluation?.coachEvaluation.performance.execution,
+        engagement: evaluation?.coachEvaluation?.performance?.engagement,
+        effort: evaluation?.coachEvaluation?.performance?.effort,
+        execution: evaluation?.coachEvaluation?.performance?.execution,
       },
-      additionalInfo: evaluation?.coachEvaluation.additionalInfo,
-      goal: evaluation?.coachEvaluation.goal ?? "",
+      additionalInfo: evaluation?.coachEvaluation?.additionalInfo,
+      goal: evaluation?.coachEvaluation?.goal ?? "",
     },
   });
 
