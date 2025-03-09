@@ -1,11 +1,11 @@
-import { useEffect, useRef, useState } from "react";
-import CalendarRow from "./CalendarRow";
-import { ReminderInf } from "@/Pages/Reminders";
+import { useEffect, useRef, useState } from "react"
+import CalendarRow from "./CalendarRow"
+import { ReminderInf } from "@/Pages/Reminders"
 
 export interface CalendarProps {
-  reminders: ReminderInf[];
-  setDateFilter: Function;
-  dateFilter: Date;
+  reminders: any[]
+  setDateFilter: Function
+  dateFilter: Date
 }
 
 const Calendar: React.FC<CalendarProps> = ({
@@ -13,32 +13,32 @@ const Calendar: React.FC<CalendarProps> = ({
   reminders,
   setDateFilter,
 }) => {
-  const [activeMonth, setActiveMonth] = useState(new Date().getMonth());
+  const [activeMonth, setActiveMonth] = useState(new Date().getMonth())
   const [activeMonthString, setActiveMonthString] = useState(
     new Date().toDateString().split(" ")[1]
-  );
-  const [activeYear, setActiveYear] = useState(new Date().getFullYear());
-  const prevMonth = useRef<number>(null);
-  const [firstDayInMonth, setFirstDayInMonth] = useState<number[]>([]);
+  )
+  const [activeYear, setActiveYear] = useState(new Date().getFullYear())
+  const prevMonth = useRef<number>(null)
+  const [firstDayInMonth, setFirstDayInMonth] = useState<number[]>([])
 
   useEffect(() => {
-    let x = [];
+    let x = []
     for (let i = 1; i <= 12; i++) {
-      x.push(new Date(`${activeYear}/${i}/1`).getDay());
+      x.push(new Date(`${activeYear}/${i}/1`).getDay())
     }
-    setFirstDayInMonth(x);
-  }, [activeYear]);
+    setFirstDayInMonth(x)
+  }, [activeYear])
 
   useEffect(() => {
     setActiveMonthString(
       new Date(new Date().setMonth(activeMonth)).toDateString().split(" ")[1]
-    );
+    )
     //remember previous activeMonth
     //@ts-ignore
-    prevMonth.current = activeMonth;
-  }, [activeMonth]);
+    prevMonth.current = activeMonth
+  }, [activeMonth])
 
-  const td = new Date();
+  const td = new Date()
 
   return (
     <div className="text-sm md:rounded md:p-4  bg-white dark:bg-gray-700 md:w-96 mx-4 md:mx-auto ">
@@ -52,10 +52,10 @@ const Calendar: React.FC<CalendarProps> = ({
               className="p-2  rounded-full border text-gray-800 "
               onClick={() => {
                 if (prevMonth.current === 0) {
-                  setActiveYear(activeYear - 1);
-                  setActiveMonth(11);
+                  setActiveYear(activeYear - 1)
+                  setActiveMonth(11)
                 } else {
-                  setActiveMonth(activeMonth - 1);
+                  setActiveMonth(activeMonth - 1)
                 }
               }}
             >
@@ -75,10 +75,10 @@ const Calendar: React.FC<CalendarProps> = ({
               className="p-2 rounded-full border text-gray-800 "
               onClick={() => {
                 if (prevMonth.current === 11) {
-                  setActiveYear(activeYear + 1);
-                  setActiveMonth(0);
+                  setActiveYear(activeYear + 1)
+                  setActiveMonth(0)
                 } else {
-                  setActiveMonth(activeMonth + 1);
+                  setActiveMonth(activeMonth + 1)
                 }
               }}
             >
@@ -98,7 +98,7 @@ const Calendar: React.FC<CalendarProps> = ({
         </div>
         <div className="-mx-2">
           <table className="w-full  dark:text-white">
-            <thead className="" >
+            <thead className="">
               <tr className="text-sm bg--300  font-thin ">
                 {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(
                   (d, i) => (
@@ -113,7 +113,7 @@ const Calendar: React.FC<CalendarProps> = ({
                 )}
               </tr>
             </thead>
-            <tbody >
+            <tbody>
               <tr className="">
                 <CalendarRow
                   dateFilter={dateFilter}
@@ -215,7 +215,7 @@ const Calendar: React.FC<CalendarProps> = ({
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Calendar;
+export default Calendar

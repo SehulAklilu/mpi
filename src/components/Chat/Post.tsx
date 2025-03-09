@@ -202,7 +202,7 @@ const PostCard = ({ post }: PostCardProps) => {
       </div>
 
       <div className="flex flex-col gap-2 px-3">
-        <div>{post.createdAt}</div>
+        {/* <div>{post.createdAt}</div> */}
         <div className="font-semibold text-lg"></div>
         <div
           className=""

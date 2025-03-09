@@ -4,22 +4,22 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/select"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { IoCloseSharp } from "react-icons/io5";
-import { LoaderCircle } from "lucide-react";
-import { useMutation, useQueryClient } from "react-query";
-import { toast } from "react-toastify";
-import axios from "@/api/axios";
-import { useEffect, useRef } from "react";
-import { FaX } from "react-icons/fa6";
-import { useRole } from "@/RoleContext";
-import Role from "../auth/Role";
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { z } from "zod"
+import { IoCloseSharp } from "react-icons/io5"
+import { LoaderCircle } from "lucide-react"
+import { useMutation, useQueryClient } from "react-query"
+import { toast } from "react-toastify"
+import axios from "@/api/axios"
+import { useEffect, useRef } from "react"
+import { FaX } from "react-icons/fa6"
+import { useRole } from "@/RoleContext"
+import Role from "../auth/Role"
 
 const AddReminderSchema = z.object({
   title: z.string({ required_error: "Title is required" }).min(1),
@@ -27,18 +27,18 @@ const AddReminderSchema = z.object({
   date: z.string({ required_error: "Date is required" }).min(1),
   type: z.string({ required_error: "Type is required" }),
   timezone: z.string({ required_error: "Timezone is required" }).min(1),
-});
+})
 
-type AddReminderForm = z.infer<typeof AddReminderSchema>;
+type AddReminderForm = z.infer<typeof AddReminderSchema>
 
 const AddReminder = ({
   date,
   setDate,
   ref,
 }: {
-  date: string;
-  setDate: Function;
-  ref: any;
+  date: string
+  setDate: Function
+  ref: any
 }) => {
   const form = useForm<AddReminderForm>({
     resolver: zodResolver(AddReminderSchema),
@@ -46,46 +46,46 @@ const AddReminder = ({
       date,
       type: "reminder",
     },
-  });
+  })
 
-  const queryClient = useQueryClient();
-  const { role }: any = useRole();
+  const queryClient = useQueryClient()
+  const { role }: any = useRole()
   const types =
     role != null && role == "player"
       ? ["reminder", "goal"]
-      : ["reminder", "goal", "match", "training"];
+      : ["reminder", "goal", "match", "training"]
 
   const { isLoading, mutate } = useMutation(
     (data: AddReminderForm) => axios.post("/api/v1/reminders", data),
     {
       onSuccess() {
-        toast.success("Reminder added successfully");
-        queryClient.invalidateQueries("reminders");
-        setDate("");
+        toast.success("Reminder added successfully")
+        queryClient.invalidateQueries("reminders")
+        setDate("")
       },
       onError(err: any) {
         toast.error(
           typeof err.response?.data === "string"
             ? err.response.data
             : err.response?.data.message ?? "Unable to add reminder"
-        );
+        )
       },
     }
-  );
+  )
 
   const onSubmit = (data: AddReminderForm) => {
-    mutate(data);
+    mutate(data)
     // alert("working...");
-  };
+  }
 
   useEffect(() => {
     function func() {
-      form.setValue("date", date);
+      form.setValue("date", date)
     }
-    func();
+    func()
 
-    return () => {};
-  }, [date]);
+    return () => {}
+  }, [date])
 
   return (
     <form
@@ -94,8 +94,8 @@ const AddReminder = ({
         "shadow-lg shadow-primary duration-200 border border-primary"
       } `}
       onSubmit={(e) => {
-        onSubmit(form.getValues());
-        e.preventDefault();
+        onSubmit(form.getValues())
+        e.preventDefault()
       }}
     >
       <div className="space-y-4">
@@ -226,7 +226,7 @@ const AddReminder = ({
         )}
       </Button>
     </form>
-  );
-};
+  )
+}
 
-export default AddReminder;
+export default AddReminder

@@ -1,19 +1,19 @@
-import { useRole } from "@/RoleContext";
-import { useState } from "react";
+import { useRole } from "@/RoleContext"
+import { useState } from "react"
 
 interface CustomTabsProps {
-  setActiveTab: (tab: string) => void;
-  tab: string;
+  setActiveTab: (tab: string) => void
+  tab: string
 }
 
 function CustomTabs({ setActiveTab, tab }: CustomTabsProps) {
-  const [activeTab, setActive] = useState(tab);
-  const { role } = useRole();
+  const [activeTab, setActive] = useState(tab)
+  const { role } = useRole()
 
   const handleTabChange = (tab: string) => {
-    setActive(tab);
-    setActiveTab(tab);
-  };
+    setActive(tab)
+    setActiveTab(tab)
+  }
 
   const tabs = [
     { value: "messages", label: "Messages" },
@@ -21,7 +21,7 @@ function CustomTabs({ setActiveTab, tab }: CustomTabsProps) {
     { value: "people", label: "People" },
     { value: "announcements", label: "Announcements" },
     { value: "posts", label: "Posts" },
-  ];
+  ]
 
   return (
     <div className="pt-2 flex-auto">
@@ -48,7 +48,7 @@ function CustomTabs({ setActiveTab, tab }: CustomTabsProps) {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default CustomTabs;
+export default CustomTabs
