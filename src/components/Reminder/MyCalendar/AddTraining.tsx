@@ -17,6 +17,7 @@ import { FaX } from "react-icons/fa6"
 import { useMutation, useQuery } from "react-query"
 import { z } from "zod"
 import moment from "moment-timezone"
+import { toast } from "react-toastify"
 
 interface AddTrainingProps {
   close: () => void
@@ -65,6 +66,7 @@ const AddTraining = ({ close }: AddTrainingProps) => {
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
   })
+  const [coachesLoader, setCoachesLoader] = useState<boolean>(false)
 
   const {} = useQuery(
     "parentChildren",
@@ -82,25 +84,38 @@ const AddTraining = ({ close }: AddTrainingProps) => {
   )
 
   const { data, isLoading, error } = useQuery(
-    "childrenCoach",
+    ["childrenCoach", form.watch("player")],
     async () => {
       const studentId = form.getValues().player
-
       if (role === "parent" && studentId) {
-        return axiosInstance.get(
-          `/api/v1/class-schedule/child/${studentId}/coaches`
-        )
+        setCoachesLoader(true) // Start loader
+        try {
+          const response = await axiosInstance.get(
+            `/api/v1/class-schedule/child/${studentId}/coaches`
+          )
+          return response.data // Return fetched data
+        } finally {
+          setCoachesLoader(false) // Stop loader
+        }
       } else if (role == "player") {
-        return axiosInstance.get(`/api/v1/class-schedule/myCoaches`)
+        setCoachesLoader(true)
+        try {
+          const response = await axiosInstance.get(
+            `/api/v1/class-schedule/myCoaches`
+          )
+          return response.data
+        } finally {
+          setCoachesLoader(false)
+        }
       }
-
       return null
     },
     {
-      enabled: !!role,
+      enabled: !!role && !!form.watch("player"),
+      keepPreviousData: true,
       onSuccess(response) {
-        console.log("Coaches: ", response?.data)
-        setCoaches(response?.data)
+        console.log("Coaches: ", response)
+        setCoaches(response || []) // Ensure coaches update immediately
       },
     }
   )
@@ -112,8 +127,6 @@ const AddTraining = ({ close }: AddTrainingProps) => {
         let url
 
         const userTimezone = moment.tz.guess()
-
-        console.log("TImezones: ", userTimezone)
 
         if (role === "parent") {
           data = {
@@ -130,16 +143,14 @@ const AddTraining = ({ close }: AddTrainingProps) => {
             timezone: userTimezone,
           }
           url = `/api/v1/class-schedule/${data_.coach}/create`
-
-          console.log(new Date(data_.date))
         } else {
           throw new Error("Unauthorized role")
         }
 
         try {
           const response = await axiosInstance.post(url, data)
-
-          console.log("Response from API:", response.data)
+          form.reset()
+          toast.success("Class added successfully!")
         } catch (error) {
           console.error("Error during API call:", error)
           throw error
@@ -215,12 +226,19 @@ const AddTraining = ({ close }: AddTrainingProps) => {
         <Select
           value={form.getValues("coach") || ""}
           onValueChange={(value: any) => form.setValue("coach", value)}
+          disabled={coachesLoader} // Disable selection while loading
         >
-          <SelectTrigger>
-            <SelectValue placeholder="Select a type" />
+          <SelectTrigger className="relative">
+            {coachesLoader ? (
+              <div className="flex items-center justify-center gap-2">
+                <LoaderCircle className="animate-spin w-4 h-4" />
+              </div>
+            ) : (
+              <SelectValue placeholder="Select a coach" />
+            )}
           </SelectTrigger>
           <SelectContent>
-            {coaches.map((coach, index) => (
+            {coaches?.map((coach, index) => (
               <SelectItem key={index} className="capitalize" value={coach._id}>
                 {coach.firstName} {coach.lastName}
               </SelectItem>
@@ -233,6 +251,7 @@ const AddTraining = ({ close }: AddTrainingProps) => {
           </p>
         )}
       </div>
+
       <div>
         <label htmlFor="description" className="block text-sm font-medium">
           Description
