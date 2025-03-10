@@ -14,7 +14,10 @@ import { z } from "zod";
 import { LoaderCircle } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { toast } from "react-toastify";
-import axios from "@/api/axios";
+import axios, {
+  getAxiosErrorMessage,
+  getAxiosSuccessMessage,
+} from "@/api/axios";
 import { useEffect, useRef, useState } from "react";
 import { useRole } from "@/RoleContext";
 import {
@@ -41,6 +44,7 @@ import { cn } from "@/lib/utils";
 import { Player } from "@/types/match.type";
 import { CoachGoal } from "@/types/children.type";
 import Cookies from "js-cookie";
+import { Session } from "@/types/classes.type";
 
 type ObjectiveType =
   | "physical"
@@ -72,10 +76,12 @@ const AddClasses = ({
   date,
   setDate,
   ref,
+  initialClassData,
 }: {
   date: string;
   setDate: Function;
   ref: any;
+  initialClassData: Session | undefined;
 }) => {
   const form = useForm<AddReminderForm>({
     resolver: zodResolver(AddReminderSchema),
@@ -184,20 +190,63 @@ const AddClasses = ({
   const { isLoading, mutate } = useMutation(
     (data: any) => axios.post("/api/v1/classes", data),
     {
-      onSuccess() {
-        toast.success("Reminder added successfully");
+      onSuccess: (response) => {
+        const message = getAxiosSuccessMessage(response);
+        toast.success(message);
         queryClient.invalidateQueries("classes");
         setDate("");
       },
-      onError(err: any) {
-        toast.error(
-          typeof err.response?.data === "string"
-            ? err.response.data
-            : err.response?.data.message ?? "Unable to add reminder"
-        );
+      onError: (err: any) => {
+        const message = getAxiosErrorMessage(err);
+        toast.error(message);
       },
     }
   );
+
+  const { isLoading: isEditLoading, mutate: editMutate } = useMutation(
+    (data: any) =>
+      axios.patch(`/api/v1/classes/${initialClassData?._id}`, data),
+    {
+      onSuccess: (response) => {
+        const message = getAxiosSuccessMessage(response);
+        toast.success(message);
+        queryClient.invalidateQueries("classes");
+      },
+      onError: (err: any) => {
+        const message = getAxiosErrorMessage(err);
+        toast.error(message);
+      },
+    }
+  );
+
+  useEffect(() => {
+    if (initialClassData) {
+      form.setValue("levelPlan", initialClassData.levelPlan);
+      const objective = initialClassData?.objectives[0]?.objective;
+      form.setValue("objectives.objective", objective);
+      setSelectedObjective(objective as ObjectiveType);
+      const subObjective = initialClassData?.objectives[0]?.subObjective;
+      form.setValue("objectives.subObjective", subObjective);
+      if (
+        subObjective === "gameStyle" ||
+        subObjective === "fiveGameSituations"
+      ) {
+        setSelectedSubObjective(subObjective);
+      } else {
+        setSelectedSubObjective(undefined);
+      }
+      form.setValue(
+        "objectives.nestedSubObjective",
+        initialClassData?.objectives[0]?.nestedSubObjective
+      );
+      form.setValue("to", initialClassData.to);
+      form.setValue("date", new Date(initialClassData.date));
+      form.setValue(
+        "players",
+        initialClassData?.players?.map((player) => player.id)
+      );
+    }
+  }, [initialClassData, date]);
 
   const { data: players } = useQuery({
     queryKey: ["player"],
@@ -209,7 +258,17 @@ const AddClasses = ({
     const utcDate = new Date(
       pickedDate.getTime() - pickedDate.getTimezoneOffset() * 60000
     );
-    mutate({ ...data, date: utcDate.toISOString() });
+    if (initialClassData) {
+      const payload = { ...data, date: utcDate.toISOString() };
+      const deepCopy = JSON.parse(JSON.stringify(payload));
+      deepCopy.date = utcDate.toISOString();
+      if (payload.players) {
+        delete deepCopy.players;
+      }
+      editMutate(deepCopy);
+    } else {
+      mutate({ ...data, date: utcDate.toISOString() });
+    }
   };
 
   function handleTimeChange(type: "hour" | "minute" | "ampm", value: string) {
@@ -292,6 +351,7 @@ const AddClasses = ({
                 <FormItem>
                   <FormLabel>Ojective</FormLabel>
                   <Select
+                    value={field.value}
                     onValueChange={(value) => {
                       field.onChange(value);
                       setSelectedObjective(value as ObjectiveType);
@@ -327,6 +387,7 @@ const AddClasses = ({
                   <FormItem>
                     <FormLabel>Sub Objective</FormLabel>
                     <Select
+                      value={field.value}
                       onValueChange={(value) => {
                         field.onChange(value);
                         if (
@@ -371,6 +432,7 @@ const AddClasses = ({
                   <FormItem>
                     <FormLabel>Nested Sub Objective</FormLabel>
                     <Select
+                      value={field.value}
                       onValueChange={(value) => {
                         field.onChange(value);
                       }}
@@ -621,14 +683,14 @@ const AddClasses = ({
           onClick={() => {}}
           className="flex my-5  w-full bg-primary py-2 shadow rounded-3xl px-12 items-center justify-center gap-2 text-white border border-gray-300"
         >
-          {isLoading ? (
+          {isLoading || isEditLoading ? (
             <LoaderCircle
               style={{
                 animation: "spin 1s linear infinite",
               }}
             />
           ) : (
-            "Create Schedule"
+            <> {initialClassData ? "Edit Session" : "Create Session"}</>
           )}
         </Button>
       </form>

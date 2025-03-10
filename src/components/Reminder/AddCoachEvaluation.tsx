@@ -338,10 +338,7 @@ function AddCoachEvaluation({
             />
           </div>
 
-          <div className="mt-6 flex gap-4">
-            <button className="py-2 px-4 rounded-lg border w-full">
-              Cancel
-            </button>
+          <div className="mt-6">
             <button className="py-2 px-4 rounded-lg w-full text-white bg-primary border border-white hover:bg-orange-500 flex items-center justify-center ">
               <span> Submit</span>
               {updateEvaluation.isLoading && (

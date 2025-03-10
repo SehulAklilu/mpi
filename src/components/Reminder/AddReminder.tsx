@@ -21,6 +21,7 @@ import { FaX } from "react-icons/fa6";
 import { useRole } from "@/RoleContext";
 import Role from "../auth/Role";
 import AddClasses from "./CreateClassesForm";
+import { Session } from "@/types/classes.type";
 
 const AddReminderSchema = z.object({
   title: z.string({ required_error: "Title is required" }).min(1),
@@ -36,16 +37,20 @@ const AddReminder = ({
   date,
   setDate,
   ref,
+  initialClassData,
+  defaultType,
 }: {
   date: string;
   setDate: Function;
   ref: any;
+  defaultType: string;
+  initialClassData: Session | undefined;
 }) => {
   const form = useForm<AddReminderForm>({
     resolver: zodResolver(AddReminderSchema),
     defaultValues: {
       date,
-      type: "reminder",
+      type: defaultType,
     },
   });
 
@@ -61,9 +66,7 @@ const AddReminder = ({
     label: item.charAt(0).toUpperCase() + item.slice(1),
   }));
 
-  const [selectedType, setSelectedType] = useState<string | undefined>(
-    undefined
-  );
+  const [selectedType, setSelectedType] = useState<string>(defaultType);
 
   const { isLoading, mutate } = useMutation(
     (data: AddReminderForm) => axios.post("/api/v1/reminders", data),
@@ -253,7 +256,12 @@ const AddReminder = ({
           </Button>
         </form>
       ) : (
-        <AddClasses ref={ref} setDate={setDate} date={date ?? undefined} />
+        <AddClasses
+          ref={ref}
+          setDate={setDate}
+          date={date ?? undefined}
+          initialClassData={initialClassData}
+        />
       )}
     </div>
   );

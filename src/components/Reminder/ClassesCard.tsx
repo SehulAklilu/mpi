@@ -14,7 +14,12 @@ import {
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
 import { MdCancel } from "react-icons/md";
-import { FaChevronUp, FaChevronDown, FaCalendarDay } from "react-icons/fa";
+import {
+  FaChevronUp,
+  FaChevronDown,
+  FaCalendarDay,
+  FaEdit,
+} from "react-icons/fa";
 import { FaRegFileAlt } from "react-icons/fa";
 import AddCoachEvaluation from "./AddCoachEvaluation";
 import { useMutation, useQueryClient } from "react-query";
@@ -36,10 +41,21 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { TbChecklist } from "react-icons/tb";
+import { RiDeleteBin6Line } from "react-icons/ri";
 
-function SessionCard({ session }: { session: Session }) {
+function SessionCard({
+  session,
+  onEditClicked,
+  setInitialClassData,
+}: {
+  session: Session;
+  onEditClicked: () => void;
+  setInitialClassData: React.Dispatch<
+    React.SetStateAction<Session | undefined>
+  >;
+}) {
   const { role } = useRole();
   const [isOpen, setIsOpen] = useState(false);
   const [editStatus, setEditStatus] = useState(false);
@@ -280,17 +296,58 @@ function SessionCard({ session }: { session: Session }) {
   return (
     <>
       <div
-        className={`max-md:w-full w-[90%] ml-auto text-sm px-2 py-3 rounded-lg bg-blue-100/20  hover:shadow duration-200 border border-gray-200 flex flex-col cursor-pointer hover:border hover:border-primary`}
-        onClick={() => setIsOpen(true)}
+        className={`max-md:w-full w-[90%] relative ml-auto text-sm px-2 py-3 rounded-lg bg-blue-100/20  hover:shadow duration-200 border border-gray-200 flex flex-col cursor-pointer`}
       >
-        <div>
-          <FaCalendarDay />
-          <p>
-            {session.coach.firstName} {session.coach.lastName}
-          </p>
-          <p>{extractDateTime(session.date)?.date}</p>
-          <p>{session.to}</p>
-          <p>{session.levelPlan}</p>
+        <div className="flex items-start gap-4">
+          <FaCalendarDay className="text-2xl mt-1 text-primary " />
+          <div>
+            <p className="text-lg font-semibold">
+              {session.coach.firstName} {session.coach.lastName}
+            </p>
+            <p>{session.to}</p>
+            <p>{session.levelPlan}</p>
+            <div className="flex gap-4 my-2">
+              <Button
+                className="px-3 py-2 max-md:px-2 max-md:py-1  bg-primary/10 flex  rounded text-primary"
+                onClick={() => setIsOpen(true)}
+              >
+                <div className=" w-5 h-5 rounded-full flex">
+                  <TbChecklist className="m-auto text-lg" />
+                </div>
+                <div className="my-auto">View Session Details</div>
+              </Button>
+              {role === "coach" && (
+                <>
+                  <Button
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      onEditClicked();
+                      setInitialClassData(session);
+                    }}
+                    className="px-3 py-2 max-md:px-2 max-md:py-1 max-md:gap-1 bg-white text-blue-500 flex gap-2 rounded "
+                  >
+                    <div className="w-5 h-5 rounded-full flex">
+                      <FaEdit className="m-auto" />
+                    </div>
+                    <div className="my-auto">Edit</div>
+                  </Button>
+
+                  <Button
+                    onClick={() => setOpenDeleteAlert(true)}
+                    className="px-3 py-2 text-red-800 bg-red-500/20 flex gap-2 rounded "
+                  >
+                    <div className="w-5 h-5 rounded-full flex">
+                      <RiDeleteBin6Line className="m-auto" />
+                    </div>
+                    <div className="my-auto">Delete</div>
+                  </Button>
+                </>
+              )}
+            </div>
+          </div>
+          <div className="absolute top-2 text-xs right-4">
+            {extractDateTime(session.date)?.date}
+          </div>
         </div>
       </div>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -308,7 +365,7 @@ function SessionCard({ session }: { session: Session }) {
             <PlayerClassDialog session={session} />
           ) : (
             <>
-              <div className="grid grid-cols-2">
+              <div className="grid grid-cols-2 gap-10">
                 {/* Session Type */}
                 <div className="flex flex-col">
                   <span className="font-medium  text-lg">Session Type</span>
@@ -325,7 +382,7 @@ function SessionCard({ session }: { session: Session }) {
                   </span>
                 </div>
               </div>
-              <div className="grid grid-cols-2">
+              <div className="grid grid-cols-2 gap-10">
                 {/* Level Plan */}
                 <div className="flex flex-col">
                   <span className="font-medium  text-lg">Level Plan</span>
@@ -348,16 +405,15 @@ function SessionCard({ session }: { session: Session }) {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2">
+              <div className="grid grid-cols-2 gap-10">
                 {/* Status Update */}
                 <div className="  ">
                   <div className="flex flex-col">
-                    <div className="font-medium  flex items-center gap-4 text-lg">
-                      Status{" "}
-                      <MdModeEdit
-                        className="text-primary text-lg cursor-pointer"
-                        onClick={() => setEditStatus((pre) => !pre)}
-                      />
+                    <div
+                      className="font-medium  flex items-center gap-4 text-lg cursor-pointer"
+                      onClick={() => setEditStatus((pre) => !pre)}
+                    >
+                      Status <MdModeEdit className="text-primary text-lg " />
                     </div>
                     <span className="capitalize  text-lg">
                       {session.status}
@@ -418,15 +474,17 @@ function SessionCard({ session }: { session: Session }) {
                 <div className="">
                   <div className="flex   justify-between items-start">
                     <div className="flex  flex-col">
-                      <span className="font-medium  text-lg">Feedback</span>
-                      <span className="capitalize text-lg">
+                      <div
+                        className="font-medium  flex items-center gap-4 text-lg cursor-pointer"
+                        onClick={() => setFeedBack((pre) => !pre)}
+                      >
+                        Feedback{" "}
+                        <MdModeEdit className="text-primary text-lg " />
+                      </div>
+                      <span className="capitalize  text-lg">
                         {session.feedback ?? "No Feedback Provided!"}
                       </span>
                     </div>
-                    <MdModeEdit
-                      className="text-lg text-primary mt-2  cursor-pointer"
-                      onClick={() => setFeedBack((pre) => !pre)}
-                    />
                   </div>
                   {feedBack && (
                     <div className="space-y-4 mt-4">
@@ -446,22 +504,22 @@ function SessionCard({ session }: { session: Session }) {
                   )}
                 </div>
               </div>
-              <div className="grid grid-cols-2">
+              <div className="grid grid-cols-2 gap-10">
                 {/* Upload Session Photo */}
                 <div className="">
                   <div className="flex justify-between items-center">
-                    <div className="flex items-center">
-                      <span className="font-medium  text-lg">
-                        Upload Session Photo
-                      </span>
-                    </div>
-
-                    <div onClick={() => setUploadImage((pre) => !pre)}>
-                      {uploadImage ? (
-                        <FaChevronUp className="text-lg text-primary cursor-pointer" />
-                      ) : (
-                        <FaChevronDown className="text-lg text-primary cursor-pointer" />
-                      )}
+                    <div
+                      className="font-medium  flex items-center gap-4 text-lg"
+                      onClick={() => setUploadImage((pre) => !pre)}
+                    >
+                      Upload Session Photo
+                      <div>
+                        {uploadImage ? (
+                          <FaChevronUp className="text-lg text-primary cursor-pointer" />
+                        ) : (
+                          <FaChevronDown className="text-lg text-primary cursor-pointer" />
+                        )}
+                      </div>
                     </div>
                   </div>
 
@@ -539,17 +597,18 @@ function SessionCard({ session }: { session: Session }) {
                 {/* Upload Session Video */}
                 <div className="">
                   <div className="flex justify-between items-center">
-                    <div className="flex items-center">
-                      <span className="font-medium  text-lg">
-                        Upload Session Video
-                      </span>
-                    </div>
-                    <div onClick={() => setUploadVideo((pre) => !pre)}>
-                      {uploadVideo ? (
-                        <FaChevronUp className="text-lg text-primary cursor-pointer" />
-                      ) : (
-                        <FaChevronDown className="text-lg text-primary cursor-pointer" />
-                      )}
+                    <div
+                      className="flex font-medium gap-4  text-lg items-center"
+                      onClick={() => setUploadVideo((pre) => !pre)}
+                    >
+                      Upload Session Video
+                      <div>
+                        {uploadVideo ? (
+                          <FaChevronUp className="text-lg text-primary cursor-pointer" />
+                        ) : (
+                          <FaChevronDown className="text-lg text-primary cursor-pointer" />
+                        )}
+                      </div>
                     </div>
                   </div>
 
@@ -643,9 +702,9 @@ function SessionCard({ session }: { session: Session }) {
                   </div>
                 </div>
                 {listOfStudents && (
-                  <div className="border p-2 rounded-xl">
+                  <div className="border p-2 rounded-sm">
                     {session?.attendance.map((att) => (
-                      <>
+                      <div className="border rounded-xl border-primary p-2">
                         <div className="grid grid-cols-2  gap-10">
                           <div className="flex items-center gap-2">
                             <img
@@ -730,14 +789,14 @@ function SessionCard({ session }: { session: Session }) {
                           </div>
                         </div>
 
-                        <hr className="my-4" />
+                        <hr className="my-6 border-2" />
 
                         <div className="flex items-start justify-between px-2">
                           <div>
-                            <h1 className="text-lg font-medium">
+                            <h1 className="text-lg text-primary font-medium">
                               Evaluation Summary
                             </h1>
-                            <p className="text-sm">Add Summary here!</p>
+                            <p className="text-xs">Add Summary here!</p>
                           </div>
                           {session.status === "completed" && (
                             <FaRegFileAlt
@@ -759,12 +818,17 @@ function SessionCard({ session }: { session: Session }) {
                           )}
                         </div>
 
-                        <hr className="my-4" />
+                        <hr className="my-6 border-2" />
 
                         <div className="flex justify-between items-center">
-                          <h1 className="text-lg font-medium">
-                            Pre-game Assessment
-                          </h1>
+                          <div className="mb-2">
+                            <h1 className="text-lg text-primary font-medium">
+                              Pre-game Assessment
+                            </h1>
+                            <h3 className="text-xs">
+                              Completed Assessment (The student have selected)
+                            </h3>
+                          </div>
                           <div
                             onClick={() => setPreGameAssessment((pre) => !pre)}
                           >
@@ -777,14 +841,6 @@ function SessionCard({ session }: { session: Session }) {
                         </div>
                         {preGameAssessment && (
                           <div>
-                            <h1 className="text-lg text-primary mt-2">
-                              Completed Assessment (
-                              <span className="text-sm px-2">
-                                The student have selected
-                              </span>
-                              )
-                            </h1>
-                            <h1 className="text-sm"></h1>
                             <div className="grid grid-cols-2 gap-4">
                               <div>
                                 <div>
@@ -855,7 +911,7 @@ function SessionCard({ session }: { session: Session }) {
                             </div>
                           </div>
                         )}
-                      </>
+                      </div>
                     ))}
                   </div>
                 )}

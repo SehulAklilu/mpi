@@ -33,7 +33,6 @@ export interface ReminderInf {
 }
 
 const Reminders = () => {
-  const { role } = useRole();
   const tomorrow = new Date();
   const dateChecker = (date1: Date, date2: Date) => {
     return (
@@ -47,6 +46,11 @@ const Reminders = () => {
 
   const [date, setDate] = useState<string | null>(null);
   const [dateFilter, setDateFilter] = useState<Date>(new Date());
+  const [onEdit, setEdit] = useState(false);
+  const [initialClassData, setInitialClassData] = useState<Session | undefined>(
+    undefined
+  );
+  const [defaultType, setDefaultType] = useState("reminder");
 
   const [search, setSearch] = useState<string>("");
   const [reminders, setReminders] = useState<ReminderInf[]>([]);
@@ -69,6 +73,11 @@ const Reminders = () => {
       );
     },
   });
+
+  const onEditClicked = () => {
+    setDate("");
+    setDefaultType("session");
+  };
 
   const {
     isLoading: isClassLoading,
@@ -158,7 +167,14 @@ const Reminders = () => {
         timeObj && timeObj.hours !== 0
           ? (timeObj.hours % 12) + timeObj.period
           : "12AM";
-      timeMap[time].push(<SessionCard key={session._id} session={session} />);
+      timeMap[time].push(
+        <SessionCard
+          key={session._id}
+          session={session}
+          onEditClicked={onEditClicked}
+          setInitialClassData={setInitialClassData}
+        />
+      );
     } else if (type === "reminder") {
       const reminder = data as ReminderInf;
       timeMap[reminder.time].push(
@@ -246,7 +262,13 @@ const Reminders = () => {
                 </div>
               </div>
             ) : (
-              <AddReminder ref={ref} setDate={setDate} date={date ?? ""} />
+              <AddReminder
+                ref={ref}
+                setDate={setDate}
+                date={date ?? ""}
+                initialClassData={initialClassData}
+                defaultType={defaultType}
+              />
             )}
           </div>
         </div>
