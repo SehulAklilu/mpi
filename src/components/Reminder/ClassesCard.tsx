@@ -23,10 +23,21 @@ import axiosInstance, {
   getAxiosSuccessMessage,
 } from "@/api/axios";
 import { toast } from "react-toastify";
-import { LoaderCircle } from "lucide-react";
+import { Delete, LoaderCircle, Trash2 } from "lucide-react";
 import { useRole } from "@/RoleContext";
 import PlayerClassDialog from "./PlayerClassDialog";
 import { FaCircleCheck } from "react-icons/fa6";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 function SessionCard({ session }: { session: Session }) {
   const { role } = useRole();
@@ -40,8 +51,8 @@ function SessionCard({ session }: { session: Session }) {
   const [selectedStatus, setSelectedStatus] = useState<string | undefined>(
     undefined
   );
-  const [canReflect, setCanReflect] = useState(
-    session.playersCanReflect ?? false
+  const [canReflect, setCanReflect] = useState<boolean>(
+    session.playersCanReflect
   );
   const [selectedPlayerStatus, setSelectedPlayerStatus] = useState<
     string | undefined
@@ -64,6 +75,7 @@ function SessionCard({ session }: { session: Session }) {
   const [uploadImage, setUploadImage] = useState(false);
   const [listOfStudents, setListOfStudents] = useState(false);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [openDeleteAlert, setOpenDeleteAlert] = useState(false);
 
   ///// API Requests
   const updateStatus = useMutation(
@@ -79,7 +91,7 @@ function SessionCard({ session }: { session: Session }) {
       onSuccess: (response) => {
         const message = getAxiosSuccessMessage(response);
         toast.success(message);
-        // queryClient.invalidateQueries("classes");
+        queryClient.invalidateQueries("classes");
       },
       onError: (err: any) => {
         const message = getAxiosErrorMessage(err);
@@ -96,7 +108,7 @@ function SessionCard({ session }: { session: Session }) {
         const message = getAxiosSuccessMessage(response);
         setCanReflect(response.data.playerCanReflect);
         toast.success(message);
-        // queryClient.invalidateQueries("classes");
+        queryClient.invalidateQueries("classes");
       },
       onError: (err: any) => {
         const message = getAxiosErrorMessage(err);
@@ -119,7 +131,7 @@ function SessionCard({ session }: { session: Session }) {
       onSuccess: (response) => {
         const message = getAxiosSuccessMessage(response);
         toast.success(message);
-        // queryClient.invalidateQueries("reminders");
+        queryClient.invalidateQueries("reminders");
       },
       onError: (err: any) => {
         const message = getAxiosErrorMessage(err);
@@ -198,6 +210,22 @@ function SessionCard({ session }: { session: Session }) {
     }
   );
 
+  const deleteSession = useMutation(
+    () => axiosInstance.delete(`api/v1/classes/${session._id}`),
+    {
+      onSuccess: (response) => {
+        const message = getAxiosSuccessMessage(response);
+        toast.success(message);
+        queryClient.invalidateQueries("classes");
+        setIsOpen(false);
+      },
+      onError: (err: any) => {
+        const message = getAxiosErrorMessage(err);
+        toast.error(message);
+      },
+    }
+  );
+
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
     setImageFiles((prevFiles) => [...prevFiles, ...files]);
@@ -249,17 +277,10 @@ function SessionCard({ session }: { session: Session }) {
       (list) => list.player._id === playerId
     );
   };
-
-  const handleVideoUploadSubmit = () => {
-    // Implement video upload logic here, like sending the files to the server
-    console.log("Videos uploaded:", videoFiles);
-    setUploadVideo(false);
-  };
-  console.log("444", session);
   return (
     <>
       <div
-        className={`max-md:w-full w-[90%] ml-auto text-sm px-2 py-3 rounded-lg bg-blue-100/20  hover:shadow duration-200 border border-gray-200 flex flex-col cursor-pointer`}
+        className={`max-md:w-full w-[90%] ml-auto text-sm px-2 py-3 rounded-lg bg-blue-100/20  hover:shadow duration-200 border border-gray-200 flex flex-col cursor-pointer hover:border hover:border-primary`}
         onClick={() => setIsOpen(true)}
       >
         <div>
@@ -274,8 +295,14 @@ function SessionCard({ session }: { session: Session }) {
       </div>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="w-full sm:w-[60rem] max-w-[80vw] max-h-[90%] bg-white rounded-lg overflow-y-auto shadow-lg p-6 space-y-6">
-          <DialogTitle className="text-2xl font-semibold text-gray-900">
-            Session Detail
+          <DialogTitle className="flex items-center justify-between pr-8">
+            <h1 className="text-2xl font-semibold text-gray-900">
+              Session Detail
+            </h1>
+            <Trash2
+              className="text-red-600 cursor-pointer"
+              onClick={() => setOpenDeleteAlert(true)}
+            />
           </DialogTitle>
           {role && role === "player" ? (
             <PlayerClassDialog session={session} />
@@ -323,18 +350,18 @@ function SessionCard({ session }: { session: Session }) {
 
               <div className="grid grid-cols-2">
                 {/* Status Update */}
-                <div className=" w-[80%] ">
-                  <div className="flex gap-4 justify-between items-start">
-                    <div className="flex flex-col">
-                      <span className="font-medium  text-lg">Status</span>
-                      <span className="capitalize  text-lg">
-                        {session.status}
-                      </span>
+                <div className="  ">
+                  <div className="flex flex-col">
+                    <div className="font-medium  flex items-center gap-4 text-lg">
+                      Status{" "}
+                      <MdModeEdit
+                        className="text-primary text-lg cursor-pointer"
+                        onClick={() => setEditStatus((pre) => !pre)}
+                      />
                     </div>
-                    <MdModeEdit
-                      className="text-primary text-lg mt-2 cursor-pointer"
-                      onClick={() => setEditStatus((pre) => !pre)}
-                    />
+                    <span className="capitalize  text-lg">
+                      {session.status}
+                    </span>
                   </div>
                   {editStatus && (
                     <div className="space-y-4mt-4">
@@ -388,7 +415,7 @@ function SessionCard({ session }: { session: Session }) {
                 </div>
 
                 {/* Feedback */}
-                <div className="w-[80%]">
+                <div className="">
                   <div className="flex   justify-between items-start">
                     <div className="flex  flex-col">
                       <span className="font-medium  text-lg">Feedback</span>
@@ -421,7 +448,7 @@ function SessionCard({ session }: { session: Session }) {
               </div>
               <div className="grid grid-cols-2">
                 {/* Upload Session Photo */}
-                <div className="w-[80%]">
+                <div className="">
                   <div className="flex justify-between items-center">
                     <div className="flex items-center">
                       <span className="font-medium  text-lg">
@@ -510,7 +537,7 @@ function SessionCard({ session }: { session: Session }) {
                 </div>
 
                 {/* Upload Session Video */}
-                <div className="w-[80%]">
+                <div className="">
                   <div className="flex justify-between items-center">
                     <div className="flex items-center">
                       <span className="font-medium  text-lg">
@@ -600,7 +627,7 @@ function SessionCard({ session }: { session: Session }) {
                 </div>
               </div>
 
-              <div className="w-[90%]">
+              <div className="">
                 <div className="flex gap-4 justify-between items-start">
                   <div className="flex flex-col">
                     <span className="font-medium  text-lg">
@@ -837,6 +864,37 @@ function SessionCard({ session }: { session: Session }) {
           )}
         </DialogContent>
       </Dialog>
+
+      <AlertDialog open={openDeleteAlert} onOpenChange={setOpenDeleteAlert}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this session?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="border rounded-lg py-2 px-4">
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-red-500 flex gap-2 text-white rounded-lg py-2 px-4"
+              onClick={() => deleteSession.mutate()}
+            >
+              Continue
+              {deleteSession.isLoading && (
+                <LoaderCircle
+                  style={{
+                    animation: "spin 1s linear infinite",
+                    fontSize: "2rem",
+                    color: "#FFFFFF",
+                  }}
+                />
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

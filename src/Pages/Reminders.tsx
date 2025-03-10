@@ -74,6 +74,7 @@ const Reminders = () => {
     isLoading: isClassLoading,
     data: classes,
     isSuccess: isClassesSuccess,
+    isFetching,
   } = useQuery("classes", () => axios.get<Session[]>("/api/v1/classes"), {
     onSuccess(data) {
       // setSessions(data.data);
@@ -91,9 +92,14 @@ const Reminders = () => {
     const fun = () => {
       if (!result || typeof result !== "object") return;
       const a = allReminders.filter((d: any) => {
-        return search.length > 0
-          ? d.title.toLowerCase().includes(search.toLowerCase())
-          : new Date(d.date).getDate() == dateFilter.getDate();
+        if (search.length > 0) {
+          return d.title.toLowerCase().includes(search.toLowerCase());
+        } else {
+          const reminderDate = extractDateTime(d.date).date;
+          const filterDate = formatDate(dateFilter);
+
+          return reminderDate == filterDate;
+        }
       });
       setReminders(a);
       ref && ref.current?.scrollIntoView({ behavior: "smooth" });
@@ -121,7 +127,7 @@ const Reminders = () => {
     filterSessions();
 
     return () => {};
-  }, [search, dateFilter, isClassLoading]);
+  }, [search, dateFilter, isClassLoading, isFetching]);
 
   const ref = useRef<any>(null);
   const timeMap: any = {};
@@ -148,9 +154,11 @@ const Reminders = () => {
     if (type === "session") {
       const session = data as Session;
       const timeObj = extractDateTime(session.date);
-      // const time = timeObj ? timeObj.hours + timeObj.period : "12AM";
-      // console.log("sssssssssss", time + 1);
-      timeMap["12AM"].push(<SessionCard key={session._id} session={session} />);
+      const time =
+        timeObj && timeObj.hours !== 0
+          ? (timeObj.hours % 12) + timeObj.period
+          : "12AM";
+      timeMap[time].push(<SessionCard key={session._id} session={session} />);
     } else if (type === "reminder") {
       const reminder = data as ReminderInf;
       timeMap[reminder.time].push(
@@ -224,6 +232,7 @@ const Reminders = () => {
                 setDateFilter={setDateFilter}
                 reminders={allReminders}
                 dateFilter={dateFilter}
+                classes={classes?.data}
               />
             </div>
 

@@ -86,8 +86,6 @@ const AddClasses = ({
     },
   });
 
-  console.log("333333333333", date);
-
   const queryClient = useQueryClient();
   const { role }: any = useRole();
 
@@ -184,11 +182,11 @@ const AddClasses = ({
   const [coachGoal, setcoachGoal] = useState<CoachGoal | undefined>(undefined);
 
   const { isLoading, mutate } = useMutation(
-    (data: AddReminderForm) => axios.post("/api/v1/classes", data),
+    (data: any) => axios.post("/api/v1/classes", data),
     {
       onSuccess() {
         toast.success("Reminder added successfully");
-        queryClient.invalidateQueries("reminders");
+        queryClient.invalidateQueries("classes");
         setDate("");
       },
       onError(err: any) {
@@ -207,8 +205,11 @@ const AddClasses = ({
   });
 
   const onSubmit = (data: AddReminderForm) => {
-    mutate(data);
-    // alert("working...");
+    const pickedDate = new Date(data.date);
+    const utcDate = new Date(
+      pickedDate.getTime() - pickedDate.getTimezoneOffset() * 60000
+    );
+    mutate({ ...data, date: utcDate.toISOString() });
   };
 
   function handleTimeChange(type: "hour" | "minute" | "ampm", value: string) {
@@ -234,9 +235,9 @@ const AddClasses = ({
 
   const user_id = Cookies.get("user_id");
 
-  useEffect(() => {
-    const selectedPlayers = form.watch("players");
+  const selectedPlayers = form.watch("players");
 
+  useEffect(() => {
     if (selectedPlayers?.length === 1) {
       const selectedPlayer = selectedPlayers[0];
 
@@ -250,7 +251,7 @@ const AddClasses = ({
     if (selectedPlayers?.length > 1) {
       setcoachGoal(undefined);
     }
-  }, [form, players, user_id]);
+  }, [form, players, user_id, selectedPlayers]);
 
   useEffect(() => {
     function func() {
@@ -299,7 +300,7 @@ const AddClasses = ({
                     <SelectTrigger>
                       <SelectValue
                         className="capitalize"
-                        placeholder="Select a type"
+                        placeholder="Select Ojective"
                       />
                     </SelectTrigger>
                     <SelectContent>
@@ -324,7 +325,7 @@ const AddClasses = ({
                 name="objectives.subObjective"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Ojective</FormLabel>
+                    <FormLabel>Sub Objective</FormLabel>
                     <Select
                       onValueChange={(value) => {
                         field.onChange(value);
@@ -341,7 +342,7 @@ const AddClasses = ({
                       <SelectTrigger>
                         <SelectValue
                           className="capitalize"
-                          placeholder="Select a type"
+                          placeholder="Select Sub Objective"
                         />
                       </SelectTrigger>
                       <SelectContent>
@@ -365,10 +366,10 @@ const AddClasses = ({
             {selectedSubObjective && (
               <FormField
                 control={form.control}
-                name="objectives.subObjective"
+                name="objectives.nestedSubObjective"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Ojective</FormLabel>
+                    <FormLabel>Nested Sub Objective</FormLabel>
                     <Select
                       onValueChange={(value) => {
                         field.onChange(value);
@@ -377,7 +378,7 @@ const AddClasses = ({
                       <SelectTrigger>
                         <SelectValue
                           className="capitalize"
-                          placeholder="Select a type"
+                          placeholder="Select Nested Sub Objective"
                         />
                       </SelectTrigger>
                       <SelectContent>

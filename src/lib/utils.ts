@@ -54,6 +54,7 @@ export function formatDateTime(dateString: string, isTime: boolean = true) {
 export function extractDateTime(timestamp: string): {
   date: string;
   time: string;
+  hours: number;
   period: string;
 } {
   const dateObj = new Date(timestamp);
@@ -68,7 +69,7 @@ export function extractDateTime(timestamp: string): {
     seconds
   ).padStart(2, "0")} ${period}`;
 
-  return { date, time: formattedTime, period };
+  return { date, time: formattedTime, hours, period };
 }
 
 export function formatDate(date: Date) {

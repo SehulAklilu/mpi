@@ -1,17 +1,21 @@
 import { useEffect, useRef, useState } from "react";
 import CalendarRow from "./CalendarRow";
 import { ReminderInf } from "@/Pages/Reminders";
+import { Session } from "@/types/classes.type";
+import { PlayerSession } from "@/types/session.type";
 
 export interface CalendarProps {
   reminders: ReminderInf[];
   setDateFilter: Function;
   dateFilter: Date;
+  classes: Session[] | PlayerSession[] | undefined;
 }
 
 const Calendar: React.FC<CalendarProps> = ({
   dateFilter,
   reminders,
   setDateFilter,
+  classes,
 }) => {
   const [activeMonth, setActiveMonth] = useState(new Date().getMonth());
   const [activeMonthString, setActiveMonthString] = useState(
@@ -98,7 +102,7 @@ const Calendar: React.FC<CalendarProps> = ({
         </div>
         <div className="-mx-2">
           <table className="w-full  dark:text-white">
-            <thead className="" >
+            <thead className="">
               <tr className="text-sm bg--300  font-thin ">
                 {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(
                   (d, i) => (
@@ -113,7 +117,7 @@ const Calendar: React.FC<CalendarProps> = ({
                 )}
               </tr>
             </thead>
-            <tbody >
+            <tbody>
               <tr className="">
                 <CalendarRow
                   dateFilter={dateFilter}
@@ -128,6 +132,7 @@ const Calendar: React.FC<CalendarProps> = ({
                   row={0}
                   currentMonth={activeMonth}
                   currentYear={activeYear}
+                  classes={classes}
                 />
               </tr>
               <tr>
@@ -144,6 +149,7 @@ const Calendar: React.FC<CalendarProps> = ({
                   row={1}
                   currentMonth={activeMonth}
                   currentYear={activeYear}
+                  classes={classes}
                 />
               </tr>
               <tr>
@@ -160,6 +166,7 @@ const Calendar: React.FC<CalendarProps> = ({
                   row={2}
                   currentMonth={activeMonth}
                   currentYear={activeYear}
+                  classes={classes}
                 />
               </tr>
               <tr>
@@ -176,6 +183,7 @@ const Calendar: React.FC<CalendarProps> = ({
                   row={3}
                   currentMonth={activeMonth}
                   currentYear={activeYear}
+                  classes={classes}
                 />
               </tr>
               <tr>
@@ -192,6 +200,7 @@ const Calendar: React.FC<CalendarProps> = ({
                   row={4}
                   currentMonth={activeMonth}
                   currentYear={activeYear}
+                  classes={classes}
                 />
               </tr>
               <tr>
@@ -208,6 +217,7 @@ const Calendar: React.FC<CalendarProps> = ({
                   row={5}
                   currentMonth={activeMonth}
                   currentYear={activeYear}
+                  classes={classes}
                 />
               </tr>
             </tbody>

@@ -1,4 +1,6 @@
 import { ReminderInf } from "@/Pages/Reminders";
+import { Session } from "@/types/classes.type";
+import { PlayerSession } from "@/types/session.type";
 import { useState } from "react";
 import { FaDotCircle } from "react-icons/fa";
 import { GoDotFill } from "react-icons/go";
@@ -12,6 +14,7 @@ export interface CalendarRowProps {
   reminders: ReminderInf[];
   setDateFilter: Function;
   dateFilter: Date;
+  classes: Session[] | PlayerSession[] | undefined;
 }
 
 const CalendarRow: React.FC<CalendarRowProps> = ({
@@ -23,11 +26,29 @@ const CalendarRow: React.FC<CalendarRowProps> = ({
   reminders,
   setDateFilter,
   dateFilter,
+  classes,
 }) => {
   const activeDay = useState(new Date().getDate())[0];
 
   // Parse reminder dates into an array of Date objects for easy comparison
-  const reminderDates = reminders.map((reminder) => new Date(reminder.date));
+
+  // const reminderDates = reminders.map((reminder) => new Date(reminder.date));
+
+  // const reminderDates = [
+  //   ...reminders.map((reminder) => new Date(reminder.date)),
+  //   ...(classes
+  //     ? classes.map((session) => {
+  //         const date = new Date(session.date);
+  //         date.setDate(date.getDate() - 1); // Subtract one day
+  //         return date;
+  //       })
+  //     : []),
+  // ];
+
+  const reminderDates = [
+    ...reminders.map((reminder) => new Date(reminder.date)),
+    ...(classes ? classes.map((session) => new Date(session.date)) : []),
+  ];
 
   let content = [];
   const isToday = (num: number): boolean => {
@@ -58,8 +79,7 @@ const CalendarRow: React.FC<CalendarRowProps> = ({
         isToday={isToday(1)}
         isActiveDay={isActiveDay(1)}
         hasReminder={isReminderDate(1)}
-          // temp={true}
-
+        // temp={true}
       />
     );
     let len = 7 - content.length;
@@ -132,7 +152,9 @@ const ReminderTd = ({
   return (
     <td
       onClick={() => handleDateClick(day)}
-      className={` ${temp && "bg-red-900"} cursor-pointer hover:bg-primary/10 relative py-1 px-2  text-center  ${
+      className={` ${
+        temp && "bg-red-900"
+      } cursor-pointer hover:bg-primary/10 relative py-1 px-2  text-center  ${
         isActiveDay ? "text-white" : "text-gray-800"
       } `}
     >
