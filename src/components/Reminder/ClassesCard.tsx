@@ -352,14 +352,8 @@ function SessionCard({
       </div>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="w-full sm:w-[60rem] max-w-[80vw] max-h-[90%] bg-white rounded-lg overflow-y-auto shadow-lg p-6 space-y-6">
-          <DialogTitle className="flex items-center justify-between pr-8">
-            <h1 className="text-2xl font-semibold text-gray-900">
-              Session Detail
-            </h1>
-            <Trash2
-              className="text-red-600 cursor-pointer"
-              onClick={() => setOpenDeleteAlert(true)}
-            />
+          <DialogTitle className="text-2xl font-semibold text-gray-900">
+            Session Detail
           </DialogTitle>
           {role && role === "player" ? (
             <PlayerClassDialog session={session} />

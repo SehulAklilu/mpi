@@ -9,7 +9,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import {
+  QueryClient,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "react-query";
 import axiosInstance, {
   getAxiosErrorMessage,
   getAxiosSuccessMessage,
@@ -27,6 +32,8 @@ import { PlayerSession } from "@/types/session.type";
 import { getUserProfile } from "@/api/auth.api";
 import PlayerEvaluation from "./PlayerEvaluation";
 import PostMatchPlayerReflection from "./PostMatchPlayerReflection";
+import audio from "../../assets/audio/mindfullness.mp3";
+import image from "../../assets/quick-mindfulness-tricks.webp";
 
 function PlayerClassDialog({ session }: { session: Session }) {
   const playerSession = session as unknown as PlayerSession;
@@ -48,7 +55,7 @@ function PlayerClassDialog({ session }: { session: Session }) {
     { label: "Rejected", value: "rejected" },
     { label: "Pending", value: "pending" },
   ];
-  const userId = Cookies.get("user_id");
+  const queryClient = useQueryClient();
 
   const questions = [
     {
@@ -111,7 +118,7 @@ function PlayerClassDialog({ session }: { session: Session }) {
       onSuccess: (response) => {
         const message = getAxiosSuccessMessage(response);
         toast.success(message);
-        // queryClient.invalidateQueries("classes");
+        queryClient.invalidateQueries("classes");
       },
       onError: (err: any) => {
         const message = getAxiosErrorMessage(err);
@@ -134,7 +141,7 @@ function PlayerClassDialog({ session }: { session: Session }) {
       onSuccess: (response) => {
         const message = getAxiosSuccessMessage(response);
         toast.success(message);
-        // queryClient.invalidateQueries("classes");
+        queryClient.invalidateQueries("classes");
       },
       onError: (err: any) => {
         const message = getAxiosErrorMessage(err);
@@ -154,7 +161,7 @@ function PlayerClassDialog({ session }: { session: Session }) {
         toast.success(message);
         setStretching(response?.data?.checkList?.stretching);
         setImagery(response?.data?.checkList?.setImagery);
-        // queryClient.invalidateQueries("classes");
+        queryClient.invalidateQueries("classes");
       },
       onError: (err: any) => {
         const message = getAxiosErrorMessage(err);
@@ -163,13 +170,15 @@ function PlayerClassDialog({ session }: { session: Session }) {
     }
   );
 
-  console.log("3333333", playerSession);
+  const handleAudioEnd = () => {
+    checkList.mutate("mindfulness");
+  };
 
   const { data: user } = useQuery("userProfile", getUserProfile);
 
   return (
     <div>
-      <div className="grid grid-cols-2">
+      <div className="grid grid-cols-2 gap-10 my-6">
         {/* Session Type */}
         <div className="flex flex-col">
           <div className="flex items-center gap-2">
@@ -193,7 +202,7 @@ function PlayerClassDialog({ session }: { session: Session }) {
           </span>
         </div>
       </div>
-      <div className="grid grid-cols-2">
+      <div className="grid grid-cols-2 gap-10 my-6">
         {/* Session Type */}
         <div className="flex flex-col">
           <span className="font-medium  text-lg">Session Type</span>
@@ -208,7 +217,7 @@ function PlayerClassDialog({ session }: { session: Session }) {
           <span className="text-lg">{playerSession.levelPlan}</span>
         </div>
       </div>
-      <div className="grid grid-cols-2">
+      <div className="grid grid-cols-2 gap-10 my-6">
         {/* Session Type */}
         <div className="flex flex-col">
           <span className="font-medium  text-lg">Status</span>
@@ -225,21 +234,21 @@ function PlayerClassDialog({ session }: { session: Session }) {
       </div>
 
       {playerSession.status !== "completed" ? (
-        <div className=" w-[80%] ">
-          <div className="flex gap-4 justify-between items-start">
-            <div className="flex flex-col">
-              <span className="font-medium  text-lg">Attendance Responce</span>
-              <span className="capitalize  text-lg">
-                {playerSession.attendanceResponse}
-              </span>
+        <div className="">
+          <div className="flex flex-col">
+            <div className="font-medium flex gap-4 items-center  text-lg">
+              Attendance Responce
+              <MdModeEdit
+                className="text-primary text-lg  cursor-pointer"
+                onClick={() => setEditStatus((pre) => !pre)}
+              />
             </div>
-            <MdModeEdit
-              className="text-primary text-lg mt-2 cursor-pointer"
-              onClick={() => setEditStatus((pre) => !pre)}
-            />
+            <span className="capitalize  text-lg">
+              {playerSession.attendanceResponse}
+            </span>
           </div>
           {editStatus && (
-            <div className="space-y-4mt-4">
+            <div className="space-y-4 w-[50%] mt-4">
               <Select
                 onValueChange={(value: any) => {
                   setSelectedStatus(value);
@@ -295,12 +304,17 @@ function PlayerClassDialog({ session }: { session: Session }) {
               </div>
             </div>
           )}
-          <div className="flex flex-col">
+          <div className="flex flex-col my-4">
             <span className="font-medium  text-lg">Reason</span>
             <span className="text-lg">{playerSession.reason}</span>
           </div>
+
+          <hr className="my-4 border-2" />
+
           <div className="flex justify-between items-center">
-            <h1 className="text-lg font-bold">Pre Game Checklist</h1>
+            <h1 className="text-lg font-bold text-primary">
+              Pre Game Checklist
+            </h1>
             <div onClick={() => setPreGameCheckList((pre) => !pre)}>
               {preGameCheckList ? (
                 <FaChevronUp className="text-lg text-primary cursor-pointer" />
@@ -316,7 +330,7 @@ function PlayerClassDialog({ session }: { session: Session }) {
                   className="flex justify-between items-center my-2"
                   onClick={() => setSelfAssessment((pre) => !pre)}
                 >
-                  <h1 className="font-semibold">Self Assessment Evaluation</h1>
+                  <h1 className="font-medium">Self Assessment Evaluation</h1>
                   <div className="flex gap-4 items-center">
                     <Checkbox
                       disabled
@@ -339,7 +353,7 @@ function PlayerClassDialog({ session }: { session: Session }) {
                         <h2 className="text-lg font-medium text-gray-800">
                           {question.no}, {question.question}
                         </h2>
-                        <div className="mt-3 w-[50%]">
+                        <div className="mt-3 ">
                           <RatingProgressBar
                             value={formData[question.formKey]}
                             onChange={(value) =>
@@ -382,7 +396,7 @@ function PlayerClassDialog({ session }: { session: Session }) {
                   className="flex justify-between items-center my-2"
                   onClick={() => setMindfulnessExercises((pre) => !pre)}
                 >
-                  <h1 className="font-semibold ">
+                  <h1 className="font-medium ">
                     Quick Grounding Mindfulness Exercises
                   </h1>
 
@@ -401,14 +415,28 @@ function PlayerClassDialog({ session }: { session: Session }) {
                   </div>
                 </div>
                 {mindfulnessExercises && (
-                  <div className="min-h-[5rem]">
-                    <div>To do audio player</div>
+                  <div className="min-h-[10rem] relative">
+                    <div className="h-[10rem]">
+                      <img
+                        src={image}
+                        className="w-full h-full object-cover opacity-90"
+                      />
+                    </div>
+                    <audio
+                      controls
+                      onEnded={handleAudioEnd}
+                      className="absolute top-1/2 left-1/2 -translate-x-1/2 border-4 rounded-full border-primary -translate-y-1/2"
+                    >
+                      <source src={audio} type="audio/mp3" />
+                      Your browser does not support the audio element.
+                    </audio>
+                    {/* {isFinished && <p>Audio finished. API request sent.</p>} */}
                   </div>
                 )}
               </div>
               <div className="flex justify-between items-center my-2">
                 <div>
-                  <h1 className="font-semibold ">
+                  <h1 className="font-medium ">
                     Imagery Work (
                     <span className="text-xs">
                       Can be done while traveling to practice or before session
@@ -419,13 +447,15 @@ function PlayerClassDialog({ session }: { session: Session }) {
 
                 <Checkbox
                   checked={imagery}
+                  className="mr-8"
                   onCheckedChange={() => checkList.mutate("imagery")}
                 />
               </div>
               <div className="flex justify-between items-center my-2">
-                <h1 className="font-semibold ">Dynamic Stretching</h1>
+                <h1 className="font-medium ">Dynamic Stretching</h1>
                 <Checkbox
                   checked={stretching}
+                  className="mr-8"
                   onCheckedChange={() => checkList.mutate("stretching")}
                 />
               </div>
@@ -434,12 +464,16 @@ function PlayerClassDialog({ session }: { session: Session }) {
         </div>
       ) : null}
 
+      <hr className="my-4 border-2" />
+
       <div>
         {playerSession?.playersCanReflect &&
           playerSession.status === "completed" && (
             <>
               <div className="flex justify-between items-center my-4">
-                <h1 className="text-lg font-bold">Player Evaluation</h1>
+                <h1 className="text-lg font-bold text-primary">
+                  Player Evaluation
+                </h1>
                 <div onClick={() => setPlayerEvaluation((pre) => !pre)}>
                   {playerEvaluation ? (
                     <FaChevronUp className="text-lg text-primary cursor-pointer" />
@@ -453,8 +487,11 @@ function PlayerClassDialog({ session }: { session: Session }) {
                   <PlayerEvaluation session={playerSession} />
                 )}
               </div>
+              <hr className="my-4 border-2" />
               <div className="flex justify-between items-center">
-                <h1 className="text-lg font-bold">Player Reflection PRIM</h1>
+                <h1 className="text-lg font-bold text-primary">
+                  Player Reflection PRIM
+                </h1>
                 <div onClick={() => setPlayerReflection((pre) => !pre)}>
                   {playerReflection ? (
                     <FaChevronUp className="text-lg text-primary cursor-pointer" />
