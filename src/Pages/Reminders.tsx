@@ -44,6 +44,8 @@ const Reminders = () => {
 
   tomorrow.setDate(tomorrow.getDate() + 1);
 
+  const { role } = useRole();
+
   const [date, setDate] = useState<string | null>(null);
   const [dateFilter, setDateFilter] = useState<Date>(new Date());
   const [onEdit, setEdit] = useState(false);
@@ -160,7 +162,7 @@ const Reminders = () => {
   ];
 
   combinedData.map(({ type, data }, ind) => {
-    if (type === "session") {
+    if (type === "session" && role !== "parent") {
       const session = data as Session;
       const timeObj = extractDateTime(session.date);
       const time =
