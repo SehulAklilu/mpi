@@ -91,7 +91,7 @@ function PlayerEvaluation({ session }: { session: PlayerSession }) {
           onSubmit={form.handleSubmit(onSubmit, onError)}
           className="space-y-6"
         >
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <FormField
               control={form.control}
               name="performance.engagement"
@@ -152,7 +152,7 @@ function PlayerEvaluation({ session }: { session: PlayerSession }) {
               )}
             />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <FormField
               control={form.control}
               name="performance.execution"

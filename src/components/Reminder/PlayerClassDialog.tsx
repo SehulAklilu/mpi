@@ -178,7 +178,7 @@ function PlayerClassDialog({ session }: { session: Session }) {
 
   return (
     <div>
-      <div className="grid grid-cols-2 gap-10 my-6">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-10">
         {/* Session Type */}
         <div className="flex flex-col">
           <div className="flex items-center gap-2">
@@ -196,16 +196,16 @@ function PlayerClassDialog({ session }: { session: Session }) {
 
         {/* Date & Time */}
         <div className="flex flex-col">
-          <span className="font-medium  text-lg">Date & Time</span>
+          <span className="font-medium  text-primary">Date & Time</span>
           <span className="text-lg">
             {extractDateTime(playerSession.date)?.date} {playerSession.to}
           </span>
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-10 my-6">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-10">
         {/* Session Type */}
         <div className="flex flex-col">
-          <span className="font-medium  text-lg">Session Type</span>
+          <span className="font-medium  text-primary">Session Type</span>
           <span className="capitalize text-lg ">
             {playerSession.sessionType}
           </span>
@@ -213,20 +213,20 @@ function PlayerClassDialog({ session }: { session: Session }) {
 
         {/* Date & Time */}
         <div className="flex flex-col">
-          <span className="font-medium  text-lg">Level Plan</span>
+          <span className="font-medium  text-primary">Level Plan</span>
           <span className="text-lg">{playerSession.levelPlan}</span>
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-10 my-6">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-10">
         {/* Session Type */}
         <div className="flex flex-col">
-          <span className="font-medium  text-lg">Status</span>
+          <span className="font-medium  text-primary">Status</span>
           <span className="capitalize  text-lg">{playerSession.status}</span>
         </div>
 
         {/* Date & Time */}
         <div className="flex flex-col">
-          <span className="font-medium  text-lg">Feedback</span>
+          <span className="font-medium  text-primary">Feedback</span>
           <span className="text-lg">
             {playerSession.feedback ?? "No Feedback"}
           </span>
@@ -236,7 +236,7 @@ function PlayerClassDialog({ session }: { session: Session }) {
       {playerSession.status !== "completed" ? (
         <div className="">
           <div className="flex flex-col">
-            <div className="font-medium flex gap-4 items-center  text-lg">
+            <div className="font-medium flex gap-4 items-center  text-primary">
               Attendance Responce
               <MdModeEdit
                 className="text-primary text-lg  cursor-pointer"
@@ -248,7 +248,7 @@ function PlayerClassDialog({ session }: { session: Session }) {
             </span>
           </div>
           {editStatus && (
-            <div className="space-y-4 w-[50%] mt-4">
+            <div className="space-y-4 w-full sm:w-[50%] mt-4">
               <Select
                 onValueChange={(value: any) => {
                   setSelectedStatus(value);
@@ -305,7 +305,7 @@ function PlayerClassDialog({ session }: { session: Session }) {
             </div>
           )}
           <div className="flex flex-col my-4">
-            <span className="font-medium  text-lg">Reason</span>
+            <span className="font-medium  text-primary">Reason</span>
             <span className="text-lg">{playerSession.reason}</span>
           </div>
 

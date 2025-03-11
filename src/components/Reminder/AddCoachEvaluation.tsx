@@ -109,7 +109,7 @@ function AddCoachEvaluation({
     console.log("e", err);
   };
   return (
-    <div className="p-2">
+    <div className="sm:p-2">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit, onError)}
@@ -135,7 +135,7 @@ function AddCoachEvaluation({
             )}
           />
 
-          <div className="flex items-start justify-between">
+          <div className="flex flex-wrap gap-4 items-start justify-between">
             <FormField
               control={form.control}
               name="achievable"
@@ -224,7 +224,7 @@ function AddCoachEvaluation({
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
             <FormField
               control={form.control}
               name="performance.engagement"
@@ -286,7 +286,7 @@ function AddCoachEvaluation({
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
             <FormField
               control={form.control}
               name="performance.execution"

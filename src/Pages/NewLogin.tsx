@@ -24,6 +24,7 @@ import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Cookies from "js-cookie";
 import { useRole } from "@/RoleContext";
+import GoogleLoginButton from "@/components/GoogleLoginButton";
 
 const FormSchema = z.object({
   email: z.string({ required_error: "Email is Required!" }).email(),
@@ -169,14 +170,7 @@ function NewLogin() {
                   "Login"
                 )}
               </Button>
-              <Button className="flex py-2 shadow rounded-3xl items-center justify-center gap-2 bg-white text-gray-800 border border-gray-300 hover:bg-gray-100">
-                <FcGoogle size={22} className="text-red-500" />
-                <div className="text-sm">Sign in With Google</div>
-              </Button>
-              {/* <Button className="flex py-2 shadow rounded-xl items-center justify-center gap-2 bg-white text-gray-800 border border-gray-300 hover:bg-gray-100">
-              <FaFacebook size={18} className="text-blue-600" />
-              <div className="text-sm">Facebook</div>
-            </Button> */}
+              <GoogleLoginButton />
             </div>
           </form>
         </Form>

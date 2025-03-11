@@ -152,7 +152,7 @@ function PostMatchPlayerReflection({
             <h2 className="text-lg font-medium text-gray-800">
               {question.no}, {question.question}
             </h2>
-            <div className="mt-3 w-[50%]">
+            <div className="mt-3 w-[80%] sm:w-[50%]">
               <RatingProgressBar
                 value={formData[question.formKey]}
                 onChange={(value) =>
@@ -167,7 +167,7 @@ function PostMatchPlayerReflection({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit, onError)}
-            className="grid grid-cols-3 gap-4"
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
           >
             <FormField
               control={form.control}

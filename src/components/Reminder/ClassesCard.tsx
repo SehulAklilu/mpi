@@ -298,7 +298,7 @@ function SessionCard({
       <div
         className={`max-md:w-full w-[90%] relative ml-auto text-sm px-2 py-3 rounded-lg bg-blue-100/20  hover:shadow duration-200 border border-gray-200 flex flex-col cursor-pointer`}
       >
-        <div className="flex items-start gap-4">
+        <div className="flex flex-col sm:flex-row items-start gap-4">
           <FaCalendarDay className="text-2xl mt-1 text-primary " />
           <div>
             <p className="text-lg font-semibold">
@@ -306,7 +306,7 @@ function SessionCard({
             </p>
             <p>{session.to}</p>
             <p>{session.levelPlan}</p>
-            <div className="flex gap-4 my-2">
+            <div className="flex flex-wrap gap-4 my-2">
               <Button
                 className="px-3 py-2 max-md:px-2 max-md:py-1  bg-primary/10 flex  rounded text-primary"
                 onClick={() => setIsOpen(true)}
@@ -351,18 +351,20 @@ function SessionCard({
         </div>
       </div>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="w-full sm:w-[60rem] max-w-[80vw] max-h-[90%] bg-white rounded-lg overflow-y-auto shadow-lg p-6 space-y-6">
+        <DialogContent className=" w-[98%] md:max-w-[80vw] max-h-[90%] bg-white rounded-lg overflow-y-auto shadow-lg p-6 space-y-6">
           <DialogTitle className="text-2xl font-semibold text-gray-900">
             Session Detail
           </DialogTitle>
           {role && role === "player" ? (
             <PlayerClassDialog session={session} />
           ) : (
-            <>
-              <div className="grid grid-cols-2 gap-10">
+            <div className="space-y-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 sm:gap-10">
                 {/* Session Type */}
                 <div className="flex flex-col">
-                  <span className="font-medium  text-lg">Session Type</span>
+                  <span className="font-medium  text-primary">
+                    Session Type
+                  </span>
                   <span className="capitalize text-lg ">
                     {session.sessionType}
                   </span>
@@ -370,16 +372,17 @@ function SessionCard({
 
                 {/* Date & Time */}
                 <div className="flex flex-col">
-                  <span className="font-medium  text-lg">Date & Time</span>
+                  <span className="font-medium  text-primary">Date & Time</span>
                   <span className="text-lg">
                     {extractDateTime(session.date)?.date} {session.to}
                   </span>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-10">
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 sm:gap-10 ">
                 {/* Level Plan */}
                 <div className="flex flex-col">
-                  <span className="font-medium  text-lg">Level Plan</span>
+                  <span className="font-medium text-primary">Level Plan</span>
                   <span className="capitalize  text-lg ">
                     {session.levelPlan}
                   </span>
@@ -387,7 +390,9 @@ function SessionCard({
 
                 {/* Player Can Reflect */}
                 <div className="space-y-1">
-                  <h3 className="font-medium  text-lg">Player Can Reflect</h3>
+                  <h3 className="font-medium   text-primary">
+                    Player Can Reflect
+                  </h3>
                   <p className="text-sm">
                     Whether the student can reflect on the session.
                   </p>
@@ -399,12 +404,12 @@ function SessionCard({
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-10">
+              <div className="grid grid-cols-1 sm:grid-cols-2 sm:gap-10">
                 {/* Status Update */}
                 <div className="  ">
                   <div className="flex flex-col">
                     <div
-                      className="font-medium  flex items-center gap-4 text-lg cursor-pointer"
+                      className="font-medium  flex items-center gap-4 text-primary cursor-pointer"
                       onClick={() => setEditStatus((pre) => !pre)}
                     >
                       Status <MdModeEdit className="text-primary text-lg " />
@@ -414,7 +419,7 @@ function SessionCard({
                     </span>
                   </div>
                   {editStatus && (
-                    <div className="space-y-4mt-4">
+                    <div className="space-y-4 mt-4">
                       <Select
                         onValueChange={(value: any) => {
                           setSelectedStatus(value);
@@ -469,7 +474,7 @@ function SessionCard({
                   <div className="flex   justify-between items-start">
                     <div className="flex  flex-col">
                       <div
-                        className="font-medium  flex items-center gap-4 text-lg cursor-pointer"
+                        className="font-medium  flex items-center gap-4 text-primary cursor-pointer"
                         onClick={() => setFeedBack((pre) => !pre)}
                       >
                         Feedback{" "}
@@ -498,12 +503,13 @@ function SessionCard({
                   )}
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-10">
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 sm:gap-10">
                 {/* Upload Session Photo */}
                 <div className="">
                   <div className="flex justify-between items-center">
                     <div
-                      className="font-medium  flex items-center gap-4 text-lg"
+                      className="font-medium  flex items-center gap-4 text-primary"
                       onClick={() => setUploadImage((pre) => !pre)}
                     >
                       Upload Session Photo
@@ -536,7 +542,7 @@ function SessionCard({
                         />
                       </div>
                       {/* Display Image Previews in a 2-column Grid */}
-                      <div className="grid grid-cols-2 gap-4 mt-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
                         {imageFiles.map((file, index) => (
                           <div key={index} className="relative">
                             <img
@@ -592,7 +598,7 @@ function SessionCard({
                 <div className="">
                   <div className="flex justify-between items-center">
                     <div
-                      className="flex font-medium gap-4  text-lg items-center"
+                      className="flex font-medium gap-4  text-primary items-center"
                       onClick={() => setUploadVideo((pre) => !pre)}
                     >
                       Upload Session Video
@@ -625,7 +631,7 @@ function SessionCard({
                         />
                       </div>
                       {/* Display Video Previews in a 2-column Grid */}
-                      <div className="grid grid-cols-2 gap-4 mt-2">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
                         {videoFiles.map((file, index) => (
                           <div key={index} className="relative">
                             <video
@@ -683,7 +689,7 @@ function SessionCard({
               <div className="">
                 <div className="flex gap-4 justify-between items-start">
                   <div className="flex flex-col">
-                    <span className="font-medium  text-lg">
+                    <span className="font-medium  text-lg underline">
                       List of Students
                     </span>
                   </div>
@@ -696,10 +702,10 @@ function SessionCard({
                   </div>
                 </div>
                 {listOfStudents && (
-                  <div className="border p-2 rounded-sm">
+                  <div className="sm:p-2 rounded-sm">
                     {session?.attendance.map((att) => (
                       <div className="border rounded-xl border-primary p-2">
-                        <div className="grid grid-cols-2  gap-10">
+                        <div className="grid grid-cols-1 sm:grid-cols-2  gap-4 sm:gap-10">
                           <div className="flex items-center gap-2">
                             <img
                               src={att.player.avatar}
@@ -835,7 +841,7 @@ function SessionCard({
                         </div>
                         {preGameAssessment && (
                           <div>
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                               <div>
                                 <div>
                                   <h1 className="font-medium underline">
@@ -910,13 +916,13 @@ function SessionCard({
                   </div>
                 )}
               </div>
-            </>
+            </div>
           )}
         </DialogContent>
       </Dialog>
 
       <AlertDialog open={openDeleteAlert} onOpenChange={setOpenDeleteAlert}>
-        <AlertDialogContent>
+        <AlertDialogContent className="w-[90%] rounded-lg">
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
@@ -928,7 +934,7 @@ function SessionCard({
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction
-              className="bg-red-500 flex gap-2 text-white rounded-lg py-2 px-4"
+              className="bg-red-500 items-center justify-center flex gap-2 text-white rounded-lg py-2 px-4"
               onClick={() => deleteSession.mutate()}
             >
               Continue
