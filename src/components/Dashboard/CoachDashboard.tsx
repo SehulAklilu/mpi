@@ -131,7 +131,7 @@ function CoachDashboard() {
   }
   return (
     <div className="px-4 md:px-14 pt-10 rounded-lg pb-[8rem] bg-white ">
-      <div className="flex gap-4 mt-4 ">
+      <div className="flex flex-wrap sm:flex-nowrap gap-4 mt-4 ">
         <Select onValueChange={onPlayerSelected}>
           <SelectTrigger className="!w-full flex-1 h-12 !py-4">
             <SelectValue placeholder="Select Player" />
@@ -215,13 +215,13 @@ function CoachDashboard() {
           {/* Top players */}
           <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
             {dashboard?.topPlayer && (
-              <Card className="p-6 shadow-lg flex items-center">
+              <Card className="p-6 shadow-lg flex  items-center">
                 <CardContent className="p-0 w-full">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center  flex-col sm:flex-row justify-between">
                     <div className="flex items-center gap-6">
                       <img
                         src={dashboard?.topPlayer.avatar}
-                        className="w-20 h-20 rounded-full object-cover border-2 border-gray-200"
+                        className="w-16 h-16 md:w-20 md:h-20  shrink-0 rounded-full object-cover border-2 border-gray-200"
                         alt="Top Player"
                       />
                       <div>
@@ -288,7 +288,7 @@ export const TimeRangeSelector = () => {
   const options = ["ALL", "1W", "1M", "3M", "6M", "1Y"];
 
   return (
-    <div className="flex space-x-2 p-2 bg-gray-100 w-fit rounded-lg">
+    <div className="flex  space-x-2 p-2 bg-gray-100 rounded-lg overflow-x-auto over">
       {options.map((option) => (
         <button
           key={option}

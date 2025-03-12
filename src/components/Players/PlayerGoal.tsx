@@ -56,13 +56,13 @@ function PlayerGoal({
       >
         Add Goal
       </div>
-      <Tabs defaultValue="short" orientation="vertical" className="flex">
-        <TabsList className="flex flex-col w-32 h-[10rem] mt-10 space-y-2">
+      <Tabs defaultValue="short" className="flex flex-col sm:flex-row">
+        <TabsList className="flex flex-row sm:flex-col w-full sm:w-32 h-[4rem] sm:h-[10rem] mt-10 space-y-0 sm:space-y-2">
           {["short", "medium", "long"].map((term) => (
             <TabsTrigger
               key={term}
               value={term}
-              className="h-12 data-[state=active]:bg-primary  data-[state=active]:text-white"
+              className="h-8 sm:h-12 data-[state=active]:bg-primary  data-[state=active]:text-white"
             >
               {term}
             </TabsTrigger>

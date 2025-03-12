@@ -77,9 +77,9 @@ function PlayersDetail() {
             value={activeTab}
             onValueChange={setActiveTab}
             defaultValue="Profile"
-            className="w-full"
+            className="w-full px-1"
           >
-            <TabsList className="flex bg-[#FFF6ED] rounded-full w-full md:w-[30rem] lg:w-[40rem] shadow-md h-[2.5rem] md:h-[3rem] mx-auto border">
+            <TabsList className="flex bg-[#FFF6ED] rounded-lg sm:rounded-full w-full md:w-[30rem] lg:w-[40rem] shadow-md h-[6-rem] sm:h-[3rem] mx-auto border flex-wrap">
               <TabsTrigger
                 value="Profile"
                 className="flex-1 text-center py-1 text-sm md:text-base lg:text-lg rounded-full transition-colors data-[state=active]:bg-[#F2851C] data-[state=active]:text-white data-[state=inactive]:text-gray-700"
@@ -111,11 +111,12 @@ function PlayersDetail() {
                 SOT
               </TabsTrigger>
             </TabsList>
-            <TabsContent className="!mt-0 p-4" value="Profile">
+            <TabsContent className="!mt-0 p-2 sm:p-4" value="Profile">
               <h1 className="text-xl font-bold text-gray-700 mb-2">Parents</h1>
               {data?.player.parents.map((parent) => (
                 <div
-                  className="flex items-center gap-4 bg-white p-2 rounded-xl my-2 border border-white hover:border-primary cursor-pointer"
+                  key={parent._id}
+                  className="flex flex-col sm:flex-row items-center gap-4 bg-white p-4 rounded-xl my-2 border border-white hover:border-primary cursor-pointer"
                   onClick={() => {
                     setSelectedValue(parent);
                     setOpen(true);
@@ -124,23 +125,26 @@ function PlayersDetail() {
                   <img
                     src={parent.avatar}
                     alt={`${parent.firstName} ${parent.lastName}`}
-                    className="w-16 h-16 rounded-full object-cover flex-none"
+                    className="w-16 h-16 rounded-full object-cover"
                   />
-                  <div>
-                    <h1 className="font-lg font-bold">
+                  <div className="text-center sm:text-left">
+                    <h1 className="text-lg font-bold">
                       {parent.firstName} {parent.lastName}
                     </h1>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center justify-center sm:justify-start gap-2 text-sm text-gray-600">
                       <AiOutlineMail /> {parent.emailAddress.email}
                     </div>
                   </div>
                 </div>
               ))}
 
-              <h1 className="text-xl font-bold text-gray-700 mb-2">Coaches</h1>
+              <h1 className="text-xl font-bold text-gray-700 mb-2 mt-4">
+                Coaches
+              </h1>
               {data?.player.coaches.map((coach) => (
                 <div
-                  className="flex items-center gap-4 bg-white p-2 rounded-xl my-2 border border-white hover:border-primary cursor-pointer"
+                  key={coach._id}
+                  className="flex flex-col sm:flex-row items-center gap-4 bg-white p-4 rounded-xl my-2 border border-white hover:border-primary cursor-pointer"
                   onClick={() => {
                     setSelectedValue(coach);
                     setOpen(true);
@@ -149,13 +153,13 @@ function PlayersDetail() {
                   <img
                     src={coach.avatar}
                     alt={`${coach.firstName} ${coach.lastName}`}
-                    className="w-16 h-16 rounded-full object-cover flex-none"
+                    className="w-16 h-16 rounded-full object-cover"
                   />
-                  <div>
-                    <h1 className="font-lg font-bold">
+                  <div className="text-center sm:text-left">
+                    <h1 className="text-lg font-bold">
                       {coach.firstName} {coach.lastName}
                     </h1>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center justify-center sm:justify-start gap-2 text-sm text-gray-600">
                       <AiOutlineMail /> {coach.emailAddress.email}
                     </div>
                   </div>

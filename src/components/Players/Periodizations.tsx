@@ -221,25 +221,28 @@ function Periodizations({
 
   return (
     <div>
-      <div className="flex items-center  my-2 gap-4 justify-center">
-        <select
-          value={selectedPeriodizationId}
-          onChange={(e) => {
-            onSelect(e.target.value),
+      <div className="flex flex-col  items-center  my-2 gap-4 justify-center">
+        <div className="mx-auto">
+          <select
+            value={selectedPeriodizationId}
+            onChange={(e) => {
+              onSelect(e.target.value);
               setSelectedPeriodizationId(e.target.value);
-          }}
-          className="py-2 px-6 rounded-full my-2 outline-none border border-primary font-medium"
-        >
-          <option value="">Select a periodization</option>
-          {data.periodizations.map((item) => (
-            <option key={item._id} value={item._id} className="font-medium">
-              {formatDateTime(item.startingDate)} -{" "}
-              {formatDateTime(item.endingDate)}
-            </option>
-          ))}
-        </select>
+            }}
+            className="py-2 px-4 rounded-full my-2 outline-none border border-primary font-medium text-xs sm:text-base w-full"
+          >
+            <option value="">Select a periodization</option>
+            {data.periodizations.map((item) => (
+              <option key={item._id} value={item._id} className="font-medium">
+                {formatDateTime(item.startingDate)} -{" "}
+                {formatDateTime(item.endingDate)}
+              </option>
+            ))}
+          </select>
+        </div>
+
         {role && role === "coach" && (
-          <>
+          <div className="flex gap-2">
             <div className="w-10 h-10 flex  flex-none items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 cursor-pointer">
               <MdEdit
                 className="text-gray-600 text-xl"
@@ -274,7 +277,7 @@ function Periodizations({
                 setIsDatePickerOpen(true);
               }}
             />
-          </>
+          </div>
         )}
       </div>
       {selectedPeriodization && (

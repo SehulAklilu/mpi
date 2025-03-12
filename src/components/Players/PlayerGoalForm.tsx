@@ -276,7 +276,7 @@ export default function PlayerGoalForm({
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="max-h-[90vh] max-w-[90vw] w-[600px]  overflow-y-auto">
+      <DialogContent className="max-h-[90vh] max-w-[90vw] w-[800px]  overflow-y-auto">
         <DialogTitle className="text-lg">
           {initialData ? "Edit Goal" : "Add Goal"}
         </DialogTitle>
@@ -440,60 +440,63 @@ export default function PlayerGoalForm({
                 }
                 className="flex items-center py-2 border border-primary text-primary px-4  gap-4 rounded-xl"
               >
-                Add Action <FaCirclePlus />
+                <span className="hidden sm:block">Add Action</span>{" "}
+                <FaCirclePlus />
               </Button>
             </div>
             <div className="flex flex-col gap-4">
               {actionFields.map((item: any, index) => (
-                <div key={item.id} className="flex gap-4 items-end">
-                  <div className="flex-1">
-                    <FormLabel>Description</FormLabel>
+                <div key={item.id} className="flex flex-wrap gap-4 items-end">
+                  <div className="grid grid-cols-1 border border-gray-400 sm:border-none rounded-md px-2 py-1 sm:p-0 sm:grid-cols-2 gap-2 flex-1">
+                    <div className="w-full">
+                      <FormLabel className="font-medium">Description</FormLabel>
 
-                    <Input
-                      {...form.register(
-                        `actions.${index}.description` as const
-                      )}
-                      placeholder="Describe the action"
-                      className="shadow !bg-white"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <FormField
-                      control={form.control}
-                      name={`actions.${index}.date`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Date</FormLabel>
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <Button
-                                variant="outline"
-                                className="w-full flex flex-1 gap-2 justify-start text-left font-normal border py-2 bg-white border-[#E5E5E5] items-center rounded-md px-2"
+                      <Input
+                        {...form.register(
+                          `actions.${index}.description` as const
+                        )}
+                        placeholder="Describe the action"
+                        className="shadow !bg-white mt-2"
+                      />
+                    </div>
+                    <div className="w-full">
+                      <FormField
+                        control={form.control}
+                        name={`actions.${index}.date`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Date</FormLabel>
+                            <Popover>
+                              <PopoverTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  className="w-full flex flex-1 gap-2 justify-start text-left font-normal border py-2 bg-white border-[#E5E5E5] items-center rounded-md px-2"
+                                >
+                                  <CalendarIcon />
+                                  {field.value ? (
+                                    format(field.value, "PPP")
+                                  ) : (
+                                    <span>Pick a date</span>
+                                  )}
+                                </Button>
+                              </PopoverTrigger>
+                              <PopoverContent
+                                className="w-auto p-0"
+                                align="start"
                               >
-                                <CalendarIcon />
-                                {field.value ? (
-                                  format(field.value, "PPP")
-                                ) : (
-                                  <span>Pick a date</span>
-                                )}
-                              </Button>
-                            </PopoverTrigger>
-                            <PopoverContent
-                              className="w-auto p-0"
-                              align="start"
-                            >
-                              <Calendar
-                                mode="single"
-                                selected={field.value}
-                                onSelect={field.onChange}
-                                initialFocus
-                              />
-                            </PopoverContent>
-                          </Popover>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                                <Calendar
+                                  mode="single"
+                                  selected={field.value}
+                                  onSelect={field.onChange}
+                                  initialFocus
+                                />
+                              </PopoverContent>
+                            </Popover>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                   </div>
                   <button
                     type="button"
@@ -520,7 +523,8 @@ export default function PlayerGoalForm({
                 }
                 className="flex items-center py-2 border border-primary text-primary px-4  gap-4 rounded-xl"
               >
-                Add Obstacle <FaCirclePlus />
+                <span className="hidden sm:block">Add Obstacle</span>{" "}
+                <FaCirclePlus />
               </Button>
             </div>
             <div className="flex flex-col gap-4">

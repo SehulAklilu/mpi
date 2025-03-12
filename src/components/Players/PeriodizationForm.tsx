@@ -506,7 +506,7 @@ export default function AddPhaseDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] mx-2 overflow-y-auto">
         <DialogTitle className="text-lg">
           {initialData ? "Edit Phase" : "Add Phase"}
         </DialogTitle>

@@ -266,7 +266,11 @@ const PeopleComponent: React.FC<PeopleComponentProps> = ({
               <div className="space-y-4">
                 <div className="space-y-2 mt-2">
                   {friends?.map((friend) => (
-                    <ProfileCardNew key={friend.friendship_id} {...friend} />
+                    <ProfileCardNew
+                      key={friend.friendship_id}
+                      {...friend}
+                      onMessage={onMessage}
+                    />
                   ))}
                   {/* <div className="flex items-center justify-center">
                         <button className="border rounded-lg px-6 py-2">

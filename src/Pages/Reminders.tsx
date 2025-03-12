@@ -392,8 +392,15 @@ const TimeShow = ({
     // const date = new Date(`${currentYear}-${currentMonth + 1}-${day}`);
   }
   const isValid = (): boolean => {
-    return new Date() < date;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const targetDate = new Date(date);
+    targetDate.setHours(0, 0, 0, 0);
+
+    return targetDate.getTime() >= today.getTime();
   };
+
   return (
     <div className="w-full flex my-2">
       <div className="w-[10%] text-sm capitalize">{time}</div>

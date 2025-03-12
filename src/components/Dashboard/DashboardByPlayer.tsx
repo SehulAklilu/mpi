@@ -14,6 +14,7 @@ import {
   YAxis,
   Line,
   LineChart,
+  ResponsiveContainer,
 } from "recharts";
 
 import {
@@ -132,7 +133,7 @@ function DashboardByPlayer({
   return (
     <div>
       <div className="mt-6 flex justify-between flex-wrap items-center mb-2">
-        <div className="flex space-x-6 p-4">
+        <div className="flex space-x-2 sm:space-x-6 p-4">
           {typeOptions.map((option) => (
             <label
               key={option.value}
@@ -169,7 +170,7 @@ function DashboardByPlayer({
             </label>
           ))}
         </div>
-        <div className="flex space-x-2 p-2 w-fit rounded-lg">
+        <div className="flex space-x-2 overflow-x-auto p-2 w-fit rounded-lg">
           {options.map((option) => (
             <button
               key={option.label}
@@ -188,7 +189,7 @@ function DashboardByPlayer({
       </div>
 
       <div className="my-6">
-        <div className="flex items-center flex-wrap gap-y-2 space-x-4 bg-gray-100 p-4 rounded-xl shadow-md">
+        <div className="flex items-center overflow-x-auto gap-y-2 space-x-4 bg-gray-100 p-4 rounded-xl shadow-md">
           {["Overview", "Serves", "Points", "Return", "Rally"].map((option) => (
             <label
               key={option}
@@ -214,14 +215,14 @@ function DashboardByPlayer({
 
       {selected === "Overview" && (
         <>
-          <div className="my-6 flex  gap-4">
+          <div className="my-6 grid grid-cols-1  md:grid-cols-2 gap-4">
             <ChartComponent data={data} />
             <WinnersChart data={data} />
           </div>
-          <div className="my-6 flex gap-4">
+          <div className="my-6">
             <ErrorsChart data={data} />
           </div>
-          <div className="my-6 flex gap-4">
+          <div className="my-6">
             <LastShotAnalysis data={data} />
             {/* <BrakingPoints /> */}
           </div>
@@ -278,13 +279,13 @@ function DashboardByPlayer({
           <hr />
           <h1 className="text-2xl font-bold my-2">Return Placement</h1>
           {returnPlacementFirstServe === "First Serve" ? (
-            <div className="grid grid-cols-3">
+            <div className="grid grid-cols-1 md:grid-cols-3">
               <ReturnPlacement data={data} type="firstServe" />
               <ReturnPlacement data={data} type="firstServeForehand" />
               <ReturnPlacement data={data} type="firstServeBackhand" />
             </div>
           ) : (
-            <div className="grid grid-cols-3">
+            <div className="grid grid-cols-1 md:grid-cols-3">
               <ReturnPlacement data={data} type="secondServe" />
               <ReturnPlacement data={data} type="secondServeForehand" />
               <ReturnPlacement data={data} type="secondServeBackhand" />
@@ -382,55 +383,59 @@ const ChartComponent = ({ data }: { data: TennisMatchStats }) => {
           </button>
         </div>
       </CardHeader>
-      <CardContent className="flex-1 mx-auto  pb-0">
-        <ChartContainer
-          config={chartConfig}
-          className=" aspect-square min-h-[300px]"
-        >
-          <PieChart>
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent hideLabel />}
-            />
-            <Pie
-              data={chartData}
-              dataKey="totalPoint"
-              nameKey="browser"
-              innerRadius={60}
-              strokeWidth={5}
+      <CardContent className="flex-1 w-full mx-auto  pb-0">
+        <div className="w-full h-80">
+          <ResponsiveContainer width="100%" height="100%">
+            <ChartContainer
+              config={chartConfig}
+              className=" aspect-square min-h-[300px]"
             >
-              <Label
-                content={({ viewBox }) => {
-                  if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                    return (
-                      <text
-                        x={viewBox.cx}
-                        y={viewBox.cy}
-                        textAnchor="middle"
-                        dominantBaseline="middle"
-                      >
-                        <tspan
-                          x={viewBox.cx}
-                          y={viewBox.cy}
-                          className="fill-foreground text-3xl font-bold"
-                        >
-                          {totalVisitors.toLocaleString()}
-                        </tspan>
-                        <tspan
-                          x={viewBox.cx}
-                          y={(viewBox.cy || 0) + 24}
-                          className="fill-muted-foreground"
-                        >
-                          Total Points
-                        </tspan>
-                      </text>
-                    );
-                  }
-                }}
-              />
-            </Pie>
-          </PieChart>
-        </ChartContainer>
+              <PieChart>
+                <ChartTooltip
+                  cursor={false}
+                  content={<ChartTooltipContent hideLabel />}
+                />
+                <Pie
+                  data={chartData}
+                  dataKey="totalPoint"
+                  nameKey="browser"
+                  innerRadius={60}
+                  strokeWidth={5}
+                >
+                  <Label
+                    content={({ viewBox }) => {
+                      if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                        return (
+                          <text
+                            x={viewBox.cx}
+                            y={viewBox.cy}
+                            textAnchor="middle"
+                            dominantBaseline="middle"
+                          >
+                            <tspan
+                              x={viewBox.cx}
+                              y={viewBox.cy}
+                              className="fill-foreground text-3xl font-bold"
+                            >
+                              {totalVisitors.toLocaleString()}
+                            </tspan>
+                            <tspan
+                              x={viewBox.cx}
+                              y={(viewBox.cy || 0) + 24}
+                              className="fill-muted-foreground"
+                            >
+                              Total Points
+                            </tspan>
+                          </text>
+                        );
+                      }
+                    }}
+                  />
+                </Pie>
+              </PieChart>
+            </ChartContainer>
+          </ResponsiveContainer>
+        </div>
       </CardContent>
       <CardFooter className="flex items-center justify-center gap-2 text-sm shadow-md rounded-md border">
         <div className="flex gap-4">
@@ -500,8 +505,28 @@ const WinnersChart = ({ data: dashboard }: { data: TennisMatchStats }) => {
         {/* <p className="text-sm text-blue-400">Win Rate: 213%</p> */}
       </CardHeader>
 
-      <CardContent className="flex flex-col items-center gap-4">
-        <div className="flex items-center space-x-4">
+      <CardContent className="flex w-full flex-col items-center gap-4">
+        <div className="flex flex-col w-full sm:flex-row items-center space-x-4">
+          <div className="w-full h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={data}
+                  dataKey="value"
+                  nameKey="name"
+                  innerRadius={60}
+                  strokeWidth={5}
+                  outerRadius={100}
+                  fill="#82ca9d"
+                >
+                  {data.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
           <div className="text-left text-sm">
             <p className="font-semibold">Shot Types</p>
             {data.map((item, index) => (
@@ -514,22 +539,6 @@ const WinnersChart = ({ data: dashboard }: { data: TennisMatchStats }) => {
               </div>
             ))}
           </div>
-
-          <PieChart width={250} height={250}>
-            <Pie
-              data={data}
-              dataKey="value"
-              nameKey="name"
-              innerRadius={60}
-              strokeWidth={5}
-              fill="#82ca9d"
-            >
-              {data.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={entry.color} />
-              ))}
-            </Pie>
-            <Tooltip />
-          </PieChart>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 w-full text-sm">
@@ -584,74 +593,84 @@ const ErrorsChart = ({ data }: { data: TennisMatchStats }) => {
         <CardHeader>
           <CardTitle className="text-2xl font-bold my-2">Errors</CardTitle>
         </CardHeader>
-        <CardContent className="flex flex-col items-center">
-          <div className="flex justify-around">
+        <CardContent className="flex flex-col w-full  items-center">
+          <div className="grid grid-cols-1 w-full  md:grid-cols-2">
             <div>
               <h1 className="text-xl text-center font-semibold my-2">
                 Forced Error
               </h1>
-              <PieChart width={350} height={350}>
-                <Pie
-                  data={chartDataForced}
-                  dataKey="count"
-                  nameKey="type"
-                  innerRadius={60}
-                  strokeWidth={5}
-                >
-                  <Label
-                    content={({ viewBox }) => {
-                      if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                        return (
-                          <text
-                            x={viewBox?.cx}
-                            y={viewBox?.cy}
-                            textAnchor="middle"
-                            dominantBaseline="middle"
-                            className="text-3xl font-bold"
-                          >
-                            {totalErrorsForced}
-                          </text>
-                        );
-                      }
-                    }}
-                  />
-                </Pie>
-              </PieChart>
+              <div className="w-full  h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={chartDataForced}
+                      dataKey="count"
+                      nameKey="type"
+                      innerRadius={60}
+                      strokeWidth={5}
+                      outerRadius={100}
+                    >
+                      <Label
+                        content={({ viewBox }) => {
+                          if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                            return (
+                              <text
+                                x={viewBox?.cx}
+                                y={viewBox?.cy}
+                                textAnchor="middle"
+                                dominantBaseline="middle"
+                                className="text-3xl font-bold"
+                              >
+                                {totalErrorsForced}
+                              </text>
+                            );
+                          }
+                        }}
+                      />
+                    </Pie>
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
             </div>
             <div>
               <h1 className="text-xl text-center font-semibold my-2">
                 Unforced Error
               </h1>
-              <PieChart width={350} height={350}>
-                <Pie
-                  data={chartDataUnforced}
-                  dataKey="count"
-                  nameKey="type"
-                  innerRadius={60}
-                  strokeWidth={5}
-                >
-                  <Label
-                    content={({ viewBox }) => {
-                      if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                        return (
-                          <text
-                            x={viewBox?.cx}
-                            y={viewBox?.cy}
-                            textAnchor="middle"
-                            dominantBaseline="middle"
-                            className="text-3xl font-bold"
-                          >
-                            {totalErrorsUnForced}
-                          </text>
-                        );
-                      }
-                    }}
-                  />
-                </Pie>
-              </PieChart>
+              <div className="w-full h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={chartDataUnforced}
+                      dataKey="count"
+                      nameKey="type"
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={100}
+                    >
+                      <Label
+                        content={({ viewBox }) => {
+                          if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                            return (
+                              <text
+                                x={viewBox?.cx}
+                                y={viewBox?.cy}
+                                textAnchor="middle"
+                                dominantBaseline="middle"
+                                className="text-3xl font-bold"
+                              >
+                                {totalErrorsUnForced}
+                              </text>
+                            );
+                          }
+                        }}
+                      />
+                    </Pie>
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
             </div>
           </div>
-          <div className="grid grid-cols-4 gap-4 w-full text-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 w-full text-xs">
             <Card className="p-4 bg-blue-100 border border-blue-300 rounded-xl">
               <CardTitle className="text-blue-500 font-bold">
                 Forehand Details

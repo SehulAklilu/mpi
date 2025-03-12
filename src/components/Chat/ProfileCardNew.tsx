@@ -28,6 +28,7 @@ export interface ProfileDataInterface {
   setActiveTab?: (tab: string) => void;
   message?: string;
   buttonText?: string;
+  onMessage?: (userId: string) => void;
 }
 
 const ProfileCardNew: React.FC<ProfileDataInterface> = ({
@@ -42,6 +43,7 @@ const ProfileCardNew: React.FC<ProfileDataInterface> = ({
   setActiveTab,
   buttonText,
   message,
+  onMessage,
 }) => {
   const [showMenu, setShowMenu] = useState(false);
   const queryClient = useQueryClient();
@@ -115,9 +117,15 @@ const ProfileCardNew: React.FC<ProfileDataInterface> = ({
       user2Id && follow.mutate({ user2: user2Id });
     }
   };
-  const onMessage = () => {
-    // createChatMessage.mutate({ userId: user_id });
-    setActiveTab && setActiveTab("messages");
+  // const onMessage = () => {
+  //   // createChatMessage.mutate({ userId: user_id });
+  //   setActiveTab && setActiveTab("messages");
+  // };
+
+  const handleMessageClick = () => {
+    if (user_id && onMessage) {
+      onMessage(user_id);
+    }
   };
   const onBlockToggle = () => {
     if (otherUserBlocked) {
@@ -167,7 +175,7 @@ const ProfileCardNew: React.FC<ProfileDataInterface> = ({
           </button>
           {status === "friends" && (
             <button
-              onClick={onMessage}
+              onClick={() => handleMessageClick()}
               disabled={status !== "friends"}
               className={`w-full py-2 px-3 text-xs md:text-sm border rounded-md  ${
                 status !== "friends"

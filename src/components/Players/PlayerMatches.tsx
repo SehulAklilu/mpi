@@ -13,7 +13,7 @@ const PlayerMatcheCard = ({ match }: { match: Match }) => {
   const { role } = useRole();
   return (
     <div
-      className="w-[30rem] items-center rounded-2xl shadow-lg bg-white my-4 h-[9rem] grid grid-cols-3 hover:border hover:border-primary cursor-pointer"
+      className="items-center px-4 rounded-2xl shadow-lg bg-white my-2 sm:my-4 h-[9rem] grid grid-cols-3 hover:border hover:border-primary cursor-pointer"
       onClick={() =>
         role && role === "parent"
           ? navigate(`/child/matchDetail/${match._id}`)
@@ -28,14 +28,16 @@ const PlayerMatcheCard = ({ match }: { match: Match }) => {
               alt={match.p1.firstName}
               className="w-16 h-16 rounded-full object-cover "
             />
-            <p className="font-semibold">
+            <p className="text-sm text-center md:text-base font-semibold">
               {match.p1.firstName} {match.p1.lastName}
             </p>
             <small>USTA: #19</small>
           </div>
         ) : (
           <div className="flex items-center justify-center">
-            <p className="font-semibold">{match.p1Name}</p>
+            <p className="font-semibold text-sm text-center md:text-base">
+              {match.p1Name}
+            </p>
           </div>
         )}
       </div>
@@ -88,13 +90,11 @@ function PlayerMatches({ playerId }: { playerId: string }) {
     queryFn: () => getPlayerMatches(playerId),
   });
 
-  console.log("444444444444", data);
-
   if (!data) {
     return;
   }
   return (
-    <div className="mx-auto sm:mx-0 grid grid-cols-2 items-center justify-center place-items-center">
+    <div className="mx-auto sm:mx-0 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 items-center justify-center place-items-center px-2">
       {data?.matches.map((match) => (
         <PlayerMatcheCard key={match._id} match={match} />
       ))}
