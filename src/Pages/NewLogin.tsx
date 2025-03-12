@@ -56,7 +56,7 @@ function NewLogin() {
         navigate("/dashboard");
       } else {
         if (data.user.isRegistrationComplete) {
-          navigate("/course");
+          navigate("/progress");
         } else {
           navigate("/assessment");
         }
