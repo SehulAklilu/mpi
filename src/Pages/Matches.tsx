@@ -64,7 +64,7 @@ const page = () => {
 
   return (
     <ContentLayout>
-      <div className="pt-5 pb-20  px-4 bg-white w-full min-h-screen">
+      <div className="pt-5 pb-20 px-2  sm:px-4 bg-white w-full min-h-screen">
         <Link
           to="/matches/new"
           className="bg-gradient-to-b z-20 hover:scale-105 duration-200 from-[#F8B672] to-[#F2851C] rounded-full shadow-lg shadow-primary p-5 w-fit fixed bottom-0 right-0 mb-12 mr-12"
@@ -81,7 +81,7 @@ const page = () => {
         </div>
         <div className="mt-5">
           <div className="flex justify-between">
-            <div className="font-semibold text-xl text-primary pl-4">
+            <div className="font-semibold text-xl text-primary pl-2">
               Pending Match
             </div>
             <div
@@ -91,7 +91,7 @@ const page = () => {
               {showAll ? "Show Less" : "View All"}
             </div>
           </div>
-          <div className="grid mt-3 grid-cols-2 gap-y-12 max-md:grid-cols-1 justify-center items-center mx-auto">
+          <div className="grid mt-3 grid-cols-2 gap-y-6 md:gap-y-12 max-md:grid-cols-1 justify-center items-center mx-auto">
             {pendingMatchesToShow?.map((match) => (
               <div key={match._id}>
                 <PendingMatch match={match} link={`/matches/${match._id}`} />
@@ -101,7 +101,7 @@ const page = () => {
         </div>
         <div className="mt-12">
           <div className="mb-2 flex justify-between">
-            <div className="font-semibold text-xl text-primary pl-4">
+            <div className="font-semibold text-xl text-primary pl-2">
               Recent Matches
             </div>
             <div
@@ -111,7 +111,7 @@ const page = () => {
               {showAllRecent ? "Show Less" : "View All"}
             </div>
           </div>
-          <div className="grid mt-3 grid-cols-2 gap-y-12 max-md:grid-cols-1">
+          <div className="grid mt-3 grid-cols-2 gap-y-6 md:gap-y-12 max-md:grid-cols-1 justify-center items-center mx-auto">
             {recentMatchesToShow?.map((match) => (
               <div key={match._id}>
                 <PendingMatch match={match} link={`/matches/${match._id}`} />
@@ -134,7 +134,7 @@ const PendingMatch = ({ match, link }: { match: Match; link: string }) => {
             player={match?.p1}
             name={match?.p1Name}
           />
-          <div className="my-auto px-3 py-2 w-14 h-14 text-3xl  font-bold text-white bg-gradient-to-b from-[#F8B36D] to-[#F28822]  rounded-xl flex justify-center items-center">
+          <div className="my-auto px-3 py-2 h-10 w-10 sm:w-14 sm:h-14 text-xl sm:text-3xl  font-bold text-white bg-gradient-to-b from-[#F8B36D] to-[#F28822]  rounded-xl flex justify-center items-center">
             VS
           </div>
           <PersonPending
@@ -177,8 +177,8 @@ const PersonPending = ({
       className={`w-fit  rounded-xl border py-2 shadow flex justify-center items-center flex-col  bg-white`}
     >
       {isObject ? (
-        <div className="w-[12rem] h-[10rem] flex flex-col items-center">
-          <div className="rounded-full w-24 h-24 mt-2 mx-12 max-md:mx-4">
+        <div className="w-[8rem] h-[8rem] sm:w-[10rem] sm:h-[8rem] md:w-[12rem] md:h-[10rem] flex flex-col items-center">
+          <div className="rounded-full w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 mt-2 mx-12 max-md:mx-4">
             <img
               className="w-full h-full rounded-full object-cover"
               src={player?.avatar}
@@ -191,9 +191,9 @@ const PersonPending = ({
           <div className="text-xs mt-1">USDTA: 19</div>
         </div>
       ) : (
-        <div className="w-[12rem] h-[10rem] flex flex-col items-center justify-center">
-          <div className="w-[12rem] h-[10rem] flex flex-col items-center">
-            <div className="rounded-full w-24 h-24 mt-2 mx-12 max-md:mx-4">
+        <div className="w-[8rem] h-[8rem] sm:w-[10rem] sm:h-[8rem] md:w-[12rem] md:h-[10rem] flex flex-col items-center justify-center">
+          <div className="w-[8rem] h-[8rem] sm:w-[10rem] sm:h-[8rem] md:w-[12rem] md:h-[10rem] flex flex-col items-center">
+            <div className="rounded-full w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 mt-2 mx-12 max-md:mx-4">
               <img
                 className="w-full h-full rounded-full object-cover"
                 src={avater}

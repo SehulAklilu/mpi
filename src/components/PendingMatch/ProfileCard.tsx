@@ -17,22 +17,30 @@ function ProfileCard({
 }: ProfileCardInterface) {
   return (
     <div
-      className={`w-64 h-44 flex flex-col border justify-center  items-center gap-y-1  rounded-lg shadow ${
+      className={`w-36 h-32 md:w-64 md:h-44 flex flex-col border justify-center  items-center gap-y-1  rounded-lg shadow ${
         showBorder ? "shadow-[#F38C28] border-[#ffb871] " : ""
       } `}
     >
       {isObject ? (
         <>
-          <img className="w-16 h-16 rounded-full" src={player?.avatar} alt="" />
-          <p>
+          <img
+            className="w-12 h-12 sm:w-16 sm:h-16 rounded-full"
+            src={player?.avatar}
+            alt=""
+          />
+          <p className="text-center">
             {player?.firstName} {player?.lastName}
           </p>
           <p className="text-xs text-gray-400">USTDA: 18</p>
         </>
       ) : (
         <>
-          <img className="w-16 h-16 rounded-full" src={profile_img} alt="" />
-          <p>{name}</p>
+          <img
+            className="w-12 h-12 sm:w-16 sm:h-16 rounded-full"
+            src={profile_img}
+            alt=""
+          />
+          <p className="text-center">{name}</p>
           <p className="text-xs text-gray-400">USTDA: 18</p>
         </>
       )}

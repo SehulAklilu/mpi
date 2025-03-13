@@ -9,8 +9,10 @@ function Dashboard() {
   const user_id = Cookies.get("user_id");
   return (
     <ContentLayout>
-      <div>{(role === "coach" || role === "parent") && <CoachDashboard />}</div>
-      <div>
+      <div className="px-3">
+        {(role === "coach" || role === "parent") && <CoachDashboard />}
+      </div>
+      <div className="px-3">
         {user_id && role === "player" && (
           <DashboardByPlayer playerId={user_id} />
         )}

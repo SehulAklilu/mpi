@@ -157,7 +157,7 @@ export function getMenuList(
           },
           {
             href: "/children",
-            label: "Children",
+            label: "Players",
             active: location.pathname.startsWith("/children"),
             icon: FaChildren,
             submenus: [],

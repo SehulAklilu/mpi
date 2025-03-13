@@ -55,7 +55,7 @@ export default function MatchReportTabs({ match }: MatchReportProps) {
     return (
       <div className="flex items-center gap-2">
         <img
-          className="w-10 h-10 rounded-full"
+          className="w-10 h-10 shrink-0 rounded-full"
           src={isPlayer(player) ? player.avatar : avater}
           alt={isPlayer(player) ? player.firstName : "image"}
         />
@@ -71,9 +71,9 @@ export default function MatchReportTabs({ match }: MatchReportProps) {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-4">
+    <div className="max-w-4xl mx-auto py-2 sm:p-4">
       <Tabs defaultValue={TABS[0]}>
-        <TabsList className="flex space-x-2 bg-transparent">
+        <TabsList className="flex space-x-2 overflow-x-auto bg-transparent">
           {TABS.map((tab, index) => (
             <TabsTrigger
               key={index}
@@ -85,7 +85,7 @@ export default function MatchReportTabs({ match }: MatchReportProps) {
           ))}
         </TabsList>
         {TABS.map((tab, index) => (
-          <TabsContent key={index} value={tab} className="p-4">
+          <TabsContent key={index} value={tab} className="sm:p-4">
             <Card>
               <CardHeader>
                 <CardTitle className="text-center text-lg font-semibold text-primary underline mb-2">

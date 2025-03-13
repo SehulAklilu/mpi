@@ -18,7 +18,7 @@ export const SetsTabs: React.FC<SetsTabsProps> = ({ sets, onSetChange }) => {
       <Tabs.List className="flex space-x-2 mb-4">
         <Tabs.Trigger
           value="all"
-          className="px-4 py-2 bg-gray-200 rounded-lg data-[state=active]:bg-[#F2851C] data-[state=active]:text-white"
+          className="px-4 whitespace-nowrap py-2 bg-gray-200 rounded-lg data-[state=active]:bg-[#F2851C] data-[state=active]:text-white"
         >
           All Sets
         </Tabs.Trigger>
@@ -26,7 +26,7 @@ export const SetsTabs: React.FC<SetsTabsProps> = ({ sets, onSetChange }) => {
           <Tabs.Trigger
             key={set._id}
             value={index.toString()}
-            className="px-4 py-2 bg-gray-200 rounded-lg data-[state=active]:bg-[#F2851C] data-[state=active]:text-white"
+            className="px-4 whitespace-nowrap py-2 bg-gray-200 rounded-lg data-[state=active]:bg-[#F2851C] data-[state=active]:text-white"
           >
             Set {index + 1}
           </Tabs.Trigger>
@@ -55,7 +55,7 @@ export const GamesTabs: React.FC<GamesTabsProps> = ({
       <Tabs.List className="flex space-x-2 mb-4">
         <Tabs.Trigger
           value="all"
-          className="px-4 py-2 bg-gray-200 rounded-lg data-[state=active]:bg-[#F2851C] data-[state=active]:text-white"
+          className="px-4 py-2 whitespace-nowrap bg-gray-200 rounded-lg data-[state=active]:bg-[#F2851C] data-[state=active]:text-white"
         >
           All Games
         </Tabs.Trigger>
@@ -63,7 +63,7 @@ export const GamesTabs: React.FC<GamesTabsProps> = ({
           <Tabs.Trigger
             key={game._id}
             value={index.toString()}
-            className="px-4 py-2 bg-gray-200 rounded-lg data-[state=active]:bg-[#F2851C] data-[state=active]:text-white"
+            className="px-4 py-2 whitespace-nowrap bg-gray-200 rounded-lg data-[state=active]:bg-[#F2851C] data-[state=active]:text-white"
           >
             Game {index + 1}
           </Tabs.Trigger>
@@ -81,6 +81,7 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
+  ResponsiveContainer,
 } from "recharts";
 
 interface LineChartProps {
@@ -89,25 +90,29 @@ interface LineChartProps {
 
 export const ScoreLineChart: React.FC<LineChartProps> = ({ data }) => {
   return (
-    <LineChart width={1000} height={400} data={data}>
-      <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="name" />
-      <YAxis ticks={[0, 15, 30, 40]} />
-      <Tooltip />
-      <Legend />
-      <Line
-        type="monotone"
-        dataKey="p1Score"
-        stroke="#8884d8"
-        name="Player 1"
-      />
-      <Line
-        type="monotone"
-        dataKey="p2Score"
-        stroke="#82ca9d"
-        name="Player 2"
-      />
-    </LineChart>
+    <div className="w-full h-96">
+      <ResponsiveContainer width="100%" height="100%">
+        <LineChart data={data}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis ticks={[0, 15, 30, 40]} />
+          <Tooltip />
+          <Legend />
+          <Line
+            type="monotone"
+            dataKey="p1Score"
+            stroke="#8884d8"
+            name="Player 1"
+          />
+          <Line
+            type="monotone"
+            dataKey="p2Score"
+            stroke="#82ca9d"
+            name="Player 2"
+          />
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
   );
 };
 
@@ -165,19 +170,20 @@ export const MatchDetails: React.FC<MatchDetailsProps> = ({ match }) => {
         }));
 
   return (
-    <div className="p-4 w-full">
-      {/* Tabs for All Sets | Set 1 | Set 2 */}
-      <SetsTabs sets={match.sets} onSetChange={setSelectedSetIndex} />
+    <div className="p-1 sm:p-4 w-full">
+      <div className="overflow-x-auto">
+        <SetsTabs sets={match.sets} onSetChange={setSelectedSetIndex} />
+      </div>
 
-      {/* Tabs for Games within a Set (only shown when a specific set is selected) */}
       {selectedSetIndex !== "all" && (
-        <GamesTabs
-          games={selectedSet[0].games}
-          onGameChange={setSelectedGameIndex}
-        />
+        <div className="overflow-x-auto">
+          <GamesTabs
+            games={selectedSet[0].games}
+            onGameChange={setSelectedGameIndex}
+          />
+        </div>
       )}
 
-      {/* Line Chart to display scores */}
       <ScoreLineChart data={chartData} />
     </div>
   );

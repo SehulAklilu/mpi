@@ -1,8 +1,8 @@
 import { getPlayer } from "@/api/match.api";
 import { ContentLayout } from "@/components/Sidebar/contenet-layout";
 import React, { useState } from "react";
-import { useQuery } from "react-query";
-import { useParams } from "react-router-dom";
+import { useMutation, useQuery } from "react-query";
+import { useNavigate, useParams } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AiOutlineMail } from "react-icons/ai";
 import PlayerGoal from "@/components/Players/PlayerGoal";
@@ -18,6 +18,10 @@ import { Parent } from "@/types/children.type";
 import { useRole } from "@/RoleContext";
 import { getChild } from "@/api/children.api";
 import PlayerClasses from "@/components/Players/PlayerClasses";
+import { createChat } from "@/api/chat.api";
+import { getAxiosErrorMessage, getAxiosSuccessMessage } from "@/api/axios";
+import { toast } from "react-toastify";
+import { LoaderCircle } from "lucide-react";
 
 function PlayersDetail() {
   const [activeTab, setActiveTab] = useState("Profile");
@@ -25,6 +29,7 @@ function PlayersDetail() {
   const [selectedValue, setSelectedValue] = useState<Parent | null>(null);
   const { id } = useParams<{ id: string }>();
   const { role } = useRole();
+  const navigate = useNavigate();
 
   const { data, isLoading, isError } = useQuery({
     queryKey: role === "parent" ? ["children", id] : ["getPlayer", id],
@@ -34,6 +39,24 @@ function PlayersDetail() {
         : () => getPlayer(id as string),
     enabled: !!id,
   });
+
+  const onMeesageMut = useMutation({
+    mutationKey: ["createChat"],
+    mutationFn: createChat,
+    onSuccess: (response) => {
+      const message = getAxiosSuccessMessage(response);
+      navigate(`/chat/${response?.id}`);
+      // setOpenChatId(response?.id);
+    },
+    onError: (error) => {
+      const message = getAxiosErrorMessage(error);
+      toast.error(message);
+    },
+  });
+
+  const onMessage = (otherUserId: string) => {
+    onMeesageMut.mutate({ userId: otherUserId });
+  };
 
   if (!data) {
     return;
@@ -64,11 +87,23 @@ function PlayersDetail() {
             </p>
           </div>
           <div className="flex items-center justify-center gap-4">
-            <button className="border border-red-500 bg-transparent px-4 py-2 text-red-500 rounded-lg">
+            <button className="border border-red-500 bg-transparent text-sm sm:text-base px-4 py-2 text-red-500 rounded-lg">
               Remove Player
             </button>
-            <button className="bg-primary text-white px-4 py-2 rounded-lg">
+            <button
+              className="bg-primary flex gap-2 text-white px-4 py-2 text-sm sm:text-base rounded-lg"
+              onClick={() => onMessage(data.player._id)}
+            >
               Message
+              {onMeesageMut.isLoading && (
+                <LoaderCircle
+                  style={{
+                    animation: "spin 1s linear infinite",
+                    fontSize: "2rem",
+                    color: "#FFFFFF",
+                  }}
+                />
+              )}
             </button>
           </div>
         </div>
@@ -194,7 +229,7 @@ function PlayersDetail() {
             setOpen(open);
           }}
         >
-          <DialogContent className="">
+          <DialogContent className="m-1 rounded-lg">
             <DialogTitle className="text-lg text-primary">
               About {selectedValue?.firstName} {selectedValue?.lastName}
             </DialogTitle>

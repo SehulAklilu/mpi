@@ -7,12 +7,19 @@ import SocialFeed from "@/components/Chat/Post";
 import { ContentLayout } from "@/components/Sidebar/contenet-layout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useRole } from "@/RoleContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 function Chat() {
   const [activeTab, setActiveTab] = useState("messages");
   const [openChatId, setOpenChatId] = useState<string | null>(null);
+  const { chatId } = useParams<{ chatId: string }>();
   const { role } = useRole();
+  useEffect(() => {
+    if (chatId) {
+      setOpenChatId(chatId);
+    }
+  }, [chatId]);
   return (
     <ContentLayout>
       <div className="">

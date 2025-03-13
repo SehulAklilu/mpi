@@ -94,7 +94,7 @@ function RecentMatch() {
       {!match ? (
         <p>No Match Found</p>
       ) : (
-        <div className="bg-white pt-10 min-h-[100vh] pb-12">
+        <div className="bg-white pt-10 min-h-[100vh] pb-12 px-2">
           <div className="w-full mx-auto mt-4">
             {user_id &&
             user_id === match.matchCreator._id &&
@@ -110,13 +110,13 @@ function RecentMatch() {
                 </button>
               </div>
             ) : null}
-            <div className="flex gap-x-6 flex-col gap-y-2 sm:flex-row items-center justify-center">
+            <div className="flex gap-x-2 md:gap-x-6 gap-y-2 flex-row items-center justify-center">
               <ProfileCard
                 name={match?.p1Name}
                 isObject={match.p1IsObject}
                 player={match?.p1}
               />
-              <div className="px-4 py-6 text-4xl text-white bg-gradient-to-b from-[#F8B570] font-bold rounded-xl to-[#F38C28] ">
+              <div className="px-2 py-3 md:px-4 md:py-6 text-xl md:text-4xl text-white bg-gradient-to-b from-[#F8B570] font-bold rounded-xl to-[#F38C28] ">
                 VS
               </div>
               <ProfileCard
@@ -172,7 +172,7 @@ function RecentMatch() {
                   </TabsTrigger>
                 </TabsList>
                 <TabsContent
-                  className="w-full md:w-[44rem] lg:w-[56rem] mx-auto px-4"
+                  className="w-full md:w-[44rem] lg:w-[56rem] mx-auto px-0 md:px-4"
                   value="details"
                 >
                   {getMatchDetail(match).map(({ icon: Icon, value, label }) => (
@@ -192,7 +192,7 @@ function RecentMatch() {
 
                 <TabsContent
                   value="sets"
-                  className="w-full md:w-[64rem] lg:w-[74rem] mx-auto px-4"
+                  className="w-full md:w-[64rem] lg:w-[74rem] mx-auto px-2 md:px-4"
                 >
                   {match?.status === "completed" ? (
                     <SetsTable match={match} />
@@ -204,7 +204,10 @@ function RecentMatch() {
                     </div>
                   )}
                 </TabsContent>
-                <TabsContent value="momentum" className="w-full mx-auto px-4">
+                <TabsContent
+                  value="momentum"
+                  className="w-full mx-auto sm:px-4"
+                >
                   {match?.status === "completed" ? (
                     <div className="w-full flex justify-center items-center flex-col gap-2 mt-14">
                       <MatchDetails match={match} />
