@@ -54,11 +54,11 @@ const ChatTopBar: React.FC<ChatTopBarProps> = ({ user, onClick }) => {
         </div>
       </div>
       <div className="relative">
-        <HiDotsVertical
+        {/* <HiDotsVertical
           className="text-white cursor-pointer"
           size={24}
           onClick={() => setIsMenuOpen((pre) => !pre)}
-        />
+        /> */}
         {isMenuOpen && (
           <div
             className="absolute top-12 right-0 w-[12rem] rounded-xl shadow-md p-2 border-2 border-primary bg-white flex flex-col "

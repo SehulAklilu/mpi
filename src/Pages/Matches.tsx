@@ -91,7 +91,7 @@ const page = () => {
               {showAll ? "Show Less" : "View All"}
             </div>
           </div>
-          <div className="grid mt-3 grid-cols-2 gap-y-6 md:gap-y-12 max-md:grid-cols-1 justify-center items-center mx-auto">
+          <div className="grid mt-3 grid-cols-1 lg:grid-cols-2 gap-y-6 md:gap-y-12 justify-center items-center mx-auto">
             {pendingMatchesToShow?.map((match) => (
               <div key={match._id}>
                 <PendingMatch match={match} link={`/matches/${match._id}`} />
@@ -111,7 +111,7 @@ const page = () => {
               {showAllRecent ? "Show Less" : "View All"}
             </div>
           </div>
-          <div className="grid mt-3 grid-cols-2 gap-y-6 md:gap-y-12 max-md:grid-cols-1 justify-center items-center mx-auto">
+          <div className="grid mt-3 grid-cols-1 lg:grid-cols-2 gap-y-6 md:gap-y-12 justify-center items-center mx-auto">
             {recentMatchesToShow?.map((match) => (
               <div key={match._id}>
                 <PendingMatch match={match} link={`/matches/${match._id}`} />
