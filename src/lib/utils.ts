@@ -204,3 +204,29 @@ export const getStatusColors = (status: Status): StatusColor => {
 
   return statusColors[status];
 };
+
+export const intToHex = (int?: number): string => {
+  if (typeof int !== "number" || isNaN(int)) return "";
+  return `#${int.toString(16).padStart(6, "0")}`;
+};
+
+export const hexToInt = (hex: string): number => {
+  if (!/^#[0-9A-Fa-f]{6}$/.test(hex)) return 0;
+  return parseInt(hex.replace("#", ""), 16);
+};
+
+export const getTextColorBasedOnBg = (
+  bgColor: string | undefined | null
+): string => {
+  const color = bgColor || "#ffffff";
+
+  const hex = color.replace("#", "");
+
+  const r = parseInt(hex.substring(0, 2), 16);
+  const g = parseInt(hex.substring(2, 4), 16);
+  const b = parseInt(hex.substring(4, 6), 16);
+
+  const brightness = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+
+  return brightness > 128 ? "text-black" : "text-white";
+};

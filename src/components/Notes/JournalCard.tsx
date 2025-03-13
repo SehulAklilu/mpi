@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/popover";
 import { useState } from "react";
 import ShowNote from "./ShowJournal";
+import { getTextColorBasedOnBg, intToHex } from "@/lib/utils";
 
 export interface JournalCardProps {
   _id: string;
@@ -17,6 +18,12 @@ export interface JournalCardProps {
   content: string;
   isFavorite: boolean;
   color: number;
+  folderId?: {
+    _id: string;
+    name: string;
+    createdAt: string;
+    updatedAt: string;
+  };
   document: string;
   createdAt: string; // ISO 8601 date string
   updatedAt: string; // ISO 8601 date string
@@ -49,6 +56,8 @@ export const journalColors = [
   },
 ];
 
+console.log("3333333333", getTextColorBasedOnBg(intToHex(14752796)));
+
 const JournalCard = ({ journal }: { journal: JournalCardProps }) => {
   const date = new Date(journal.createdAt);
   let content = journal.content.slice(0, 280);
@@ -60,22 +69,32 @@ const JournalCard = ({ journal }: { journal: JournalCardProps }) => {
     <>
       <ShowNote open={open} setOpen={setOpen} note={journal} />
       <div
-        className={`w-full shadow group  hover:shadow-lg duration-150 bg-white rounded-lg min-h-[40vh] h-[40vh] overflow-hidden  flex flex-col pb-2 `}
+        style={{
+          backgroundColor: intToHex(journal?.color),
+          color: getTextColorBasedOnBg(intToHex(journal?.color)),
+        }}
+        className="w-full shadow group hover:shadow-lg duration-150 rounded-lg min-h-[40vh] h-[40vh] overflow-hidden flex flex-col pb-2"
       >
         <h2
           onClick={() => setOpen(true)}
-          className="font-semibold text-white group-hover:underline  cursor-pointer capitalize text-lg rounded-t-lg bg-gradient-to-b from-[#F8B672] to-[#F2851C] py-2 px-3 text-black-75"
+          className={`font-semibold group-hover:underline  cursor-pointer capitalize text-lg rounded-t-lg bg-gradient-to-b from-[#F8B672] to-[#F2851C] py-2 px-3 ${getTextColorBasedOnBg(
+            intToHex(journal?.color)
+          )}`}
         >
           {journal.title}
         </h2>
 
-        <div className="flex flex-col gap-7 flex-1 px-2 pt-2 pb-2">
+        <div
+          className={`flex flex-col gap-7 flex-1 px-2 pt-2 pb-2 ${getTextColorBasedOnBg(
+            intToHex(journal?.color)
+          )}`}
+        >
           <div
-            className="flex-1 basis-1 flex-grow text-sm h-[30vh] overflow-hidden"
+            className="*:flex-1 basis-1 flex-grow text-sm h-[30vh] overflow-hidden"
             dangerouslySetInnerHTML={{ __html: journal.content }}
           ></div>
           <div className="flex flex-row justify-between mt-auto ">
-            <p className="my-auto text-xs text-black-65 font-semibold ">
+            <p className="my-auto text-xs font-semibold">
               {date.getMonth() + 1}-{date.getDate()}-{date.getFullYear()}
             </p>
             <JournalOptions journal={journal} />
