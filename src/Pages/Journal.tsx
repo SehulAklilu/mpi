@@ -19,6 +19,7 @@ import { LoaderCircle } from "lucide-react";
 import folderImage from "../assets/pngwing.com.png";
 import { extractDateTime, formatDateTime } from "@/lib/utils";
 import { FaFolderOpen } from "react-icons/fa6";
+import { IoChevronBackSharp } from "react-icons/io5";
 
 interface FilterInf {
   search: string | null;
@@ -193,6 +194,10 @@ const Journal = () => {
                 <div>
                   {selectedFolder && (
                     <div className="flex gap-2 items-center">
+                      <IoChevronBackSharp
+                        className="text-lg cursor-pointer"
+                        onClick={() => setSelectedFolder(undefined)}
+                      />
                       <FaFolderOpen className="text-xl text-primary " />
                       <h1 className="text-xl font-semibold">
                         {selectedFolder.name}
@@ -226,15 +231,17 @@ const Journal = () => {
                   <div className="flex flex-wrap gap-3 pb-32">
                     {[...folders].reverse().map((folder) => (
                       <div
-                        className="w-40 h-52 flex flex-col justify-center items-center border border-primary rounded-md cursor-pointer"
+                        className="w-40 flex flex-col justify-center items-center border border-primary rounded-md cursor-pointer"
                         onClick={() => setSelectedFolder(folder)}
                       >
                         <img
-                          className="w-30 h-26 object-cover "
+                          className="w-30 h-20 object-cover "
                           src={folderImage}
                         />
-                        <p className="py-1 font-medium">{folder.name}</p>
-                        <p className="text-xs">
+                        <p className="py-1 font-medium text-center">
+                          {folder.name}
+                        </p>
+                        <p className="text-xs text-center">
                           {extractDateTime(folder.createdAt)?.date}
                         </p>
                       </div>
