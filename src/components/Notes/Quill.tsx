@@ -29,8 +29,8 @@ interface NewJournalInf {
 }
 
 const QuillEditor = () => {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
+  const [title, setTitle] = useState<string | undefined>(undefined);
+  const [content, setContent] = useState<string | undefined>(undefined);
   const [color, setColor] = useState("#ffffff");
   const [folder, setFolder] = useState<string | undefined>(undefined);
 
@@ -81,12 +81,16 @@ const QuillEditor = () => {
   );
   const handleSave = async () => {
     const intColor = hexToInt(color);
-    mutate({
-      title,
-      content,
-      color: intColor?.toString(),
-      folderId: folder,
-    });
+    if (title && content) {
+      mutate({
+        title,
+        content,
+        color: intColor?.toString(),
+        folderId: folder,
+      });
+    } else {
+      toast.error("Please provide a title and description.");
+    }
   };
   return (
     <div className="bg-white  rounded-xl shadow-xl relative">
