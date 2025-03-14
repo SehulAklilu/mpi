@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import JournalCard, { JournalCardProps } from "../components/Notes/JournalCard";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "@/api/axios.ts";
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { toast } from "react-toastify";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
@@ -34,7 +34,6 @@ export interface FolderInterface {
 }
 
 const Journal = () => {
-  const [filterOn, setFilterOn] = useState<boolean>(false);
   const [journals, setJournals] = useState<JournalCardProps[]>([]);
   const [folders, setFolders] = useState<FolderInterface[]>([]);
   const [selectedFolder, setSelectedFolder] = useState<
@@ -43,6 +42,7 @@ const Journal = () => {
   const [active, setActive] = useState("All");
   const [isOpen, setIsOpen] = useState(false);
   const [content, setContent] = useState("");
+  const queryClient = useQueryClient();
 
   // const { register, handleSubmit } = useForm();
   const [filters, setFilters] = useState<FilterInf>({
@@ -73,6 +73,8 @@ const Journal = () => {
     {
       onSuccess(data) {
         toast.success("Folder created successfully!");
+        queryClient.invalidateQueries("getfolders");
+        setIsOpen(false);
       },
       onError(err: any) {
         toast.error(
@@ -277,7 +279,7 @@ const Journal = () => {
                   onClick={() => {
                     content && createFolder.mutate(content);
                   }}
-                  className="bg-primary flex gap-2 py-2 text-lg text-white rounded-full w-full"
+                  className="bg-primary flex items-center justify-center gap-2 py-2 text-lg text-white rounded-full w-full"
                 >
                   Add
                   {createFolder.isLoading && (
