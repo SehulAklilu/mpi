@@ -6,8 +6,6 @@ import axios from "axios";
 
 const GoogleSignIn: React.FC = () => {
   const handleSuccess = async (credentialResponse: any) => {
-    console.log("Login Successful: ", credentialResponse);
-
     const serverAuthCode = credentialResponse.code;
     const scopes = [
       "email",
@@ -31,8 +29,6 @@ const GoogleSignIn: React.FC = () => {
           },
         }
       );
-
-      console.log("Backend Response: ", response.data);
     } catch (error) {
       console.error("Error sending token to backend:", error);
     }

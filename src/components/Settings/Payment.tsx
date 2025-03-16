@@ -56,9 +56,7 @@ const Payment = () => {
     resolver: zodResolver(FormSchema),
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log("sssssss", data);
-  }
+  function onSubmit(data: z.infer<typeof FormSchema>) {}
 
   const countryData = Country.getAllCountries();
   const [formData, setFormData] = useState<z.infer<typeof FormSchema>>({

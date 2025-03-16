@@ -38,9 +38,6 @@ const Announcements = () => {
     "announcements",
     () => axios.get("/api/v1/announcements"),
     {
-      onSuccess(data) {
-        console.log(data, "announcements");
-      },
       onError(err: any) {
         toast.error(
           typeof err.response.data === "string"

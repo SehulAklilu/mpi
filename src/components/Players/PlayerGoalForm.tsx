@@ -194,7 +194,6 @@ export default function PlayerGoalForm({
   });
 
   const onSubmit = (data: FormValues) => {
-    console.log("3333333333333", initialData, playerId);
     if (initialData && coachId) {
       editGoalMutation.mutate({
         coachId,
@@ -240,9 +239,7 @@ export default function PlayerGoalForm({
     }
   };
 
-  const onError = (error: any) => {
-    console.log("eeeeeeeeeeeee", error, initialData);
-  };
+  const onError = (error: any) => {};
 
   useEffect(() => {
     if (!isOpen) {

@@ -30,8 +30,6 @@ const AddPost = () => {
   const images_ = images.map((item) => item.file);
   const [isOpen, setIsOpen] = useState(false);
 
-  console.log(images_);
-
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const newImages = acceptedFiles.map((file) => ({
       file,

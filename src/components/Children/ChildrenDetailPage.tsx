@@ -18,8 +18,6 @@ function ChildrenDetailPage() {
     }
   );
 
-  console.log("33333333", data);
-
   if (!data) {
     return;
   }

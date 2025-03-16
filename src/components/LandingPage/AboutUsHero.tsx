@@ -1,4 +1,3 @@
-import { IoPlayCircle } from "react-icons/io5";
 import bgImage from "../../assets/landingpage/US-Open-Tennis---Cancha-Bags.webp";
 import LandingPageNavBar from "./LandingPageNavBar";
 import { FaArrowDown } from "react-icons/fa6";

@@ -19,7 +19,6 @@ const VideoListItem: FC<VideoListItemProps> = ({
   active,
   locked,
 }) => {
-  // console.log("333333333333", active);
   return (
     <div
       onClick={onPlay}

@@ -21,9 +21,6 @@ const Progress = () => {
   } = useQuery<UserCoursesResponse, Error>({
     queryKey: ["courses"],
     queryFn: getUserCourses,
-    onSuccess(data) {
-      console.log(data, "LLLLLLLLLL");
-    },
   });
 
   return (
