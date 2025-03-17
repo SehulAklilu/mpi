@@ -1,31 +1,22 @@
 import { createBrowserRouter } from "react-router-dom";
-// import Login from "./Pages/Login.tsx";
-import SignUp from "./Pages/signup.tsx";
 import CreateProfile from "./Pages/CreateProfile.tsx";
-import { ToastContainer } from "react-toastify";
 import Components from "./Pages/Components.tsx";
 import InviteOrganization from "./Pages/InviteOrganization.tsx";
 import TakeShortQuiz from "./Pages/TakeShortQuiz.tsx";
-import { RoleProvider } from "./RoleContext.tsx";
-
 import Connect from "./Pages/Connect.tsx";
 import Home from "./Pages/Home.tsx";
 import Journal from "./Pages/Journal.tsx";
 import NewJournal from "./components/Notes/NewJournal.tsx";
-import Progress from "./Pages/Progress.tsx";
 import Reminders from "./Pages/Reminders.tsx";
 import Profile from "./Pages/Profile.tsx";
-import Settings from "./Pages/Settings.tsx";
 import NewSignup from "./Pages/NewSignup.tsx";
 import NewLogin from "./Pages/NewLogin.tsx";
 import CourseDetail from "./components/Learn/CourseDetail.tsx";
 import LessonDetail from "./components/Learn/LessonDetail.tsx";
-import AssessmentComponent from "./components/Assessment/assessment.tsx";
 import NewLearn from "./Pages/Learn/NewLearn.tsx";
 import Assessment from "./Pages/Assessment.tsx";
 import Chat from "./Pages/Chat.tsx";
 import PrivateRoute from "./components/PrivateRoute.tsx";
-// import PendingMatch from "./Pages/PendingMatch.tsx";
 import UnauthorizedPage from "./Pages/Unauthorized.tsx";
 import Players from "./Pages/Players.tsx";
 import Dashboard from "./Pages/Dashboard.tsx";
@@ -33,23 +24,18 @@ import TrackingMatch from "./components/Matches/updated/TM.tsx";
 import AddMatch from "./Pages/AddMatch.tsx";
 import RecentMatch from "./components/Matches/RecentMatch.tsx";
 import Matches from "./Pages/Matches.tsx";
-import PendingMatch from "./components/Matches/PendingMatch.tsx";
 import LandingPage from "./Pages/LandingPage.tsx";
-import Courses from "./Pages/CoursesPage.tsx";
 import Testimonial from "./components/LandingPage/Testimonial.tsx";
 import ChatProflie from "./components/Chat/ChatProflie.tsx";
 import ProfileSetting from "./components/Chat/ProfileSetting.tsx";
-import AboutUsContainer from "./Pages/AboutUsPage.tsx";
 import CoursesDetail from "./components/LandingPage/CoursesDetail.tsx";
 import Contact from "./components/LandingPage/Contact.tsx";
 import Blog from "./components/LandingPage/Blog.tsx";
 import AboutUsPage from "./Pages/AboutUsPage.tsx";
 import CoursesPage from "./Pages/CoursesPage.tsx";
 import ChildrenPage from "./Pages/ChildrenPage.tsx";
-import ChildrenDetailPage from "./components/Children/ChildrenDetailPage.tsx";
 import PlayersDetail from "./Pages/PlayersDetail.tsx";
 import InitialAssessment from "./components/Assessment/InitialAssessment.tsx";
-import PlayersMatchDetail from "./components/Players/PlayersMatchDetail.tsx";
 
 const router = createBrowserRouter([
   {

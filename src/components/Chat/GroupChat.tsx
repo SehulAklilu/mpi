@@ -144,7 +144,6 @@ function GroupChat({ setActiveTab }: GroupChatProps) {
           <div className="flex gap-x-2 items-center p-4 rounded-lg">
             <Input
               type="text"
-              id="full_name"
               placeholder="Search..."
               value={searchValue}
               onChange={handleSearchChange}

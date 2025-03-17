@@ -79,7 +79,6 @@ function Players() {
         <div className="p-4 rounded-lg">
           <Input
             type="text"
-            id="full_name"
             placeholder="Search..."
             className={"py-2 w-full !rounded-lg !outline-none !bg-white"}
             startIcon={FaSearch}

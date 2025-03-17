@@ -460,7 +460,6 @@ export default function AddPhaseDialog({
     }
   };
   const onError = (error: any) => {
-    console.log("eeeeeeeeeeeee", error);
   };
 
   const [coachGoal, setcoachGoal] = useState<CoachGoal | undefined>(undefined);

@@ -4,7 +4,12 @@ import { FaUserAlt, FaMicrophone, FaPlayCircle } from "react-icons/fa";
 import { CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { getUserCourses, UserCoursesResponse } from "@/api/course.api";
 import { useQuery } from "react-query";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -114,6 +119,8 @@ function NewLearn() {
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogContent className=" max-w-[90%] md:max-w-[70%] lg:max-w-[50%] xl:max-w-[45%] max-h-[95%] overflow-y-scroll overflow-x-hidden custom-scrollbar-two rounded-lg bg-white">
+            <DialogTitle></DialogTitle>
+            <DialogDescription></DialogDescription>
             <CardHeader>
               <img
                 src="https://cdn.create.vista.com/api/media/small/206135578/stock-video-close-tennis-equipment-court-sport-recreation-concept-yellow-racket-tennis?videoStaticPreview=true&token="

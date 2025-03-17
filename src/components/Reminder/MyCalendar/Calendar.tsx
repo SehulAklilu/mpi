@@ -107,6 +107,7 @@ const Calendar: React.FC<CalendarProps> = ({
                 {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(
                   (d, i) => (
                     <th
+                      key={d}
                       className={`py-3 font-[500] ${
                         td.getDay() == i ? "text-gray-800" : "text-primary "
                       }`}
@@ -120,6 +121,7 @@ const Calendar: React.FC<CalendarProps> = ({
             <tbody>
               <tr className="">
                 <CalendarRow
+                  key={1}
                   dateFilter={dateFilter}
                   setDateFilter={setDateFilter}
                   reminders={reminders}

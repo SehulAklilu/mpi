@@ -227,7 +227,7 @@ function Address({ setCurr }: any) {
                     <FormControl>
                       <Input
                         type="text"
-                        id="full_name"
+                        id="streetAddress"
                         placeholder="Enter your street address here"
                         className={"!rounded-3xl shadow !bg-[#F0F0FF]"}
                         startIcon={FaHome}
@@ -249,7 +249,7 @@ function Address({ setCurr }: any) {
                     <FormControl>
                       <Input
                         type="text"
-                        id="full_name"
+                        id="zipCode"
                         placeholder="Enter zip code"
                         className={"!rounded-3xl !w-fit shadow !bg-[#F0F0FF]"}
                         startIcon={IoIosMail}

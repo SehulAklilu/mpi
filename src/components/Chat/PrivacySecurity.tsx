@@ -58,7 +58,6 @@ function PrivacySecurity() {
 
     if (value) {
       // const phoneNumberObj = parsePhoneNumber(value);
-      console.log("3333333333333", value);
       // if (phoneNumberObj) {
       //   form.setValue("phoneNumberCountryCode", phoneNumberObj?.country || "");
       // }
@@ -88,7 +87,6 @@ function PrivacySecurity() {
                       <FormControl>
                         <Input
                           type="text"
-                          id="full_name"
                           placeholder="Enter your email"
                           className={"!rounded-3xl shadow !bg-[#F0F0FF] "}
                           {...field}
@@ -160,7 +158,6 @@ function PrivacySecurity() {
                         <div className="relative">
                           <Input
                             type={showPassword ? "text" : "password"}
-                            id="full_name"
                             placeholder="Enter your old password"
                             className={"!rounded-3xl shadow !bg-[#F0F0FF] "}
                             {...field}
@@ -202,7 +199,6 @@ function PrivacySecurity() {
                         <div className="relative">
                           <Input
                             type={showPassword ? "text" : "password"}
-                            id="full_name"
                             placeholder="Enter your new password"
                             className={"!rounded-3xl shadow !bg-[#F0F0FF] "}
                             {...field}

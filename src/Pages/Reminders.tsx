@@ -232,9 +232,12 @@ const Reminders = () => {
                   })}
                 {isLoading &&
                   isClassLoading &&
-                  [1, 2, 3, 4, 4, 4, 4, 4, 4, 4].map(() => {
+                  [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((val) => {
                     return (
-                      <Skeleton className="w-full py-12 h-44 bg-primary" />
+                      <Skeleton
+                        key={val}
+                        className="w-full py-12 h-44 bg-primary"
+                      />
                     );
                   })}
               </div>

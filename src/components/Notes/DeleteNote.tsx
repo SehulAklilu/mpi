@@ -27,7 +27,6 @@ function DeleteNote({ note }: { note: JournalCardProps }) {
     () => axios.delete(`/api/v1/journals/${note._id}`),
     {
       onSuccess(data) {
-        console.log(data, "Journals");
         toast.success("Journal Deleted Successfuly");
         queryClient.invalidateQueries("journals");
         setOpen(false);

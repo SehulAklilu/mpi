@@ -177,7 +177,10 @@ function LessonDetail() {
               <h1 className="text-lg">Summary</h1>
               <div className="grid grid-cols-2 gap-x-10 my-2 gap-y-4">
                 {videoSummarys.map((videoSummary) => (
-                  <div className="flex gap-2 text-gray-800">
+                  <div
+                    key={videoSummary.min}
+                    className="flex gap-2 text-gray-800"
+                  >
                     <FaPlayCircle color="#FFAC64" />{" "}
                     <span>{videoSummary.min}</span> -{" "}
                     <span>{videoSummary.description}</span>

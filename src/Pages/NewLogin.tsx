@@ -38,6 +38,10 @@ function NewLogin() {
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
   });
 
   const navigate = useNavigate();
@@ -104,7 +108,6 @@ function NewLogin() {
                     <FormControl>
                       <Input
                         type="text"
-                        id="full_name"
                         placeholder="Enter your email"
                         className={"!rounded-3xl shadow !bg-[#F0F0FF] "}
                         {...field}
@@ -124,7 +127,7 @@ function NewLogin() {
                       <div className="relative">
                         <Input
                           type={showPassword ? "text" : "password"}
-                          id="full_name"
+                          id="password"
                           placeholder="Enter your password"
                           className={"!rounded-3xl shadow !bg-[#F0F0FF] "}
                           {...field}

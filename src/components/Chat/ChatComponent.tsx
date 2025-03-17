@@ -56,10 +56,10 @@ function ChatComponent({ setActiveTab, openChatId }: ChatComponentProps) {
     },
   });
 
-  const readMessage = useMutation({
-    mutationKey: ["isRead"],
-    mutationFn: (id: string) => isRead(id),
-  });
+  // const readMessage = useMutation({
+  //   mutationKey: ["isRead"],
+  //   mutationFn: (id: string) => isRead(id),
+  // });
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value);
@@ -151,7 +151,7 @@ function ChatComponent({ setActiveTab, openChatId }: ChatComponentProps) {
 
   const makeLatestMessageRead = (id: string | undefined) => {
     if (id) {
-      readMessage.mutate(id);
+      // readMessage.mutate(id);
     }
   };
   const [isSidebarOpen, setSidebarOpen] = useState(true);
@@ -179,7 +179,6 @@ function ChatComponent({ setActiveTab, openChatId }: ChatComponentProps) {
           <div className="flex gap-x-2 items-center p-4 rounded-lg">
             <Input
               type="text"
-              id="full_name"
               placeholder="Search..."
               value={searchValue}
               onChange={handleSearchChange}

@@ -4,6 +4,7 @@ import image3 from "../../assets/landingpage/image19.webp";
 import CustomButton2 from "./CustomButton2";
 
 interface CardInterface {
+  id: number;
   image: any;
   title: string;
   type: string;
@@ -14,6 +15,7 @@ interface CardInterface {
 
 const cards: CardInterface[] = [
   {
+    id: 1,
     image: image1,
     title: "Introduction",
     type: "BASICS",
@@ -22,6 +24,7 @@ const cards: CardInterface[] = [
     review: 4.5,
   },
   {
+    id: 2,
     image: image2,
     title: "Introduction",
     type: "BASICS",
@@ -30,6 +33,7 @@ const cards: CardInterface[] = [
     review: 4.8,
   },
   {
+    id: 3,
     image: image3,
     title: "Introduction",
     type: "BASICS",
@@ -38,6 +42,7 @@ const cards: CardInterface[] = [
     review: 4.3,
   },
   {
+    id: 4,
     image: image2,
     title: "Introduction",
     type: "BASICS",
@@ -46,6 +51,7 @@ const cards: CardInterface[] = [
     review: 4.7,
   },
   {
+    id: 5,
     image: image1,
     title: "Introduction",
     type: "BASICS",
@@ -96,7 +102,7 @@ function CoursesListNew() {
     <div className="container mx-auto">
       <div className="mx-4 md:mx-10 lg:mx-20 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {cards.map((card) => (
-          <Card card={card} />
+          <Card key={card.id} card={card} />
         ))}
       </div>
     </div>

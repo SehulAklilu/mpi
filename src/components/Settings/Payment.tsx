@@ -106,7 +106,6 @@ const Payment = () => {
           <div className="w-[300px]">
             <Input
               type="text"
-              id="full_name"
               className={"py-6  bg-white"}
               startIcon={IoCardOutline}
               // {...field}
@@ -128,7 +127,6 @@ const Payment = () => {
         <div className="w-[300px]">
           <Input
             type="text"
-            id="full_name"
             className={"py-6  bg-white"}
             // startIcon={IoCardOutline}
             // {...field}
@@ -147,7 +145,6 @@ const Payment = () => {
           <div className="w-[75px]  me-3">
             <Input
               type="text"
-              id="full_name"
               className={"py-6  bg-white"}
               // {...field}
             />
@@ -156,7 +153,6 @@ const Payment = () => {
           <div className="w-[75px] me-3">
             <Input
               type="text"
-              id="full_name"
               className={"py-6  bg-white"}
               // {...field}
             />
@@ -168,7 +164,6 @@ const Payment = () => {
           <div className="w-[75px]">
             <Input
               type="text"
-              id="full_name"
               className={"py-6  bg-white"}
               // {...field}
             />

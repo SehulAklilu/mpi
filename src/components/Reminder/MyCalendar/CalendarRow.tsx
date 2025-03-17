@@ -151,6 +151,7 @@ const ReminderTd = ({
 }) => {
   return (
     <td
+      key={day}
       onClick={() => handleDateClick(day)}
       className={` ${
         temp && "bg-red-900"

@@ -68,7 +68,6 @@ function CreatePassword({ setCurr }: any) {
                     <div className="relative">
                       <Input
                         type={showPassword ? "text" : "password"}
-                        id="full_name"
                         placeholder="Enter your password"
                         className={"!rounded-3xl shadow !bg-[#F0F0FF] "}
                         {...field}

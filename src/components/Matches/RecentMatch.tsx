@@ -176,7 +176,10 @@ function RecentMatch() {
                   value="details"
                 >
                   {getMatchDetail(match).map(({ icon: Icon, value, label }) => (
-                    <div className=" w-full md:w-[70%] flex items-center justify-between my-2">
+                    <div
+                      key={label}
+                      className=" w-full md:w-[70%] flex items-center justify-between my-2"
+                    >
                       <div className="flex items-center gap-x-1 ">
                         <div className="p-1 rounded-md bg-[#FFF6ED]">
                           <Icon size={20} className="text-[#F38C28]" />

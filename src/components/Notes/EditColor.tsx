@@ -24,7 +24,6 @@ const EditColor = ({ note }: { note: JournalCardProps }) => {
       axios.patch(`/api/v1/journals/${note._id}`, color),
     {
       onSuccess(data) {
-        console.log(data, "Journals");
         toast.success("Journal Edited Successfuly");
         setColor(0);
       },

@@ -54,7 +54,6 @@ const QuillEditor = () => {
     (data: NewJournalInf) => axios.post("/api/v1/journals", data),
     {
       onSuccess(data) {
-        console.log(data, "Journals");
         toast.success("Journal Added Successfuly");
         setContent("");
         setTitle("");

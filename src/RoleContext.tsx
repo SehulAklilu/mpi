@@ -63,7 +63,6 @@ export const RoleProvider: React.FC<{ children: ReactNode }> = ({
   const [contactInfo, setContactInfo] = useState<ContactInfoType>({});
   const [additionalInfo, setAdditionalInfo] = useState<AdditionalInfoType>({});
   const [lastAttemptedRoute, setLastAttemptedRoute] = useState<string>("/");
-  console.log("eeeeeeeeee", role);
   return (
     <RoleContext.Provider
       value={{

@@ -110,7 +110,6 @@ const SettingsProfile = () => {
                   <FormControl>
                     <Input
                       type="text"
-                      id="full_name"
                       placeholder="Enter your first name here"
                       className={"py-6"}
                       startIcon={FaUser}
@@ -340,7 +339,6 @@ const SettingsProfile = () => {
                     <FormControl>
                       <Input
                         type="text"
-                        id="full_name"
                         placeholder="Enter your street address here"
                         className={"py-6"}
                         startIcon={FaCity}
@@ -360,7 +358,6 @@ const SettingsProfile = () => {
                     <FormControl>
                       <Input
                         type="text"
-                        id="full_name"
                         placeholder="Enter your street address here"
                         className={"py-6"}
                         startIcon={FaHome}

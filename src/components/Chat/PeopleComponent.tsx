@@ -162,7 +162,6 @@ const PeopleComponent: React.FC<PeopleComponentProps> = ({
         </div>
         <Input
           type="text"
-          id="full_name"
           placeholder="Search..."
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}

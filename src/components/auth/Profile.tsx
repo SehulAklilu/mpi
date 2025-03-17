@@ -173,7 +173,6 @@ function Profile({ setCurr }: any) {
                     <FormControl>
                       <Input
                         type="text"
-                        id="full_name"
                         placeholder="First Name"
                         className={"!rounded-3xl shadow !bg-[#F0F0FF]"}
                         {...field}

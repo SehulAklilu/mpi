@@ -56,8 +56,6 @@ export const journalColors = [
   },
 ];
 
-console.log("3333333333", getTextColorBasedOnBg(intToHex(14752796)));
-
 const JournalCard = ({ journal }: { journal: JournalCardProps }) => {
   const date = new Date(journal.createdAt);
   let content = journal.content.slice(0, 280);
@@ -109,6 +107,7 @@ const JournalOptions = ({ journal }: { journal: JournalCardProps }) => {
   return (
     <Popover>
       <PopoverTrigger
+        asChild
         onClick={(event) => {
           event.stopPropagation();
         }}
@@ -117,8 +116,8 @@ const JournalOptions = ({ journal }: { journal: JournalCardProps }) => {
           <PiDotsThreeOutlineVertical />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-fit ">
-        <div className="flex flex-col gap-2 ">
+      <PopoverContent className="w-fit">
+        <div className="flex flex-col gap-2">
           <EditNote note={journal} />
           <DeleteNote note={journal} />
         </div>

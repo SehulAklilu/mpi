@@ -32,7 +32,6 @@ const page = () => {
     queryFn: getMatches,
   });
 
-  console.log("33333333333", matches);
 
   const categorizedMatchs = matches
     ? groupMatchesByStatus(matches?.matches)

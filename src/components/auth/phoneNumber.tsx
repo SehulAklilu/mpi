@@ -82,7 +82,6 @@ const PhoneNumber = ({ setCurr }: any) => {
                   <FormControl>
                     <Input
                       type="text"
-                      id="full_name"
                       placeholder="Enter your email"
                       className={"!rounded-3xl shadow !bg-[#F0F0FF] "}
                       {...field}

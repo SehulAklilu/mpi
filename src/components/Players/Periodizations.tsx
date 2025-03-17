@@ -118,7 +118,6 @@ function Periodizations({
       createPlayerPeriodizations(playerId, payload),
     onSuccess: (response) => {
       const message = getAxiosSuccessMessage(response);
-      console.log("3333333", response);
       toast.success(message);
       queryClient.invalidateQueries("getPlayerPeriodizations");
       setIsDatePickerOpen(false);

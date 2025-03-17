@@ -58,15 +58,25 @@ export function Navbar({ links }: NavbarProps) {
                 </NavigationMenuContent>
               </>
             ) : (
-              <Link to={link.href}>
-                <NavigationMenuLink
+              // <Link to={link.href}>
+              //   <NavigationMenuLink
+              //     className={`mx-2 px-2 py-1 rounded-md font-bold whitespace-nowrap ${
+              //       isActive(link.href) ? "text-primary" : ""
+              //     }`}
+              //   >
+              //     {link.title}
+              //   </NavigationMenuLink>
+              // </Link>
+              <NavigationMenuLink asChild>
+                <Link
+                  to={link.href}
                   className={`mx-2 px-2 py-1 rounded-md font-bold whitespace-nowrap ${
                     isActive(link.href) ? "text-primary" : ""
                   }`}
                 >
                   {link.title}
-                </NavigationMenuLink>
-              </Link>
+                </Link>
+              </NavigationMenuLink>
             )}
           </NavigationMenuItem>
         ))}

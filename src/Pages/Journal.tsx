@@ -13,6 +13,8 @@ import {
   AlertDialog,
   AlertDialogCancel,
   AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { FaX } from "react-icons/fa6";
 import { LoaderCircle } from "lucide-react";
@@ -56,7 +58,6 @@ const Journal = () => {
     () => axios.get("/api/v1/journals"),
     {
       onSuccess(data) {
-        console.log(data, "Journals");
         setJournals(data.data || []);
       },
       onError(err: any) {
@@ -180,9 +181,12 @@ const Journal = () => {
                 <JournalCard key={journal._id} journal={journal} />
               ))}
               {isLoading &&
-                [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2].map(() => {
+                [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map((val) => {
                   return (
-                    <Skeleton className="h-[40vh] z-10 rounded-xl bg-white">
+                    <Skeleton
+                      key={val}
+                      className="h-[40vh] z-10 rounded-xl bg-white"
+                    >
                       <Skeleton className="w-full h-[10vh] rounded-t-xl bg-primary " />
                     </Skeleton>
                   );
@@ -250,9 +254,12 @@ const Journal = () => {
                 )}
 
                 {foldersQuery.isLoading &&
-                  [2, 2, 2, 2, 2, 2].map(() => {
+                  [1, 2, 3, 4, 5, 6].map((val) => {
                     return (
-                      <Skeleton className="h-[10vh] z-10 rounded-xl bg-white">
+                      <Skeleton
+                        key={val}
+                        className="h-[10vh] z-10 rounded-xl bg-white"
+                      >
                         <Skeleton className="w-full h-[10vh] rounded-t-xl bg-primary " />
                       </Skeleton>
                     );
@@ -263,6 +270,8 @@ const Journal = () => {
         </div>
         <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
           <AlertDialogContent className="min-h-[30vh] text-sm bg-white overflow-auto flex flex-col">
+            <AlertDialogTitle></AlertDialogTitle>
+            <AlertDialogDescription></AlertDialogDescription>
             <div className="flex justify-between w-full ">
               <div className="w-fit font-semibold text-lg">Create a Folder</div>
               <AlertDialogCancel className="border p-1 w-fit">

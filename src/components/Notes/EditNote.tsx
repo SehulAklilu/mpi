@@ -66,7 +66,6 @@ const EditNote = ({ note }: { note: JournalCardProps }) => {
     (data: any) => axios.patch(`/api/v1/journals/${note._id}`, data),
     {
       onSuccess(data) {
-        console.log(data, "Journals");
         toast.success("Journal Added Successfuly");
         queryClient.invalidateQueries("journals");
         setOpen(false);
@@ -110,7 +109,10 @@ const EditNote = ({ note }: { note: JournalCardProps }) => {
           Edit
         </Button>
       </AlertDialogTrigger>
-      <AlertDialogContent className="min-h-[90vh]  bg-gray-100 h-[90vh] md:min-w-[70%] overflow-y-auto">
+      <AlertDialogContent
+        forceMount
+        className="min-h-[90vh]  bg-gray-100 h-[90vh] md:min-w-[70%] overflow-y-auto"
+      >
         <AlertDialogHeader>
           <div className="flex justify-between w-full">
             <AlertDialogTitle>Edit Your Note</AlertDialogTitle>

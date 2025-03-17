@@ -369,7 +369,6 @@ function ProfileSetting() {
                             <FormControl>
                               <Input
                                 type="text"
-                                id="full_name"
                                 placeholder="First Name"
                                 className={"!rounded-3xl shadow !bg-[#F0F0FF]"}
                                 {...field}
@@ -632,7 +631,6 @@ function ProfileSetting() {
                             <FormControl>
                               <Input
                                 type="text"
-                                id="full_name"
                                 placeholder="Enter your street address here"
                                 className={"!rounded-3xl shadow !bg-[#F0F0FF]"}
                                 startIcon={FaHome}
@@ -652,7 +650,6 @@ function ProfileSetting() {
                             <FormControl>
                               <Input
                                 type="text"
-                                id="full_name"
                                 placeholder="Enter zip code"
                                 className={"!rounded-3xl  shadow !bg-[#F0F0FF]"}
                                 startIcon={IoIosMail}
