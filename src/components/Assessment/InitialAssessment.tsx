@@ -44,7 +44,7 @@ const InitialAssessment = () => {
     onSuccess: (response) => {
       const message = getAxiosSuccessMessage(response);
       toast.success(message);
-      navigate("/course");
+      navigate("/progress");
     },
     onError: (error: any) => {
       const message = getAxiosErrorMessage(error);
@@ -54,18 +54,16 @@ const InitialAssessment = () => {
 
   const handleSubmit = () => {
     const structuredData = {
-      initialAssessment: {
-        competitiveStateAnxietyInventory: Object.fromEntries(
-          questions
-            .filter((q) => !q.formKey.includes("ffqm"))
-            .map((q) => [q.formKey, (formData[q.formKey] ?? 0) + 1])
-        ),
-        mindfulnessQuestionnaire: Object.fromEntries(
-          questions
-            .filter((q) => q.formKey.includes("ffqm"))
-            .map((q) => [q.formKey, (formData[q.formKey] ?? 0) + 1])
-        ),
-      },
+      competitiveStateAnxietyInventory: Object.fromEntries(
+        questions
+          .filter((q) => !q.formKey.includes("ffqm"))
+          .map((q) => [q.formKey, (formData[q.formKey] ?? 0) + 1])
+      ),
+      mindfulnessQuestionnaire: Object.fromEntries(
+        questions
+          .filter((q) => q.formKey.includes("ffqm"))
+          .map((q) => [q.formKey, (formData[q.formKey] ?? 0) + 1])
+      ),
     };
 
     assessment.mutate(structuredData);

@@ -59,7 +59,7 @@ function Chat() {
                 value="posts"
                 className="flex-1 text-center py-1 text-sm md:text-base lg:text-lg rounded-full transition-colors data-[state=active]:bg-[#F2851C] data-[state=active]:text-white data-[state=inactive]:text-gray-700"
               >
-                Posts
+                Community
               </TabsTrigger>
             </TabsList>
             <TabsContent className="!mt-0" value="messages">

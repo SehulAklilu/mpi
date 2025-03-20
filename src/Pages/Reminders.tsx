@@ -230,16 +230,16 @@ const Reminders = () => {
                       return search.length > 0 && ind == 0 ? <></> : rem;
                     });
                   })}
-                {isLoading &&
-                  isClassLoading &&
-                  [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((val) => {
-                    return (
-                      <Skeleton
-                        key={val}
-                        className="w-full py-12 h-44 bg-primary"
-                      />
-                    );
-                  })}
+                {isLoading ||
+                  (isClassLoading &&
+                    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((val) => {
+                      return (
+                        <Skeleton
+                          key={val}
+                          className="w-full py-12 h-44 bg-primary"
+                        />
+                      );
+                    }))}
               </div>
             </div>
           </div>

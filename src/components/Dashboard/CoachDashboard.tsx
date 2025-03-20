@@ -530,7 +530,7 @@ const TodoList = () => {
       </div>
       <ul>
         {recentTodos?.todos.map((todo) => (
-          <div className="flex justify-between items-center">
+          <div key={todo._id} className="flex justify-between items-center">
             <li key={todo._id} className="flex items-center gap-2 py-1">
               <Checkbox
                 checked={todo.isCompleted}

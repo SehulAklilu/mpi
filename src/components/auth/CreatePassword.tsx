@@ -31,6 +31,10 @@ function CreatePassword({ setCurr }: any) {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
+    defaultValues: {
+      password: "",
+      confirm_password: "",
+    },
   });
 
   const signupCon = useSignupContext();

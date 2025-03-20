@@ -66,3 +66,9 @@ export const requiredFields: (keyof RegisterPayload)[] = [
 export interface LogoutPayload {
   refreshToken: string;
 }
+
+export interface RegisterResponse {
+  message: string;
+  status: number;
+  user: User;
+}

@@ -32,6 +32,10 @@ import { useMutation } from "react-query";
 import { register } from "@/api/auth.api";
 import { requiredFields } from "@/types/auth.type";
 import { LoaderCircle } from "lucide-react";
+import Cookies from "js-cookie";
+import { useRole } from "@/RoleContext";
+import { useNavigate } from "react-router-dom";
+
 const FormSchema = z.object({
   country: z.string(),
   stateProvince: z.string(),
@@ -45,6 +49,10 @@ const FormSchema = z.object({
 function Address({ setCurr }: any) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
+    defaultValues: {
+      zipCode: "",
+      streetAddress: "",
+    },
   });
 
   const signupCon = useSignupContext();
@@ -54,7 +62,10 @@ function Address({ setCurr }: any) {
   const [cityData, setCityData] = useState<ICity[]>();
   const [selectCountry, setSelectCountry] = useState<string>();
   const [selectedState, setSelectedState] = useState<string>();
-  const [selectedCity, setSelectedCity] = useState<ICity>();
+  const [countryValue, setCountryValue] = useState("");
+  const [stateValue, setStateValue] = useState("");
+  const { setRole, lastAttemptedRoute } = useRole();
+  const navigate = useNavigate();
 
   useEffect(() => {
     setStateData(State.getStatesOfCountry(selectCountry));
@@ -68,18 +79,24 @@ function Address({ setCurr }: any) {
   }, [selectCountry, selectedState]);
 
   useEffect(() => {
-    if (selectCountry && selectedState && selectedCity) {
+    if (selectCountry && selectedState) {
       setCityData(City.getCitiesOfState(selectCountry, selectedState));
     }
-  }, [selectCountry, selectedState, selectedCity]);
+  }, [selectCountry, selectedState]);
 
   const { mutate, isLoading } = useMutation({
     mutationKey: ["register"],
     mutationFn: (payload: any) => register(payload),
-    onSuccess: (response) => {
+    onSuccess: (data) => {
       setCurr((c: number) => c + 1);
-      const message = getAxiosSuccessMessage(response);
-      toast.success(message);
+      const message = getAxiosSuccessMessage(data);
+      // toast.success(message);
+      // Cookies.set("user_id", data.user.id);
+      // setRole(data.user.role);
+      // Cookies.set("role", data.user.role);
+      // Cookies.set("user_name", data.user.firstName + " " + data.user.lastName);
+      // Cookies.set("avater", data.user?.avatar);
+      // localStorage.setItem("authUpdate", Date.now().toString());
     },
     onError: (error: any) => {
       const message = getAxiosErrorMessage(error);
@@ -90,8 +107,8 @@ function Address({ setCurr }: any) {
   function onSubmit(data: z.infer<typeof FormSchema>) {
     signupCon.setUserInfo({
       ...data,
-      stateProvince: data.stateProvince + "_",
-      country: data.country + "_",
+      stateProvince: stateValue,
+      country: countryValue,
     });
 
     const missingFields = requiredFields.filter((field) => {
@@ -129,6 +146,12 @@ function Address({ setCurr }: any) {
                       onValueChange={(value) => {
                         field.onChange(value);
                         setSelectCountry(value);
+                        const selectedCountry = countryData?.find(
+                          (country) => country.isoCode === value
+                        );
+                        if (selectedCountry) {
+                          setCountryValue(selectedCountry.name);
+                        }
                       }}
                       defaultValue=""
                     >
@@ -139,10 +162,10 @@ function Address({ setCurr }: any) {
                         <SelectValue placeholder="Select your country" />
                       </SelectTrigger>
                       <SelectContent>
-                        {countryData.map((country) => (
+                        {countryData.map((country, index) => (
                           <SelectItem
                             value={country.isoCode}
-                            key={country.isoCode + country.latitude}
+                            key={country.isoCode + country.latitude + index}
                           >
                             {country.name}
                           </SelectItem>
@@ -153,6 +176,7 @@ function Address({ setCurr }: any) {
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="stateProvince"
@@ -163,6 +187,12 @@ function Address({ setCurr }: any) {
                       onValueChange={(value) => {
                         field.onChange(value);
                         setSelectedState(value);
+                        const selectedState = stateData?.find(
+                          (state) => state.isoCode === value
+                        );
+                        if (selectedState) {
+                          setStateValue(selectedState.name);
+                        }
                       }}
                       defaultValue={field.value}
                     >
@@ -173,10 +203,10 @@ function Address({ setCurr }: any) {
                         <SelectValue placeholder="Select your country" />
                       </SelectTrigger>
                       <SelectContent>
-                        {stateData?.map((state) => (
+                        {stateData?.map((state, index) => (
                           <SelectItem
                             value={state.isoCode}
-                            key={state.isoCode + state.latitude}
+                            key={state.isoCode + state.latitude + index}
                           >
                             {state.name}
                           </SelectItem>
@@ -204,10 +234,10 @@ function Address({ setCurr }: any) {
                         <SelectValue placeholder="Select your city" />
                       </SelectTrigger>
                       <SelectContent>
-                        {cityData?.map((city) => (
+                        {cityData?.map((city, index) => (
                           <SelectItem
                             value={city.name}
-                            key={city.stateCode + city.latitude}
+                            key={city.stateCode + city.latitude + index}
                           >
                             {city.name}
                           </SelectItem>

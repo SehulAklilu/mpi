@@ -7,6 +7,7 @@ import {
   OtpPayload,
   OtpResponse,
   RegisterPayload,
+  RegisterResponse,
   VerifyOtpPayload,
 } from "@/types/auth.type";
 import { User } from "@/types/user.types";
@@ -44,8 +45,10 @@ export const verifyOTP = async (payload: VerifyOtpPayload) => {
   return response.data;
 };
 
-export const register = async (payload: RegisterPayload): Promise<any> => {
-  const response = await axiosInstance.post<RegisterPayload>(
+export const register = async (
+  payload: RegisterPayload
+): Promise<RegisterResponse> => {
+  const response = await axiosInstance.post<RegisterResponse>(
     "/auth/register",
     payload
   );
@@ -54,7 +57,7 @@ export const register = async (payload: RegisterPayload): Promise<any> => {
 
 export const createAssessment = async (payload: any): Promise<any> => {
   const response = await axiosInstance.post<any>(
-    "/api/v1/user/profile/assessment/initial",
+    "/api/v1/users/profile/assessment/initial",
     payload
   );
   return response.data;
@@ -70,6 +73,11 @@ export const updateUserProfile = async (payload: any): Promise<any> => {
     "/api/v1/users/profile",
     payload
   );
+  return response.data;
+};
+
+export const deleteProfile = async (): Promise<any> => {
+  const response = await axiosInstance.delete<any>("/api/v1/users/profile");
   return response.data;
 };
 

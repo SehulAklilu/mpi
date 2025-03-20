@@ -20,7 +20,7 @@ function CustomTabs({ setActiveTab, tab }: CustomTabsProps) {
     { value: "group", label: "Groups" },
     { value: "people", label: "People" },
     { value: "announcements", label: "Announcements" },
-    { value: "posts", label: "Posts" },
+    { value: "posts", label: "Community" },
   ];
 
   return (

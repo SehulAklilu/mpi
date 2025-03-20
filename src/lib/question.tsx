@@ -28,7 +28,7 @@ export const questions = [
     formKey: "feelTenseInStomach",
   },
   { no: 12, question: "I feel secure.", formKey: "feelSecure" },
-  { no: 13, question: "", formKey: "" }, // Skipped
+  // { no: 13, question: "", formKey: "" }, // Skipped
   { no: 14, question: "My body feels relaxed.", formKey: "bodyFeelsRelaxed" },
   {
     no: 15,
@@ -37,8 +37,8 @@ export const questions = [
   },
   {
     no: 16,
-    question: "I am confident I can meet the challenge.",
-    formKey: "confidentToMeetChallenge",
+    question: "I am concerned about performing poorly.",
+    formKey: "concernedAboutPerformingPoorly",
   },
   { no: 17, question: "My heart is racing.", formKey: "heartRacing" },
   {
@@ -62,8 +62,9 @@ export const questions = [
   { no: 23, question: "My hands are clammy.", formKey: "handsClammy" },
   {
     no: 24,
-    question: "I am confident I can meet the challenge.",
-    formKey: "confidentToMeetChallenge",
+    question:
+      "I am confident because I mentally picture myself reaching my goal.",
+    formKey: "mentallyPictureReachingGoal",
   },
   {
     no: 25,
@@ -271,7 +272,8 @@ export const questions = [
   },
   {
     no: 62,
-    question: "I judge myself as good or bad depending on my thoughts.",
+    question:
+      "When I have distressing thoughts or images, I judge myself as good or bad depending what the thought or image is about.",
     formKey: "ffqm35",
   },
   {
@@ -282,7 +284,19 @@ export const questions = [
   },
   {
     no: 64,
-    question: "I can usually describe how I feel in detail.",
+    question:
+      "I can usually describe how I feel at the moment in considerable detail.",
     formKey: "ffqm37",
   },
+  {
+    no: 65,
+    question: "I find myself doing things without paying attention.",
+    formKey: "ffqm38",
+  },
+  {
+    no: 66,
+    question: "I disapprove of myself when I have irrational ideas.",
+    formKey: "ffqm39",
+  },
 ];
+// I judge myself as good or bad depending on my thoughts

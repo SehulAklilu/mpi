@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import logo from "../../assets/logo/new-logo.svg";
 import congrats from "../../assets/svg/congrats.svg";
 import { Button } from "../ui/button";
+import { useRole } from "@/RoleContext";
 
 export interface CongratesProps {
   title: string;
@@ -14,6 +15,7 @@ export interface CongratesProps {
 
 function Congrats({ ind, setCurr }: { ind: number; setCurr: any }) {
   const navigate = useNavigate();
+  const { role } = useRole();
   const contentValue: CongratesProps[] = [
     {
       title: "Account created successfully",
@@ -40,6 +42,14 @@ function Congrats({ ind, setCurr }: { ind: number; setCurr: any }) {
       showSkip: true,
     },
   ];
+
+  const navigateTo = () => {
+    if (role === "coach" || role === "parent") {
+      navigate("/dashboard");
+    } else {
+      navigate("/progress");
+    }
+  };
   const selectedValue = contentValue[ind];
   return (
     <div>
@@ -67,7 +77,7 @@ function Congrats({ ind, setCurr }: { ind: number; setCurr: any }) {
         </Button>
         {selectedValue?.showSkip && (
           <Button
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/login")}
             className=" px-7 mt-1  border-none rounded-3x bg-transparent text-black hover:bg-gray-200 hover:sahdow hover:rounded-3xl "
           >
             Skip

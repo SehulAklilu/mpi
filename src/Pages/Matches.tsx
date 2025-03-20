@@ -32,7 +32,6 @@ const page = () => {
     queryFn: getMatches,
   });
 
-
   const categorizedMatchs = matches
     ? groupMatchesByStatus(matches?.matches)
     : {
@@ -48,14 +47,14 @@ const page = () => {
   const [showAll, setShowAll] = useState(false);
 
   const pendingMatchesToShow = showAll
-    ? categorizedMatchs?.["pending"]
-    : categorizedMatchs?.["pending"]?.slice(0, 4);
+    ? categorizedMatchs?.["pending"]?.slice().reverse()
+    : categorizedMatchs?.["pending"]?.slice().reverse().slice(0, 4);
 
   const [showAllRecent, setShowAllRecent] = useState(false);
 
   const recentMatchesToShow = showAll
-    ? categorizedMatchs?.["completed"]
-    : categorizedMatchs?.["completed"]?.slice(0, 4);
+    ? categorizedMatchs?.["completed"]?.slice().reverse()
+    : categorizedMatchs?.["completed"]?.slice().reverse().slice(0, 4);
 
   if (isLoading) {
     return <MatchSkeleton />;

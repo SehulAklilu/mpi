@@ -11,7 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "../ui/button";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { LuImagePlus } from "react-icons/lu";
 import { useSignupContext } from "@/context/SignupContext";
@@ -32,11 +32,14 @@ import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Country } from "country-state-city";
-import PhoneInput, {
-  isValidPhoneNumber,
-  parsePhoneNumber,
-} from "react-phone-number-input";
+// import PhoneInput, {
+//   isValidPhoneNumber,
+//   parsePhoneNumber,
+// } from "react-phone-number-input";
 import "react-phone-number-input/style.css";
+
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
 
 const FormSchema = z.object({
   firstName: z.string().min(3, {
@@ -48,11 +51,7 @@ const FormSchema = z.object({
   avatar: z.any().optional(),
   gender: z.string(),
   dateOfBirth: z.date(),
-  country: z.string(),
-  phoneNumber: z
-    .string()
-    .nonempty("Phone number is required")
-    .refine((value) => isValidPhoneNumber(value), "Invalid phone number"),
+  phoneNumber: z.string().nonempty("Phone number is required"),
   phoneNumberCountryCode: z.string(),
 });
 
@@ -60,6 +59,11 @@ function Profile({ setCurr }: any) {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      gender: "",
+    },
   });
 
   const countryData = Country.getAllCountries();
@@ -71,25 +75,25 @@ function Profile({ setCurr }: any) {
       data.dateOfBirth instanceof Date
         ? data.dateOfBirth.toISOString()
         : data.dateOfBirth;
-    const phoneNumberObj = parsePhoneNumber(data.phoneNumber);
+
     signupCon.setUserInfo({
       ...data,
       dateOfBirth: formattedDateOfBirth,
-      phoneNumber: phoneNumberObj?.nationalNumber,
+      phoneNumberCountryCode: data.phoneNumberCountryCode ?? "",
+      phoneNumber: data.phoneNumber,
     });
     setCurr((c: number) => c + 1);
   }
 
-  const handleChange = (value: any) => {
-    form.setValue("phoneNumber", value);
-
-    if (value) {
-      const phoneNumberObj = parsePhoneNumber(value);
-      if (phoneNumberObj) {
-        form.setValue("phoneNumberCountryCode", phoneNumberObj?.country || "");
-      }
-    }
+  const onError = (e: any) => {
+    console.log("error", e, form.getValues());
   };
+
+  const handleChange = (value: any, data: any) => {
+    form.setValue("phoneNumber", value);
+    form.setValue("phoneNumberCountryCode", data?.countryCode?.toUpperCase());
+  };
+
   useEffect(() => {
     signupCon.userInfo.firstName &&
       form.setValue("firstName", signupCon.userInfo.firstName);
@@ -107,8 +111,6 @@ function Profile({ setCurr }: any) {
         "phoneNumberCountryCode",
         signupCon.userInfo.phoneNumberCountryCode
       );
-    signupCon.userInfo.country &&
-      form.setValue("country", signupCon.userInfo.country);
   }, []);
   return (
     <div>
@@ -119,7 +121,7 @@ function Profile({ setCurr }: any) {
         </div>
       </div>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+        <form onSubmit={form.handleSubmit(onSubmit, onError)}>
           <div className="flex flex-col gap-2  mx-auto   mt-5">
             <FormField
               control={form.control}
@@ -252,15 +254,14 @@ function Profile({ setCurr }: any) {
                           mode="single"
                           selected={field.value}
                           onSelect={field.onChange}
-                          disabled={(date) => {
-                            const maxDate = new Date();
-                            maxDate.setMonth(maxDate.getMonth() - 1);
-                            return (
-                              date > new Date() ||
-                              date < new Date("1900-01-01") ||
-                              date > maxDate
-                            );
-                          }}
+                          disabled={(date) =>
+                            date >
+                            new Date(
+                              new Date().setFullYear(
+                                new Date().getFullYear() - 12
+                              )
+                            )
+                          }
                         />
                       </PopoverContent>
                     </Popover>
@@ -269,7 +270,7 @@ function Profile({ setCurr }: any) {
                   </FormItem>
                 )}
               />
-              <FormField
+              {/* <FormField
                 control={form.control}
                 name="country"
                 render={({ field }) => (
@@ -302,28 +303,36 @@ function Profile({ setCurr }: any) {
                     <FormMessage />
                   </FormItem>
                 )}
-              />
+              /> */}
               <Controller
                 name="phoneNumber"
                 control={form.control}
+                rules={{
+                  required: "Phone number is required",
+                }}
                 render={({ field, fieldState }) => (
-                  <div className="flex flex-col space-y-2">
-                    <label
-                      htmlFor="phoneNumber"
-                      className="text-sm font-medium text-gray-700"
-                    >
+                  <div className="group flex flex-col space-y-2">
+                    <label className="text-sm font-medium text-gray-700">
                       Phone Number
                     </label>
 
                     <PhoneInput
                       {...field}
-                      id="phoneNumber"
-                      onChange={(value) => {
-                        field.onChange(value);
-                        handleChange(value);
-                      }}
                       value={field.value}
-                      className="!rounded-3xl shadow !h-10 !py-4 !px-4 !bg-[#F0F0FF]"
+                      onChange={(value, data) => {
+                        field.onChange(value);
+                        handleChange(value, data);
+                      }}
+                      country={"us"}
+                      enableSearch={true}
+                      disableDropdown={false}
+                      inputClass="!rounded-3xl shadow !h-10 !py-4 !px-12 !bg-[#F0F0FF] !w-full"
+                      containerClass="w-full"
+                      buttonStyle={{
+                        borderTopLeftRadius: "1.3rem",
+                        borderBottomLeftRadius: "1.3rem",
+                      }}
+                      buttonClass="phone-input-button-hover"
                     />
 
                     {fieldState.error && (

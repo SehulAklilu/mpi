@@ -30,7 +30,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { CalendarIcon, LoaderCircle } from "lucide-react";
-import { Calendar } from "@/components/ui/calendar";
+// import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { cn, getGoogleProfileColor } from "@/lib/utils";
 import { City, Country, ICity, IState, State } from "country-state-city";
@@ -50,7 +50,11 @@ import PrivacySecurity from "./PrivacySecurity";
 import Purchases from "./Purchases";
 import { ContentLayout } from "../Sidebar/contenet-layout";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { getUserProfile, updateUserProfile } from "@/api/auth.api";
+import {
+  deleteProfile,
+  getUserProfile,
+  updateUserProfile,
+} from "@/api/auth.api";
 import Cookies from "js-cookie";
 import { getMyGoals } from "@/api/children.api";
 import MyGoal from "../Players/MyGoals";
@@ -58,6 +62,19 @@ import { useRole } from "@/RoleContext";
 import { User } from "@/types/user.types";
 import { getAxiosErrorMessage, getAxiosSuccessMessage } from "@/api/axios";
 import { toast } from "react-toastify";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Calendar } from "../ui/calendar";
+import { useNavigate } from "react-router-dom";
 
 const FormSchema = z.object({
   firstName: z.string().min(3, {
@@ -93,6 +110,7 @@ function ProfileSetting() {
   const [countryValue, setCountryValue] = useState("");
   const [cityValue, setCityValue] = useState("");
   const [stateValue, setStateValue] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
 
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -125,6 +143,7 @@ function ProfileSetting() {
   });
 
   const { reset } = form;
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (profileData) {
@@ -157,6 +176,15 @@ function ProfileSetting() {
   const updateProfile = useMutation({
     mutationKey: ["updateProfile"],
     mutationFn: updateUserProfile,
+  });
+
+  const deleteUserProfile = useMutation({
+    mutationKey: ["deleteProfile"],
+    mutationFn: deleteProfile,
+    onSuccess: () => {
+      setIsOpen(false);
+      navigate("/login");
+    },
   });
 
   const onSubmit = (data: any) => {
@@ -663,6 +691,45 @@ function ProfileSetting() {
                     </div>
                   </div>
                   <div className="flex items-center justify-end">
+                    <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
+                      <AlertDialogTrigger asChild>
+                        <Button className="bg-red-600 px-4 py-2 rounded-lg text-white">
+                          Delete Profile
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Are you absolutely sure?
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone. This will permanently
+                            delete your account and remove your data from our
+                            servers.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel className="bg-gray-500 px-4 py-2 rounded-lg text-white">
+                            Cancel
+                          </AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => deleteUserProfile.mutate()}
+                            className="bg-red-600 flex gap-2 px-4 py-2 rounded-lg text-white"
+                          >
+                            Continue
+                            {deleteUserProfile.isLoading && (
+                              <LoaderCircle
+                                style={{
+                                  animation: "spin 1s linear infinite",
+                                  fontSize: "2rem",
+                                  color: "#FFFFFF",
+                                }}
+                              />
+                            )}
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                     <button className="py-2 flex gap-2 px-4 rounded-md bg-primary text-white mx:0 sm:mx-4 ">
                       Save Changes
                       {updateProfile.isLoading && (

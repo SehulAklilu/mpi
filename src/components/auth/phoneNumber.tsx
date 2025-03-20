@@ -31,6 +31,9 @@ const FormSchema = z.object({
 const PhoneNumber = ({ setCurr }: any) => {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
+    defaultValues: {
+      email: "",
+    },
   });
   const signupCon = useSignupContext();
 

@@ -70,12 +70,7 @@ const AddMatch = () => {
         date: z.date({
           required_error: "A date and time is required.",
         }),
-        p1:
-          role === "player"
-            ? z.string().optional()
-            : playerOne
-            ? z.string().min(1, "Required")
-            : z.string().optional(),
+        p1: playerOne ? z.string().min(1, "Required") : z.string().optional(),
         p2: playerTwo ? z.string().min(1, "Required") : z.string().optional(),
         p1IsObject: z.boolean(),
         p2IsObject: z.boolean(),
@@ -109,6 +104,7 @@ const AddMatch = () => {
     defaultValues: {
       p2IsObject: true,
       p1IsObject: true,
+      p1: role === "player" ? user_id : "",
       p1Name: "",
       p2Name: "",
       matchType: "three",
@@ -148,8 +144,9 @@ const AddMatch = () => {
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ["player"],
-    queryFn: () => getPlayers(type), // Pass the correct type based on role
+    queryKey: ["player", type],
+    queryFn: () => getPlayers(type!),
+    enabled: !!type,
   });
 
   const { data: friends_data } = useQuery({
@@ -223,6 +220,30 @@ const AddMatch = () => {
     { value: "five", label: "3 out of 5" },
   ];
 
+  // const userId = Cookies.get("user_id") || "default_id";
+  // const avatar = Cookies.get("avatar") || "default_avatar_url";
+  // const fullName = Cookies.get("user_name")?.split(" ") || ["Default", "User"];
+
+  // const currentPlayer: Player = {
+  //   _id: userId,
+  //   firstName: fullName[0], // First part of the name or default
+  //   lastName: fullName[1] || "", // Prevents 'undefined' values
+  //   emailAddress: {
+  //     email: "email@email.com",
+  //   },
+  //   phoneNumber: {
+  //     countryCode: "1",
+  //     number: "12345654",
+  //   },
+  //   avatar: avatar,
+  //   parents: [], // Default to empty array
+  //   coaches: [],
+  //   coachGoals: [],
+  //   lastOnline: "false",
+  //   goals: [],
+  //   classes: [],
+  // };
+
   const [selectedTournamentType, setSelectedTournamentType] =
     useState<string>("");
   const [availableLevels, setAvailableLevels] = useState<string[]>([]);
@@ -292,16 +313,16 @@ const AddMatch = () => {
     if (!checked) {
       form.setValue("p1", "");
       form.setValue("p1Name", "");
-      setPlayerOne(checked);
     }
+    setPlayerOne(checked);
   };
 
   const p2IsObjectChanged = (checked: boolean) => {
     if (!checked) {
       form.setValue("p2", "");
       form.setValue("p2Name", "");
-      setPlayerTwo(checked);
     }
+    setPlayerTwo(checked);
   };
 
   const createMatchMut = useMutation({
@@ -375,7 +396,7 @@ const AddMatch = () => {
                           <FormItem>
                             <FormLabel>
                               Player One{" "}
-                              {role && role === "player" ? "YOU" : ""}{" "}
+                              {role && role === "player" ? "( You )" : ""}{" "}
                             </FormLabel>
                             <Select
                               onValueChange={(value) => {
