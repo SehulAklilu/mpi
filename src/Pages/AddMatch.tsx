@@ -55,6 +55,13 @@ import { Player } from "@/types/children.type";
 import { ProfileDataInterface } from "@/components/Chat/PeopleComponent";
 import { MatchData } from "@/types/match.type";
 
+interface CurrentPlayer {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  avatar: string;
+}
+
 const AddMatch = () => {
   const [playerOne, setPlayerOne] = useState(true);
   const [playerTwo, setPlayerTwo] = useState(true);
@@ -114,6 +121,19 @@ const AddMatch = () => {
       courtSurface: "clay",
     },
   });
+
+  const getUserData = (): CurrentPlayer => {
+    return {
+      _id: Cookies.get("user_id") ?? "",
+      firstName: Cookies.get("user_name")?.split(" ")[0] ?? "",
+      lastName: Cookies.get("user_name")?.split(" ")[1] ?? "",
+      avatar: Cookies.get("avater") ?? "",
+    };
+  };
+
+  const [currentPlayer, setCurrentPlayer] = useState<CurrentPlayer>(
+    getUserData()
+  );
 
   function handleTimeChange(type: "hour" | "minute" | "ampm", value: string) {
     const currentDate = form.getValues("date") || new Date();
@@ -206,8 +226,6 @@ const AddMatch = () => {
   const friends =
     friends_data && user_id ? extractUsers(friends_data, user_id) : null;
 
-  // /apiv1/users/players /children
-
   useEffect(() => {
     if (role && role === "player" && user_id) {
       form.setValue("p1", user_id);
@@ -219,30 +237,6 @@ const AddMatch = () => {
     { value: "three", label: "2 out of 3" },
     { value: "five", label: "3 out of 5" },
   ];
-
-  // const userId = Cookies.get("user_id") || "default_id";
-  // const avatar = Cookies.get("avatar") || "default_avatar_url";
-  // const fullName = Cookies.get("user_name")?.split(" ") || ["Default", "User"];
-
-  // const currentPlayer: Player = {
-  //   _id: userId,
-  //   firstName: fullName[0], // First part of the name or default
-  //   lastName: fullName[1] || "", // Prevents 'undefined' values
-  //   emailAddress: {
-  //     email: "email@email.com",
-  //   },
-  //   phoneNumber: {
-  //     countryCode: "1",
-  //     number: "12345654",
-  //   },
-  //   avatar: avatar,
-  //   parents: [], // Default to empty array
-  //   coaches: [],
-  //   coachGoals: [],
-  //   lastOnline: "false",
-  //   goals: [],
-  //   classes: [],
-  // };
 
   const [selectedTournamentType, setSelectedTournamentType] =
     useState<string>("");
@@ -437,6 +431,24 @@ const AddMatch = () => {
                                       </div>
                                     </SelectItem>
                                   ))}
+                                {role === "player" && (
+                                  <SelectItem
+                                    value={currentPlayer._id}
+                                    key={currentPlayer._id}
+                                  >
+                                    <div className="flex items-center gap-x-2">
+                                      <img
+                                        src={currentPlayer.avatar}
+                                        className="w-8 h-8 rounded-full object-cover"
+                                        alt={`${currentPlayer.firstName} ${currentPlayer.lastName}`}
+                                      />
+                                      <p>
+                                        {currentPlayer.firstName}{" "}
+                                        {currentPlayer.lastName}
+                                      </p>
+                                    </div>
+                                  </SelectItem>
+                                )}
                               </SelectContent>
                             </Select>
                             <FormMessage />
