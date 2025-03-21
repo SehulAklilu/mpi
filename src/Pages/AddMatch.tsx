@@ -1,5 +1,5 @@
 import { FaAngleLeft } from "react-icons/fa";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   Select,
   SelectContent,
@@ -67,7 +67,7 @@ const AddMatch = () => {
   const [playerTwo, setPlayerTwo] = useState(true);
   const [isTournament, setIsTournament] = useState(false);
   const { id } = useParams<{ id: string }>();
-
+  const navigate = useNavigate();
   const { role } = useRole();
   const user_id = Cookies.get("user_id");
 
@@ -325,6 +325,7 @@ const AddMatch = () => {
     onSuccess: (response) => {
       const message = getAxiosSuccessMessage(response);
       toast.success(message);
+      navigate("/matches");
     },
     onError: (error: any) => {
       const message = getAxiosErrorMessage(error);
@@ -338,6 +339,7 @@ const AddMatch = () => {
     onSuccess: (response) => {
       const message = getAxiosSuccessMessage(response);
       toast.success(message);
+      navigate("/matches");
     },
     onError: (error: any) => {
       const message = getAxiosErrorMessage(error);
@@ -395,9 +397,10 @@ const AddMatch = () => {
                             <Select
                               onValueChange={(value) => {
                                 field.onChange(value); // Update form state
-                                players?.players?.length === 1 &&
+                                if (players?.players?.length === 1) {
                                   form.setValue("p2IsObject", false);
-                                setPlayerTwo(false);
+                                  setPlayerTwo(false);
+                                }
                               }}
                               value={field.value ?? undefined}
                               disabled={
@@ -517,9 +520,10 @@ const AddMatch = () => {
                             <Select
                               onValueChange={(value) => {
                                 field.onChange(value); // Update form state
-                                players?.players?.length === 1 &&
+                                if (players?.players?.length === 1) {
                                   form.setValue("p1IsObject", false);
-                                setPlayerOne(false);
+                                  setPlayerOne(false);
+                                }
                               }}
                               value={field.value ?? undefined}
                             >

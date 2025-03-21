@@ -59,7 +59,10 @@ function NewLogin() {
       } else if (data.user.role === "parent") {
         navigate("/dashboard");
       } else {
-        if (data.user.isRegistrationComplete) {
+        if (
+          data.user?.initialAssessment &&
+          Object.keys(data.user?.initialAssessment).length > 0
+        ) {
           navigate("/progress");
         } else {
           navigate("/assessment");
