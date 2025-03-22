@@ -367,10 +367,10 @@ function TrackingMatch() {
       type: singleScoreData.type == "" ? "doubleFault" : singleScoreData.type,
     };
 
-    if (newApiScoreData.missedShot == "") delete newApiScoreData["missedShot"];
-    if (newApiScoreData.missedShotWay == "")
-      delete newApiScoreData["missedShotWay"];
-    if (newApiScoreData.placement == "") delete newApiScoreData["placement"];
+    // if (newApiScoreData.missedShot == "") delete newApiScoreData["missedShot"];
+    // if (newApiScoreData.missedShotWay == "")
+    //   delete newApiScoreData["missedShotWay"];
+    // if (newApiScoreData.placement == "") delete newApiScoreData["placement"];
 
     if (isTieBreak && winnerPoint != "A" && againestPoint != "A") {
       const nextpoint = winnerPoint + 1;
@@ -508,8 +508,8 @@ function TrackingMatch() {
             />
           </div>
         </div>
-    
-        {isLoading  ? (
+
+        {isLoading ? (
           <div className="text-center pt-12 mx-auto">Loadaing...</div>
         ) : score.serve == null ? (
           <div className="flex flex-col gap-2 mt-12">

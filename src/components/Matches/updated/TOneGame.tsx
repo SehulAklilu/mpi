@@ -971,19 +971,39 @@ const Shots = ({
   reset: Function;
   back: Function;
 }) => {
-  const placements = ["downTheLine", "crossCourt", "dropShot"];
+  // const placements = ["downTheLine", "crossCourt", "dropShot"];
+  // const shotTypes = [
+  //   "forehand",
+  //   "backhand",
+  //   "forehandVolley",
+  //   "backhandVolley",
+  //   "forehandSwingingVolley",
+  //   "backhandSwingingVolley",
+  //   "forehandSlice",
+  //   "backhandSlice",
+  //   "overhead",
+  //   "forehandDropShot",
+  //   "backhandDropShot",
+  // ];
+
   const shotTypes = [
-    "forehand",
-    "backhand",
-    "forehandVolley",
-    "backhandVolley",
-    "forehandSwingingVolley",
-    "backhandSwingingVolley",
-    "forehandSlice",
-    "backhandSlice",
-    "overhead",
-    "forehandDropShot",
-    "backhandDropShot",
+    { value: "forehand", label: "Forehand" },
+    { value: "backhand", label: "Back Hand" },
+    { value: "forehandVolley", label: "Forehand Volley" },
+    { value: "backhandVolley", label: "Back Hand Volley" },
+    { value: "forehandSwingingVolley", label: "Forehand Swinging Volley" },
+    { value: "backhandSwingingVolley", label: "Back Hand Swinging Volley" },
+    { value: "forehandSlice", label: "Forehand Slice" },
+    { value: "backhandSlice", label: "Back Hand Slice" },
+    { value: "overhead", label: "Overhead" },
+    { value: "forehandDropShot", label: "Forehand Drop Shot" },
+    { value: "backhandDropShot", label: "Back Hand Drop Shot" },
+  ];
+
+  const placements = [
+    { value: "downTheLine", label: "Down The Line" },
+    { value: "crossCourt", label: "Cross Court" },
+    { value: "dropShot", label: "Drop Shot" },
   ];
 
   const [placement, setPlacement] = useState<string>("downTheLine");
@@ -1016,11 +1036,11 @@ const Shots = ({
             </option>
             {placements.map((placement) => (
               <option
-                defaultChecked={placement == "downTheLine"}
-                key={placement}
-                value={placement}
+                defaultChecked={placement.value == "downTheLine"}
+                key={placement.value}
+                value={placement.value}
               >
-                {placement}
+                {placement.label}
               </option>
             ))}
           </select>
@@ -1039,11 +1059,11 @@ const Shots = ({
             </option>
             {shotTypes.map((shotType) => (
               <option
-                key={shotType}
-                defaultChecked={shotType == "forehand"}
-                value={shotType}
+                key={shotType.value}
+                defaultChecked={shotType.value == "forehand"}
+                value={shotType.value}
               >
-                {shotType}
+                {shotType.label}
               </option>
             ))}
           </select>
@@ -1077,12 +1097,20 @@ const ChooseRally = ({
   back: Function;
 }) => {
   const [rallies, setRallies] = useState("oneToFour");
+  // const rallyChoices = [
+  //   "oneToFour",
+  //   "fiveToEight",
+  //   "nineToTwelve",
+  //   "thirteenToTwenty",
+  //   "twentyOnePlus",
+  // ];
+
   const rallyChoices = [
-    "oneToFour",
-    "fiveToEight",
-    "nineToTwelve",
-    "thirteenToTwenty",
-    "twentyOnePlus",
+    { value: "oneToFour", label: "1 to 4" },
+    { value: "fiveToEight", label: "5 to 8" },
+    { value: "nineToTwelve", label: "9 to 12" },
+    { value: "thirteenToTwenty", label: "13 to 20" },
+    { value: "twentyOnePlus", label: "21+" },
   ];
 
   const handleNextClick = () => {
@@ -1109,8 +1137,12 @@ const ChooseRally = ({
             Select Rally Count
           </option>
           {rallyChoices.map((r) => (
-            <option defaultChecked={r == "oneToFour"} key={r} value={r}>
-              {r}
+            <option
+              defaultChecked={r.value == "oneToFour"}
+              key={r.value}
+              value={r.value}
+            >
+              {r.label}
             </option>
           ))}
         </select>

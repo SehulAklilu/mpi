@@ -48,13 +48,13 @@ interface Score {
   p1Reaction: string; // Example: "negativeResponse"
   p2Reaction: string; // Example: "negativeResponse"
   missedShot?: string; // Example: "net"
-  placement?: string; // Example: "downTheLine"
+  placement?: string | null; // Example: "downTheLine"
   missedShotWay?: string; // Example: "forehand"
   betweenPointDuration: number;
   type: string; // Example: "ace"
   rallies: string; // Example: "oneToFour"
   servePlacement: string; // Example: "t"
-  server? : string | null,
+  server?: string | null;
 }
 
 interface TieBreak {
@@ -410,10 +410,10 @@ function TrackingMatch() {
       type: singleScoreData.type == "" ? "doubleFault" : singleScoreData.type,
     };
 
-    if (newApiScoreData.missedShot == "") delete newApiScoreData["missedShot"];
+    if (newApiScoreData.missedShot == "") newApiScoreData.missedShot = "net";
     if (newApiScoreData.missedShotWay == "")
-      delete newApiScoreData["missedShotWay"];
-    if (newApiScoreData.placement == "") delete newApiScoreData["placement"];
+      newApiScoreData.missedShotWay = "forehand";
+    if (newApiScoreData.placement == "") newApiScoreData.placement = null;
 
     if (isTieBreak && winnerPoint != "A" && againestPoint != "A") {
       const nextpoint = winnerPoint + 1;
@@ -421,7 +421,7 @@ function TrackingMatch() {
         ...newApiScoreData,
         p1Score: nextpoint.toString(),
         p2Score: againestPoint.toString(),
-        server: score.serve == "player1" ? "playerOne" : "playerTwo"
+        server: score.serve == "player1" ? "playerOne" : "playerTwo",
       };
       console.log("Tie Break Switch");
       console.log(score.serve, getAgainest(score.serve!));
