@@ -34,7 +34,9 @@ const AddReminderSchema = z.object({
   description: z.string({ required_error: "Description is required" }).min(1),
   date: z.string({ required_error: "Date is required" }).min(1),
   type: z.string({ required_error: "Type is required" }),
-  timezone: z.string({ required_error: "Timezone is required" }).min(1),
+  timezone: z
+    .string({ required_error: "Timezone is required" })
+    .default(Intl.DateTimeFormat().resolvedOptions().timeZone),
 });
 
 type AddReminderForm = z.infer<typeof AddReminderSchema>;
@@ -76,7 +78,11 @@ const AddReminderAlert = ({
   );
 
   const onSubmit = (data: AddReminderForm) => {
-    mutate(data);
+    const payload = {
+      ...data,
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    };
+    mutate(payload);
   };
 
   useEffect(() => {
@@ -87,7 +93,7 @@ const AddReminderAlert = ({
   }, [date]);
 
   return (
-    <AlertDialog  open={date != null}>
+    <AlertDialog open={date != null}>
       <AlertDialogTrigger>
         <Button
           onClick={() => setDate("")}
@@ -175,7 +181,7 @@ const AddReminderAlert = ({
                 </p>
               )}
             </div>
-            <div>
+            {/* <div>
               <label htmlFor="timezone" className="block text-sm font-medium">
                 Timezone
               </label>
@@ -189,7 +195,7 @@ const AddReminderAlert = ({
                   {form.formState.errors.timezone.message}
                 </p>
               )}
-            </div>
+            </div> */}
             {date !== null && date?.length > 0 ? (
               <></>
             ) : (

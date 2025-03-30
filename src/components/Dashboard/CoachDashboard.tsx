@@ -73,6 +73,7 @@ import { toast } from "react-toastify";
 import DashboardByPlayer from "./DashboardByPlayer";
 import ProfileCard from "../PendingMatch/ProfileCard";
 import SkeletonLoader from "./DashboardSkelton";
+import DashboardReminder from "./DashboardReminder";
 
 function CoachDashboard() {
   const { role } = useRole();
@@ -210,6 +211,11 @@ function CoachDashboard() {
           {/* Todos */}
           <div className="my-8">
             <TodoList />
+          </div>
+
+          {/* Reminders */}
+          <div className="my-8">
+            <DashboardReminder />
           </div>
 
           {/* Top players */}

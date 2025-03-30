@@ -75,13 +75,13 @@ type AddReminderForm = z.infer<typeof AddReminderSchema>;
 const AddClasses = ({
   date,
   setDate,
-  ref,
   initialClassData,
+  setDateFilter,
 }: {
   date: string;
   setDate: Function;
-  ref: any;
   initialClassData: Session | undefined;
+  setDateFilter: Function;
 }) => {
   const form = useForm<AddReminderForm>({
     resolver: zodResolver(AddReminderSchema),
@@ -193,6 +193,9 @@ const AddClasses = ({
       onSuccess: (response) => {
         const message = getAxiosSuccessMessage(response);
         toast.success(message);
+        const newSession = response?.data?.[response.data.length - 1];
+        const newSessionDate = new Date(newSession?.date);
+        newSessionDate && setDateFilter(newSessionDate);
         queryClient.invalidateQueries("classes");
         setDate("");
       },

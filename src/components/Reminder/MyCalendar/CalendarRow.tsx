@@ -1,5 +1,5 @@
 import { ReminderInf } from "@/Pages/Reminders";
-import { Session } from "@/types/classes.type";
+import { ClassesSchedul, Session } from "@/types/classes.type";
 import { PlayerSession } from "@/types/session.type";
 import { useState } from "react";
 import { FaDotCircle } from "react-icons/fa";
@@ -15,6 +15,8 @@ export interface CalendarRowProps {
   setDateFilter: Function;
   dateFilter: Date;
   classes: Session[] | PlayerSession[] | undefined;
+  classSchedule: ClassesSchedul[] | undefined;
+  coachSchedule: ClassesSchedul[] | undefined;
 }
 
 const CalendarRow: React.FC<CalendarRowProps> = ({
@@ -27,6 +29,8 @@ const CalendarRow: React.FC<CalendarRowProps> = ({
   setDateFilter,
   dateFilter,
   classes,
+  classSchedule,
+  coachSchedule,
 }) => {
   const activeDay = useState(new Date().getDate())[0];
 
@@ -48,6 +52,12 @@ const CalendarRow: React.FC<CalendarRowProps> = ({
   const reminderDates = [
     ...reminders.map((reminder) => new Date(reminder.date)),
     ...(classes ? classes.map((session) => new Date(session.date)) : []),
+    ...(classSchedule
+      ? classSchedule.map((schedule) => new Date(schedule.date))
+      : []),
+    ...(coachSchedule
+      ? coachSchedule.map((schedule) => new Date(schedule.date))
+      : []),
   ];
 
   let content = [];
@@ -74,6 +84,7 @@ const CalendarRow: React.FC<CalendarRowProps> = ({
     }
     content.push(
       <ReminderTd
+        key={`ReminderTd_1_${1}`}
         handleDateClick={handleDateClick}
         day={1}
         isToday={isToday(1)}
@@ -86,6 +97,7 @@ const CalendarRow: React.FC<CalendarRowProps> = ({
     for (let i = 1; i <= len; i++) {
       content.push(
         <ReminderTd
+          key={`ReminderTd_2_${i + 7}`}
           handleDateClick={handleDateClick}
           day={i + 1}
           isToday={isToday(i + 1)}
@@ -105,6 +117,7 @@ const CalendarRow: React.FC<CalendarRowProps> = ({
     if (day <= lastDayInMonth) {
       content.push(
         <ReminderTd
+          key={`ReminderTd_${row}_${i}_${day}`}
           handleDateClick={handleDateClick}
           day={day}
           isToday={isToday(day)}
@@ -148,10 +161,11 @@ const ReminderTd = ({
   isActiveDay: boolean;
   hasReminder: boolean;
   temp?: boolean;
+  // customKey: string;
 }) => {
   return (
     <td
-      key={day}
+      // key={customKey}
       onClick={() => handleDateClick(day)}
       className={` ${
         temp && "bg-red-900"

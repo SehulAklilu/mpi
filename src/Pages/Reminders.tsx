@@ -18,9 +18,10 @@ import { IoIosArrowForward } from "react-icons/io";
 import { Input } from "@/components/ui/input";
 import { ContentLayout } from "@/components/Sidebar/contenet-layout";
 import { useRole } from "@/RoleContext";
-import { Session } from "@/types/classes.type";
+import { ClassesSchedul, Session } from "@/types/classes.type";
 import SessionCard from "@/components/Reminder/ClassesCard";
 import { extractDateTime, formatDate } from "@/lib/utils";
+import ClassSchedule from "@/components/Reminder/ClassSchedule";
 export interface ReminderInf {
   _id?: string;
   isCompleted?: boolean;
@@ -57,11 +58,14 @@ const Reminders = () => {
   const [search, setSearch] = useState<string>("");
   const [reminders, setReminders] = useState<ReminderInf[]>([]);
   const [sessions, setSessions] = useState<Session[]>([]);
+  const [classScheduls, setClassScheduls] = useState<ClassesSchedul[]>([]);
+  const [coachScheduls, setCoachScheduls] = useState<ClassesSchedul[]>([]);
   const [allReminders, setAllReminder] = useState<ReminderInf[]>([]);
   const {
     isLoading,
     data: result,
     isSuccess,
+    isFetched,
   } = useQuery("reminders", () => axios.get("/api/v1/reminders"), {
     onSuccess(data) {
       const m = data.data.map((a: any) => ({ ...a, time: "12AM" }));
@@ -99,6 +103,54 @@ const Reminders = () => {
     },
   });
 
+  const {
+    isLoading: isClassSchedulLoading,
+    data: classesScheduls,
+    isSuccess: isClassesSchedulSuccess,
+    isFetching: isFetchingSchedul,
+  } = useQuery(
+    "classes-schedule",
+    () => axios.get<ClassesSchedul[]>("/api/v1/class-schedule"),
+    {
+      enabled: role === "player" || role === "parent",
+      onSuccess(data) {
+        // console.log("3333333333", data);
+        setClassScheduls(data.data);
+      },
+      onError(err: any) {
+        toast.error(
+          typeof err.response.data === "string"
+            ? err.response.data
+            : "Error loading reminders"
+        );
+      },
+    }
+  );
+
+  const {
+    isLoading: isCoachSchedulLoading,
+    data: coachSchedul,
+    isSuccess: isCoachSchedulSuccess,
+    isFetching: isFetchingCoachSchedul,
+  } = useQuery(
+    "classes-schedule-coach",
+    () => axios.get<ClassesSchedul[]>("/api/v1/class-schedule/coach"),
+    {
+      enabled: role === "coach",
+      onSuccess(data) {
+        // console.log("3333333333", data);
+        // setCoachScheduls(data.data);
+      },
+      onError(err: any) {
+        toast.error(
+          typeof err.response.data === "string"
+            ? err.response.data
+            : "Error loading reminders"
+        );
+      },
+    }
+  );
+
   useEffect(() => {
     const fun = () => {
       if (!result || typeof result !== "object") return;
@@ -117,7 +169,7 @@ const Reminders = () => {
     };
     fun();
     return () => {};
-  }, [dateFilter, allReminders, search]);
+  }, [dateFilter, allReminders, search, isFetched, isLoading, setAllReminder]);
 
   useEffect(() => {
     const filterSessions = () => {
@@ -140,6 +192,56 @@ const Reminders = () => {
     return () => {};
   }, [search, dateFilter, isClassLoading, isFetching]);
 
+  useEffect(() => {
+    const filterClassSchedul = () => {
+      const filteredScheduls = classesScheduls?.data.filter(
+        (classesSchedul: ClassesSchedul) => {
+          if (search.length > 0) {
+            return classesSchedul.playerNote
+              .toLowerCase()
+              .includes(search.toLowerCase());
+          } else {
+            const sessionDate = extractDateTime(classesSchedul.date).date;
+            const filterDate = formatDate(dateFilter);
+
+            return sessionDate == filterDate;
+          }
+        }
+      );
+
+      filteredScheduls && setClassScheduls(filteredScheduls);
+    };
+
+    filterClassSchedul();
+
+    return () => {};
+  }, [search, dateFilter, isClassSchedulLoading, isFetchingSchedul]);
+
+  useEffect(() => {
+    const filterCoachSchedul = () => {
+      const filteredScheduls = coachSchedul?.data.filter(
+        (classesSchedul: ClassesSchedul) => {
+          if (search.length > 0) {
+            return classesSchedul.playerNote
+              .toLowerCase()
+              .includes(search.toLowerCase());
+          } else {
+            const sessionDate = extractDateTime(classesSchedul.date).date;
+            const filterDate = formatDate(dateFilter);
+
+            return sessionDate == filterDate;
+          }
+        }
+      );
+
+      filteredScheduls && setCoachScheduls(filteredScheduls);
+    };
+
+    filterCoachSchedul();
+
+    return () => {};
+  }, [search, dateFilter, isCoachSchedulLoading, isFetchingCoachSchedul]);
+
   const ref = useRef<any>(null);
   const timeMap: any = {};
 
@@ -159,6 +261,14 @@ const Reminders = () => {
   const combinedData = [
     ...reminders.map((reminder) => ({ type: "reminder", data: reminder })),
     ...sessions.map((session) => ({ type: "session", data: session })),
+    ...classScheduls.map((classSchedule) => ({
+      type: "class-schedule",
+      data: classSchedule,
+    })),
+    ...coachScheduls.map((coachSchedule) => ({
+      type: "coach-schedule",
+      data: coachSchedule,
+    })),
   ];
 
   combinedData.map(({ type, data }, ind) => {
@@ -166,7 +276,7 @@ const Reminders = () => {
       const session = data as Session;
       const timeObj = extractDateTime(session.date);
       const time =
-        timeObj && timeObj.hours !== 0
+        timeObj && timeObj.hours !== 0 && timeObj.hours !== 12
           ? (timeObj.hours % 12) + timeObj.period
           : "12AM";
       timeMap[time].push(
@@ -181,11 +291,34 @@ const Reminders = () => {
       const reminder = data as ReminderInf;
       timeMap[reminder.time].push(
         <ReminderCard
-          key={ind}
+          key={reminder._id}
           ind={ind}
           setDate={setDate}
           reminder={reminder}
         />
+      );
+    } else if (
+      type === "class-schedule" &&
+      (role === "parent" || role === "player")
+    ) {
+      const classSchedule = data as ClassesSchedul;
+      const timeObj = extractDateTime(classSchedule.date);
+      const time =
+        timeObj && timeObj.hours !== 0
+          ? (timeObj.hours % 12) + timeObj.period
+          : "12AM";
+      timeMap[time].push(
+        <ClassSchedule key={classSchedule._id} classSchedule={classSchedule} />
+      );
+    } else if (type === "coach-schedule" && role === "coach") {
+      const classSchedule = data as ClassesSchedul;
+      const timeObj = extractDateTime(classSchedule.date);
+      const time =
+        timeObj && timeObj.hours !== 0
+          ? (timeObj.hours % 12) + timeObj.period
+          : "12AM";
+      timeMap[time].push(
+        <ClassSchedule key={classSchedule._id} classSchedule={classSchedule} />
       );
     }
   });
@@ -254,6 +387,8 @@ const Reminders = () => {
                 reminders={allReminders}
                 dateFilter={dateFilter}
                 classes={classes?.data}
+                classSchedule={classesScheduls?.data}
+                coachSchedule={coachSchedul?.data}
               />
             </div>
 
@@ -270,6 +405,7 @@ const Reminders = () => {
               <AddReminder
                 ref={ref}
                 setDate={setDate}
+                setDateFilter={setDateFilter}
                 date={date ?? ""}
                 initialClassData={initialClassData}
                 defaultType={defaultType}

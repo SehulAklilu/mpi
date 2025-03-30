@@ -22,13 +22,17 @@ import { useRole } from "@/RoleContext";
 import Role from "../auth/Role";
 import AddClasses from "./CreateClassesForm";
 import { Session } from "@/types/classes.type";
+import TrainingForm from "./TrainingForm";
+import { getTimeZoneAbbreviation } from "@/lib/utils";
 
 const AddReminderSchema = z.object({
   title: z.string({ required_error: "Title is required" }).min(1),
   description: z.string({ required_error: "Description is required" }).min(1),
   date: z.string({ required_error: "Date is required" }).min(1),
   type: z.string({ required_error: "Type is required" }),
-  timezone: z.string({ required_error: "Timezone is required" }).min(1),
+  timezone: z
+    .string({ required_error: "Timezone is required" })
+    .default(Intl.DateTimeFormat().resolvedOptions().timeZone),
 });
 
 type AddReminderForm = z.infer<typeof AddReminderSchema>;
@@ -37,14 +41,16 @@ const AddReminder = ({
   date,
   setDate,
   ref,
-  initialClassData,
   defaultType,
+  initialClassData,
+  setDateFilter,
 }: {
   date: string;
   setDate: Function;
   ref: any;
   defaultType: string;
   initialClassData: Session | undefined;
+  setDateFilter: Function;
 }) => {
   const form = useForm<AddReminderForm>({
     resolver: zodResolver(AddReminderSchema),
@@ -59,7 +65,7 @@ const AddReminder = ({
 
   const types = (
     role != null && role === "player"
-      ? ["reminder", "goal"]
+      ? ["reminder", "goal", "training"]
       : ["reminder", "goal", "match", "training", "session"]
   ).map((item) => ({
     value: item,
@@ -71,10 +77,13 @@ const AddReminder = ({
   const { isLoading, mutate } = useMutation(
     (data: AddReminderForm) => axios.post("/api/v1/reminders", data),
     {
-      onSuccess() {
+      onSuccess(response) {
         toast.success("Reminder added successfully");
-        queryClient.invalidateQueries("reminders");
+        const newReminder = response?.data?.[response.data.length - 1];
+        const newReminderDate = new Date(newReminder?.date);
+        newReminderDate && setDateFilter(newReminderDate);
         setDate("");
+        queryClient.invalidateQueries("reminders");
       },
       onError(err: any) {
         toast.error(
@@ -87,7 +96,14 @@ const AddReminder = ({
   );
 
   const onSubmit = (data: AddReminderForm) => {
-    mutate(data);
+    const timeZoneAbbreviation = getTimeZoneAbbreviation();
+    const payload = {
+      ...data,
+      timezone: timeZoneAbbreviation
+        ? timeZoneAbbreviation
+        : Intl.DateTimeFormat().resolvedOptions().timeZone,
+    };
+    mutate(payload);
     // alert("working...");
   };
 
@@ -151,7 +167,17 @@ const AddReminder = ({
           </p>
         )}
       </div>
-      {selectedType !== "session" ? (
+      {selectedType === "session" ? (
+        <AddClasses
+          // ref={ref}
+          setDate={setDate}
+          setDateFilter={setDateFilter}
+          date={date ?? undefined}
+          initialClassData={initialClassData}
+        />
+      ) : selectedType === "training" ? (
+        <TrainingForm date={date} />
+      ) : (
         <form
           onSubmit={(e) => {
             onSubmit(form.getValues());
@@ -198,9 +224,9 @@ const AddReminder = ({
             </div>
 
             <div
-              className={`grid grid-cols-${date.length > 0 ? "1" : "2"} gap-2`}
+            // className={`grid grid-cols-${date.length > 0 ? "1" : "2"} gap-2`}
             >
-              <div>
+              {/* <div>
                 <label htmlFor="timezone" className="block text-sm font-medium">
                   Timezone
                 </label>
@@ -215,7 +241,7 @@ const AddReminder = ({
                     {form.formState.errors.timezone.message}
                   </p>
                 )}
-              </div>
+              </div> */}
               {date.length > 0 ? (
                 <></>
               ) : (
@@ -255,13 +281,6 @@ const AddReminder = ({
             )}
           </Button>
         </form>
-      ) : (
-        <AddClasses
-          ref={ref}
-          setDate={setDate}
-          date={date ?? undefined}
-          initialClassData={initialClassData}
-        />
       )}
     </div>
   );

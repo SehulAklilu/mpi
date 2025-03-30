@@ -230,3 +230,15 @@ export const getTextColorBasedOnBg = (
 
   return brightness > 128 ? "text-black" : "text-white";
 };
+
+export function getTimeZoneAbbreviation(): string | undefined {
+  return new Intl.DateTimeFormat("en-US", {
+    timeZoneName: "short",
+  })
+    .formatToParts(new Date())
+    .find((part) => part.type === "timeZoneName")?.value;
+}
+
+export function getDateString(date: Date): string {
+  return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+}

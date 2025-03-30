@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import CalendarRow from "./CalendarRow";
 import { ReminderInf } from "@/Pages/Reminders";
-import { Session } from "@/types/classes.type";
+import { ClassesSchedul, Session } from "@/types/classes.type";
 import { PlayerSession } from "@/types/session.type";
 
 export interface CalendarProps {
@@ -9,6 +9,8 @@ export interface CalendarProps {
   setDateFilter: Function;
   dateFilter: Date;
   classes: Session[] | PlayerSession[] | undefined;
+  classSchedule: ClassesSchedul[] | undefined;
+  coachSchedule: ClassesSchedul[] | undefined;
 }
 
 const Calendar: React.FC<CalendarProps> = ({
@@ -16,6 +18,8 @@ const Calendar: React.FC<CalendarProps> = ({
   reminders,
   setDateFilter,
   classes,
+  classSchedule,
+  coachSchedule,
 }) => {
   const [activeMonth, setActiveMonth] = useState(new Date().getMonth());
   const [activeMonthString, setActiveMonthString] = useState(
@@ -135,10 +139,13 @@ const Calendar: React.FC<CalendarProps> = ({
                   currentMonth={activeMonth}
                   currentYear={activeYear}
                   classes={classes}
+                  classSchedule={classSchedule}
+                  coachSchedule={coachSchedule}
                 />
               </tr>
               <tr>
                 <CalendarRow
+                  key={2}
                   dateFilter={dateFilter}
                   setDateFilter={setDateFilter}
                   reminders={reminders}
@@ -152,10 +159,13 @@ const Calendar: React.FC<CalendarProps> = ({
                   currentMonth={activeMonth}
                   currentYear={activeYear}
                   classes={classes}
+                  classSchedule={classSchedule}
+                  coachSchedule={coachSchedule}
                 />
               </tr>
               <tr>
                 <CalendarRow
+                  key={3}
                   dateFilter={dateFilter}
                   setDateFilter={setDateFilter}
                   reminders={reminders}
@@ -169,10 +179,13 @@ const Calendar: React.FC<CalendarProps> = ({
                   currentMonth={activeMonth}
                   currentYear={activeYear}
                   classes={classes}
+                  classSchedule={classSchedule}
+                  coachSchedule={coachSchedule}
                 />
               </tr>
               <tr>
                 <CalendarRow
+                  key={4}
                   dateFilter={dateFilter}
                   setDateFilter={setDateFilter}
                   reminders={reminders}
@@ -186,10 +199,13 @@ const Calendar: React.FC<CalendarProps> = ({
                   currentMonth={activeMonth}
                   currentYear={activeYear}
                   classes={classes}
+                  classSchedule={classSchedule}
+                  coachSchedule={coachSchedule}
                 />
               </tr>
               <tr>
                 <CalendarRow
+                  key={5}
                   dateFilter={dateFilter}
                   setDateFilter={setDateFilter}
                   reminders={reminders}
@@ -203,10 +219,13 @@ const Calendar: React.FC<CalendarProps> = ({
                   currentMonth={activeMonth}
                   currentYear={activeYear}
                   classes={classes}
+                  classSchedule={classSchedule}
+                  coachSchedule={coachSchedule}
                 />
               </tr>
               <tr>
                 <CalendarRow
+                  key={6}
                   dateFilter={dateFilter}
                   setDateFilter={setDateFilter}
                   reminders={reminders}
@@ -220,6 +239,8 @@ const Calendar: React.FC<CalendarProps> = ({
                   currentMonth={activeMonth}
                   currentYear={activeYear}
                   classes={classes}
+                  classSchedule={classSchedule}
+                  coachSchedule={coachSchedule}
                 />
               </tr>
             </tbody>

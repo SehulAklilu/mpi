@@ -145,3 +145,31 @@ export interface Session {
   checkList: CheckList[];
   id: string;
 }
+
+interface User {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  emailAddress: {
+    email: string;
+    verified: boolean;
+  };
+  phoneNumber: {
+    countryCode: string;
+    number: string;
+  };
+  avatar: string;
+  lastOnline: string;
+  __t: string;
+  id: string;
+}
+
+export interface ClassesSchedul {
+  _id: string;
+  userId: User;
+  coachId: User;
+  date: string;
+  status: "pending" | "accepted" | "rejected";
+  playerNote: string;
+  createdAt: string;
+}

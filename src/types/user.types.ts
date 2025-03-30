@@ -58,3 +58,15 @@ export interface Tokens {
   accessToken: string;
   refreshToken: string;
 }
+
+export interface Coach {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  emailAddress: EmailAddress;
+  phoneNumber: PhoneNumber;
+  avatar: string;
+  lastOnline: string;
+  __t: string;
+  id: string;
+}
