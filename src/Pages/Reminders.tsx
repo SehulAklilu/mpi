@@ -61,6 +61,8 @@ const Reminders = () => {
   const [classScheduls, setClassScheduls] = useState<ClassesSchedul[]>([]);
   const [coachScheduls, setCoachScheduls] = useState<ClassesSchedul[]>([]);
   const [allReminders, setAllReminder] = useState<ReminderInf[]>([]);
+  const ref = useRef<any>(null);
+
   const {
     isLoading,
     data: result,
@@ -114,8 +116,7 @@ const Reminders = () => {
     {
       enabled: role === "player" || role === "parent",
       onSuccess(data) {
-        // console.log("3333333333", data);
-        setClassScheduls(data.data);
+        // setClassScheduls(data.data);
       },
       onError(err: any) {
         toast.error(
@@ -138,7 +139,6 @@ const Reminders = () => {
     {
       enabled: role === "coach",
       onSuccess(data) {
-        // console.log("3333333333", data);
         // setCoachScheduls(data.data);
       },
       onError(err: any) {
@@ -151,177 +151,366 @@ const Reminders = () => {
     }
   );
 
+  // Helper function to filter data based on search and date
+  const filterData = <T extends { date: string }>(
+    data: T[],
+    search: string,
+    dateFilter: Date,
+    searchField: keyof T
+  ) => {
+    return data.filter((item) => {
+      if (search.length > 0) {
+        const fieldValue = String(item[searchField]).toLowerCase();
+        return fieldValue.includes(search.toLowerCase());
+      } else {
+        const itemDate = extractDateTime(item.date).date;
+        const filterDate = formatDate(dateFilter);
+
+        return itemDate === filterDate;
+      }
+    });
+  };
+
+  // Combined effect for reminders
   useEffect(() => {
-    const fun = () => {
-      if (!result || typeof result !== "object") return;
-      const a = allReminders.filter((d: any) => {
-        if (search.length > 0) {
-          return d.title.toLowerCase().includes(search.toLowerCase());
-        } else {
-          const reminderDate = extractDateTime(d.date).date;
-          const filterDate = formatDate(dateFilter);
+    if (!result || typeof result !== "object") return;
+    const filteredReminders = filterData(
+      allReminders,
+      search,
+      dateFilter,
+      "title"
+    );
+    setReminders(filteredReminders);
+    ref?.current?.scrollIntoView({ behavior: "smooth" });
+  }, [dateFilter, allReminders, search, result]);
 
-          return reminderDate == filterDate;
-        }
-      });
-      setReminders(a);
-      ref && ref.current?.scrollIntoView({ behavior: "smooth" });
-    };
-    fun();
-    return () => {};
-  }, [dateFilter, allReminders, search, isFetched, isLoading, setAllReminder]);
+  // Combined effect for sessions
+  useEffect(() => {
+    if (!classes?.data) return;
+    const filteredSessions = filterData(
+      classes.data,
+      search,
+      dateFilter,
+      "levelPlan"
+    );
+    setSessions(filteredSessions);
+  }, [search, dateFilter, classes]);
+
+  // Combined effect for class schedules (player/parent)
+  useEffect(() => {
+    if (!classesScheduls?.data) return;
+    const filteredSchedules = filterData(
+      classesScheduls.data,
+      search,
+      dateFilter,
+      "playerNote"
+    );
+    setClassScheduls(filteredSchedules);
+  }, [search, dateFilter, classesScheduls]);
+
+  // Combined effect for coach schedules
+  useEffect(() => {
+    if (!coachSchedul?.data) return;
+    const filteredSchedules = filterData(
+      coachSchedul.data,
+      search,
+      dateFilter,
+      "playerNote"
+    );
+    setCoachScheduls(filteredSchedules);
+  }, [search, dateFilter, coachSchedul]);
+
+  // useEffect(() => {
+  //   const fun = () => {
+  //     if (!result || typeof result !== "object") return;
+  //     const a = allReminders.filter((d: any) => {
+  //       if (search.length > 0) {
+  //         return d.title.toLowerCase().includes(search.toLowerCase());
+  //       } else {
+  //         const reminderDate = extractDateTime(d.date).date;
+  //         const filterDate = formatDate(dateFilter);
+
+  //         return reminderDate == filterDate;
+  //       }
+  //     });
+  //     setReminders(a);
+  //     ref && ref.current?.scrollIntoView({ behavior: "smooth" });
+  //   };
+  //   fun();
+  //   return () => {};
+  // }, [dateFilter, allReminders, search]);
+
+  // useEffect(() => {
+  //   const filterSessions = () => {
+  //     const filteredSessions = classes?.data.filter((session: Session) => {
+  //       if (search.length > 0) {
+  //         return session.levelPlan.toLowerCase().includes(search.toLowerCase());
+  //       } else {
+  //         const sessionDate = extractDateTime(session.date).date;
+  //         const filterDate = formatDate(dateFilter);
+
+  //         return sessionDate == filterDate;
+  //       }
+  //     });
+
+  //     filteredSessions && setSessions(filteredSessions);
+  //   };
+
+  //   filterSessions();
+
+  //   return () => {};
+  // }, [search, dateFilter, isClassLoading, isFetching]);
+
+  // useEffect(() => {
+  //   const filterClassSchedul = () => {
+  //     const filteredScheduls = classesScheduls?.data.filter(
+  //       (classesSchedul: ClassesSchedul) => {
+  //         if (search.length > 0) {
+  //           return classesSchedul.playerNote
+  //             .toLowerCase()
+  //             .includes(search.toLowerCase());
+  //         } else {
+  //           const sessionDate = extractDateTime(classesSchedul.date).date;
+  //           const filterDate = formatDate(dateFilter);
+
+  //           return sessionDate == filterDate;
+  //         }
+  //       }
+  //     );
+
+  //     filteredScheduls && setClassScheduls(filteredScheduls);
+  //   };
+
+  //   filterClassSchedul();
+
+  //   return () => {};
+  // }, [search, dateFilter, isClassSchedulLoading]);
+
+  // useEffect(() => {
+  //   const filterCoachSchedul = () => {
+  //     const filteredScheduls = coachSchedul?.data.filter(
+  //       (classesSchedul: ClassesSchedul) => {
+  //         if (search.length > 0) {
+  //           return classesSchedul.playerNote
+  //             .toLowerCase()
+  //             .includes(search.toLowerCase());
+  //         } else {
+  //           const sessionDate = extractDateTime(classesSchedul.date).date;
+  //           const filterDate = formatDate(dateFilter);
+
+  //           return sessionDate == filterDate;
+  //         }
+  //       }
+  //     );
+
+  //     filteredScheduls && setCoachScheduls(filteredScheduls);
+  //   };
+
+  //   filterCoachSchedul();
+
+  //   return () => {};
+  // }, [search, dateFilter, isCoachSchedulLoading, isFetchingCoachSchedul]);
+
+  const [timeMap, setTimeMap] = useState<Record<string, JSX.Element[]>>({});
 
   useEffect(() => {
-    const filterSessions = () => {
-      const filteredSessions = classes?.data.filter((session: Session) => {
-        if (search.length > 0) {
-          return session.levelPlan.toLowerCase().includes(search.toLowerCase());
-        } else {
-          const sessionDate = extractDateTime(session.date).date;
-          const filterDate = formatDate(dateFilter);
+    // Initialize timeMap with TimeShow components
+    const initialTimeMap: Record<string, JSX.Element[]> = {};
 
-          return sessionDate == filterDate;
-        }
-      });
-
-      filteredSessions && setSessions(filteredSessions);
-    };
-
-    filterSessions();
-
-    return () => {};
-  }, [search, dateFilter, isClassLoading, isFetching]);
-
-  useEffect(() => {
-    const filterClassSchedul = () => {
-      const filteredScheduls = classesScheduls?.data.filter(
-        (classesSchedul: ClassesSchedul) => {
-          if (search.length > 0) {
-            return classesSchedul.playerNote
-              .toLowerCase()
-              .includes(search.toLowerCase());
-          } else {
-            const sessionDate = extractDateTime(classesSchedul.date).date;
-            const filterDate = formatDate(dateFilter);
-
-            return sessionDate == filterDate;
-          }
-        }
-      );
-
-      filteredScheduls && setClassScheduls(filteredScheduls);
-    };
-
-    filterClassSchedul();
-
-    return () => {};
-  }, [search, dateFilter, isClassSchedulLoading, isFetchingSchedul]);
-
-  useEffect(() => {
-    const filterCoachSchedul = () => {
-      const filteredScheduls = coachSchedul?.data.filter(
-        (classesSchedul: ClassesSchedul) => {
-          if (search.length > 0) {
-            return classesSchedul.playerNote
-              .toLowerCase()
-              .includes(search.toLowerCase());
-          } else {
-            const sessionDate = extractDateTime(classesSchedul.date).date;
-            const filterDate = formatDate(dateFilter);
-
-            return sessionDate == filterDate;
-          }
-        }
-      );
-
-      filteredScheduls && setCoachScheduls(filteredScheduls);
-    };
-
-    filterCoachSchedul();
-
-    return () => {};
-  }, [search, dateFilter, isCoachSchedulLoading, isFetchingCoachSchedul]);
-
-  const ref = useRef<any>(null);
-  const timeMap: any = {};
-
-  [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(
-    (val) =>
-      (timeMap[val + "AM"] = [
-        <TimeShow time={`${val}AM`} setDate={setDate} date={dateFilter} />,
-      ])
-  );
-  [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(
-    (val) =>
-      (timeMap[val + "PM"] = [
-        <TimeShow time={`${val}PM`} setDate={setDate} date={dateFilter} />,
-      ])
-  );
-
-  const combinedData = [
-    ...reminders.map((reminder) => ({ type: "reminder", data: reminder })),
-    ...sessions.map((session) => ({ type: "session", data: session })),
-    ...classScheduls.map((classSchedule) => ({
-      type: "class-schedule",
-      data: classSchedule,
-    })),
-    ...coachScheduls.map((coachSchedule) => ({
-      type: "coach-schedule",
-      data: coachSchedule,
-    })),
-  ];
-
-  combinedData.map(({ type, data }, ind) => {
-    if (type === "session" && role !== "parent") {
-      const session = data as Session;
-      const timeObj = extractDateTime(session.date);
-      const time =
-        timeObj && timeObj.hours !== 0 && timeObj.hours !== 12
-          ? (timeObj.hours % 12) + timeObj.period
-          : "12AM";
-      timeMap[time].push(
-        <SessionCard
-          key={session._id}
-          session={session}
-          onEditClicked={onEditClicked}
-          setInitialClassData={setInitialClassData}
-        />
-      );
-    } else if (type === "reminder") {
-      const reminder = data as ReminderInf;
-      timeMap[reminder.time].push(
-        <ReminderCard
-          key={reminder._id}
-          ind={ind}
+    [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].forEach((val) => {
+      initialTimeMap[`${val}AM`] = [
+        <TimeShow
+          key={`${val}AM`}
+          time={`${val}AM`}
           setDate={setDate}
-          reminder={reminder}
-        />
-      );
-    } else if (
-      type === "class-schedule" &&
-      (role === "parent" || role === "player")
-    ) {
-      const classSchedule = data as ClassesSchedul;
-      const timeObj = extractDateTime(classSchedule.date);
-      const time =
-        timeObj && timeObj.hours !== 0
-          ? (timeObj.hours % 12) + timeObj.period
-          : "12AM";
-      timeMap[time].push(
-        <ClassSchedule key={classSchedule._id} classSchedule={classSchedule} />
-      );
-    } else if (type === "coach-schedule" && role === "coach") {
-      const classSchedule = data as ClassesSchedul;
-      const timeObj = extractDateTime(classSchedule.date);
-      const time =
-        timeObj && timeObj.hours !== 0
-          ? (timeObj.hours % 12) + timeObj.period
-          : "12AM";
-      timeMap[time].push(
-        <ClassSchedule key={classSchedule._id} classSchedule={classSchedule} />
-      );
-    }
-  });
+          date={dateFilter}
+        />,
+      ];
+      initialTimeMap[`${val}PM`] = [
+        <TimeShow
+          key={`${val}PM`}
+          time={`${val}PM`}
+          setDate={setDate}
+          date={dateFilter}
+        />,
+      ];
+    });
+
+    // Process combined data
+    const combinedData = [
+      ...reminders.map((reminder) => ({ type: "reminder", data: reminder })),
+      ...sessions.map((session) => ({ type: "session", data: session })),
+      ...classScheduls.map((classSchedule) => ({
+        type: "class-schedule",
+        data: classSchedule,
+      })),
+      ...coachScheduls.map((coachSchedule) => ({
+        type: "coach-schedule",
+        data: coachSchedule,
+      })),
+    ];
+
+    const updatedTimeMap = { ...initialTimeMap };
+
+    combinedData.forEach(({ type, data }, ind) => {
+      if (type === "session" && role !== "parent") {
+        const session = data as Session;
+        const timeObj = extractDateTime(session.date);
+        const time =
+          timeObj && timeObj.hours !== 0 && timeObj.hours !== 12
+            ? `${timeObj.hours % 12}${timeObj.period}`
+            : "12AM";
+
+        updatedTimeMap[time] = [
+          ...(updatedTimeMap[time] || []),
+          <SessionCard
+            key={session._id}
+            session={session}
+            onEditClicked={onEditClicked}
+            setInitialClassData={setInitialClassData}
+          />,
+        ];
+      } else if (type === "reminder") {
+        const reminder = data as ReminderInf;
+        updatedTimeMap[reminder.time] = [
+          ...(updatedTimeMap[reminder.time] || []),
+          <ReminderCard
+            key={reminder._id}
+            ind={ind}
+            setDate={setDate}
+            reminder={reminder}
+          />,
+        ];
+      } else if (
+        type === "class-schedule" &&
+        (role === "parent" || role === "player")
+      ) {
+        const classSchedule = data as ClassesSchedul;
+        const timeObj = extractDateTime(classSchedule.date);
+        const time =
+          timeObj && timeObj.hours !== 0 && timeObj.hours !== 12
+            ? `${timeObj.hours % 12}${timeObj.period}`
+            : "12AM";
+
+        updatedTimeMap[time] = [
+          ...(updatedTimeMap[time] || []),
+          <ClassSchedule
+            key={classSchedule._id}
+            classSchedule={classSchedule}
+          />,
+        ];
+      } else if (type === "coach-schedule" && role === "coach") {
+        const classSchedule = data as ClassesSchedul;
+        const timeObj = extractDateTime(classSchedule.date);
+        const time =
+          timeObj && timeObj.hours !== 0 && timeObj.hours !== 12
+            ? `${timeObj.hours % 12}${timeObj.period}`
+            : "12AM";
+
+        updatedTimeMap[time] = [
+          ...(updatedTimeMap[time] || []),
+          <ClassSchedule
+            key={classSchedule._id}
+            classSchedule={classSchedule}
+          />,
+        ];
+      }
+    });
+
+    setTimeMap(updatedTimeMap);
+
+    // console.log(timeMap, reminders, sessions, coachScheduls, classScheduls);
+  }, [reminders, sessions, classScheduls, coachScheduls, role, dateFilter]);
+
+  // const timeMap: any = {};
+
+  // [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(
+  //   (val) =>
+  //     (timeMap[val + "AM"] = [
+  //       <TimeShow
+  //         key={`${val}AM`}
+  //         time={`${val}AM`}
+  //         setDate={setDate}
+  //         date={dateFilter}
+  //       />,
+  //     ])
+  // );
+  // [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(
+  //   (val) =>
+  //     (timeMap[val + "PM"] = [
+  //       <TimeShow
+  //         key={`${val}PM`}
+  //         time={`${val}PM`}
+  //         setDate={setDate}
+  //         date={dateFilter}
+  //       />,
+  //     ])
+  // );
+
+  // const combinedData = [
+  //   ...reminders.map((reminder) => ({ type: "reminder", data: reminder })),
+  //   ...sessions.map((session) => ({ type: "session", data: session })),
+  //   ...classScheduls.map((classSchedule) => ({
+  //     type: "class-schedule",
+  //     data: classSchedule,
+  //   })),
+  //   ...coachScheduls.map((coachSchedule) => ({
+  //     type: "coach-schedule",
+  //     data: coachSchedule,
+  //   })),
+  // ];
+
+  // combinedData.map(({ type, data }, ind) => {
+  //   if (type === "session" && role !== "parent") {
+  //     const session = data as Session;
+  //     const timeObj = extractDateTime(session.date);
+  //     const time =
+  //       timeObj && timeObj.hours !== 0 && timeObj.hours !== 12
+  //         ? (timeObj.hours % 12) + timeObj.period
+  //         : "12AM";
+  //     timeMap[time].push(
+  //       <SessionCard
+  //         key={session._id}
+  //         session={session}
+  //         onEditClicked={onEditClicked}
+  //         setInitialClassData={setInitialClassData}
+  //       />
+  //     );
+  //   } else if (type === "reminder") {
+  //     const reminder = data as ReminderInf;
+  //     timeMap[reminder.time].push(
+  //       <ReminderCard
+  //         key={reminder._id}
+  //         ind={ind}
+  //         setDate={setDate}
+  //         reminder={reminder}
+  //       />
+  //     );
+  //   } else if (
+  //     type === "class-schedule" &&
+  //     (role === "parent" || role === "player")
+  //   ) {
+  //     const classSchedule = data as ClassesSchedul;
+  //     const timeObj = extractDateTime(classSchedule.date);
+  //     const time =
+  //       timeObj && timeObj.hours !== 0 && timeObj.hours !== 12
+  //         ? (timeObj.hours % 12) + timeObj.period
+  //         : "12AM";
+  //     timeMap[time].push(
+  //       <ClassSchedule key={classSchedule._id} classSchedule={classSchedule} />
+  //     );
+  //   } else if (type === "coach-schedule" && role === "coach") {
+  //     const classSchedule = data as ClassesSchedul;
+  //     const timeObj = extractDateTime(classSchedule.date);
+  //     const time =
+  //       timeObj && timeObj.hours !== 0 && timeObj.hours !== 12
+  //         ? (timeObj.hours % 12) + timeObj.period
+  //         : "12AM";
+  //     timeMap[time].push(
+  //       <ClassSchedule key={classSchedule._id} classSchedule={classSchedule} />
+  //     );
+  //   }
+  // });
 
   return (
     <ContentLayout>

@@ -16,7 +16,7 @@ import { LoaderCircle } from "lucide-react";
 import { useMutation, useQueryClient } from "react-query";
 import { toast } from "react-toastify";
 import axios from "@/api/axios";
-import { useEffect, useRef, useState } from "react";
+import { forwardRef, useEffect, useRef, useState } from "react";
 import { FaX } from "react-icons/fa6";
 import { useRole } from "@/RoleContext";
 import Role from "../auth/Role";
@@ -37,21 +37,16 @@ const AddReminderSchema = z.object({
 
 type AddReminderForm = z.infer<typeof AddReminderSchema>;
 
-const AddReminder = ({
-  date,
-  setDate,
-  ref,
-  defaultType,
-  initialClassData,
-  setDateFilter,
-}: {
-  date: string;
-  setDate: Function;
-  ref: any;
-  defaultType: string;
-  initialClassData: Session | undefined;
-  setDateFilter: Function;
-}) => {
+const AddReminder = forwardRef<
+  HTMLDivElement,
+  {
+    date: string;
+    setDate: Function;
+    defaultType: string;
+    initialClassData: Session | undefined;
+    setDateFilter: Function;
+  }
+>(({ date, setDate, defaultType, initialClassData, setDateFilter }, ref) => {
   const form = useForm<AddReminderForm>({
     resolver: zodResolver(AddReminderSchema),
     defaultValues: {
@@ -284,6 +279,6 @@ const AddReminder = ({
       )}
     </div>
   );
-};
+});
 
 export default AddReminder;

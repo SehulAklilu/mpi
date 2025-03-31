@@ -1,14 +1,14 @@
-export interface ChatInterface {
-  _id: string;
-  chatName: string;
-  users: User[];
-  isGroupChat: boolean;
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
-  latestMessage?: Message;
-  id: string;
-}
+// export interface ChatInterface {
+//   _id: string;
+//   chatName: string;
+//   users: User[];
+//   isGroupChat: boolean;
+//   createdAt: string;
+//   updatedAt: string;
+//   __v: number;
+//   latestMessage?: Message;
+//   id: string;
+// }
 
 type Role = "player" | "coach" | "parent";
 
@@ -159,4 +159,58 @@ export interface Announcement {
   seen?: Seen;
   id: string;
   showButton?: boolean;
+}
+
+// interface EmailAddress {
+//     email: string;
+//     verified: boolean;
+// }
+
+// interface PhoneNumber {
+//     countryCode: string;
+//     number: string;
+// }
+
+// interface Address {
+//     streetAddress: string;
+//     streetAddress2: string | null;
+//     city: string;
+//     stateProvince: string;
+//     country: string;
+//     zipCode: string;
+// }
+
+// interface User {
+//     _id: string;
+//     firstName: string;
+//     lastName: string;
+//     emailAddress: EmailAddress;
+//     gender: string;
+//     phoneNumber: PhoneNumber;
+//     address: Address;
+//     avatar: string;
+//     role: string;
+//     __t: string;
+// }
+
+export interface Chat {
+  _id: string;
+  chatName: string;
+  users: User[];
+  isGroupChat: boolean;
+  groupAdmin?: User; // Only present for group chats
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+  latestMessage?: string;
+  latestMessageContent?: string;
+  latestMessageSenderId?: string;
+  latestMessageTimeStamp?: string;
+  unreadCount: number;
+  photo?: string; // Only present in one chat
+}
+
+export interface ChatListResponse {
+  chats: Chat[];
+  length: number;
 }

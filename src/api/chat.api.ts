@@ -1,16 +1,11 @@
 import {
   Announcement,
-  ChatInterface,
+  ChatListResponse,
   FriendDataResponse,
   FriendRequestResponse,
   Message,
 } from "@/types/chat.type";
 import axiosInstance from "./axios";
-
-export interface ChatResponse {
-  chats: ChatInterface[];
-  length: number;
-}
 
 export interface MessageResponse {
   messages: Message[];
@@ -54,7 +49,7 @@ export interface CreateChatPayload {
   userId: string;
 }
 
-export const getChats = async (): Promise<ChatResponse> => {
+export const getChats = async (): Promise<ChatListResponse> => {
   const response = await axiosInstance.get("/api/v1/chats");
   return response.data;
 };

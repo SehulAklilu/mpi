@@ -60,7 +60,7 @@ function DashboardReminder() {
   useEffect(() => {
     if (reminders) {
       const filteredReminders = reminders
-        .filter((reminder) => {
+        ?.filter((reminder) => {
           const reminderDate = new Date(reminder.date); // Convert string to Date object
 
           return (
@@ -99,7 +99,7 @@ function DashboardReminder() {
           reminderToShow?.map((reminder) => (
             <div className="space-y-3 my-4 flex justify-between items-start bg-white rounded-lg shadow-lg p-4 transition-all duration-200 hover:shadow-xl">
               <div>
-                <h1 className="font-semibold text-xl text-gray-800">
+                <h1 className="font-semibold text-xl text-primary/80 underline">
                   {reminder.title}
                 </h1>
                 <p className="text-gray-600">{reminder.description}</p>
@@ -111,10 +111,15 @@ function DashboardReminder() {
                 {reminder?.isCompleted ? (
                   <FaCheckSquare className="text-xl text-primary transition-transform transform hover:scale-110" />
                 ) : (
-                  <FaRegSquare
-                    className="cursor-pointer text-xl text-gray-600 hover:text-primary transition-transform transform hover:scale-110"
-                    onClick={() => reminder._id && mutate(reminder._id)}
-                  />
+                  <div className="flex items-end flex-col">
+                    <FaRegSquare
+                      className="cursor-pointer text-xl text-gray-600 hover:text-primary transition-transform transform hover:scale-110"
+                      onClick={() => reminder._id && mutate(reminder._id)}
+                    />
+                    <p className="text-xs whitespace-nowrap">
+                      Mark as Complete
+                    </p>
+                  </div>
                 )}
               </div>
             </div>

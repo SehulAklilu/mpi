@@ -9,7 +9,7 @@ import { useMutation, useQuery } from "react-query";
 import { getChats, isRead } from "@/api/chat.api";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
-import { ChatInterface } from "@/types/chat.type";
+import { Chat } from "@/types/chat.type";
 import NoMessage from "./NoMessage";
 import ChatItemSkeleton from "./ChatItemSkeleton";
 import { IoClose, IoMenu } from "react-icons/io5";
@@ -65,10 +65,7 @@ function ChatComponent({ setActiveTab, openChatId }: ChatComponentProps) {
     setSearchValue(e.target.value);
   };
 
-  const extractChatItems = (
-    chats: ChatInterface[],
-    user_id: string
-  ): ChatItems[] => {
+  const extractChatItems = (chats: Chat[], user_id: string): ChatItems[] => {
     return chats
       .filter((chat) => chat.users.some((user) => user._id === user_id))
       .map((chat) => {
@@ -79,28 +76,22 @@ function ChatComponent({ setActiveTab, openChatId }: ChatComponentProps) {
         }
 
         return {
-          id: chat.id,
+          id: chat._id,
           name: `${otherUser.firstName} ${otherUser.lastName}`,
           avatarUrl: otherUser.avatar,
           status: otherUser.lastOnline ? "online" : "offline",
-          message: chat?.latestMessage?.content || "",
+          message: chat?.latestMessageContent || "",
           role: otherUser.role,
-          time: chat?.latestMessage?.createdAt
-            ? new Date(chat?.latestMessage.createdAt).toLocaleTimeString([], {
+          time: chat?.latestMessageTimeStamp
+            ? new Date(chat?.latestMessageTimeStamp).toLocaleTimeString([], {
                 hour: "2-digit",
                 minute: "2-digit",
               })
             : "",
-          unreadCount: chat?.latestMessage
-            ? chat.latestMessage.isRead
-              ? 0
-              : chat.latestMessage.content
-              ? 0
-              : 0
-            : 0,
-          isRead: chat?.latestMessage?.isRead ?? false,
+          unreadCount: chat.unreadCount,
+          isRead: false,
           reciverId: otherUser._id,
-          latestMessageId: chat?.latestMessage?.id ?? "", // Add nullish coalescing
+          latestMessageId: chat?.latestMessage ?? "",
         };
       });
   };
