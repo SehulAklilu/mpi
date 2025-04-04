@@ -11,7 +11,6 @@ interface ChatTopBarProps {
     id: string;
     name: string;
     avatarUrl: string;
-    status: "online" | "offline";
     isOnline: boolean;
     reciverId: string;
   };

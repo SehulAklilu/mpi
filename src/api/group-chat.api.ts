@@ -42,12 +42,12 @@ export interface GroupMessagePayload {
 export type GroupMessage = {
   sender: string;
   group: string;
-  type: string; 
+  type: string;
   message: string;
   isRead: boolean;
   readBy: string[];
   _id: string;
-  files: any[]; 
+  files: any[];
   createdAt: string;
   updatedAt: string;
   __v: number;
@@ -80,8 +80,6 @@ export const createGroupMessage = async (
 export const getGroupsMessage = async (
   groupId: string
 ): Promise<GroupMessage[]> => {
-  const response = await axiosInstance.get(
-    `/api/v1/group-chats/${groupId}/message`
-  );
+  const response = await axiosInstance.get(`/api/v1/messages/${groupId}`);
   return response.data;
 };

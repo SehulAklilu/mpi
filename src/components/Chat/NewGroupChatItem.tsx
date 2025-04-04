@@ -1,22 +1,24 @@
 import React from "react";
 import { MdDoneAll } from "react-icons/md";
 import TypingIndicator from "./Typing";
+import { User } from "@/types/chat.type";
 
-export interface ChatItemProps {
+export interface GroupChatItemProps {
   id?: string;
   name: string;
-  avatarUrl: string;
+  avatarUrl?: string;
   message: string;
   time: string;
   unreadCount: number;
   onClick?: () => void;
   active?: boolean;
   isRead?: boolean;
-  isOnline: boolean;
-  isTyping: boolean;
+  //   isOnline: boolean;
+  //   isTyping: boolean;
+  users: User[];
 }
 
-const ChatItem: React.FC<ChatItemProps> = ({
+const NewGroupChatItem: React.FC<GroupChatItemProps> = ({
   name,
   avatarUrl,
   message,
@@ -25,8 +27,8 @@ const ChatItem: React.FC<ChatItemProps> = ({
   onClick,
   active,
   isRead,
-  isOnline,
-  isTyping,
+  //   isOnline,
+  //   isTyping,
 }) => {
   return (
     <div
@@ -42,11 +44,6 @@ const ChatItem: React.FC<ChatItemProps> = ({
           alt={`${name}'s avatar`}
           className="w-12 h-12 rounded-full"
         />
-        <span
-          className={`absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-2 border-white ${
-            isOnline ? "bg-green-500" : "bg-gray-400"
-          }`}
-        ></span>
       </div>
 
       {/* Chat Details */}
@@ -63,7 +60,7 @@ const ChatItem: React.FC<ChatItemProps> = ({
         </div>
         <div className="flex justify-between items-center">
           <div className="text-sm truncate max-w-[70%]">
-            {isTyping ? (
+            {false ? (
               <TypingIndicator />
             ) : (
               message &&
@@ -92,4 +89,4 @@ const ChatItem: React.FC<ChatItemProps> = ({
   );
 };
 
-export default ChatItem;
+export default NewGroupChatItem;

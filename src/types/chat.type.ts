@@ -12,7 +12,7 @@
 
 type Role = "player" | "coach" | "parent";
 
-type User = {
+export type User = {
   _id: string;
   badge: number;
   deviceToken: string;
@@ -235,7 +235,7 @@ interface Address {
   zipCode: string;
 }
 
-interface NewUser {
+export interface NewUser {
   _id: string;
   firstName: string;
   lastName: string;

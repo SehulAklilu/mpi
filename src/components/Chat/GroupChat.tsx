@@ -36,9 +36,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { getFriends } from "@/api/chat.api";
+import { getChats, getFriends } from "@/api/chat.api";
 import Cookies from "js-cookie";
-import { extractUsers } from "@/lib/utils";
+import { extractUsers, formatTelegramTimestamp } from "@/lib/utils";
 import MultiSelectDropdown from "../MultipleDropDown";
 import {
   createGroup,
@@ -49,6 +49,23 @@ import { getAxiosErrorMessage, getAxiosSuccessMessage } from "@/api/axios";
 import { toast } from "react-toastify";
 import GroupChatItem, { GroupChatItemProps } from "./GroupChatItem";
 import { groupCollapsed } from "console";
+import { Chat, User } from "@/types/chat.type";
+import NewGroupChatItem from "./NewGroupChatItem";
+
+export interface GroupChatItems {
+  id: string;
+  name: string;
+  avatarUrl?: string;
+  message: string;
+  time: string;
+  unreadCount: number;
+  isRead: boolean;
+  latestMessageId?: string;
+  active: boolean;
+  // isOnline: boolean;
+  // isTyping: boolean;
+  users: User[];
+}
 
 const FormSchema = z.object({
   group_name: z.string(),
@@ -71,9 +88,9 @@ function GroupChat({ setActiveTab }: GroupChatProps) {
       members: [],
     },
   });
-  const [selectedChat, setSelectedChat] = useState<
-    GroupChatItemProps | undefined
-  >(undefined);
+  const [selectedChat, setSelectedChat] = useState<GroupChatItems | undefined>(
+    undefined
+  );
   const [open, setOpen] = useState(false);
 
   const [isSidebarOpen, setSidebarOpen] = useState(true);
@@ -92,13 +109,60 @@ function GroupChat({ setActiveTab }: GroupChatProps) {
   });
 
   const {
-    data: groups,
+    data: chats_data,
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ["groups"],
-    queryFn: getGroups,
+    queryKey: ["chats"],
+    queryFn: getChats,
+    // onSuccess: (response) => {
+    //   setGroupChats(response?.chats?.filter((chat) => chat.isGroupChat));
+    // },
   });
+
+  const extractChatItems = (
+    chats: Chat[],
+    user_id: string
+  ): GroupChatItems[] => {
+    return chats
+      .filter((chat) => chat.isGroupChat)
+      .filter((chat) => chat.users.some((user) => user._id === user_id))
+      .map((chat) => {
+        const otherUsers = chat.users.filter((user) => user._id !== user_id);
+
+        if (!otherUsers) {
+          throw new Error("No other user found in chat");
+        }
+
+        return {
+          id: chat._id,
+          name: chat.chatName,
+          avatarUrl: chat.photo ?? chat.groupAdmin?.avatar,
+          message: chat?.latestMessageContent || "",
+          time: chat?.latestMessageTimeStamp
+            ? formatTelegramTimestamp(chat.latestMessageTimeStamp)
+            : "",
+
+          unreadCount: chat.unreadCount,
+          isRead:
+            chat?.latestMessageContent && chat.unreadCount === 0 ? true : false,
+          latestMessageId: chat?.latestMessage ?? "",
+          users: otherUsers,
+          active: false,
+          //   isOnline: onlineUsers?.includes(otherUser._id) ?? false,
+          //   isTyping:
+          //     typingUsers?.some(
+          //       (user) =>
+          //         user.chatId === chat._id && user.userId === otherUser._id
+          //     ) ?? false,
+        };
+      });
+  };
+
+  const groupChats: GroupChatItems[] =
+    chats_data?.chats && user_id
+      ? extractChatItems(chats_data?.chats, user_id)
+      : [];
 
   const { mutate, isLoading: isCreatingGroup } = useMutation({
     mutationKey: ["createGroup"],
@@ -168,23 +232,14 @@ function GroupChat({ setActiveTab }: GroupChatProps) {
                 </div>
                 <p className="text-[#152946] font-semibold">New Group</p>
               </div>
-              {groups &&
-                groups.map((group) => (
-                  <GroupChatItem
-                    key={group._id}
-                    id={group._id}
-                    name={group.groupName}
-                    avatarUrl={group.avatar}
-                    active={false}
+              {groupChats?.length > 0 &&
+                groupChats.map((groupChat) => (
+                  <NewGroupChatItem
+                    {...groupChat}
+                    active={selectedChat && selectedChat.id === groupChat.id}
                     onClick={() => {
-                      setSelectedChat({
-                        id: group._id,
-                        name: group.groupName,
-                        avatarUrl: group.avatar,
-                        active: false,
-                      });
-                      // makeLatestMessageRead(chat?.latestMessageId);
-                      setSidebarOpen(false); // Close sidebar on mobile after selecting chat
+                      setSelectedChat(groupChat);
+                      setSidebarOpen(false);
                     }}
                   />
                 ))}
@@ -206,7 +261,6 @@ function GroupChat({ setActiveTab }: GroupChatProps) {
                   name: selectedChat.name,
                   // avatarUrl: selectedChat.avatarUrl,
                   avatarUrl: "https://i.pravatar.cc/100?img=20",
-                  status: "online",
                   isOnline: false,
                   reciverId: "3q34u234uo23i4o23i",
                 }}

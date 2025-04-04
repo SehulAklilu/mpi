@@ -1,5 +1,5 @@
 import { getMessages } from "@/api/chat.api";
-import { Message, NewMessage } from "@/types/chat.type";
+import { Message, NewMessage, NewUser } from "@/types/chat.type";
 import { useEffect, useRef, useState } from "react";
 import { useQuery } from "react-query";
 import Cookies from "js-cookie";
@@ -14,7 +14,7 @@ type ExtractedMessage = {
   time: string;
   date: string;
   image: string | null;
-  sender: string;
+  sender: NewUser;
   isSender: boolean;
 };
 
@@ -61,7 +61,7 @@ const ChatMessages = ({ chatId }: { chatId: string }) => {
         month: "long",
         day: "numeric",
       }),
-      sender: `${message.sender.firstName}`,
+      sender: message.sender,
       isSender: message.sender.id === userId,
     }));
   }
@@ -115,50 +115,62 @@ const ChatMessages = ({ chatId }: { chatId: string }) => {
           <div key={date}>
             {/* Date Header */}
             <div className="text-center text-gray-500 text-sm my-2">{date}</div>
-            {messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex ${
-                  message.isSender ? "justify-end" : "justify-start"
-                }`}
-              >
-                <div className="max-w-xs p-3 rounded-lg">
-                  <span className="text-xs">{message.time}</span>
+            {messages.map((message) => {
+              const isSender = message.isSender;
 
-                  {message.type === "text" && (
-                    <div
-                      className={`py-2 px-4 ${
-                        message.isSender
-                          ? "bg-[#F2851C] text-white rounded-md rounded-tr-none"
-                          : "bg-[#D8D8D8] text-black rounded-md rounded-tl-none"
-                      }`}
-                    >
-                      {message.content}
-                    </div>
-                  )}
+              return (
+                <div
+                  key={message.id}
+                  className={`flex ${
+                    isSender ? "justify-end" : "justify-start"
+                  } px-3 py-1`}
+                >
+                  <div
+                    className={`flex flex-col max-w-md ${
+                      isSender ? "items-end" : "items-start"
+                    }`}
+                  >
+                    {/* Time */}
+                    <span className="text-[10px] text-gray-400 mb-1">
+                      {message.time}
+                    </span>
 
-                  {message.type === "image" && message?.image && (
-                    <div className="relative max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg p-2 rounded-lg bg-primary/20 shadow-md">
-                      <img
-                        src={message.image}
-                        alt="Chat Image"
-                        className="rounded-lg w-full object-cover"
-                      />
-                      {message.content && message.content !== "'" && (
-                        <p className="text-sm  mt-2 px-2">{message.content}</p>
-                      )}
-                    </div>
-                  )}
+                    {/* Text Message */}
+                    {message.type === "text" && (
+                      <div
+                        className={`py-2 px-4 text-sm shadow-sm ${
+                          isSender
+                            ? "bg-[#F2851C] text-white rounded-xl rounded-br-none"
+                            : "bg-[#D8D8D8] text-black rounded-xl rounded-bl-none"
+                        }`}
+                      >
+                        {message.content}
+                      </div>
+                    )}
 
-                  {message.type === "voice" && (
-                    <audio controls className="w-full">
-                      <source src={message.content} type="audio/mpeg" />
-                      Your browser does not support the audio element.
-                    </audio>
-                  )}
+                    {/* Image Message */}
+                    {message.type === "image" && message.image && (
+                      <div
+                        className={`relative p-2 shadow-md rounded-xl ${
+                          isSender ? "bg-[#f2851c22]" : "bg-[#d8d8d822]"
+                        }`}
+                      >
+                        <img
+                          src={message.image}
+                          alt="Chat Image"
+                          className="rounded-xl max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg object-cover"
+                        />
+                        {message.content && message.content !== "'" && (
+                          <p className="text-sm mt-2 px-1 text-gray-800">
+                            {message.content}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         ))
       ) : (

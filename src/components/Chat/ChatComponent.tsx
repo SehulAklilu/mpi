@@ -25,7 +25,6 @@ export interface ChatItems {
   id: string;
   name: string;
   avatarUrl: string;
-  status: "online" | "offline";
   message: string;
   time: string;
   role: Role;
@@ -95,7 +94,6 @@ function ChatComponent({
           id: chat._id,
           name: `${otherUser.firstName} ${otherUser.lastName}`,
           avatarUrl: otherUser.avatar,
-          status: otherUser.lastOnline ? "online" : "offline",
           message: chat?.latestMessageContent || "",
           role: otherUser.role,
           time: chat?.latestMessageTimeStamp
@@ -103,7 +101,8 @@ function ChatComponent({
             : "",
 
           unreadCount: chat.unreadCount,
-          isRead: false,
+          isRead:
+            chat?.latestMessageContent && chat.unreadCount === 0 ? true : false,
           reciverId: otherUser._id,
           latestMessageId: chat?.latestMessage ?? "",
           isOnline: onlineUsers?.includes(otherUser._id) ?? false,
@@ -305,7 +304,6 @@ function ChatComponent({
                   id: selectedChat.id,
                   name: selectedChat.name,
                   avatarUrl: selectedChat.avatarUrl,
-                  status: selectedChat.status,
                   isOnline: selectedChat.isOnline,
                   reciverId: selectedChat.reciverId,
                 }}
