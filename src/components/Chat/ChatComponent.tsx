@@ -16,6 +16,9 @@ import { IoClose, IoMenu } from "react-icons/io5";
 import CustomTabs from "./CustomTabs";
 import { MenuIcon } from "lucide-react";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import { TypingUser, useSocket } from "@/context/SocketContext";
+import { Message } from "@/types/socketTypes";
+import { formatTelegramTimestamp } from "@/lib/utils";
 
 type Role = "player" | "coach" | "parent";
 export interface ChatItems {
@@ -30,20 +33,32 @@ export interface ChatItems {
   reciverId: string;
   isRead: boolean;
   latestMessageId?: string;
+  isOnline: boolean;
+  isTyping: boolean;
 }
 
 interface ChatComponentProps {
   setActiveTab: (tab: string) => void;
   openChatId: string | null;
+  onlineUsers: string[];
+  messages: Message[];
 }
 
-function ChatComponent({ setActiveTab, openChatId }: ChatComponentProps) {
+function ChatComponent({
+  setActiveTab,
+  openChatId,
+  onlineUsers,
+  messages,
+}: ChatComponentProps) {
   const [user_id, setUserId] = useState<string | undefined>(undefined);
   const [searchValue, setSearchValue] = useState("");
   const [isManuallySelected, setIsManuallySelected] = useState(false);
   const [selectedChat, setSelectedChat] = useState<ChatItems | undefined>(
     undefined
   );
+  const { socket, isConnected } = useSocket();
+  const [typingUsers, setTypingUsers] = useState<TypingUser[]>([]);
+  const userId = Cookies.get("user_id");
   const {
     data: chats_data,
     isLoading,
@@ -67,6 +82,7 @@ function ChatComponent({ setActiveTab, openChatId }: ChatComponentProps) {
 
   const extractChatItems = (chats: Chat[], user_id: string): ChatItems[] => {
     return chats
+      .filter((chat) => !chat.isGroupChat)
       .filter((chat) => chat.users.some((user) => user._id === user_id))
       .map((chat) => {
         const otherUser = chat.users.find((user) => user._id !== user_id);
@@ -83,15 +99,19 @@ function ChatComponent({ setActiveTab, openChatId }: ChatComponentProps) {
           message: chat?.latestMessageContent || "",
           role: otherUser.role,
           time: chat?.latestMessageTimeStamp
-            ? new Date(chat?.latestMessageTimeStamp).toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-              })
+            ? formatTelegramTimestamp(chat.latestMessageTimeStamp)
             : "",
+
           unreadCount: chat.unreadCount,
           isRead: false,
           reciverId: otherUser._id,
           latestMessageId: chat?.latestMessage ?? "",
+          isOnline: onlineUsers?.includes(otherUser._id) ?? false,
+          isTyping:
+            typingUsers?.some(
+              (user) =>
+                user.chatId === chat._id && user.userId === otherUser._id
+            ) ?? false,
         };
       });
   };
@@ -109,6 +129,40 @@ function ChatComponent({ setActiveTab, openChatId }: ChatComponentProps) {
       }
     }
   }, [chats, openChatId]);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleTyping = (data: TypingUser) => {
+      if (data.userId !== userId) {
+        setTypingUsers((prev) => [...prev, data]);
+      }
+    };
+
+    const handleStopTyping = (data: TypingUser) => {
+      setTypingUsers((prev) => prev.filter((id) => id.userId !== data.userId));
+    };
+
+    const handleMessageSeen = (data: any) => {
+      console.log("message seen", data);
+    };
+
+    // const handleMessageReceived = (data: any) => {
+    //   console.log("handle message REcived", data);
+    // };
+
+    socket.on("typing", handleTyping);
+    socket.on("stop-typing", handleStopTyping);
+    socket.on("message-seen", handleMessageSeen);
+    // socket.on("message received", handleMessageReceived);
+
+    return () => {
+      socket.off("typing", handleTyping);
+      socket.off("stop-typing", handleStopTyping);
+      socket.off("message-seen", handleMessageSeen);
+      // socket.off("message received", handleMessageReceived);
+    };
+  }, [socket, isConnected, userId]);
 
   const filteredChats =
     chats &&
@@ -252,6 +306,8 @@ function ChatComponent({ setActiveTab, openChatId }: ChatComponentProps) {
                   name: selectedChat.name,
                   avatarUrl: selectedChat.avatarUrl,
                   status: selectedChat.status,
+                  isOnline: selectedChat.isOnline,
+                  reciverId: selectedChat.reciverId,
                 }}
                 onClick={openSideBar}
               />

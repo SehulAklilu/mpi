@@ -214,3 +214,69 @@ export interface ChatListResponse {
   chats: Chat[];
   length: number;
 }
+
+// the updated Message response
+interface EmailAddress {
+  email: string;
+  verified: boolean;
+}
+
+interface PhoneNumber {
+  countryCode: string;
+  number: string;
+}
+
+interface Address {
+  streetAddress: string;
+  streetAddress2?: string | null;
+  city: string;
+  stateProvince: string;
+  country: string;
+  zipCode: string;
+}
+
+interface NewUser {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  emailAddress: EmailAddress;
+  gender: string;
+  phoneNumber: PhoneNumber;
+  address: Address;
+  avatar: string;
+  role: string;
+  __t: string;
+  id: string;
+}
+
+interface NewChat {
+  _id: string;
+  chatName: string;
+  users: NewUser[];
+  isGroupChat: boolean;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+  latestMessage: string;
+  id: string;
+}
+
+export interface NewMessage {
+  _id: string;
+  receivers: string[];
+  isGroup: boolean;
+  sender: NewUser;
+  content: string;
+  image: string | null;
+  isRead: boolean;
+  readBy: string[];
+  chat: NewChat;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+  id: string;
+}
+
+export interface MessagesResponse {
+  messages: NewMessage[];
+}

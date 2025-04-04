@@ -36,6 +36,7 @@ import CoursesPage from "./Pages/CoursesPage.tsx";
 import ChildrenPage from "./Pages/ChildrenPage.tsx";
 import PlayersDetail from "./Pages/PlayersDetail.tsx";
 import InitialAssessment from "./components/Assessment/InitialAssessment.tsx";
+import { SocketProvider } from "./context/SocketContext.tsx";
 
 const router = createBrowserRouter([
   {
@@ -55,11 +56,21 @@ const router = createBrowserRouter([
           },
           {
             path: "chat",
-            element: <Chat />,
+            element: (
+              <SocketProvider>
+                <Chat />
+              </SocketProvider>
+            ),
           },
           {
             path: "chat/:chatId",
-            element: <Chat />,
+
+            element: (
+              <SocketProvider>
+                {" "}
+                <Chat />{" "}
+              </SocketProvider>
+            ),
           },
           {
             path: "calendar",

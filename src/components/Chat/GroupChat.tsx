@@ -207,6 +207,8 @@ function GroupChat({ setActiveTab }: GroupChatProps) {
                   // avatarUrl: selectedChat.avatarUrl,
                   avatarUrl: "https://i.pravatar.cc/100?img=20",
                   status: "online",
+                  isOnline: false,
+                  reciverId: "3q34u234uo23i4o23i",
                 }}
                 onClick={openSideBar}
               />

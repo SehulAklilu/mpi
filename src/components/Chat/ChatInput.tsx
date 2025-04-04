@@ -1,116 +1,122 @@
-import { useState, useRef, useEffect } from "react"
-import { LuSendHorizontal } from "react-icons/lu"
-import { IoMdMic } from "react-icons/io"
-import { FaRegSmile } from "react-icons/fa"
-import { FaRegImage } from "react-icons/fa6"
-import { useMutation, useQueryClient } from "react-query"
-import { createMessage, MessagePayload } from "@/api/chat.api"
-import { LoaderCircle } from "lucide-react"
-import EmojiPicker, { EmojiClickData } from "emoji-picker-react"
-import { AiOutlinePaperClip } from "react-icons/ai"
-import { GrDocumentText } from "react-icons/gr"
-import { Dialog, DialogContent, DialogTitle } from "../ui/dialog"
-import { PiFilePdfBold, PiFileDocBold } from "react-icons/pi"
-import { TbFileTypeDocx } from "react-icons/tb"
-import { createGroupMessage, GroupMessagePayload } from "@/api/group-chat.api"
+import { useState, useRef, useEffect } from "react";
+import { LuSendHorizontal } from "react-icons/lu";
+import { IoMdMic } from "react-icons/io";
+import { FaRegSmile } from "react-icons/fa";
+import { FaRegImage } from "react-icons/fa6";
+import { useMutation, useQueryClient } from "react-query";
+import { createMessage, MessagePayload } from "@/api/chat.api";
+import { LoaderCircle } from "lucide-react";
+import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
+import { AiOutlinePaperClip } from "react-icons/ai";
+import { GrDocumentText } from "react-icons/gr";
+import { Dialog, DialogContent, DialogTitle } from "../ui/dialog";
+import { PiFilePdfBold, PiFileDocBold } from "react-icons/pi";
+import { TbFileTypeDocx } from "react-icons/tb";
+import { createGroupMessage, GroupMessagePayload } from "@/api/group-chat.api";
+import { useSocket } from "@/context/SocketContext";
+import Cookies from "js-cookie";
 
 // is mobile hook
 const useIsMobile = (): boolean => {
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768)
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768)
-    }
-    window.addEventListener("resize", handleResize)
+      setIsMobile(window.innerWidth <= 768);
+    };
+    window.addEventListener("resize", handleResize);
     return () => {
-      window.removeEventListener("resize", handleResize)
-    }
-  }, [])
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
-  return isMobile
-}
+  return isMobile;
+};
 
 const ChatInput = ({
   chatId,
   reciverId,
   chatType,
 }: {
-  chatId: string
-  reciverId: string
-  chatType: "GROUP" | "DIRECT"
+  chatId: string;
+  reciverId: string;
+  chatType: "GROUP" | "DIRECT";
 }) => {
-  const [message, setMessage] = useState("")
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false)
-  const emojiPickerRef = useRef<HTMLDivElement>(null)
-  const filePickerRef = useRef<HTMLInputElement>(null)
-  const [previewImage, setPreviewImage] = useState<string | null>(null)
-  const [fileName, setFileName] = useState<string | null>(null)
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [fileExtension, setFileExtension] = useState("")
-  const [fileSize, setFileSize] = useState("")
-  const docInputRef = useRef<HTMLInputElement | null>(null)
-  const imageInputRef = useRef<HTMLInputElement | null>(null)
+  const [message, setMessage] = useState("");
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const emojiPickerRef = useRef<HTMLDivElement>(null);
+  const filePickerRef = useRef<HTMLInputElement>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [fileName, setFileName] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [fileExtension, setFileExtension] = useState("");
+  const [fileSize, setFileSize] = useState("");
+  const docInputRef = useRef<HTMLInputElement | null>(null);
+  const imageInputRef = useRef<HTMLInputElement | null>(null);
+  const { socket, isConnected } = useSocket();
+  const [isTyping, setIsTyping] = useState(false);
+  const userId = Cookies.get("user_id");
 
-  const [showOptions, setShowOptions] = useState(false)
+  const [showOptions, setShowOptions] = useState(false);
 
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
-  const isMobile = useIsMobile()
+  const isMobile = useIsMobile();
 
-  const handleSend = () => {
-    if (message.trim() === "" && !previewImage) return
+  const handleSend = async () => {
+    if (message.trim() === "" && !previewImage) return;
 
-    const payload: MessagePayload = {
-      chatId: chatId,
-      receiver: reciverId,
-      content: message.trim(),
-      // image: previewImage, // Include the image in the payload
-    }
+    const formData = new FormData();
+    formData.append("chatId", chatId);
+    formData.append("receiver", reciverId);
+    formData.append("content", message.trim() ? message.trim() : "'");
 
-    const groupChatPayload: GroupMessagePayload = {
-      message: message.trim(),
+    if (previewImage?.startsWith("data:image")) {
+      const blob = await fetch(previewImage).then((res) => res.blob());
+      formData.append("image", blob, "image.jpg"); // Name it properly
     }
 
     if (chatType === "DIRECT") {
-      createMessageMutation.mutate(payload)
+      createMessageMutation.mutate(formData);
     } else {
       createGroupMessageMutation.mutate({
         groupId: chatId,
-        payload: groupChatPayload,
-      })
+        payload: { message: message.trim() },
+      });
     }
-    setMessage("")
-    setPreviewImage(null)
-  }
+
+    setMessage("");
+    setPreviewImage(null);
+  };
 
   const handleEmojiClick = (emojiData: EmojiClickData) => {
-    setMessage((prev) => prev + emojiData.emoji)
-  }
+    handleInputChange("emojiData");
+    setMessage((prev) => prev + emojiData.emoji);
+  };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
+    const file = event.target.files?.[0];
     if (file) {
-      setShowOptions(false)
-      const extension = file.name.split(".").pop() || ""
-      const fileSizeInKB = (file.size / 1024).toFixed(2)
-      setFileExtension(extension)
-      setFileSize(`${fileSizeInKB} KB`)
+      setShowOptions(false);
+      const extension = file.name.split(".").pop() || "";
+      const fileSizeInKB = (file.size / 1024).toFixed(2);
+      setFileExtension(extension);
+      setFileSize(`${fileSizeInKB} KB`);
       if (file.type.startsWith("image/")) {
-        const reader = new FileReader()
+        const reader = new FileReader();
         reader.onload = () => {
-          setPreviewImage(reader.result as string)
-          setIsModalOpen(true)
-          setFileName(null)
-        }
-        reader.readAsDataURL(file)
+          setPreviewImage(reader.result as string);
+          setIsModalOpen(true);
+          setFileName(null);
+        };
+        reader.readAsDataURL(file);
       } else if (file.type.startsWith("application/")) {
-        setFileName(file.name)
-        setIsModalOpen(true)
+        setFileName(file.name);
+        setIsModalOpen(true);
 
-        setPreviewImage(null)
+        setPreviewImage(null);
       }
     }
-  }
+  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -118,15 +124,15 @@ const ChatInput = ({
         emojiPickerRef.current &&
         !emojiPickerRef.current.contains(event.target as Node)
       ) {
-        setShowEmojiPicker(false)
+        setShowEmojiPicker(false);
       }
-    }
+    };
 
-    document.addEventListener("mousedown", handleClickOutside)
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside)
-    }
-  }, [])
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -134,15 +140,38 @@ const ChatInput = ({
         filePickerRef.current &&
         !filePickerRef.current.contains(event.target as Node)
       ) {
-        setShowOptions(false)
+        setShowOptions(false);
       }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const handleInputChange = (value: string) => {
+    setMessage(value);
+
+    if (!userId) {
+      console.log("no user id", userId);
+      return;
+    }
+    // Typing indicators logic
+    if (!isTyping) {
+      socket?.emit("typing", { chatId, userId });
+      setIsTyping(true);
     }
 
-    document.addEventListener("mousedown", handleClickOutside)
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside)
-    }
-  }, [])
+    // Debounce stop typing
+    const timer = setTimeout(() => {
+      socket?.emit("stop-typing", { chatId, userId });
+
+      setIsTyping(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  };
 
   const createMessageMutation = useMutation({
     mutationKey: ["createMessage"],
@@ -150,9 +179,9 @@ const ChatInput = ({
     onSuccess: () => {
       chatType === "DIRECT"
         ? queryClient.invalidateQueries(["message", chatId])
-        : queryClient.invalidateQueries(["groupmessage", chatId])
+        : queryClient.invalidateQueries(["groupmessage", chatId]);
     },
-  })
+  });
 
   const createGroupMessageMutation = useMutation({
     mutationKey: ["createGroupMessage"],
@@ -160,10 +189,10 @@ const ChatInput = ({
       groupId,
       payload,
     }: {
-      groupId: string
-      payload: GroupMessagePayload
+      groupId: string;
+      payload: GroupMessagePayload;
     }) => createGroupMessage(groupId, payload),
-  })
+  });
 
   return (
     <>
@@ -173,10 +202,12 @@ const ChatInput = ({
           <input
             type="text"
             value={message}
-            onChange={(e) => setMessage(e.target.value)}
+            onChange={(e) => {
+              handleInputChange(e.target.value);
+            }}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
-                handleSend()
+                handleSend();
               }
             }}
             placeholder="Type a message..."
@@ -189,7 +220,7 @@ const ChatInput = ({
               type="button"
               className="text-gray-500 hover:text-gray-700"
               onClick={() => {
-                setShowEmojiPicker((pre) => !pre)
+                setShowEmojiPicker((pre) => !pre);
               }}
             >
               <FaRegSmile size={18} className="text-black" />
@@ -278,18 +309,32 @@ const ChatInput = ({
       </div>
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="sm:max-w-[425px] sm:max-h-[400px]">
+        <DialogContent className="sm:min-w-[400px] sm:min-h-[400px]">
           <DialogTitle className="text-lg">
             {fileName ? "Send File" : "Send Photo"}
           </DialogTitle>
 
           {/* Image Preview */}
           {previewImage && (
-            <img
-              src={previewImage}
-              alt="Uploaded Preview"
-              className="w-full h-[200px] object-contain rounded-lg shadow-lg"
-            />
+            <div className="relative p-3 bg-white rounded-xl shadow-md border w-full max-w-sm sm:max-w-md md:max-w-lg">
+              <img
+                src={previewImage}
+                alt="Uploaded Preview"
+                className="w-full h-[200px] object-contain rounded-lg"
+              />
+              <input
+                type="text"
+                value={message}
+                onChange={(e) => handleInputChange(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleSend();
+                  }
+                }}
+                placeholder="Add a caption..."
+                className="mt-2 w-full  border-gray-300 rounded-xl px-3  py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+              />
+            </div>
           )}
 
           {fileName && (
@@ -321,7 +366,8 @@ const ChatInput = ({
             </button>
             <button
               onClick={() => {
-                setIsModalOpen(false)
+                setIsModalOpen(false);
+                handleSend();
               }}
               className="bg-[#F28822] hover:bg-[#ff9027] text-white px-4 py-2 rounded"
             >
@@ -331,7 +377,7 @@ const ChatInput = ({
         </DialogContent>
       </Dialog>
     </>
-  )
-}
+  );
+};
 
-export default ChatInput
+export default ChatInput;

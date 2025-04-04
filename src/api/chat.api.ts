@@ -4,12 +4,13 @@ import {
   FriendDataResponse,
   FriendRequestResponse,
   Message,
+  MessagesResponse,
 } from "@/types/chat.type";
 import axiosInstance from "./axios";
 
-export interface MessageResponse {
-  messages: Message[];
-}
+// export interface MessageResponse {
+//   messages: Message[];
+// }
 export interface MessagePayload {
   receiver: string;
   // "sender": "65f38cb2d8c8946b5367bf4f",
@@ -54,13 +55,22 @@ export const getChats = async (): Promise<ChatListResponse> => {
   return response.data;
 };
 
-export const getMessages = async (id: string): Promise<MessageResponse> => {
+export const getMessages = async (id: string): Promise<MessagesResponse> => {
   const response = await axiosInstance.get(`/api/v1/messages/${id}`);
   return response.data;
 };
 
-export const createMessage = async (payload: MessagePayload): Promise<any> => {
-  const response = await axiosInstance.post("/api/v1/messages", payload);
+// export const createMessage = async (payload: MessagePayload): Promise<any> => {
+//   const response = await axiosInstance.post("/api/v1/messages", payload);
+//   return response.data;
+// };
+
+export const createMessage = async (payload: FormData): Promise<any> => {
+  const response = await axiosInstance.post("/api/v1/messages", payload, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
   return response.data;
 };
 

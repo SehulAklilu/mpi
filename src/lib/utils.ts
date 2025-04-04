@@ -244,3 +244,31 @@ export function getTimeZoneAbbreviation(): string | undefined {
 export function getDateString(date: Date): string {
   return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
 }
+
+export function formatTelegramTimestamp(
+  timestamp: string | number | Date
+): string {
+  const date = new Date(timestamp);
+  const now = new Date();
+
+  const isToday = date.toDateString() === now.toDateString();
+  const yesterday = new Date();
+  yesterday.setDate(now.getDate() - 1);
+  const isYesterday = date.toDateString() === yesterday.toDateString();
+
+  const options: Intl.DateTimeFormatOptions = {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  };
+
+  if (isToday) {
+    return date.toLocaleTimeString([], options); // "12:30"
+  } else if (isYesterday) {
+    return "Yesterday"; // "Yesterday"
+  } else if (now.getTime() - date.getTime() < 7 * 24 * 60 * 60 * 1000) {
+    return date.toLocaleDateString([], { weekday: "short" }); // "Wed", "Tue", etc.
+  } else {
+    return date.toLocaleDateString([], { month: "short", day: "2-digit" }); // "May 12", "May 25"
+  }
+}

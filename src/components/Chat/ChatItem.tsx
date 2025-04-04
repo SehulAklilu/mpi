@@ -1,5 +1,6 @@
 import React from "react";
 import { MdDoneAll } from "react-icons/md";
+import TypingIndicator from "./Typing";
 
 export interface ChatItemProps {
   id?: string;
@@ -12,6 +13,8 @@ export interface ChatItemProps {
   onClick?: () => void;
   active?: boolean;
   isRead?: boolean;
+  isOnline: boolean;
+  isTyping: boolean;
 }
 
 const ChatItem: React.FC<ChatItemProps> = ({
@@ -24,6 +27,8 @@ const ChatItem: React.FC<ChatItemProps> = ({
   onClick,
   active,
   isRead,
+  isOnline,
+  isTyping,
 }) => {
   return (
     <div
@@ -41,7 +46,7 @@ const ChatItem: React.FC<ChatItemProps> = ({
         />
         <span
           className={`absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-2 border-white ${
-            status === "online" ? "bg-green-500" : "bg-gray-400"
+            isOnline ? "bg-green-500" : "bg-gray-400"
           }`}
         ></span>
       </div>
@@ -59,11 +64,15 @@ const ChatItem: React.FC<ChatItemProps> = ({
           </span>
         </div>
         <div className="flex justify-between items-center">
-          <p className="text-sm truncate max-w-[70%]">
-            {message && message.length > 15
-              ? message.slice(0, 15) + "..."
-              : message}
-          </p>
+          <div className="text-sm truncate max-w-[70%]">
+            {isTyping ? (
+              <TypingIndicator />
+            ) : (
+              message &&
+              (message.length > 15 ? message.slice(0, 15) + "..." : message)
+            )}
+          </div>
+
           {isRead ? (
             <MdDoneAll className="text-green-500 text-lg" />
           ) : (

@@ -3,13 +3,17 @@ import { FaArrowLeft } from "react-icons/fa6";
 import { HiDotsVertical } from "react-icons/hi";
 import { GoPerson, GoTrash } from "react-icons/go";
 import { useNavigate } from "react-router-dom";
-
+import TypingIndicator from "./Typing";
+import { TypingUser, useSocket } from "@/context/SocketContext";
+import Cookies from "js-cookie";
 interface ChatTopBarProps {
   user: {
     id: string;
     name: string;
     avatarUrl: string;
     status: "online" | "offline";
+    isOnline: boolean;
+    reciverId: string;
   };
   onClick: () => void;
 }
@@ -18,6 +22,30 @@ const ChatTopBar: React.FC<ChatTopBarProps> = ({ user, onClick }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
+  const { socket, isConnected } = useSocket();
+  const [typingUsers, setTypingUsers] = useState<TypingUser[]>([]);
+  const userId = Cookies.get("user_id");
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleTyping = (data: TypingUser) => {
+      if (data.userId !== userId) {
+        setTypingUsers((prev) => [...prev, data]);
+      }
+    };
+
+    const handleStopTyping = (data: TypingUser) => {
+      setTypingUsers((prev) => prev.filter((id) => id.userId !== data.userId));
+    };
+
+    socket.on("typing", handleTyping);
+    socket.on("stop-typing", handleStopTyping);
+
+    return () => {
+      socket.off("typing", handleTyping);
+      socket.off("stop-typing", handleStopTyping);
+    };
+  }, [socket, isConnected, userId]);
 
   useEffect(() => {
     const handleClickOutside = (event: any) => {
@@ -46,10 +74,23 @@ const ChatTopBar: React.FC<ChatTopBarProps> = ({ user, onClick }) => {
           <h4 className="text-xl text-white font-medium ">{user.name}</h4>
           <span
             className={`text-sm ${
-              user.status === "online" ? "text-white" : "text-gray-500"
+              user.isOnline ? "text-white" : "text-gray-500"
             }`}
           >
-            {user.status === "online" ? "Online" : "Offline"}
+            {typingUsers?.some(
+              (typingUser) =>
+                typingUser.chatId === user.id &&
+                typingUser.userId === user.reciverId
+            ) ? (
+              <TypingIndicator />
+            ) : user.isOnline ? (
+              <div className="flex gap-2 items-center">
+                <span className="w-2 h-2 rounded-full bg-green-700"></span>{" "}
+                <span>Online</span>
+              </div>
+            ) : (
+              "Offline"
+            )}
           </span>
         </div>
       </div>
