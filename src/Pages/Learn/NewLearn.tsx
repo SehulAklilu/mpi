@@ -36,7 +36,7 @@ function NewLearn() {
   const navigate = useNavigate();
   const [course, setCourse] = useState<Module | undefined>(undefined);
   const [showError, setShowError] = useState(false);
-  const { setModule } = useModule();
+  const { setModule, setModules } = useModule();
 
   const {
     data: allCourses,
@@ -45,9 +45,10 @@ function NewLearn() {
   } = useQuery<ModuleResponse, Error>({
     queryKey: ["courses"],
     queryFn: getUserCoursesNew,
+    onSuccess: (res) => {
+      setModules(res);
+    },
   });
-
-  console.log("333333", allCourses);
 
   const details = [
     { icon: <FaUserAlt />, label: "Introduction" },

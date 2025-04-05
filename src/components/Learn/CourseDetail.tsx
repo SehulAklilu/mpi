@@ -65,7 +65,7 @@ function CourseDetail() {
       <div className="px-2 bg-white">
         <div className="w-full h-52 rounded-md relative">
           <img
-            src="https://cdn.create.vista.com/api/media/small/206135578/stock-video-close-tennis-equipment-court-sport-recreation-concept-yellow-racket-tennis?videoStaticPreview=true&token="
+            src={selectedCourse?.thumbnail}
             alt="img"
             className="w-full h-full object-cover rounded-md"
           />
@@ -73,7 +73,7 @@ function CourseDetail() {
             <div
               onClick={() =>
                 navigate(
-                  `/course/${selectedCourse?._id}/video/${selectedCourse?.weeks[0]._id}`
+                  `/course/${selectedCourse?._id}/${selectedCourse?.weeks[0]._id}/video/${selectedCourse?.weeks[0]?.contentItems[0]?._id}`
                 )
               }
               className="flex items-center justify-center w-16 h-16 bg-black/50 rounded-full cursor-pointer"
@@ -88,7 +88,7 @@ function CourseDetail() {
               className="text-2xl font-semibold hover:text-[#000000] cursor-pointer"
               onClick={() =>
                 navigate(
-                  `/course/${selectedCourse?._id}/video/${selectedCourse?.weeks[0]._id}`
+                  `/course/${selectedCourse?._id}/${selectedCourse?.weeks[0]._id}/video/${selectedCourse?.weeks[0]?.contentItems[0]?._id}`
                 )
               }
             >
@@ -172,6 +172,7 @@ function CourseDetail() {
                         locked={
                           item.progress?.status === "locked" || item.order !== 1
                         }
+                        status={item.progress?.status}
                         onPlay={() => {
                           if (
                             item.progress?.status !== "locked" ||

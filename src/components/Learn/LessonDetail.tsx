@@ -13,7 +13,7 @@ import {
 } from "@/types/course.types";
 import { useEffect, useState } from "react";
 import ReactPlayer from "react-player";
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import VideoListItem from "./VideoListItem";
 import InstructorCard from "./InstructorCard";
@@ -28,9 +28,11 @@ import { useModule } from "@/context/courseContext";
 function LessonDetail() {
   const { course_id, week_id, video_id } = useParams();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const currentItemId = video_id;
   const {
     module: selectedCourse,
+    setModule,
     selectedItem: selectedVideo,
     setItem,
   } = useModule();
@@ -46,8 +48,9 @@ function LessonDetail() {
   >({
     mutationKey: ["updateVideoStatus", course_id, video_id],
     mutationFn: ({ params, payload }) => updateVideoStatus(params, payload),
-    onSuccess: () => {
+    onSuccess: async () => {
       handleNext();
+      queryClient.invalidateQueries("courses");
     },
     onError: (error: Error) => {
       console.error("Error updating video status:", error);
@@ -234,14 +237,16 @@ function LessonDetail() {
                           label={item.title}
                           duration={item.duration}
                           identifier={identifier}
+                          active={item._id === video_id}
+                          status={item.progress?.status}
                           locked={
                             item.progress?.status === "locked" ||
-                            item.order !== 1
+                            (item.type === "video" && item.order !== 1)
                           }
                           onPlay={() => {
                             if (
                               item.progress?.status !== "locked" ||
-                              item.order === 1
+                              (item.type === "video" && item.order !== 1)
                             ) {
                               if (item.type === "video") {
                                 navigate(

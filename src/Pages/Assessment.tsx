@@ -19,7 +19,7 @@ import {
   FaLink,
   FaQuestion,
 } from "react-icons/fa";
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import instructor from "../assets/user.jpeg";
 import { TbReload } from "react-icons/tb";
@@ -71,7 +71,7 @@ function Assessment() {
   const [attempt, setAttempt] = useState(1);
   const navigate = useNavigate();
   const currentItemId = assessment_id;
-
+  const queryClient = useQueryClient();
   const {
     selectedItem: selectedAssessment,
     module: selectedCourse,
@@ -91,6 +91,7 @@ function Assessment() {
       updateAssessmentStatus(params, payload),
     onSuccess: () => {
       goToNext();
+      queryClient.invalidateQueries("courses");
     },
   });
 
@@ -278,6 +279,8 @@ function Assessment() {
                         label={item.title}
                         duration={item.duration}
                         identifier={identifier}
+                        active={item._id === assessment_id}
+                        status={item.progress?.status}
                         locked={
                           item.progress?.status === "locked" || item.order !== 1
                         }
