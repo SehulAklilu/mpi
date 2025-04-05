@@ -185,7 +185,7 @@ function GroupChat({ setActiveTab }: GroupChatProps) {
 
   const onSubmit = (data: z.infer<typeof FormSchema>) => {
     const payload = {
-      groupName: data.group_name,
+      chatName: data.group_name,
       members: data.members.map((member) => ({
         user: member,
       })),
