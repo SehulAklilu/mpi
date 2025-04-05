@@ -1,4 +1,4 @@
-import { UserCourseProgress } from "@/types/course.types";
+import { ModuleResponse, UserCourseProgress } from "@/types/course.types";
 import axiosInstance from "./axios";
 
 export interface UserCoursesResponse {
@@ -18,9 +18,12 @@ export interface UpdateVideoPayload {
   status: string;
 }
 
-export interface Question {
-  questionId: string;
-  userAnswer: string | null;
+export interface UserAnswer {
+  assessmentId: string;
+  attemptNumber: number;
+  answers: string[];
+  passed: boolean;
+  score: number;
 }
 
 export interface UpdateAssessmentResponse {
@@ -34,6 +37,11 @@ export const getUserCourses = async (): Promise<UserCoursesResponse> => {
   return response.data;
 };
 
+export const getUserCoursesNew = async (): Promise<ModuleResponse> => {
+  const response = await axiosInstance.get("/api/v1/modules/me");
+  return response.data;
+};
+
 export const getCourse = async (course_id: string): Promise<CourseResponse> => {
   const response = await axiosInstance.get(
     `/api/v1/users/profile/courses/${course_id}`
@@ -41,12 +49,19 @@ export const getCourse = async (course_id: string): Promise<CourseResponse> => {
   return response.data;
 };
 
+// export const getCourseNew = async (
+//   course_id: string
+// ): Promise<CourseResponse> => {
+//   const response = await axiosInstance.get(`api/v1/modules/me/${course_id}`);
+//   return response.data;
+// };
+
 export const updateVideoStatus = async (
   params: UpdateVideoParams,
   payload: UpdateVideoPayload
 ): Promise<any> => {
   const response = await axiosInstance.patch(
-    `/api/v1/users/profile/courses/${params.course_id}/videos/${params.video_id}`,
+    `/api/v1/modules/complete-video/${params.video_id} `,
     payload
   );
   return response.data;
@@ -57,10 +72,10 @@ export const updateAssessmentStatus = async (
     course_id: string;
     assessment_id: string;
   },
-  payload: Question[]
+  payload: UserAnswer
 ): Promise<UpdateAssessmentResponse> => {
   const response = await axiosInstance.patch(
-    `/api/v1/users/profile/courses/${params.course_id}/assessments/${params.assessment_id}`,
+    `/api/v1/modules/assessment/${params.assessment_id} `,
     { questions: payload }
   );
 

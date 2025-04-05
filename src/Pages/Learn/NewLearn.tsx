@@ -2,7 +2,11 @@ import road from "../../assets/svg/road.svg";
 import user from "../../assets/user.jpeg";
 import { FaUserAlt, FaMicrophone, FaPlayCircle } from "react-icons/fa";
 import { CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { getUserCourses, UserCoursesResponse } from "@/api/course.api";
+import {
+  getUserCourses,
+  getUserCoursesNew,
+  UserCoursesResponse,
+} from "@/api/course.api";
 import { useQuery } from "react-query";
 import {
   Dialog,
@@ -18,26 +22,32 @@ import { IoBriefcase } from "react-icons/io5";
 import ReadMore from "@/components/common/ReadMore";
 import InstructorCard from "@/components/Learn/InstructorCard";
 import { CardContainer } from "@/components/Learn/RoadCard";
-import { UserCourseProgress } from "@/types/course.types";
+import {
+  Module,
+  ModuleResponse,
+  UserCourseProgress,
+} from "@/types/course.types";
 import NewLearnSkeleton from "./NewLearnSkeleton";
 import { ContentLayout } from "@/components/Sidebar/contenet-layout";
+import { useModule } from "@/context/courseContext";
 
 function NewLearn() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
-  const [course, setCourse] = useState<UserCourseProgress | undefined>(
-    undefined
-  );
+  const [course, setCourse] = useState<Module | undefined>(undefined);
   const [showError, setShowError] = useState(false);
+  const { setModule } = useModule();
 
   const {
     data: allCourses,
     isLoading,
     isError,
-  } = useQuery<UserCoursesResponse, Error>({
+  } = useQuery<ModuleResponse, Error>({
     queryKey: ["courses"],
-    queryFn: getUserCourses,
+    queryFn: getUserCoursesNew,
   });
+
+  console.log("333333", allCourses);
 
   const details = [
     { icon: <FaUserAlt />, label: "Introduction" },
@@ -67,7 +77,7 @@ function NewLearn() {
     <ContentLayout>
       <div className="flex flex-col items-center justify-center  pl-20 md:pl-0 lg:pr-24 py-4">
         <div className="w-72">
-          {allCourses?.courses.map((course, index) => (
+          {allCourses?.map((course, index) => (
             <div key={index} className="relative w-64">
               {/* card container */}
               <div
@@ -108,7 +118,7 @@ function NewLearn() {
                     ? "left-5 md:left-10"
                     : "right-[5rem] md:-right-24"
                 } top-1/2 cursor-pointer transform -translate-y-1/2 w-8 h-8 md:w-16 md:h-16 rounded-full text-xl md:text-2xl border-2 border-gray-500 bg-gray-400 flex items-center justify-center font-bold text-white shadow-lg shadow-gray-200/50 ${getStatusStyles(
-                  course.status
+                  course.progress.status
                 )}`}
               >
                 {index + 1}
@@ -123,7 +133,7 @@ function NewLearn() {
             <DialogDescription></DialogDescription>
             <CardHeader>
               <img
-                src="https://cdn.create.vista.com/api/media/small/206135578/stock-video-close-tennis-equipment-court-sport-recreation-concept-yellow-racket-tennis?videoStaticPreview=true&token="
+                src={course?.thumbnail}
                 alt="sdl"
                 className="w-full h-52 object-cover  rounded-md"
               />
@@ -136,9 +146,7 @@ function NewLearn() {
             /> */}
             </CardHeader>
             <CardContent className="text-[#1c1d47]">
-              <h1 className="text-2xl font-semibold">
-                {course?.courseId.title}
-              </h1>
+              <h1 className="text-2xl font-semibold">{course?.title}</h1>
 
               {/* instructor */}
               <InstructorCard
@@ -154,7 +162,7 @@ function NewLearn() {
               <div>
                 <h1 className="text-lg font-semibold">Introduction</h1>
                 <ReadMore
-                  text={course?.courseId.description ?? ""}
+                  text={course?.description ?? ""}
                   previewLength={100}
                 />
               </div>
@@ -175,23 +183,24 @@ function NewLearn() {
             </CardContent>
 
             <CardFooter className="flex flex-col items-center">
-              {course && course.status === "locked" && (
+              {course && course?.progress.status === "locked" && (
                 <small className="text-red-400">
                   Complete previous lessons to proceed.
                 </small>
               )}
               <Button
                 onClick={() => {
-                  if (course && course.status !== "locked") {
-                    navigate(`/course/${course?.courseId.id}`);
+                  if (course && course?.progress.status !== "locked") {
+                    setModule(course);
+                    navigate(`/course/${course?._id}`);
                   }
                 }}
                 className={`px-10 py-2 mt-4 shadow rounded-3xl bg-primary text-white !w-full ${
-                  course?.status === "locked"
+                  course?.progress.status === "locked"
                     ? "opacity-50 cursor-not-allowed"
                     : ""
                 }`}
-                disabled={course?.status === "locked"}
+                disabled={course?.progress.status === "locked"}
               >
                 Explore
               </Button>
