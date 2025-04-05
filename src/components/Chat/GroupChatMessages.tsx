@@ -1,4 +1,4 @@
-import { getGroups, getGroupsMessage, Group } from "@/api/group-chat.api";
+import { getGroupsMessage, Group } from "@/api/group-chat.api";
 import React, { useEffect, useRef } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import Cookies from "js-cookie";
@@ -68,10 +68,10 @@ function GroupChatMessages({ groupId }: { groupId: string }) {
 
   const groupedMessages = messages ? groupMessagesByDate(messages) : {};
 
-  const { data: groups } = useQuery({
-    queryKey: ["groups"],
-    queryFn: getGroups,
-  });
+  // const { data: groups } = useQuery({
+  //   queryKey: ["groups"],
+  //   queryFn: getGroups,
+  // });
 
   function formatTime(createdAt: string): string {
     const date = new Date(createdAt);

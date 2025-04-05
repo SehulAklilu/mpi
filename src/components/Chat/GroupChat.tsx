@@ -40,11 +40,7 @@ import { getChats, getFriends } from "@/api/chat.api";
 import Cookies from "js-cookie";
 import { extractUsers, formatTelegramTimestamp } from "@/lib/utils";
 import MultiSelectDropdown from "../MultipleDropDown";
-import {
-  createGroup,
-  CreateGroupPayload,
-  getGroups,
-} from "@/api/group-chat.api";
+import { createGroup, CreateGroupPayload } from "@/api/group-chat.api";
 import { getAxiosErrorMessage, getAxiosSuccessMessage } from "@/api/axios";
 import { toast } from "react-toastify";
 import GroupChatItem, { GroupChatItemProps } from "./GroupChatItem";
@@ -69,9 +65,6 @@ export interface GroupChatItems {
 
 const FormSchema = z.object({
   group_name: z.string(),
-  group_type: z.string(),
-  bio: z.string().optional(),
-  avatar: z.any().optional(),
   members: z.array(z.string()).min(1, "At least one member is required"),
 });
 interface GroupChatProps {
@@ -186,9 +179,7 @@ function GroupChat({ setActiveTab }: GroupChatProps) {
   const onSubmit = (data: z.infer<typeof FormSchema>) => {
     const payload = {
       chatName: data.group_name,
-      members: data.members.map((member) => ({
-        user: member,
-      })),
+      userIds: data.members,
     };
     mutate(payload);
   };
@@ -257,14 +248,17 @@ function GroupChat({ setActiveTab }: GroupChatProps) {
             <>
               <ChatTopBar
                 user={{
-                  id: "3q34u234uo23i4o23i",
+                  id: selectedChat.id,
                   name: selectedChat.name,
-                  // avatarUrl: selectedChat.avatarUrl,
-                  avatarUrl: "https://i.pravatar.cc/100?img=20",
+                  avatarUrl: selectedChat.avatarUrl
+                    ? selectedChat.avatarUrl
+                    : "",
                   isOnline: false,
                   reciverId: "3q34u234uo23i4o23i",
                 }}
                 onClick={openSideBar}
+                chatType="Group"
+                memebers={selectedChat?.users?.length + 1}
               />
               <ScrollArea className="h-[74.4vh] sm:h-[76vh] md:h-[68.8vh] !overflow-hidden ">
                 <GroupChatMessages groupId={selectedChat.id} />
@@ -284,53 +278,6 @@ function GroupChat({ setActiveTab }: GroupChatProps) {
         <DialogContent className="  overflow-x-hidden custom-scrollbar-two rounded-lg bg-white ">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
-              <div className="flex w-full justify-center flex-col items-center">
-                <FormField
-                  control={form.control}
-                  name="avatar"
-                  render={({ field: { value, onChange, ...fieldProps } }) => (
-                    <FormItem>
-                      <FormControl>
-                        <div className="relative flex items-center">
-                          <div className="w-20 h-20 rounded-full bg-[#F0F0FF]  border border-[#e3e3fd] flex items-center justify-center overflow-hidden">
-                            {previewImage ? (
-                              <img
-                                src={previewImage}
-                                alt="Uploaded preview"
-                                className="w-full h-full object-cover"
-                              />
-                            ) : (
-                              <LuImagePlus />
-                            )}
-                          </div>
-
-                          <input
-                            {...fieldProps}
-                            type="file"
-                            accept="image/*"
-                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                            onChange={(event) => {
-                              const file =
-                                event.target.files && event.target.files[0];
-                              if (file) {
-                                onChange(file);
-                                const reader = new FileReader();
-                                reader.onload = () =>
-                                  setPreviewImage(reader.result as string);
-                                reader.readAsDataURL(file);
-                              }
-                            }}
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage className="!text-center" />
-                    </FormItem>
-                  )}
-                />
-                <p className="text-center w-[80%]">
-                  Drag/Upload Group Picture or Leave to use Your Profile Picture
-                </p>
-              </div>
               <FormField
                 control={form.control}
                 name="group_name"
@@ -350,39 +297,6 @@ function GroupChat({ setActiveTab }: GroupChatProps) {
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="group_type"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Group Type</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <SelectTrigger
-                        className={
-                          "!rounded-lg  shadow !h-10 !py-4 !px-4 !bg-white"
-                        }
-                      >
-                        <SelectValue placeholder="Group Type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="pirvate">Private</SelectItem>
-                        <SelectItem value="public">Public</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div>
-                <label>Bio</label>
-                <textarea
-                  id="bio"
-                  placeholder="Coach Damian’s Resource Repository..."
-                  rows={2}
-                  className="w-full border !rounded-lg p-2"
-                  {...form.register("bio")}
-                />
-              </div>
               <div>
                 <label
                   className={

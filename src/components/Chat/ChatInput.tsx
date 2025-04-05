@@ -68,7 +68,7 @@ const ChatInput = ({
     const formData = new FormData();
     formData.append("chatId", chatId);
     formData.append("receiver", reciverId);
-    formData.append("content", message.trim() ? message.trim() : "'");
+    formData.append("content", message.trim() ? message.trim() : "image");
 
     if (previewImage?.startsWith("data:image")) {
       const blob = await fetch(previewImage).then((res) => res.blob());

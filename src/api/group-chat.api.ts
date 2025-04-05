@@ -1,10 +1,9 @@
+import { Chat } from "@/types/chat.type";
 import axiosInstance from "./axios";
 
 export interface CreateGroupPayload {
   chatName: string;
-  members: {
-    user: string;
-  }[];
+  userIds: string[];
 }
 
 export type User = {
@@ -57,12 +56,12 @@ export type GroupMessage = {
 export const createGroup = async (
   payload: CreateGroupPayload
 ): Promise<any> => {
-  const response = await axiosInstance.post("/api/v1/groups", payload);
+  const response = await axiosInstance.post("/api/v1/chats/group", payload);
   return response.data;
 };
 
-export const getGroups = async (): Promise<Group[]> => {
-  const response = await axiosInstance.get("/api/v1/chats/groups");
+export const getGroupsById = async (id: string): Promise<Chat> => {
+  const response = await axiosInstance.get(`/api/v1/chats/group/${id}`);
   return response.data;
 };
 

@@ -160,7 +160,7 @@ const ChatMessages = ({ chatId }: { chatId: string }) => {
                           alt="Chat Image"
                           className="rounded-xl max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg object-cover"
                         />
-                        {message.content && message.content !== "'" && (
+                        {message.content && message.content !== "image" && (
                           <p className="text-sm mt-2 px-1 text-gray-800">
                             {message.content}
                           </p>
