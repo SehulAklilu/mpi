@@ -25,6 +25,7 @@ interface ClientToServerEvents {
   "new-message": (data: { senderId: string; message: string }) => void;
   "message-seen": (data: { chatId: string; userId: string }) => void;
   "join chat": (chatId: string) => void;
+  "leave chat": (chatId: string) => void;
 }
 
 interface ISocketContext {

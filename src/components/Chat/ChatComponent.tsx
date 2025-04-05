@@ -202,6 +202,9 @@ function ChatComponent({
 
   const openSideBar = () => {
     setSidebarOpen((pre) => !pre);
+    if (socket && selectedChat) {
+      socket.emit("leave chat", selectedChat.id);
+    }
   };
 
   if (isError) {
