@@ -1,7 +1,7 @@
 import axiosInstance from "./axios";
 
 export interface CreateGroupPayload {
-  groupName: string;
+  chatName: string;
   members: {
     user: string;
   }[];
@@ -24,7 +24,7 @@ export type Member = {
 
 export type Group = {
   _id: string;
-  groupName: string;
+  chatName: string;
   members: Member[];
   createdBy: User;
   avatar: string;
@@ -62,7 +62,7 @@ export const createGroup = async (
 };
 
 export const getGroups = async (): Promise<Group[]> => {
-  const response = await axiosInstance.get("/api/v1/groups");
+  const response = await axiosInstance.get("/api/v1/chats/groups");
   return response.data;
 };
 
