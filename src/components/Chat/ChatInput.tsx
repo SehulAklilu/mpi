@@ -78,10 +78,12 @@ const ChatInput = ({
     if (chatType === "DIRECT") {
       createMessageMutation.mutate(formData);
     } else {
-      createGroupMessageMutation.mutate({
-        groupId: chatId,
-        payload: { message: message.trim() },
-      });
+      createMessageMutation.mutate(formData);
+
+      // createGroupMessageMutation.mutate({
+      //   groupId: chatId,
+      //   payload: { message: message.trim() },
+      // });
     }
 
     setMessage("");
