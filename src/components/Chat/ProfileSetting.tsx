@@ -187,31 +187,84 @@ function ProfileSetting() {
     },
   });
 
+  // const updateProfileMu = useMutation(
+  //   async (payload: FormData | Record<string, any>) => {
+  //     const isFormData = payload instanceof FormData;
+
+  //     return axiosInstance.patch(`/api/v1/users/profile`, payload, {
+  //       headers: {
+  //         "Content-Type": isFormData
+  //           ? "multipart/form-data"
+  //           : "application/json",
+  //       },
+  //     });
+  //   },
+  //   {
+  //     onSuccess: (response) => {
+  //       const message = getAxiosSuccessMessage(response);
+  //       toast.success(message);
+  //     },
+  //     onError: (err: any) => {
+  //       const message = getAxiosErrorMessage(err);
+  //       toast.error(message);
+  //     },
+  //   }
+  // );
+
+  //  const onSubmit = (data: any) => {
+  //   const payload = {
+  //     ...data,
+  //     dateOfBirth: data.dateOfBirth?.toISOString(),
+  //     phoneNumberCountryCode:
+  //       data.phoneNumberCountryCode ??
+  //       profileData?.phoneNumber.countryCode ??
+  //       "",
+  //     country: countryValue,
+  //     stateProvince: stateValue,
+  //     city: cityValue,
+  //     streetAddress2: profileData?.address.streetAddress2
+  //       ? profileData?.address.streetAddress2
+  //       : data.streetAddress,
+  //     what: "what",
+  //   };
+
+  //   if (avatarFile) {
+  //     const formData = new FormData();
+  //     Object.entries(payload).forEach(([key, value]) => {
+  //       if (value !== undefined && key !== "avatar") {
+  //         formData.append(key, value as string);
+  //       }
+  //     });
+
+  //     if (avatarFile instanceof File) {
+  //       formData.append("avatar", avatarFile);
+  //     }
+
+  //     updateProfileMu.mutate(formData);
+  //   } else {
+  //     updateProfileMu.mutate(payload);
+  //   }
+  // };
+
   const onSubmit = (data: any) => {
     const payload = {
       firstName: data.firstName,
       lastName: data.lastName,
       dateOfBirth: data.dateOfBirth?.toISOString(),
       gender: data.gender,
-      emailAddress: {
-        email: data.email,
-        verified: profileData?.emailAddress.verified ?? false,
-      },
-      phoneNumber: {
-        countryCode:
-          data.phoneNumberCountryCode ??
-          profileData?.phoneNumber.countryCode ??
-          "",
-        number: data.phoneNumber,
-      },
-      address: {
-        country: countryValue,
-        stateProvince: stateValue,
-        city: cityValue,
-        zipCode: data.zipCode,
-        streetAddress: data.streetAddress,
-        streetAddress2: profileData?.address.streetAddress2 ?? "",
-      },
+      phoneNumber: data.phoneNumber,
+      phoneNumberCountryCode:
+        data.phoneNumberCountryCode ??
+        profileData?.phoneNumber.countryCode ??
+        "",
+      country: countryValue,
+      stateProvince: stateValue,
+      city: cityValue,
+      zipCode: data.zipCode,
+      streetAddress: data.streetAddress,
+      streetAddress2: profileData?.address.streetAddress2
+        ? profileData?.address.streetAddress2
+        : data.streetAddress,
       avatar: data.avatar || undefined,
     };
 

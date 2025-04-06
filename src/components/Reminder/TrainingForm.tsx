@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/select";
 import { useState } from "react";
 import { Coach } from "@/types/user.types";
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import axiosInstance from "@/api/axios";
 import { toast } from "react-toastify";
 import { LoaderCircle } from "lucide-react";
@@ -38,8 +38,15 @@ interface AvailabilityNew {
   label: string;
   available: boolean;
 }
-
-function TrainingForm({ date }: { date: string }) {
+function TrainingForm({
+  date,
+  setDate,
+  setDateFilter,
+}: {
+  date: string;
+  setDate: Function;
+  setDateFilter: Function;
+}) {
   const [coachs, setCoachs] = useState<Coach[]>([]);
   const [availabilitys, setAvailabilitys] = useState<AvailabilityNew[]>([]);
   const [selectedCoach, setSelectedCoach] = useState<string | undefined>(
@@ -53,6 +60,7 @@ function TrainingForm({ date }: { date: string }) {
   const [selectedPlayer, setSelectedPlayer] = useState<string | undefined>(
     undefined
   );
+  const queryClient = useQueryClient();
 
   const FormSchema = z.object({
     coach: z.string().min(3),
@@ -155,8 +163,11 @@ function TrainingForm({ date }: { date: string }) {
     },
     {
       onSuccess: (response) => {
-        console.log("Success:", response.data);
         toast.success("Class scheduled successfully!");
+        const newReminder = response?.data?.[response.data.length - 1];
+        const newRemindeDater = new Date(newReminder?.date);
+        newRemindeDater && setDateFilter(newRemindeDater);
+        queryClient.invalidateQueries("classes-schedule");
       },
       onError: (err: any) => {
         console.error("Error:", err);

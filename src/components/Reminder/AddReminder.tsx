@@ -171,7 +171,11 @@ const AddReminder = forwardRef<
           initialClassData={initialClassData}
         />
       ) : selectedType === "training" ? (
-        <TrainingForm date={date} />
+        <TrainingForm
+          date={date}
+          setDate={setDate}
+          setDateFilter={setDateFilter}
+        />
       ) : (
         <form
           onSubmit={(e) => {
