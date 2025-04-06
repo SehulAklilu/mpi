@@ -14,6 +14,7 @@ import React, { useState } from "react";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { useMutation, useQueryClient } from "react-query";
 import { toast } from "react-toastify";
+import MessageButton from "../Learn/MessageButton";
 
 export interface ProfileDataInterface {
   user2Id?: string;
@@ -177,17 +178,10 @@ const ProfileCardNew: React.FC<ProfileDataInterface> = ({
               ))}
           </button>
           {status === "friends" && (
-            <button
-              onClick={() => handleMessageClick()}
-              disabled={status !== "friends"}
-              className={`w-full py-2 px-3 text-xs md:text-sm border rounded-md  ${
-                status !== "friends"
-                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                  : "bg-white hover:bg-gray-300"
-              }`}
-            >
-              Message
-            </button>
+            <MessageButton
+              user_id={user_id}
+              style="w-full py-2 px-3 text-xs md:text-sm border rounded-md  bg-white hover:bg-gray-300"
+            />
           )}
         </div>
         {status === "friends" && (

@@ -22,6 +22,7 @@ import { createChat } from "@/api/chat.api";
 import { getAxiosErrorMessage, getAxiosSuccessMessage } from "@/api/axios";
 import { toast } from "react-toastify";
 import { LoaderCircle } from "lucide-react";
+import MessageButton from "@/components/Learn/MessageButton";
 
 function PlayersDetail() {
   const [activeTab, setActiveTab] = useState("Profile");
@@ -45,7 +46,7 @@ function PlayersDetail() {
     mutationFn: createChat,
     onSuccess: (response) => {
       const message = getAxiosSuccessMessage(response);
-      navigate(`/chat/${response?.id}`);
+      navigate(`/chat/${response?._id}`);
       // setOpenChatId(response?.id);
     },
     onError: (error) => {
@@ -90,21 +91,10 @@ function PlayersDetail() {
             <button className="border border-red-500 bg-transparent text-sm sm:text-base px-4 py-2 text-red-500 rounded-lg">
               Remove Player
             </button>
-            <button
-              className="bg-primary flex gap-2 text-white px-4 py-2 text-sm sm:text-base rounded-lg"
-              onClick={() => onMessage(data.player._id)}
-            >
-              Message
-              {onMeesageMut.isLoading && (
-                <LoaderCircle
-                  style={{
-                    animation: "spin 1s linear infinite",
-                    fontSize: "2rem",
-                    color: "#FFFFFF",
-                  }}
-                />
-              )}
-            </button>
+            <MessageButton
+              user_id={data.player._id}
+              style="bg-primary flex gap-2 text-white px-4 py-2 text-sm sm:text-base rounded-lg"
+            />
           </div>
         </div>
         <div className="flex items-center justify-center mt-4">

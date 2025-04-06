@@ -1,5 +1,6 @@
 import {
   Announcement,
+  Chat,
   ChatListResponse,
   FriendDataResponse,
   FriendRequestResponse,
@@ -143,7 +144,7 @@ export const unblockFriend = async (id: string): Promise<any> => {
   return response.data;
 };
 
-export const createChat = async (payload: CreateChatPayload): Promise<any> => {
+export const createChat = async (payload: CreateChatPayload): Promise<Chat> => {
   const response = await axiosInstance.post("/api/v1/chats", payload);
   return response.data;
 };

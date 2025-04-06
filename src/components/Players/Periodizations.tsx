@@ -11,21 +11,12 @@ import {
   Periodization,
   Preparation,
 } from "@/types/children.type";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import PeriodizationCard from "./PeriodizationCard";
 import { Progress } from "@/components/ui/progress";
 import { IoMdCheckboxOutline } from "react-icons/io";
 import { IoMdHourglass } from "react-icons/io";
-import { Dialog, DialogContent, DialogTitle, DialogFooter } from "../ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { IoTimeSharp } from "react-icons/io5";
 
 import {
   Card,
@@ -34,17 +25,7 @@ import {
   CardTitle,
   CardFooter,
 } from "@/components/ui/card";
-import { Input } from "../ui/input";
-
 import { z } from "zod";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FaCirclePlus } from "react-icons/fa6";
@@ -55,7 +36,6 @@ import { addDays } from "date-fns";
 import { getAxiosErrorMessage, getAxiosSuccessMessage } from "@/api/axios";
 import { toast } from "react-toastify";
 import { MdEdit, MdDelete } from "react-icons/md";
-import { SelectLabel } from "@radix-ui/react-select";
 import { useRole } from "@/RoleContext";
 
 export interface NewPreparation extends Preparation {
@@ -80,6 +60,13 @@ function Periodizations({
   const { data } = useQuery({
     queryKey: ["getPlayerPeriodizations"],
     queryFn: () => getPlayerPeriodizations(playerId),
+    onSuccess: (res) => {
+      const newPeriodization =
+        res?.periodizations?.[res?.periodizations?.length - 1];
+      setSelectedPeriodization(newPeriodization);
+      setSelectedPeriodizationId(newPeriodization?._id);
+      // onSelect(newPeriodization?._id);
+    },
   });
   const FormSchema = z.object({
     id: z.string().optional(),
@@ -193,13 +180,6 @@ function Periodizations({
     createSOT.mutate({ playerId, payload: payload });
   };
 
-  useEffect(() => {
-    if (data) {
-      setSelectedPeriodization(data.periodizations[0]);
-      setSelectedPeriodizationId(data.periodizations[0]?._id);
-    }
-  }, [data]);
-
   const [date, setDate] = React.useState<DateRange | undefined>({
     from: new Date(),
     to: addDays(new Date(), 3),
@@ -231,8 +211,14 @@ function Periodizations({
             className="py-2 px-4 rounded-full my-2 outline-none border border-primary font-medium text-xs sm:text-base w-full"
           >
             <option value="">Select a periodization</option>
-            {data.periodizations.map((item) => (
-              <option key={item._id} value={item._id} className="font-medium">
+            {data.periodizations?.reverse().map((item) => (
+              <option
+                key={item._id}
+                value={item._id}
+                className={`font-medium ${
+                  item._id === selectedPeriodizationId ? "bg-green-300" : ""
+                }`}
+              >
                 {formatDateTime(item.startingDate)} -{" "}
                 {formatDateTime(item.endingDate)}
               </option>

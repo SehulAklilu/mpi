@@ -81,7 +81,7 @@ const PeopleComponent: React.FC<PeopleComponentProps> = ({
     mutationFn: createChat,
     onSuccess: (response) => {
       const message = getAxiosSuccessMessage(response);
-      setOpenChatId(response?.id);
+      setOpenChatId(response?._id);
       setActiveTab("messages");
     },
     onError: (error) => {
