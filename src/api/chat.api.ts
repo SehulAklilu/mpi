@@ -74,6 +74,22 @@ export const createMessage = async (payload: FormData): Promise<any> => {
   return response.data;
 };
 
+export const updateMessage = async (
+  id: string,
+  payload: FormData
+): Promise<any> => {
+  const response = await axiosInstance.patch(
+    `/api/v1/messages/${id}`,
+    payload,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+  return response.data;
+};
+
 export const getFriends = async (): Promise<FriendDataResponse> => {
   const response = await axiosInstance.get("/api/v1/friendship");
   return response.data;

@@ -7,7 +7,7 @@ import ChatTopBar from "./ChatTopBar";
 import ChatMessages from "./ChatMessages";
 import ChatInput from "./ChatInput";
 import GroupChatMessages from "./GroupChatMessages";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LoaderCircle, MenuIcon } from "lucide-react";
 import CustomTabs from "./CustomTabs";
 import ChatItemSkeleton from "./ChatItemSkeleton";
@@ -47,6 +47,8 @@ import GroupChatItem, { GroupChatItemProps } from "./GroupChatItem";
 import { groupCollapsed } from "console";
 import { Chat, User } from "@/types/chat.type";
 import NewGroupChatItem from "./NewGroupChatItem";
+import { Message } from "@/types/socketTypes";
+import { TypingUser, useSocket } from "@/context/SocketContext";
 
 export interface GroupChatItems {
   id: string;
@@ -61,6 +63,8 @@ export interface GroupChatItems {
   // isOnline: boolean;
   // isTyping: boolean;
   users: User[];
+  onlineUsers?: string[];
+  adminId?: string;
 }
 
 const FormSchema = z.object({
@@ -69,12 +73,14 @@ const FormSchema = z.object({
 });
 interface GroupChatProps {
   setActiveTab: (tab: string) => void;
+  onlineUsers: string[];
+  messages: Message[];
 }
 
-function GroupChat({ setActiveTab }: GroupChatProps) {
+function GroupChat({ setActiveTab, onlineUsers }: GroupChatProps) {
   const user_id = Cookies.get("user_id");
   const queryClient = useQueryClient();
-
+  const { socket, isConnected } = useSocket();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -85,7 +91,8 @@ function GroupChat({ setActiveTab }: GroupChatProps) {
     undefined
   );
   const [open, setOpen] = useState(false);
-
+  const [typingUsers, setTypingUsers] = useState<TypingUser[]>([]);
+  const userId = Cookies.get("user_id");
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [searchValue, setSearchValue] = useState("");
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -93,8 +100,14 @@ function GroupChat({ setActiveTab }: GroupChatProps) {
   };
   const openSideBar = () => {
     setSidebarOpen((pre) => !pre);
+    if (socket && selectedChat) {
+      socket.emit("leave chat", selectedChat.id);
+    }
   };
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [editMessage, setEditMessage] = useState<{
+    id: string | null;
+    content: string;
+  }>({ id: null, content: "" });
 
   const { data: friends_data } = useQuery({
     queryKey: ["friends"],
@@ -113,6 +126,40 @@ function GroupChat({ setActiveTab }: GroupChatProps) {
     // },
   });
 
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleTyping = (data: TypingUser) => {
+      if (data.userId !== userId) {
+        setTypingUsers((prev) => [...prev, data]);
+      }
+    };
+
+    const handleStopTyping = (data: TypingUser) => {
+      setTypingUsers((prev) => prev.filter((id) => id.userId !== data.userId));
+    };
+
+    const handleMessageSeen = (data: any) => {
+      console.log("message seen", data);
+    };
+
+    // const handleMessageReceived = (data: any) => {
+    //   console.log("handle message REcived", data);
+    // };
+
+    socket.on("typing", handleTyping);
+    socket.on("stop-typing", handleStopTyping);
+    socket.on("message-seen", handleMessageSeen);
+    // socket.on("message received", handleMessageReceived);
+
+    return () => {
+      socket.off("typing", handleTyping);
+      socket.off("stop-typing", handleStopTyping);
+      socket.off("message-seen", handleMessageSeen);
+      // socket.off("message received", handleMessageReceived);
+    };
+  }, [socket, isConnected, userId]);
+
   const extractChatItems = (
     chats: Chat[],
     user_id: string
@@ -122,6 +169,7 @@ function GroupChat({ setActiveTab }: GroupChatProps) {
       .filter((chat) => chat.users.some((user) => user._id === user_id))
       .map((chat) => {
         const otherUsers = chat.users.filter((user) => user._id !== user_id);
+        const otherUserIds = otherUsers?.map((user) => user._id);
 
         if (!otherUsers) {
           throw new Error("No other user found in chat");
@@ -142,12 +190,12 @@ function GroupChat({ setActiveTab }: GroupChatProps) {
           latestMessageId: chat?.latestMessage ?? "",
           users: otherUsers,
           active: false,
-          //   isOnline: onlineUsers?.includes(otherUser._id) ?? false,
-          //   isTyping:
-          //     typingUsers?.some(
-          //       (user) =>
-          //         user.chatId === chat._id && user.userId === otherUser._id
-          //     ) ?? false,
+          onlineUsers: onlineUsers?.filter((id) => otherUserIds?.includes(id)),
+          typingUsers: typingUsers?.filter(
+            (user) =>
+              user.chatId === chat._id && otherUserIds?.includes(user.userId)
+          ),
+          adminId: chat?.groupAdmin?._id,
         };
       });
   };
@@ -161,7 +209,7 @@ function GroupChat({ setActiveTab }: GroupChatProps) {
     mutationKey: ["createGroup"],
     mutationFn: (payload: CreateGroupPayload) => createGroup(payload),
     onSuccess: (response) => {
-      queryClient.invalidateQueries(["groups"]);
+      queryClient.invalidateQueries("chats");
       const message = getAxiosSuccessMessage(response);
       toast.success(message);
       form.reset();
@@ -226,6 +274,7 @@ function GroupChat({ setActiveTab }: GroupChatProps) {
               {groupChats?.length > 0 &&
                 groupChats.map((groupChat) => (
                   <NewGroupChatItem
+                    key={groupChat.id}
                     {...groupChat}
                     active={selectedChat && selectedChat.id === groupChat.id}
                     onClick={() => {
@@ -259,14 +308,23 @@ function GroupChat({ setActiveTab }: GroupChatProps) {
                 onClick={openSideBar}
                 chatType="Group"
                 memebers={selectedChat?.users?.length + 1}
+                onlineUsers={selectedChat?.onlineUsers}
+                users={selectedChat.users}
+                adminId={selectedChat?.adminId}
               />
               <ScrollArea className="h-[74.4vh] sm:h-[76vh] md:h-[68.8vh] !overflow-hidden ">
-                <GroupChatMessages groupId={selectedChat.id} />
+                <GroupChatMessages
+                  chatId={selectedChat.id}
+                  groupId={selectedChat.id}
+                  setEditMessage={setEditMessage}
+                />
               </ScrollArea>
               <ChatInput
                 chatId={selectedChat.id}
                 reciverId={"2"}
                 chatType="GROUP"
+                editMessage={editMessage}
+                setEditMessage={setEditMessage}
               />
             </>
           ) : (

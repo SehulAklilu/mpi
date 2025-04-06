@@ -40,8 +40,9 @@ type Props = {
   groupId: string;
   open: boolean;
   setOpen: (value: boolean) => void;
+  onlineUsers: string[] | undefined;
 };
-function EditGroup({ groupId, open, setOpen }: Props) {
+function EditGroup({ groupId, open, setOpen, onlineUsers }: Props) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -86,6 +87,16 @@ function EditGroup({ groupId, open, setOpen }: Props) {
       axiosInstance.delete(`/api/v1/chats/group/${groupId}/remove`, {
         data: { userIds },
       }),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("group-chat");
+        setOpen(false);
+      },
+    }
+  );
+
+  const leveGroup = useMutation(
+    () => axiosInstance.delete(`/api/v1/chats/group/${groupId}/leave`),
     {
       onSuccess: () => {
         queryClient.invalidateQueries("group-chat");
@@ -274,7 +285,7 @@ function EditGroup({ groupId, open, setOpen }: Props) {
                       {user.firstName} {user.lastName}
                     </span>
                   </div>
-                  {user._id === user_id ? (
+                  {groupChat?.groupAdmin?._id === user._id ? (
                     <div>
                       <button
                         type="button"
@@ -284,13 +295,29 @@ function EditGroup({ groupId, open, setOpen }: Props) {
                       </button>
                     </div>
                   ) : (
-                    <button
-                      type="button"
-                      className="py-1 px-3 bg-red-500 text-white rounded-md text-sm hover:bg-red-600 transition"
-                      onClick={() => removeMember.mutate([user._id])}
-                    >
-                      Remove
-                    </button>
+                    <div className="flex gap-2 items-center">
+                      {onlineUsers && onlineUsers?.includes(user._id) && (
+                        <span className="w-3 h-3 bg-green-500 rounded-full"></span>
+                      )}
+                      {groupChat?.groupAdmin?._id === user_id && (
+                        <button
+                          type="button"
+                          className="py-1 px-3 bg-red-500 text-white rounded-md text-sm hover:bg-red-600 transition"
+                          onClick={() => removeMember.mutate([user._id])}
+                        >
+                          Remove
+                        </button>
+                      )}
+                      {user._id === user_id && (
+                        <button
+                          type="button"
+                          className="py-1 px-3 bg-red-500 text-white rounded-md text-sm hover:bg-red-600 transition"
+                          onClick={() => leveGroup.mutate()}
+                        >
+                          Leave
+                        </button>
+                      )}
+                    </div>
                   )}
                 </div>
               ))}

@@ -58,6 +58,10 @@ function ChatComponent({
   const { socket, isConnected } = useSocket();
   const [typingUsers, setTypingUsers] = useState<TypingUser[]>([]);
   const userId = Cookies.get("user_id");
+  const [editMessage, setEditMessage] = useState<{
+    id: string | null;
+    content: string;
+  }>({ id: null, content: "" });
   const {
     data: chats_data,
     isLoading,
@@ -313,12 +317,17 @@ function ChatComponent({
                 onClick={openSideBar}
               />
               <ScrollArea className="h-[74.4vh] sm:h-[76vh] md:h-[68.8vh] !overflow-hidden ">
-                <ChatMessages chatId={selectedChat.id} />
+                <ChatMessages
+                  chatId={selectedChat.id}
+                  setEditMessage={setEditMessage}
+                />
               </ScrollArea>
               <ChatInput
                 chatId={selectedChat.id}
                 reciverId={selectedChat.reciverId}
                 chatType="DIRECT"
+                editMessage={editMessage}
+                setEditMessage={setEditMessage}
               />
             </>
           ) : (

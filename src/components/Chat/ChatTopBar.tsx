@@ -7,8 +7,10 @@ import TypingIndicator from "./Typing";
 import { TypingUser, useSocket } from "@/context/SocketContext";
 import Cookies from "js-cookie";
 import EditGroup from "./EditGroup";
-import { useMutation } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import axiosInstance from "@/api/axios";
+import { User } from "@/types/chat.type";
+
 interface ChatTopBarProps {
   user: {
     id: string;
@@ -20,6 +22,9 @@ interface ChatTopBarProps {
   onClick: () => void;
   chatType?: "Group" | "Direct";
   memebers?: number;
+  onlineUsers?: string[];
+  users?: User[];
+  adminId?: string;
 }
 
 const ChatTopBar: React.FC<ChatTopBarProps> = ({
@@ -27,6 +32,9 @@ const ChatTopBar: React.FC<ChatTopBarProps> = ({
   onClick,
   chatType,
   memebers,
+  onlineUsers,
+  users,
+  adminId,
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
@@ -35,7 +43,7 @@ const ChatTopBar: React.FC<ChatTopBarProps> = ({
   const [typingUsers, setTypingUsers] = useState<TypingUser[]>([]);
   const userId = Cookies.get("user_id");
   const [open, setOpen] = useState(false);
-
+  const queryClient = useQueryClient();
   useEffect(() => {
     if (!socket) return;
 
@@ -58,12 +66,12 @@ const ChatTopBar: React.FC<ChatTopBarProps> = ({
     };
   }, [socket, isConnected, userId]);
 
-  const leaveChat = useMutation(
-    (groupId: string) =>
-      axiosInstance.delete(`/api/v1/chats/group/${groupId}/leave`),
+  const deleteChat = useMutation(
+    (groupId: string) => axiosInstance.delete(`/api/v1/chats/group/${groupId}`),
     {
       onSuccess: () => {
-        // queryClient.invalidateQueries("group-chat");
+        queryClient.invalidateQueries("chats");
+        setIsMenuOpen(false);
       },
     }
   );
@@ -117,16 +125,42 @@ const ChatTopBar: React.FC<ChatTopBarProps> = ({
                 )}
               </span>
             ) : (
-              <span className="text-white">{memebers} members</span>
+              <div className="flex gap-2 text-white">
+                <span className="text-white">{memebers} members</span>
+                {typingUsers && typingUsers?.length > 0 ? (
+                  <div className="text-xs flex items-center">
+                    {typingUsers
+                      .map((tu) => {
+                        const user = users?.find((u) => u._id === tu.userId);
+                        return user?.firstName;
+                      })
+                      .join(", ")}
+                    {" - "}
+                    <TypingIndicator />
+                  </div>
+                ) : (
+                  <div>
+                    {onlineUsers && onlineUsers?.length > 0 && (
+                      <span className="flex items-center gap-2">
+                        {" "}
+                        <span className="w-2 h-2 bg-green-500 rounded-full"></span>{" "}
+                        {onlineUsers?.length} online{" "}
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
             )}
           </div>
         </div>
         <div className="relative">
-          <HiDotsVertical
-            className="text-white cursor-pointer"
-            size={24}
-            onClick={() => setIsMenuOpen((pre) => !pre)}
-          />
+          {adminId === userId && (
+            <HiDotsVertical
+              className="text-white cursor-pointer"
+              size={24}
+              onClick={() => setIsMenuOpen((pre) => !pre)}
+            />
+          )}
           {isMenuOpen && (
             <div
               className="absolute top-12 right-0 w-[12rem] rounded-xl shadow-md p-2 border-2 border-primary bg-white flex flex-col "
@@ -140,7 +174,7 @@ const ChatTopBar: React.FC<ChatTopBarProps> = ({
               </div> */}
               <div
                 className="flex items-center gap-2 cursor-pointer hover:bg-gray-200  p-2 rounded-md"
-                onClick={() => leaveChat.mutate(user.id)}
+                onClick={() => deleteChat.mutate(user.id)}
               >
                 <GoTrash size={24} className="text-red-400" />
                 <span className="text-red-400">Delete Chat</span>
@@ -149,7 +183,12 @@ const ChatTopBar: React.FC<ChatTopBarProps> = ({
           )}
         </div>
       </div>
-      <EditGroup groupId={user.id} open={open} setOpen={setOpen} />
+      <EditGroup
+        groupId={user.id}
+        open={open}
+        setOpen={setOpen}
+        onlineUsers={onlineUsers}
+      />
     </>
   );
 };

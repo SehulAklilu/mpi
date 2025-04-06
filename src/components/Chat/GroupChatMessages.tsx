@@ -1,6 +1,12 @@
 import { getGroupsMessage, Group } from "@/api/group-chat.api";
-import React, { useEffect, useRef } from "react";
-import { useQuery, useQueryClient } from "react-query";
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import Cookies from "js-cookie";
 import styles from "./ChatMessage.module.css";
 import ChatMessagesSkeleton from "./ChatMessagesSkeleton";
@@ -8,6 +14,10 @@ import { GroupChatItemProps } from "./GroupChatItem";
 import { group } from "console";
 import { getMessages } from "@/api/chat.api";
 import { NewMessage, NewUser } from "@/types/chat.type";
+import { useSocket } from "@/context/SocketContext";
+import { BsThreeDots } from "react-icons/bs";
+import { MdDelete, MdEdit } from "react-icons/md";
+import axiosInstance from "@/api/axios";
 
 type ExtractedMessage = {
   id: string;
@@ -19,8 +29,20 @@ type ExtractedMessage = {
   sender: NewUser;
   isSender: boolean;
 };
-function GroupChatMessages({ groupId }: { groupId: string }) {
+function GroupChatMessages({
+  chatId,
+  groupId,
+  setEditMessage,
+}: {
+  chatId: string;
+  groupId: string;
+  setEditMessage?: Dispatch<
+    SetStateAction<{ id: string | null; content: string }>
+  >;
+}) {
   const user_id = Cookies.get("user_id");
+  const { socket, isConnected } = useSocket();
+  const userId = Cookies.get("user_id");
   const {
     data: message_datas,
     error,
@@ -30,6 +52,11 @@ function GroupChatMessages({ groupId }: { groupId: string }) {
     queryFn: () => getMessages(groupId),
     enabled: !!groupId,
   });
+
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const scrollAreaRef = useRef<HTMLDivElement | null>(null);
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const queryClient = useQueryClient();
 
   function extractMessages(messages: NewMessage[], userId: string) {
     return messages.map((message) => ({
@@ -50,6 +77,27 @@ function GroupChatMessages({ groupId }: { groupId: string }) {
       isSender: message.sender.id === userId,
     }));
   }
+
+  useEffect(() => {
+    if (!socket || !chatId) return;
+
+    // Setup user when connected
+    if (isConnected) {
+      socket.emit("join chat", chatId);
+    }
+    if (userId) {
+      socket.emit("message-seen", { chatId, userId });
+    }
+
+    const handleMessageSeen = (data: any) => {
+      console.log("message seen", data);
+    };
+    socket.on("message-seen", handleMessageSeen);
+
+    return () => {
+      socket.off("message-seen", handleMessageSeen);
+    };
+  }, [socket, isConnected, chatId]);
 
   const messages =
     message_datas && user_id && message_datas.messages
@@ -83,40 +131,28 @@ function GroupChatMessages({ groupId }: { groupId: string }) {
     return date.toLocaleTimeString([], options);
   }
 
-  const getProfile = (
-    senderId: string,
-    groups: Group[] | undefined,
-    groupId: string | undefined
-  ) => {
-    if (senderId === user_id) {
-      return null;
+  const deleteMessage = useMutation(
+    (id: string) => axiosInstance.delete(`/api/v1/messages/${id}`),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["message", chatId]);
+        setOpenMenuId(null);
+      },
     }
+  );
 
-    if (groupId && groups) {
-      const selectedGroup = groups?.find((group) => group?._id === groupId);
-      if (selectedGroup) {
-        const sender = selectedGroup?.members.find(
-          (member) => member?.user?._id === senderId
-        );
-
-        if (sender) {
-          return (
-            <div className="flex gap-1 items-center">
-              <img
-                src={sender.user.avatar}
-                className="w-8 h-8 rounded-full object-cover"
-                alt={sender.user.firstName}
-              />
-              <p className="text-sm font-medium">{sender.user.firstName}</p>
-            </div>
-          );
-        }
+  useEffect(() => {
+    const handleClickOutside = (event: any) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpenMenuId(null);
       }
-    }
+    };
 
-    return null;
-  };
-  const scrollAreaRef = useRef<HTMLDivElement | null>(null);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
     if (scrollAreaRef.current) {
@@ -139,6 +175,7 @@ function GroupChatMessages({ groupId }: { groupId: string }) {
 
             {messages.map((message, index) => {
               const isSender = message.sender.id === user_id;
+              const isOpen = openMenuId === message.id;
 
               return (
                 <div
@@ -152,6 +189,44 @@ function GroupChatMessages({ groupId }: { groupId: string }) {
                       isSender ? "items-end" : "items-start"
                     }`}
                   >
+                    {isSender && (
+                      <div className="relative" ref={dropdownRef}>
+                        <button
+                          onClick={() =>
+                            setOpenMenuId(isOpen ? null : message.id)
+                          }
+                          className="text-gray-500 hover:text-gray-700"
+                        >
+                          <BsThreeDots />
+                        </button>
+
+                        {isOpen && (
+                          <div className="absolute bottom-0 right-0 translate-y-full mt-1 bg-white border border-primary shadow-md rounded-md overflow-hidden z-10">
+                            {message.type === "text" && (
+                              <button
+                                onClick={() => {
+                                  setEditMessage &&
+                                    setEditMessage({
+                                      id: message.id,
+                                      content: message.content,
+                                    });
+                                  setOpenMenuId(null);
+                                }}
+                                className="flex items-center gap-1 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full"
+                              >
+                                <MdEdit className="text-base" /> Edit
+                              </button>
+                            )}
+                            <button
+                              onClick={() => deleteMessage.mutate(message.id)}
+                              className="flex items-center gap-1 px-3 py-2 text-sm text-red-500 hover:bg-red-50 w-full"
+                            >
+                              <MdDelete className="text-base" /> Delete
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    )}
                     {/* Avatar & Sender Name (only for received messages) */}
                     {!isSender && (
                       <div className="flex items-center gap-2 text-sm text-gray-600 mb-1">

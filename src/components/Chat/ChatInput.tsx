@@ -1,10 +1,10 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, Dispatch, SetStateAction } from "react";
 import { LuSendHorizontal } from "react-icons/lu";
 import { IoMdMic } from "react-icons/io";
 import { FaRegSmile } from "react-icons/fa";
 import { FaRegImage } from "react-icons/fa6";
 import { useMutation, useQueryClient } from "react-query";
-import { createMessage, MessagePayload } from "@/api/chat.api";
+import { createMessage, MessagePayload, updateMessage } from "@/api/chat.api";
 import { LoaderCircle } from "lucide-react";
 import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
 import { AiOutlinePaperClip } from "react-icons/ai";
@@ -36,10 +36,16 @@ const ChatInput = ({
   chatId,
   reciverId,
   chatType,
+  editMessage,
+  setEditMessage,
 }: {
   chatId: string;
   reciverId: string;
   chatType: "GROUP" | "DIRECT";
+  editMessage?: { id: string | null; content: string };
+  setEditMessage?: Dispatch<
+    SetStateAction<{ id: string | null; content: string }>
+  >;
 }) => {
   const [message, setMessage] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -68,22 +74,18 @@ const ChatInput = ({
     const formData = new FormData();
     formData.append("chatId", chatId);
     formData.append("receiver", reciverId);
-    formData.append("content", message.trim() ? message.trim() : "image");
+    formData.append("content", message.trim() ? message.trim() : "img.jpg");
 
     if (previewImage?.startsWith("data:image")) {
       const blob = await fetch(previewImage).then((res) => res.blob());
       formData.append("image", blob, "image.jpg"); // Name it properly
     }
 
-    if (chatType === "DIRECT") {
-      createMessageMutation.mutate(formData);
+    console.log("333333333333", editMessage);
+    if (editMessage?.id) {
+      editMessageMutation.mutate({ id: editMessage.id, payload: formData });
     } else {
       createMessageMutation.mutate(formData);
-
-      // createGroupMessageMutation.mutate({
-      //   groupId: chatId,
-      //   payload: { message: message.trim() },
-      // });
     }
 
     setMessage("");
@@ -137,6 +139,12 @@ const ChatInput = ({
   }, []);
 
   useEffect(() => {
+    if (editMessage?.content) {
+      setMessage(editMessage.content);
+    }
+  }, [editMessage]);
+
+  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
         filePickerRef.current &&
@@ -179,21 +187,27 @@ const ChatInput = ({
     mutationKey: ["createMessage"],
     mutationFn: createMessage,
     onSuccess: () => {
+      if (setEditMessage) {
+        setEditMessage({ id: null, content: "" });
+      }
       chatType === "DIRECT"
         ? queryClient.invalidateQueries(["message", chatId])
         : queryClient.invalidateQueries(["groupmessage", chatId]);
     },
   });
 
-  const createGroupMessageMutation = useMutation({
-    mutationKey: ["createGroupMessage"],
-    mutationFn: ({
-      groupId,
-      payload,
-    }: {
-      groupId: string;
-      payload: GroupMessagePayload;
-    }) => createGroupMessage(groupId, payload),
+  const editMessageMutation = useMutation({
+    mutationKey: ["updateMessage"],
+    mutationFn: ({ id, payload }: { id: string; payload: FormData }) =>
+      updateMessage(id, payload),
+    onSuccess: () => {
+      if (setEditMessage) {
+        setEditMessage({ id: null, content: "" });
+      }
+      chatType === "DIRECT"
+        ? queryClient.invalidateQueries(["message", chatId])
+        : queryClient.invalidateQueries(["groupmessage", chatId]);
+    },
   });
 
   return (
@@ -294,7 +308,8 @@ const ChatInput = ({
           {/* Send Button */}
           <button type="button" onClick={handleSend}>
             <div className="w-8 h-8 rounded-full bg-gradient-to-b from-[#F8B36D] to-[#F28822] flex items-center justify-center">
-              {createMessageMutation.isLoading ? (
+              {createMessageMutation.isLoading ||
+              editMessageMutation.isLoading ? (
                 <LoaderCircle
                   style={{
                     animation: "spin 1s linear infinite",

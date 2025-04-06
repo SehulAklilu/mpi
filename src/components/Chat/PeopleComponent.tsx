@@ -198,6 +198,7 @@ const PeopleComponent: React.FC<PeopleComponentProps> = ({
                 profilePicture={user.avatar}
                 otherUserBlocked={false}
                 relationshipType="following"
+                email={user.emailAddress.email}
               />
             ))}
           </div>

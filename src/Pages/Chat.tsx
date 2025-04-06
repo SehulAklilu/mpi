@@ -111,7 +111,11 @@ function Chat() {
               />
             </TabsContent>
             <TabsContent className="!mt-0" value="group">
-              <GroupChat setActiveTab={setActiveTab} />
+              <GroupChat
+                setActiveTab={setActiveTab}
+                messages={messages}
+                onlineUsers={onlineUsers}
+              />
             </TabsContent>
             <TabsContent className="!mt-0" value="people">
               <PeopleComponent

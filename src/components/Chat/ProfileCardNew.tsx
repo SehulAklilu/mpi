@@ -29,6 +29,7 @@ export interface ProfileDataInterface {
   message?: string;
   buttonText?: string;
   onMessage?: (userId: string) => void;
+  email?: string;
 }
 
 const ProfileCardNew: React.FC<ProfileDataInterface> = ({
@@ -44,6 +45,7 @@ const ProfileCardNew: React.FC<ProfileDataInterface> = ({
   buttonText,
   message,
   onMessage,
+  email,
 }) => {
   const [showMenu, setShowMenu] = useState(false);
   const queryClient = useQueryClient();
@@ -149,6 +151,7 @@ const ProfileCardNew: React.FC<ProfileDataInterface> = ({
         </div>
         <div className="flex-1">
           <p className="font-medium text-lg">{name}</p>
+          <p className="text-xs text-gray-600">{email}</p>
           <p className="text-sm text-gray-500">{role}</p>
           <p className="text-sm text-gray-600">{message}</p>
         </div>

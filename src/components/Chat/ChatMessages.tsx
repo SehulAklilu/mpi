@@ -1,11 +1,16 @@
 import { getMessages } from "@/api/chat.api";
 import { Message, NewMessage, NewUser } from "@/types/chat.type";
-import { useEffect, useRef, useState } from "react";
-import { useQuery } from "react-query";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import Cookies from "js-cookie";
 import ChatMessagesSkeleton from "./ChatMessagesSkeleton";
 import styles from "./ChatMessage.module.css";
 import { useSocket } from "@/context/SocketContext";
+import { BsThreeDots } from "react-icons/bs";
+import { MdDelete } from "react-icons/md";
+import { MdEdit } from "react-icons/md";
+import axiosInstance from "@/api/axios";
+import { IoCheckmarkDone, IoCheckmarkDoneSharp } from "react-icons/io5";
 
 type ExtractedMessage = {
   id: string;
@@ -16,14 +21,25 @@ type ExtractedMessage = {
   image: string | null;
   sender: NewUser;
   isSender: boolean;
+  isRead: boolean;
 };
 
-const ChatMessages = ({ chatId }: { chatId: string }) => {
+const ChatMessages = ({
+  chatId,
+  setEditMessage,
+}: {
+  chatId: string;
+  setEditMessage?: Dispatch<
+    SetStateAction<{ id: string | null; content: string }>
+  >;
+}) => {
   const [user_id, setUserId] = useState<string | undefined>(undefined);
   const scrollAreaRef = useRef<HTMLDivElement | null>(null);
   const { socket, isConnected } = useSocket();
   const userId = Cookies.get("user_id");
-
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const queryClient = useQueryClient();
   const {
     data: message_datas,
     isLoading,
@@ -42,10 +58,6 @@ const ChatMessages = ({ chatId }: { chatId: string }) => {
     }
   }, [message_datas]);
 
-  if (isError) {
-    return <div>Error loading messages.</div>;
-  }
-
   function extractMessages(messages: NewMessage[], userId: string) {
     return messages.map((message) => ({
       id: message.id,
@@ -61,10 +73,21 @@ const ChatMessages = ({ chatId }: { chatId: string }) => {
         month: "long",
         day: "numeric",
       }),
+      isRead: message.isRead,
       sender: message.sender,
       isSender: message.sender.id === userId,
     }));
   }
+
+  const deleteMessage = useMutation(
+    (id: string) => axiosInstance.delete(`/api/v1/messages/${id}`),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["message", chatId]);
+        setOpenMenuId(null);
+      },
+    }
+  );
 
   useEffect(() => {
     if (!socket || !chatId) return;
@@ -102,7 +125,24 @@ const ChatMessages = ({ chatId }: { chatId: string }) => {
     }, {} as Record<string, ExtractedMessage[]>);
   }
 
+  useEffect(() => {
+    const handleClickOutside = (event: any) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpenMenuId(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   const groupedMessages = messages ? groupMessagesByDate(messages) : {};
+
+  if (isError) {
+    return <div>Error loading messages.</div>;
+  }
   return (
     <div
       className={`flex flex-col-reverse gap-4 h-[84vh] sm:h-[80vh] md:h-[65vh] ${styles.customScrollbar}`}
@@ -117,7 +157,7 @@ const ChatMessages = ({ chatId }: { chatId: string }) => {
             <div className="text-center text-gray-500 text-sm my-2">{date}</div>
             {messages.map((message) => {
               const isSender = message.isSender;
-
+              const isOpen = openMenuId === message.id;
               return (
                 <div
                   key={message.id}
@@ -126,13 +166,55 @@ const ChatMessages = ({ chatId }: { chatId: string }) => {
                   } px-3 py-1`}
                 >
                   <div
-                    className={`flex flex-col max-w-md ${
+                    className={`flex flex-col max-w-md relative ${
                       isSender ? "items-end" : "items-start"
                     }`}
                   >
+                    {isSender && (
+                      <div className="relative" ref={dropdownRef}>
+                        <button
+                          onClick={() =>
+                            setOpenMenuId(isOpen ? null : message.id)
+                          }
+                          className="text-gray-500 hover:text-gray-700"
+                        >
+                          <BsThreeDots />
+                        </button>
+
+                        {isOpen && (
+                          <div className="absolute bottom-0 right-0 translate-y-full mt-1 bg-white border border-primary shadow-md rounded-md overflow-hidden z-10">
+                            {message.type === "text" && (
+                              <button
+                                onClick={() => {
+                                  setEditMessage &&
+                                    setEditMessage({
+                                      id: message.id,
+                                      content: message.content,
+                                    });
+                                  setOpenMenuId(null);
+                                }}
+                                className="flex items-center gap-1 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full"
+                              >
+                                <MdEdit className="text-base" /> Edit
+                              </button>
+                            )}
+                            <button
+                              onClick={() => deleteMessage.mutate(message.id)}
+                              className="flex items-center gap-1 px-3 py-2 text-sm text-red-500 hover:bg-red-50 w-full"
+                            >
+                              <MdDelete className="text-base" /> Delete
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
                     {/* Time */}
-                    <span className="text-[10px] text-gray-400 mb-1">
+                    <span className="text-[10px] text-gray-400 mb-1 flex items-center gap-1">
                       {message.time}
+                      {isSender && message.isRead && (
+                        <IoCheckmarkDone className="text-green-500 text-[16px]" />
+                      )}
                     </span>
 
                     {/* Text Message */}

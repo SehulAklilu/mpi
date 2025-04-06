@@ -2,6 +2,7 @@ import React from "react";
 import { MdDoneAll } from "react-icons/md";
 import TypingIndicator from "./Typing";
 import { User } from "@/types/chat.type";
+import { TypingUser } from "@/context/SocketContext";
 
 export interface GroupChatItemProps {
   id?: string;
@@ -16,6 +17,7 @@ export interface GroupChatItemProps {
   //   isOnline: boolean;
   //   isTyping: boolean;
   users: User[];
+  typingUsers?: TypingUser[];
 }
 
 const NewGroupChatItem: React.FC<GroupChatItemProps> = ({
@@ -29,6 +31,8 @@ const NewGroupChatItem: React.FC<GroupChatItemProps> = ({
   isRead,
   //   isOnline,
   //   isTyping,
+  users,
+  typingUsers,
 }) => {
   return (
     <div
@@ -60,8 +64,17 @@ const NewGroupChatItem: React.FC<GroupChatItemProps> = ({
         </div>
         <div className="flex justify-between items-center">
           <div className="text-sm truncate max-w-[70%]">
-            {false ? (
-              <TypingIndicator />
+            {typingUsers && typingUsers.length > 0 ? (
+              <div className="text-sm flex items-center">
+                {typingUsers
+                  .map((tu) => {
+                    const user = users.find((u) => u._id === tu.userId);
+                    return user?.firstName;
+                  })
+                  .join(", ")}
+                {" - "}
+                <TypingIndicator />
+              </div>
             ) : (
               message &&
               (message.length > 15 ? message.slice(0, 15) + "..." : message)
