@@ -37,6 +37,8 @@ import ChildrenPage from "./Pages/ChildrenPage.tsx";
 import PlayersDetail from "./Pages/PlayersDetail.tsx";
 import InitialAssessment from "./components/Assessment/InitialAssessment.tsx";
 import { SocketProvider } from "./context/SocketContext.tsx";
+import ResetPassword from "./components/auth/ResetPassword.tsx";
+import PasswordFormComponent from "./components/auth/PasswordForm.tsx";
 
 const router = createBrowserRouter([
   {
@@ -199,6 +201,14 @@ const router = createBrowserRouter([
   {
     path: "/signup",
     element: <NewSignup />,
+  },
+  {
+    path: "/reset-password",
+    element: <ResetPassword />,
+  },
+  {
+    path: "/passwordreset/:token",
+    element: <PasswordFormComponent />,
   },
   {
     path: "/create-profile",

@@ -186,6 +186,12 @@ function NewLogin() {
             Create your account here
           </Link>
         </div>
+        <div className="text-sm flex gap-2 justify-center w-full mx-auto mt-4">
+          <div>Forgot your password?</div>
+          <Link to={"/reset-password"} className="text-primary">
+            Reset it here
+          </Link>
+        </div>
       </>
     </AuthWrapper>
   );

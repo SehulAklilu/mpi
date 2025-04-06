@@ -11,7 +11,14 @@ import {
   VerifyOtpPayload,
 } from "@/types/auth.type";
 import { User } from "@/types/user.types";
+import { TokenPayload } from "@/components/auth/ResetPassword";
+import { ResetPayload } from "@/components/auth/PasswordForm";
 
+export interface GetTokenInterface {
+  link: string;
+  token: string;
+  email: string;
+}
 export const login = async (
   credentials: LoginPayload
 ): Promise<LoginResponse> => {
@@ -35,6 +42,24 @@ export const logout = async (payload: LogoutPayload): Promise<any> => {
 export const sendOtp = async (payload: OtpPayload): Promise<OtpResponse> => {
   const response = await axiosInstance.post<OtpResponse>(
     "/auth/generateotp",
+    payload
+  );
+  return response.data;
+};
+
+export const getToken = async (
+  payload: TokenPayload
+): Promise<GetTokenInterface> => {
+  const response = await axiosInstance.post<GetTokenInterface>(
+    "/auth/requestresetpassword",
+    payload
+  );
+  return response.data;
+};
+
+export const resetPassword = async (payload: ResetPayload): Promise<any> => {
+  const response = await axiosInstance.post<any>(
+    `/auth/resetPassword/${payload.token}?email=${payload.email}`,
     payload
   );
   return response.data;
