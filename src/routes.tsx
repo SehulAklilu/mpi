@@ -37,7 +37,6 @@ import ChildrenPage from "./Pages/ChildrenPage.tsx";
 import PlayersDetail from "./Pages/PlayersDetail.tsx";
 import InitialAssessment from "./components/Assessment/InitialAssessment.tsx";
 import { SocketProvider } from "./context/SocketContext.tsx";
-import ModuleProviderWrapper from "./components/ModuleProviderWrapper.tsx";
 
 const router = createBrowserRouter([
   {
@@ -112,25 +111,20 @@ const router = createBrowserRouter([
         element: <PrivateRoute allowedRoles={["player"]} />,
         children: [
           {
-            element: <ModuleProviderWrapper />,
-            children: [
-              {
-                path: "course",
-                element: <NewLearn />,
-              },
-              {
-                path: "course/:course_id",
-                element: <CourseDetail />,
-              },
-              {
-                path: "course/:course_id/:week_id/video/:video_id",
-                element: <LessonDetail />,
-              },
-              {
-                path: "course/:course_id/:week_id/assessment/:assessment_id",
-                element: <Assessment />,
-              },
-            ],
+            path: "course",
+            element: <NewLearn />,
+          },
+          {
+            path: "course/:course_id",
+            element: <CourseDetail />,
+          },
+          {
+            path: "course/:course_id/:week_id/video/:video_id",
+            element: <LessonDetail />,
+          },
+          {
+            path: "course/:course_id/:week_id/assessment/:assessment_id",
+            element: <Assessment />,
           },
           {
             path: "journal",

@@ -1,4 +1,4 @@
-import { getCourse, getUserCoursesNew } from "@/api/course.api";
+import { getUserCoursesById } from "@/api/course.api";
 import { useQuery } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import user_image from "../../assets/user_1.jpg";
@@ -14,16 +14,22 @@ import FAQ from "./FAQ";
 import { Review } from "./Review";
 import VideoListItem from "./VideoListItem";
 import CourseDetailSkeleton from "./CourseDetailSkeleton";
-import { string } from "zod";
 import { ContentLayout } from "../Sidebar/contenet-layout";
-import { Module, ModuleResponse } from "@/types/course.types";
-import { useState } from "react";
-import { useModule } from "@/context/courseContext";
+import { Module } from "@/types/course.types";
 
 function CourseDetail() {
   const navigate = useNavigate();
   const { course_id } = useParams<{ course_id: string }>();
-  const { module: selectedCourse, setItem } = useModule();
+
+  const {
+    data: selectedCourse,
+    isLoading,
+    isError,
+  } = useQuery<Module, Error>({
+    queryKey: ["course", course_id],
+    queryFn: () => getUserCoursesById(course_id!),
+    enabled: !!course_id,
+  });
 
   const reviews = [
     {
@@ -57,9 +63,9 @@ function CourseDetail() {
     { stars: 1, value: 5 },
   ];
 
-  // if (isLoading || isError) {
-  //   return <CourseDetailSkeleton />;
-  // }
+  if (isLoading || isError) {
+    return <CourseDetailSkeleton />;
+  }
   return (
     <ContentLayout>
       <div className="px-2 bg-white">
@@ -182,12 +188,10 @@ function CourseDetail() {
                               navigate(
                                 `/course/${course_id}/${week._id}/video/${item._id}`
                               );
-                              setItem(item);
                             } else if (item.type === "quiz") {
                               navigate(
                                 `/course/${course_id}/${week._id}/assessment/${item._id}`
                               );
-                              setItem(item);
                             }
                           }
                         }}

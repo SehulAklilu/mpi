@@ -1,4 +1,8 @@
-import { ModuleResponse, UserCourseProgress } from "@/types/course.types";
+import {
+  Module,
+  ModuleResponse,
+  UserCourseProgress,
+} from "@/types/course.types";
 import axiosInstance from "./axios";
 
 export interface UserCoursesResponse {
@@ -39,6 +43,11 @@ export const getUserCourses = async (): Promise<UserCoursesResponse> => {
 
 export const getUserCoursesNew = async (): Promise<ModuleResponse> => {
   const response = await axiosInstance.get("/api/v1/modules/me");
+  return response.data;
+};
+
+export const getUserCoursesById = async (id: string): Promise<Module> => {
+  const response = await axiosInstance.get(`/api/v1/modules/me/${id}`);
   return response.data;
 };
 

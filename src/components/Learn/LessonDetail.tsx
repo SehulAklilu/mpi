@@ -1,16 +1,10 @@
 import {
-  getCourse,
-  getUserCoursesNew,
+  getUserCoursesById,
   UpdateVideoParams,
   UpdateVideoPayload,
   updateVideoStatus,
 } from "@/api/course.api";
-import {
-  ContentItem,
-  Module,
-  ModuleResponse,
-  Video,
-} from "@/types/course.types";
+import { ContentItem, Module } from "@/types/course.types";
 import { useEffect, useState } from "react";
 import ReactPlayer from "react-player";
 import { useMutation, useQuery, useQueryClient } from "react-query";
@@ -20,22 +14,25 @@ import InstructorCard from "./InstructorCard";
 import instructor from "../../assets/user.jpeg";
 import ReadMore from "../common/ReadMore";
 import { FaDownload, FaFilePdf, FaLink, FaPlayCircle } from "react-icons/fa";
-import { MdSkipPrevious, MdSkipNext } from "react-icons/md";
 import LessonDetailSkeleton from "./LessonDetailSkeleton";
 import { ContentLayout } from "../Sidebar/contenet-layout";
-import { useModule } from "@/context/courseContext";
 
 function LessonDetail() {
   const { course_id, week_id, video_id } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const currentItemId = video_id;
+  const [selectedItem, setSelectedItem] = useState<ContentItem | null>(null);
+
   const {
-    module: selectedCourse,
-    setModule,
-    selectedItem: selectedVideo,
-    setItem,
-  } = useModule();
+    data: selectedCourse,
+    isLoading,
+    isError,
+  } = useQuery<Module, Error>({
+    queryKey: ["course", course_id],
+    queryFn: () => getUserCoursesById(course_id!),
+    enabled: !!course_id,
+  });
 
   const {
     mutate: update_video_status,
@@ -74,21 +71,16 @@ function LessonDetail() {
   }
 
   useEffect(() => {
-    if (week_id && video_id && selectedCourse) {
-      const selectedWeek = selectedCourse.weeks?.find(
-        (week) => week._id === week_id
+    if (selectedCourse) {
+      const selectedWeek = selectedCourse.weeks.find(
+        (week) => week._id == week_id
       );
-      const selectedItem =
-        selectedWeek &&
-        selectedWeek.contentItems.find((item) => item._id === video_id);
-
-      if (selectedItem) {
-        setItem(selectedItem);
-      } else {
-        console.log("No video found with the given video_id");
-      }
+      const selectedItem = selectedWeek?.contentItems.find(
+        (item) => item._id === video_id
+      );
+      selectedItem && setSelectedItem(selectedItem);
     }
-  }, [week_id, video_id, selectedCourse, setItem]);
+  }, [isLoading, selectedCourse, selectedItem, setSelectedItem]);
 
   function handleNext() {
     if (!selectedCourse || !course_id || !week_id || !currentItemId) return;
@@ -111,7 +103,7 @@ function LessonDetail() {
 
     if (currentItemIndex < contentItems.length - 1) {
       const nextItem = contentItems[currentItemIndex + 1];
-      setItem(nextItem);
+      // setItem(nextItem);
       navigateToItem(course_id, week_id, nextItem);
       return;
     }
@@ -123,7 +115,7 @@ function LessonDetail() {
         .sort((a, b) => a.order - b.order);
       if (nextItems.length > 0) {
         const nextItem = nextItems[0];
-        setItem(nextItem);
+        // setItem(nextItem);
         navigateToItem(course_id, nextWeek._id, nextItem);
       }
     }
@@ -138,16 +130,16 @@ function LessonDetail() {
     }
   };
 
-  // if (isLoading || update_video_loading || !selectedVideo) {
-  //   return <LessonDetailSkeleton />;
-  // }
+  if (isLoading || !selectedItem) {
+    return <LessonDetailSkeleton />;
+  }
 
   return (
     <ContentLayout>
       <div>
         <div className="relative w-full h-[70vh] bg-black group">
           <ReactPlayer
-            url={`https://www.youtube.com/watch?v=${selectedVideo?.videoId}`}
+            url={`https://www.youtube.com/watch?v=${selectedItem?.videoId}`}
             controls={true}
             width="100%"
             height="100%"
@@ -156,7 +148,7 @@ function LessonDetail() {
         </div>
         <div className="grid  grid-cols-6 py-2 p-2 text-[#1c1d47] gap-10">
           <div className="col-span-6 lg:col-span-4 order-2 lg:order-1">
-            <h1 className="text-2xl font-semibold">{selectedVideo?.title}</h1>
+            <h1 className="text-2xl font-semibold">{selectedItem?.title}</h1>
             {/* instructor */}
             <InstructorCard
               name="Damian"
@@ -184,7 +176,7 @@ function LessonDetail() {
             </div>
             <div className="pt-2 ">
               <ReadMore
-                text={selectedVideo?.description ?? ""}
+                text={selectedItem?.description ?? ""}
                 previewLength={300}
               />
             </div>
@@ -252,12 +244,10 @@ function LessonDetail() {
                                 navigate(
                                   `/course/${course_id}/${week._id}/video/${item._id}`
                                 );
-                                setItem(item);
                               } else if (item.type === "quiz") {
                                 navigate(
                                   `/course/${course_id}/${week._id}/assessment/${item._id}`
                                 );
-                                setItem(item);
                               }
                             }
                           }}

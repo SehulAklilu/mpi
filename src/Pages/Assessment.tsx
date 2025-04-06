@@ -1,16 +1,12 @@
 import {
-  getCourse,
+  getUserCoursesById,
   updateAssessmentStatus,
   UserAnswer,
 } from "@/api/course.api";
-import AssessmentComponent from "@/components/Assessment/assessment";
 import ReadMore from "@/components/common/ReadMore";
 import InstructorCard from "@/components/Learn/InstructorCard";
 import VideoListItem from "@/components/Learn/VideoListItem";
-import {
-  Assessment as AssessmentProps,
-  ContentItem,
-} from "@/types/course.types";
+import { ContentItem, Module } from "@/types/course.types";
 import { useEffect, useState } from "react";
 import {
   FaClock,
@@ -25,11 +21,9 @@ import instructor from "../assets/user.jpeg";
 import { TbReload } from "react-icons/tb";
 import LessonDetailSkeleton from "@/components/Learn/LessonDetailSkeleton";
 import { ContentLayout } from "@/components/Sidebar/contenet-layout";
-import { useModule } from "@/context/courseContext";
 import NewAssessmentComponent, {
   QuestionAnswer,
 } from "@/components/Learn/NewAssessmentComponent";
-import AssignmentCard from "@/components/Card/AssignmentCard";
 
 const AssessmentSummary = ({
   assessment,
@@ -72,11 +66,19 @@ function Assessment() {
   const navigate = useNavigate();
   const currentItemId = assessment_id;
   const queryClient = useQueryClient();
+
+  const [selectedItem, setSelectedItem] = useState<ContentItem | null>(null);
+
   const {
-    selectedItem: selectedAssessment,
-    module: selectedCourse,
-    setItem,
-  } = useModule();
+    data: selectedCourse,
+    isLoading,
+    isError,
+  } = useQuery<Module, Error>({
+    queryKey: ["course", course_id],
+    queryFn: () => getUserCoursesById(course_id!),
+    enabled: !!course_id,
+  });
+
   interface MutationVariables {
     params: {
       course_id: string;
@@ -96,28 +98,23 @@ function Assessment() {
   });
 
   useEffect(() => {
-    if (week_id && assessment_id && selectedCourse) {
-      const selectedWeek = selectedCourse.weeks?.find(
-        (week) => week._id === week_id
+    if (selectedCourse) {
+      const selectedWeek = selectedCourse.weeks.find(
+        (week) => week._id == week_id
       );
-      const selectedItem =
-        selectedWeek &&
-        selectedWeek.contentItems.find((item) => item._id === assessment_id);
-
-      if (selectedItem) {
-        setItem(selectedItem);
-      } else {
-        console.log("No video found with the given assessment_id");
-      }
+      const selectedItem = selectedWeek?.contentItems.find(
+        (item) => item._id === assessment_id
+      );
+      selectedItem && setSelectedItem(selectedItem);
     }
-  }, [week_id, assessment_id, selectedCourse, setItem]);
+  }, [isLoading, selectedCourse, selectedItem, setSelectedItem]);
 
   const handleNext = (answers: QuestionAnswer[]) => {
     if (
       !course_id ||
       !assessment_id ||
       attempt == null ||
-      !selectedAssessment?.questions
+      !selectedItem?.questions
     ) {
       console.log("Missing required data to submit assessment.");
       return;
@@ -132,7 +129,7 @@ function Assessment() {
       attemptNumber: attempt,
       answers: sanitizedAnswers,
       passed: true, // You might want to calculate this based on score later
-      score: selectedAssessment.questions.length,
+      score: selectedItem.questions.length,
     };
 
     const params = { course_id, assessment_id };
@@ -168,7 +165,6 @@ function Assessment() {
 
     if (currentItemIndex < contentItems.length - 1) {
       const nextItem = contentItems[currentItemIndex + 1];
-      setItem(nextItem);
       navigateToItem(course_id, week_id, nextItem);
       return;
     }
@@ -180,23 +176,22 @@ function Assessment() {
         .sort((a, b) => a.order - b.order);
       if (nextItems.length > 0) {
         const nextItem = nextItems[0];
-        setItem(nextItem);
         navigateToItem(course_id, nextWeek._id, nextItem);
       }
     }
   }
 
-  // if (isLoading) {
-  //   return <LessonDetailSkeleton />;
-  // }
+  if (isLoading || !selectedItem) {
+    return <LessonDetailSkeleton />;
+  }
 
   return (
     <ContentLayout>
       <div>
         <div className="relative w-full min-h-[50vh] bg-white">
-          {selectedAssessment ? (
+          {selectedItem ? (
             <NewAssessmentComponent
-              assessment={selectedAssessment}
+              assessment={selectedItem}
               onContinue={(answers) => handleNext(answers)}
               assessmentPage={false}
               isLoading={updateAssessment.isLoading}
@@ -206,9 +201,7 @@ function Assessment() {
         </div>
         <div className="grid grid-cols-6 py-2 p-2 text-[#1c1d47] gap-10">
           <div className="col-span-6 lg:col-span-4 order-2 lg:order-1">
-            <h1 className="text-2xl font-semibold">
-              {selectedAssessment?.title}
-            </h1>
+            <h1 className="text-2xl font-semibold">{selectedItem?.title}</h1>
             {/* instructor */}
             <InstructorCard
               name="Damian"
@@ -222,12 +215,12 @@ function Assessment() {
             <div className="pt-2 ">
               <h1 className="text-lg">Summary</h1>
               <div className="grid grid-cols-2 gap-x-10 my-2 gap-y-4">
-                <AssessmentSummary assessment={selectedAssessment} />
+                <AssessmentSummary assessment={selectedItem} />
               </div>
             </div>
             <div className="pt-2 ">
               <ReadMore
-                text={selectedAssessment?.description ?? ""}
+                text={selectedItem?.description ?? ""}
                 previewLength={300}
               />
             </div>
@@ -293,12 +286,10 @@ function Assessment() {
                               navigate(
                                 `/course/${course_id}/${week._id}/video/${item._id}`
                               );
-                              setItem(item);
                             } else if (item.type === "quiz") {
                               navigate(
                                 `/course/${course_id}/${week._id}/assessment/${item._id}`
                               );
-                              setItem(item);
                             }
                           }
                         }}

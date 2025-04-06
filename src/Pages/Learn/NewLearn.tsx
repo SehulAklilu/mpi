@@ -2,11 +2,7 @@ import road from "../../assets/svg/road.svg";
 import user from "../../assets/user.jpeg";
 import { FaUserAlt, FaMicrophone, FaPlayCircle } from "react-icons/fa";
 import { CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import {
-  getUserCourses,
-  getUserCoursesNew,
-  UserCoursesResponse,
-} from "@/api/course.api";
+import { getUserCoursesNew } from "@/api/course.api";
 import { useQuery } from "react-query";
 import {
   Dialog,
@@ -22,21 +18,14 @@ import { IoBriefcase } from "react-icons/io5";
 import ReadMore from "@/components/common/ReadMore";
 import InstructorCard from "@/components/Learn/InstructorCard";
 import { CardContainer } from "@/components/Learn/RoadCard";
-import {
-  Module,
-  ModuleResponse,
-  UserCourseProgress,
-} from "@/types/course.types";
+import { Module, ModuleResponse } from "@/types/course.types";
 import NewLearnSkeleton from "./NewLearnSkeleton";
 import { ContentLayout } from "@/components/Sidebar/contenet-layout";
-import { useModule } from "@/context/courseContext";
 
 function NewLearn() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const [course, setCourse] = useState<Module | undefined>(undefined);
-  const [showError, setShowError] = useState(false);
-  const { setModule } = useModule();
 
   const {
     data: allCourses,
@@ -45,9 +34,6 @@ function NewLearn() {
   } = useQuery<ModuleResponse, Error>({
     queryKey: ["courses"],
     queryFn: getUserCoursesNew,
-    onSuccess: (res) => {
-      // setModules(res);
-    },
   });
 
   const details = [
@@ -192,7 +178,6 @@ function NewLearn() {
               <Button
                 onClick={() => {
                   if (course && course?.progress.status !== "locked") {
-                    setModule(course);
                     navigate(`/course/${course?._id}`);
                   }
                 }}
