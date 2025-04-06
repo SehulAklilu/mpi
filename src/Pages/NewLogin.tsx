@@ -48,30 +48,38 @@ function NewLogin() {
 
   const { mutate, isLoading } = useMutation(login, {
     onSuccess: (data) => {
+      // Set user data in cookies and local storage
       Cookies.set("user_id", data.user.id);
       setRole(data.user.role);
       Cookies.set("role", data.user.role);
-      Cookies.set("user_name", data.user.firstName + " " + data.user.lastName);
-      Cookies.set("avater", data.user?.avatar);
+      Cookies.set("user_name", `${data.user.firstName} ${data.user.lastName}`);
+      Cookies.set("avatar", data.user?.avatar || "");
       localStorage.setItem("authUpdate", Date.now().toString());
-      if (data.user.role === "coach") {
-        navigate("/dashboard");
-      } else if (data.user.role === "parent") {
-        navigate("/dashboard");
-      } else {
-        if (
-          data.user?.initialAssessment &&
-          Object.keys(data.user?.initialAssessment).length > 0
-        ) {
-          navigate("/progress");
-        } else {
-          navigate("/assessment");
-        }
-        // if (lastAttemptedRoute !== "/") {
-        //   navigate(`${lastAttemptedRoute}`);
-        // } else {
 
-        // }
+      // Handle incomplete registration first
+      if (!data.user.isRegistrationComplete) {
+        const params = new URLSearchParams();
+        params.set("isRegistrationNotComplete", "true");
+        navigate(`/signup?${params.toString()}`);
+        return;
+      }
+
+      // Handle navigation based on user role
+      switch (data.user.role) {
+        case "coach":
+        case "parent":
+          navigate("/dashboard");
+          break;
+        default:
+          if (
+            data.user?.initialAssessment &&
+            Object.keys(data.user.initialAssessment).length > 0
+          ) {
+            navigate("/progress");
+          } else {
+            navigate("/assessment");
+          }
+          break;
       }
     },
     onError: (error: any) => {

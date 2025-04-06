@@ -48,7 +48,7 @@ export function getMenuList(
           {
             href: "/course",
             label: "Home",
-            active: location.pathname === "/course",
+            active: location.pathname.includes("/course"),
             icon: GoHome,
             submenus: [],
           },

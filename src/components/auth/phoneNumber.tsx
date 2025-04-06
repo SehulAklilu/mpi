@@ -14,7 +14,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { boolean, z } from "zod";
 import { useMutation, useQuery } from "react-query";
 import { sendOtp } from "@/api/auth.api";
 import { useSignupContext } from "@/context/SignupContext";
@@ -28,7 +28,13 @@ const FormSchema = z.object({
   email: z.string({ required_error: "Email is Required!" }).email(),
 });
 
-const PhoneNumber = ({ setCurr }: any) => {
+const PhoneNumber = ({
+  setCurr,
+  isRegistrationNotComplete,
+}: {
+  setCurr: any;
+  isRegistrationNotComplete?: boolean;
+}) => {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -72,10 +78,15 @@ const PhoneNumber = ({ setCurr }: any) => {
           If continuing, you have agreed to our Terms of Service and confirm you
           have read our Privacy And Cookie Statement
         </div>
+        {isRegistrationNotComplete && (
+          <div className="text-lg mt-4 text-red-600 my-2">
+            Please finish setting up your account!
+          </div>
+        )}
       </div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="flex flex-col gap-2 mx-auto max-w-sm  mt-16">
+          <div className="flex flex-col gap-2 mx-auto max-w-sm  mt-10">
             <FormField
               control={form.control}
               name="email"

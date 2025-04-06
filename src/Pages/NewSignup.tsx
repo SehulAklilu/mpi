@@ -8,12 +8,21 @@ import CreatePassword from "@/components/auth/CreatePassword";
 import { InputOTPForm } from "@/components/auth/OtpNew";
 import Address from "@/components/auth/Address";
 import Resume from "@/components/auth/Resume";
+import { useSearchParams } from "react-router-dom";
 
 const NewSignup = () => {
   const [curr, setCurr] = useState(0);
+  const [searchParams] = useSearchParams();
+  const isRegistrationNotComplete =
+    searchParams?.get("isRegistrationNotComplete") === "true";
   return (
     <AuthWrapper setCurr={setCurr} curr={curr}>
-      {curr == 0 && <PhoneNumber setCurr={setCurr} />}
+      {curr == 0 && (
+        <PhoneNumber
+          setCurr={setCurr}
+          isRegistrationNotComplete={isRegistrationNotComplete}
+        />
+      )}
       {curr == 1 && <InputOTPForm setCurr={setCurr} />}
       {curr == 2 && <CreatePassword setCurr={setCurr} />}
       {curr == 3 && <Congrats setCurr={setCurr} ind={0} />}
