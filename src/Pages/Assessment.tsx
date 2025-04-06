@@ -1,10 +1,13 @@
-import { getCourse, Question, updateAssessmentStatus } from "@/api/course.api";
-import AssessmentComponent from "@/components/Assessment/assessment";
+import {
+  getUserCoursesById,
+  updateAssessmentStatus,
+  UserAnswer,
+} from "@/api/course.api";
 import ReadMore from "@/components/common/ReadMore";
 import InstructorCard from "@/components/Learn/InstructorCard";
 import VideoListItem from "@/components/Learn/VideoListItem";
-import { Assessment as AssessmentProps } from "@/types/course.types";
-import { useState } from "react";
+import { ContentItem, Module } from "@/types/course.types";
+import { useEffect, useState } from "react";
 import {
   FaClock,
   FaDownload,
@@ -12,17 +15,20 @@ import {
   FaLink,
   FaQuestion,
 } from "react-icons/fa";
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import instructor from "../assets/user.jpeg";
 import { TbReload } from "react-icons/tb";
 import LessonDetailSkeleton from "@/components/Learn/LessonDetailSkeleton";
 import { ContentLayout } from "@/components/Sidebar/contenet-layout";
+import NewAssessmentComponent, {
+  QuestionAnswer,
+} from "@/components/Learn/NewAssessmentComponent";
 
 const AssessmentSummary = ({
   assessment,
 }: {
-  assessment: AssessmentProps | undefined;
+  assessment: ContentItem | null;
 }) => {
   if (!assessment) {
     return null;
@@ -39,15 +45,15 @@ const AssessmentSummary = ({
         </div> */}
         <div className="flex items-center gap-2">
           <FaQuestion color="#ff9328" />
-          <span className="">{assessment.questions.length} Questions</span>
+          <span className="">{assessment?.questions?.length} Questions</span>
         </div>
         <div className="flex items-center gap-2">
           <FaClock className="text-[#ff9328]" />
-          <span className="">{assessment.timeLimit} minutes</span>
+          <span className="">{assessment.duration} minutes</span>
         </div>
         <div className="flex items-center gap-2 ">
           <TbReload color="#ff9328" />
-          <span className=""> {assessment.attemptsAllowed} Attempt</span>
+          <span className=""> {3} Attempt</span>
         </div>
       </div>
     </div>
@@ -55,32 +61,30 @@ const AssessmentSummary = ({
 };
 
 function Assessment() {
-  const { course_id, assessment_id } = useParams();
-  const [selectedAssessment, setSelectedAssessment] = useState<
-    AssessmentProps | undefined
-  >(undefined);
+  const { course_id, week_id, assessment_id } = useParams();
+  const [attempt, setAttempt] = useState(1);
   const navigate = useNavigate();
+  const currentItemId = assessment_id;
+  const queryClient = useQueryClient();
+
+  const [selectedItem, setSelectedItem] = useState<ContentItem | null>(null);
 
   const {
-    data: selected_course,
+    data: selectedCourse,
     isLoading,
     isError,
-  } = useQuery({
+  } = useQuery<Module, Error>({
     queryKey: ["course", course_id],
-    queryFn: () => getCourse(course_id!),
-    onSuccess: (data) =>
-      setSelectedAssessment(() =>
-        data?.course.courseId.assessments.find(
-          (assessment) => assessment._id == assessment_id
-        )
-      ),
+    queryFn: () => getUserCoursesById(course_id!),
+    enabled: !!course_id,
   });
+
   interface MutationVariables {
     params: {
       course_id: string;
       assessment_id: string;
     };
-    payload: Question[];
+    payload: UserAnswer;
   }
 
   const updateAssessment = useMutation({
@@ -89,44 +93,95 @@ function Assessment() {
       updateAssessmentStatus(params, payload),
     onSuccess: () => {
       goToNext();
+      queryClient.invalidateQueries("courses");
     },
   });
 
-  const handleNext = (answers: Question[]) => {
-    if (course_id && assessment_id) {
-      const params = { course_id, assessment_id };
-      updateAssessment.mutate({ params, payload: answers });
-    }
-  };
-
-  const goToNext = () => {
-    const course = selected_course?.course.courseId;
-
-    if (!selectedAssessment || !course) return;
-
-    const connectedVideo = course.videos.find(
-      (video) => video._id === selectedAssessment.connectedVideoId
-    );
-
-    if (connectedVideo) {
-      const currentIndex = course.videos.findIndex(
-        (video) => video._id === connectedVideo._id
+  useEffect(() => {
+    if (selectedCourse) {
+      const selectedWeek = selectedCourse.weeks.find(
+        (week) => week._id == week_id
       );
-
-      if (currentIndex < course.videos.length - 1) {
-        const nextVideo = course.videos[currentIndex + 1];
-        navigate(`/course/${course.id}/video/${nextVideo._id}`);
-      } else if (course.nextCourse) {
-        navigate(`/course/${course.nextCourse}`);
-      } else {
-        console.log("No next video or course");
-      }
-    } else {
-      console.log("No connected video for this assessment");
+      const selectedItem = selectedWeek?.contentItems.find(
+        (item) => item._id === assessment_id
+      );
+      selectedItem && setSelectedItem(selectedItem);
     }
+  }, [isLoading, selectedCourse, selectedItem, setSelectedItem]);
+
+  const handleNext = (answers: QuestionAnswer[]) => {
+    if (
+      !course_id ||
+      !assessment_id ||
+      attempt == null ||
+      !selectedItem?.questions
+    ) {
+      console.log("Missing required data to submit assessment.");
+      return;
+    }
+
+    const sanitizedAnswers = answers
+      .map((a) => a?.userAnswer)
+      .filter((answer): answer is string => typeof answer === "string");
+
+    const newPayload: UserAnswer = {
+      assessmentId: assessment_id,
+      attemptNumber: attempt,
+      answers: sanitizedAnswers,
+      passed: true, // You might want to calculate this based on score later
+      score: selectedItem.questions.length,
+    };
+
+    const params = { course_id, assessment_id };
+    updateAssessment.mutate({ params, payload: newPayload });
   };
 
-  if (isLoading) {
+  function navigateToItem(courseId: string, weekId: string, item: ContentItem) {
+    if (item.type === "video") {
+      navigate(`/course/${courseId}/${weekId}/video/${item._id}`);
+    } else if (item.type === "quiz") {
+      navigate(`/course/${courseId}/${weekId}/assessment/${item._id}`);
+    }
+  }
+
+  function goToNext() {
+    if (!selectedCourse || !course_id || !week_id || !currentItemId) return;
+
+    const weeks = selectedCourse?.weeks.sort(
+      (a, b) => a.weekNumber - b.weekNumber
+    );
+    const currentWeekIndex = weeks.findIndex((w) => w._id === week_id);
+    if (currentWeekIndex === -1) return;
+
+    const currentWeek = weeks[currentWeekIndex];
+    const contentItems = currentWeek.contentItems
+      .filter((item) => !item.deleted && item.isPublished)
+      .sort((a, b) => a.order - b.order);
+
+    const currentItemIndex = contentItems.findIndex(
+      (item) => item._id === currentItemId
+    );
+    if (currentItemIndex === -1) return;
+
+    if (currentItemIndex < contentItems.length - 1) {
+      const nextItem = contentItems[currentItemIndex + 1];
+      navigateToItem(course_id, week_id, nextItem);
+      return;
+    }
+
+    if (currentWeekIndex < weeks.length - 1) {
+      const nextWeek = weeks[currentWeekIndex + 1];
+      const nextItems = nextWeek.contentItems
+        .filter((item) => !item.deleted && item.isPublished)
+        .sort((a, b) => a.order - b.order);
+      if (nextItems.length > 0) {
+        const nextItem = nextItems[0];
+        navigateToItem(course_id, nextWeek._id, nextItem);
+      }
+    }
+  }
+
+  if (isLoading || !selectedItem) {
     return <LessonDetailSkeleton />;
   }
 
@@ -134,20 +189,19 @@ function Assessment() {
     <ContentLayout>
       <div>
         <div className="relative w-full min-h-[50vh] bg-white">
-          {selectedAssessment ? (
-            <AssessmentComponent
-              assessment={selectedAssessment}
+          {selectedItem ? (
+            <NewAssessmentComponent
+              assessment={selectedItem}
               onContinue={(answers) => handleNext(answers)}
               assessmentPage={false}
               isLoading={updateAssessment.isLoading}
+              setAttempt={setAttempt}
             />
           ) : null}
         </div>
         <div className="grid grid-cols-6 py-2 p-2 text-[#1c1d47] gap-10">
           <div className="col-span-6 lg:col-span-4 order-2 lg:order-1">
-            <h1 className="text-2xl font-semibold">
-              {selected_course?.course.courseId.title}
-            </h1>
+            <h1 className="text-2xl font-semibold">{selectedItem?.title}</h1>
             {/* instructor */}
             <InstructorCard
               name="Damian"
@@ -161,12 +215,12 @@ function Assessment() {
             <div className="pt-2 ">
               <h1 className="text-lg">Summary</h1>
               <div className="grid grid-cols-2 gap-x-10 my-2 gap-y-4">
-                <AssessmentSummary assessment={selectedAssessment} />
+                <AssessmentSummary assessment={selectedItem} />
               </div>
             </div>
             <div className="pt-2 ">
               <ReadMore
-                text={selectedAssessment?.description ?? ""}
+                text={selectedItem?.description ?? ""}
                 previewLength={300}
               />
             </div>
@@ -196,69 +250,55 @@ function Assessment() {
               </div>
             </div>
           </div>
-          <div className="col-span-6 lg:col-span-2 order-1 lg:order-2 p-2 bg-[#F8F9FA] rounded-lg">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 flex items-center justify-center rounded-full text-white font-semibold bg-[#ff9328]">
-                01
-              </div>
-              <p className="text-[#152946] text-xl font-semibold">
-                Introduction
-              </p>
-            </div>
-            {selected_course?.course.courseId.videos.map((video, index) => {
-              const assessment = video.hasAssessmentNext
-                ? selected_course.course.courseId.assessments.find(
-                    (a) => a._id === video.assessmentId
-                  )
-                : null;
-              const videoExists = selected_course?.course.videos.find(
-                (vid) => vid.videoId === video._id
-              );
-
-              const assessmentExists = assessment
-                ? selected_course?.course.assessments.find(
-                    (asses) => asses.assessmentId === assessment._id
-                  )
-                : undefined;
-
-              return (
-                <div key={video._id}>
-                  <VideoListItem
-                    label={video.title}
-                    duration={video.duration}
-                    identifier={"0" + (index + 1)}
-                    locked={videoExists && videoExists.status == "locked"}
-                    onPlay={() => {
-                      if (videoExists && videoExists.status !== "locked") {
-                        navigate(
-                          `/course/${selected_course.course.courseId.id}/video/${video._id}`
-                        );
-                      }
-                    }}
-                  />
-                  {video.hasAssessmentNext && assessment && (
-                    <VideoListItem
-                      label={assessment.title?.slice(0, 30)}
-                      duration={assessment.timeLimit}
-                      active={assessment._id === assessment_id}
-                      locked={
-                        assessmentExists && assessmentExists.status == "locked"
-                      }
-                      onPlay={() => {
-                        if (
-                          assessmentExists &&
-                          assessmentExists.status !== "locked"
-                        ) {
-                          navigate(
-                            `/course/${selected_course.course.courseId.id}/assessment/${assessment._id}`
-                          );
-                        }
-                      }}
-                    />
-                  )}
+          <div className="hidden md:block col-span-2 order-1 p-2 bg-[#F8F9FA] rounded-lg">
+            {selectedCourse?.weeks.map((week) => (
+              <div key={week._id}>
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-8 h-8 flex items-center justify-center rounded-full text-white font-semibold bg-[#ff9328]">
+                    {week.weekNumber.toString().padStart(2, "0")}
+                  </div>
+                  <p className="text-[#152946] text-xl font-semibold">
+                    {week.title}
+                  </p>
                 </div>
-              );
-            })}
+
+                {week.contentItems.map((item, index) => {
+                  const identifier =
+                    item.type === "video" ? "0" + (index + 1) : undefined;
+
+                  return (
+                    <div key={item._id}>
+                      <VideoListItem
+                        label={item.title}
+                        duration={item.duration}
+                        identifier={identifier}
+                        active={item._id === assessment_id}
+                        status={item.progress?.status}
+                        locked={
+                          item.progress?.status === "locked" || item.order !== 1
+                        }
+                        onPlay={() => {
+                          if (
+                            item.progress?.status !== "locked" ||
+                            item.order === 1
+                          ) {
+                            if (item.type === "video") {
+                              navigate(
+                                `/course/${course_id}/${week._id}/video/${item._id}`
+                              );
+                            } else if (item.type === "quiz") {
+                              navigate(
+                                `/course/${course_id}/${week._id}/assessment/${item._id}`
+                              );
+                            }
+                          }
+                        }}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
           </div>
         </div>
       </div>

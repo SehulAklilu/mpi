@@ -1,4 +1,4 @@
-import { getCourse } from "@/api/course.api";
+import { getUserCoursesById } from "@/api/course.api";
 import { useQuery } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import user_image from "../../assets/user_1.jpg";
@@ -14,8 +14,8 @@ import FAQ from "./FAQ";
 import { Review } from "./Review";
 import VideoListItem from "./VideoListItem";
 import CourseDetailSkeleton from "./CourseDetailSkeleton";
-import { string } from "zod";
 import { ContentLayout } from "../Sidebar/contenet-layout";
+import { Module } from "@/types/course.types";
 
 function CourseDetail() {
   const navigate = useNavigate();
@@ -25,9 +25,9 @@ function CourseDetail() {
     data: selectedCourse,
     isLoading,
     isError,
-  } = useQuery({
+  } = useQuery<Module, Error>({
     queryKey: ["course", course_id],
-    queryFn: () => getCourse(course_id!),
+    queryFn: () => getUserCoursesById(course_id!),
     enabled: !!course_id,
   });
 
@@ -71,7 +71,7 @@ function CourseDetail() {
       <div className="px-2 bg-white">
         <div className="w-full h-52 rounded-md relative">
           <img
-            src="https://cdn.create.vista.com/api/media/small/206135578/stock-video-close-tennis-equipment-court-sport-recreation-concept-yellow-racket-tennis?videoStaticPreview=true&token="
+            src={selectedCourse?.thumbnail}
             alt="img"
             className="w-full h-full object-cover rounded-md"
           />
@@ -79,7 +79,7 @@ function CourseDetail() {
             <div
               onClick={() =>
                 navigate(
-                  `/course/${selectedCourse?.course.courseId.id}/video/${selectedCourse?.course.courseId.videos[0]._id}`
+                  `/course/${selectedCourse?._id}/${selectedCourse?.weeks[0]._id}/video/${selectedCourse?.weeks[0]?.contentItems[0]?._id}`
                 )
               }
               className="flex items-center justify-center w-16 h-16 bg-black/50 rounded-full cursor-pointer"
@@ -94,11 +94,11 @@ function CourseDetail() {
               className="text-2xl font-semibold hover:text-[#000000] cursor-pointer"
               onClick={() =>
                 navigate(
-                  `/course/${selectedCourse?.course.courseId.id}/video/${selectedCourse?.course.courseId.videos[0]._id}`
+                  `/course/${selectedCourse?._id}/${selectedCourse?.weeks[0]._id}/video/${selectedCourse?.weeks[0]?.contentItems[0]?._id}`
                 )
               }
             >
-              {selectedCourse?.course?.courseId.title}
+              {selectedCourse?.title}
             </h1>
             {/* instructor */}
             <InstructorCard
@@ -112,9 +112,7 @@ function CourseDetail() {
             {/* containt */}
             <div className="pt-2 ">
               <h1 className="text-lg font-semibold">Introduction</h1>
-              <ReadMore
-                text={selectedCourse?.course.courseId.description ?? ""}
-              />
+              <ReadMore text={selectedCourse?.description ?? ""} />
             </div>
             {/* Detail */}
             <DetailCard title="Details" details={details} />
@@ -156,70 +154,53 @@ function CourseDetail() {
             </div>
           </div>
           <div className="hidden md:block col-span-2 p-2 bg-[#F8F9FA] rounded-lg">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 flex items-center justify-center rounded-full text-white font-semibold bg-[#ff9328]">
-                01
-              </div>
-              <p className="text-[#152946] text-xl font-semibold">
-                Introduction
-              </p>
-            </div>
-            {selectedCourse?.course.courseId.videos.map((video, index) => {
-              const assessment = video.hasAssessmentNext
-                ? selectedCourse.course.courseId.assessments.find(
-                    (a) => a._id === video.assessmentId
-                  )
-                : null;
-
-              const videoExists = selectedCourse?.course.videos.find(
-                (vid) => vid.videoId === video._id
-              );
-
-              const assessmentExists = assessment
-                ? selectedCourse?.course.assessments.find(
-                    (asses) => asses.assessmentId === assessment._id
-                  )
-                : undefined;
-
-              return (
-                <div key={video._id}>
-                  <VideoListItem
-                    label={video.title}
-                    duration={video.duration}
-                    identifier={"0" + (index + 1)}
-                    locked={videoExists && videoExists.status == "locked"}
-                    onPlay={() =>
-                      selectedCourse?.course.videos.find(
-                        (vid) => vid.videoId === video._id
-                      )?.status !== "locked" &&
-                      navigate(
-                        `/course/${selectedCourse.course.courseId.id}/video/${video._id}`
-                      )
-                    }
-                  />
-                  {video.hasAssessmentNext && assessment && (
-                    <VideoListItem
-                      label={assessment.title?.slice(0, 30)}
-                      duration={assessment.timeLimit}
-                      locked={
-                        assessmentExists && assessmentExists.status == "locked"
-                      }
-                      onPlay={() => {
-                        const isFinished =
-                          selectedCourse?.course.assessments.find(
-                            (asses) => asses.assessmentId === assessment._id
-                          )?.status !== "locked";
-
-                        isFinished &&
-                          navigate(
-                            `/course/${selectedCourse.course.courseId.id}/assessment/${assessment._id}`
-                          );
-                      }}
-                    />
-                  )}
+            {selectedCourse?.weeks.map((week) => (
+              <div key={week._id}>
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-8 h-8 flex items-center justify-center rounded-full text-white font-semibold bg-[#ff9328]">
+                    {week.weekNumber.toString().padStart(2, "0")}
+                  </div>
+                  <p className="text-[#152946] text-xl font-semibold">
+                    {week.title}
+                  </p>
                 </div>
-              );
-            })}
+
+                {week.contentItems.map((item, index) => {
+                  const identifier =
+                    item.type === "video" ? "0" + (index + 1) : undefined;
+
+                  return (
+                    <div key={item._id}>
+                      <VideoListItem
+                        label={item.title}
+                        duration={item.duration}
+                        identifier={identifier}
+                        locked={
+                          item.progress?.status === "locked" || item.order !== 1
+                        }
+                        status={item.progress?.status}
+                        onPlay={() => {
+                          if (
+                            item.progress?.status !== "locked" ||
+                            item.order === 1
+                          ) {
+                            if (item.type === "video") {
+                              navigate(
+                                `/course/${course_id}/${week._id}/video/${item._id}`
+                              );
+                            } else if (item.type === "quiz") {
+                              navigate(
+                                `/course/${course_id}/${week._id}/assessment/${item._id}`
+                              );
+                            }
+                          }
+                        }}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
           </div>
         </div>
       </div>

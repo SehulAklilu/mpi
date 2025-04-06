@@ -119,11 +119,11 @@ const router = createBrowserRouter([
             element: <CourseDetail />,
           },
           {
-            path: "course/:course_id/video/:video_id",
+            path: "course/:course_id/:week_id/video/:video_id",
             element: <LessonDetail />,
           },
           {
-            path: "course/:course_id/assessment/:assessment_id",
+            path: "course/:course_id/:week_id/assessment/:assessment_id",
             element: <Assessment />,
           },
           {
