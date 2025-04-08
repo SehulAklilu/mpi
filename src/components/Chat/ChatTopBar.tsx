@@ -66,7 +66,7 @@ const ChatTopBar: React.FC<ChatTopBarProps> = ({
     };
   }, [socket, isConnected, userId]);
 
-  const deleteChat = useMutation(
+  const deleteGroupChat = useMutation(
     (groupId: string) => axiosInstance.delete(`/api/v1/chats/group/${groupId}`),
     {
       onSuccess: () => {
@@ -75,6 +75,16 @@ const ChatTopBar: React.FC<ChatTopBarProps> = ({
       },
     }
   );
+
+  // const deleteChat = useMutation(
+  //   (groupId: string) => axiosInstance.delete(`/api/v1/chats/${groupId}`),
+  //   {
+  //     onSuccess: () => {
+  //       queryClient.invalidateQueries("chats");
+  //       setIsMenuOpen(false);
+  //     },
+  //   }
+  // );
 
   useEffect(() => {
     const handleClickOutside = (event: any) => {
@@ -154,13 +164,21 @@ const ChatTopBar: React.FC<ChatTopBarProps> = ({
           </div>
         </div>
         <div className="relative">
-          {adminId === userId && (
+          {chatType === "Group" && adminId === userId && (
             <HiDotsVertical
               className="text-white cursor-pointer"
               size={24}
               onClick={() => setIsMenuOpen((pre) => !pre)}
             />
           )}
+
+          {/* {chatType !== "Group" && (
+            <HiDotsVertical
+              className="text-white cursor-pointer"
+              size={24}
+              onClick={() => setIsMenuOpen((pre) => !pre)}
+            />
+          )} */}
           {isMenuOpen && (
             <div
               className="absolute top-12 right-0 w-[12rem] rounded-xl shadow-md p-2 border-2 border-primary bg-white flex flex-col "
@@ -174,7 +192,7 @@ const ChatTopBar: React.FC<ChatTopBarProps> = ({
               </div> */}
               <div
                 className="flex items-center gap-2 cursor-pointer hover:bg-gray-200  p-2 rounded-md"
-                onClick={() => deleteChat.mutate(user.id)}
+                onClick={() => deleteGroupChat.mutate(user.id)}
               >
                 <GoTrash size={24} className="text-red-400" />
                 <span className="text-red-400">Delete Chat</span>

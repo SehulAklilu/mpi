@@ -26,12 +26,12 @@ const PlayerMatcheCard = ({ match }: { match: Match }) => {
         {match.p1IsObject ? (
           <>
             <img
-              src={match.p1.avatar}
-              alt={match.p1.firstName}
+              src={match?.p1?.avatar}
+              alt={match?.p1?.firstName}
               className="w-12 h-12 sm:w-16 sm:h-16 rounded-full object-cover"
             />
             <p className="text-sm sm:text-base font-semibold text-center">
-              {match.p1.firstName} {match.p1.lastName}
+              {match?.p1?.firstName} {match?.p1?.lastName}
             </p>
             <small className="text-xs">USTA: #19</small>
           </>
@@ -65,12 +65,12 @@ const PlayerMatcheCard = ({ match }: { match: Match }) => {
         {match.p2IsObject ? (
           <>
             <img
-              src={match.p2.avatar}
-              alt={match.p2.firstName}
+              src={match?.p2?.avatar}
+              alt={match?.p2?.firstName}
               className="w-12 h-12 sm:w-16 sm:h-16 rounded-full object-cover"
             />
             <p className="font-semibold text-sm sm:text-base text-center">
-              {match.p2.firstName} {match.p2.lastName}
+              {match?.p2?.firstName} {match?.p2?.lastName}
             </p>
             <small className="text-xs">USTA: #19</small>
           </>
