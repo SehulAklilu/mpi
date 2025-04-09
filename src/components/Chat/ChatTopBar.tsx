@@ -109,9 +109,12 @@ const ChatTopBar: React.FC<ChatTopBarProps> = ({
             src={user.avatarUrl}
             alt={user.name}
             className="w-12 h-12 rounded-full cursor-pointer"
-            onClick={() => setOpen(true)}
+            onClick={() => chatType === "Group" && setOpen(true)}
           />
-          <div onClick={() => setOpen(true)} className="cursor-pointer">
+          <div
+            onClick={() => chatType === "Group" && setOpen(true)}
+            className="cursor-pointer"
+          >
             <h4 className="text-xl text-white font-medium ">{user.name}</h4>
             {chatType !== "Group" ? (
               <span
