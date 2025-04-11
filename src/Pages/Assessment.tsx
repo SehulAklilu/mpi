@@ -6,7 +6,7 @@ import {
 import ReadMore from "@/components/common/ReadMore";
 import InstructorCard from "@/components/Learn/InstructorCard";
 import VideoListItem from "@/components/Learn/VideoListItem";
-import { ContentItem, Module } from "@/types/course.types";
+import { ContentItem, Module, Week } from "@/types/course.types";
 import { useEffect, useState } from "react";
 import {
   FaClock,
@@ -67,6 +67,8 @@ function Assessment() {
   const currentItemId = assessment_id;
   const queryClient = useQueryClient();
 
+  const [selectedWeek, setSelectedWeek] = useState<Week | undefined>(undefined);
+
   const [selectedItem, setSelectedItem] = useState<ContentItem | null>(null);
 
   const {
@@ -78,6 +80,11 @@ function Assessment() {
     queryFn: () => getUserCoursesById(course_id!),
     enabled: !!course_id,
   });
+
+  useEffect(() => {
+    const selectedWeek = selectedCourse?.weeks.find((w) => w._id === week_id);
+    setSelectedWeek(selectedWeek);
+  }, [isLoading, selectedCourse, week_id]);
 
   interface MutationVariables {
     params: {
@@ -107,7 +114,14 @@ function Assessment() {
       );
       selectedItem && setSelectedItem(selectedItem);
     }
-  }, [isLoading, selectedCourse, selectedItem, setSelectedItem]);
+  }, [
+    isLoading,
+    selectedCourse,
+    selectedItem,
+    setSelectedItem,
+    week_id,
+    assessment_id,
+  ]);
 
   const handleNext = (answers: QuestionAnswer[]) => {
     if (
@@ -200,7 +214,7 @@ function Assessment() {
           ) : null}
         </div>
         <div className="grid grid-cols-6 py-2 p-2 text-[#1c1d47] gap-10">
-          <div className="col-span-6 lg:col-span-4 order-2 lg:order-1">
+          <div className=" hidden md:block col-span-6 lg:col-span-4 order-2 lg:order-1">
             <h1 className="text-2xl font-semibold">{selectedItem?.title}</h1>
             {/* instructor */}
             <InstructorCard
@@ -250,55 +264,43 @@ function Assessment() {
               </div>
             </div>
           </div>
-          <div className="hidden md:block col-span-2 order-1 p-2 bg-[#F8F9FA] rounded-lg">
-            {selectedCourse?.weeks.map((week) => (
-              <div key={week._id}>
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="w-8 h-8 flex items-center justify-center rounded-full text-white font-semibold bg-[#ff9328]">
-                    {week.weekNumber.toString().padStart(2, "0")}
-                  </div>
-                  <p className="text-[#152946] text-xl font-semibold">
-                    {week.title}
-                  </p>
-                </div>
+          <div className="col-span-6 lg:col-span-2 order-1 lg:order-2 p-2 bg-[#F8F9FA] rounded-lg">
+            <h1 className="text-2xl block md:hidden font-semibold">
+              {selectedItem?.title}
+            </h1>
+            {selectedWeek?.contentItems.map((item, index) => {
+              const identifier =
+                item.type === "video" ? "0" + (index + 1) : undefined;
 
-                {week.contentItems.map((item, index) => {
-                  const identifier =
-                    item.type === "video" ? "0" + (index + 1) : undefined;
-
-                  return (
-                    <div key={item._id}>
-                      <VideoListItem
-                        label={item.title}
-                        duration={item.duration}
-                        identifier={identifier}
-                        active={item._id === assessment_id}
-                        status={item.progress?.status}
-                        locked={
-                          item.progress?.status === "locked" || item.order !== 1
+              return (
+                <div key={item._id}>
+                  <VideoListItem
+                    label={item.title}
+                    duration={item.duration}
+                    identifier={identifier}
+                    active={item._id === assessment_id}
+                    status={item.progress?.status}
+                    type={item.type}
+                    onPlay={() => {
+                      if (
+                        item.progress?.status !== "locked" ||
+                        item.order === 1
+                      ) {
+                        if (item.type === "video") {
+                          navigate(
+                            `/course/${course_id}/${week_id}/video/${item._id}`
+                          );
+                        } else if (item.type === "quiz") {
+                          navigate(
+                            `/course/${course_id}/${week_id}/assessment/${item._id}`
+                          );
                         }
-                        onPlay={() => {
-                          if (
-                            item.progress?.status !== "locked" ||
-                            item.order === 1
-                          ) {
-                            if (item.type === "video") {
-                              navigate(
-                                `/course/${course_id}/${week._id}/video/${item._id}`
-                              );
-                            } else if (item.type === "quiz") {
-                              navigate(
-                                `/course/${course_id}/${week._id}/assessment/${item._id}`
-                              );
-                            }
-                          }
-                        }}
-                      />
-                    </div>
-                  );
-                })}
-              </div>
-            ))}
+                      }
+                    }}
+                  />
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>

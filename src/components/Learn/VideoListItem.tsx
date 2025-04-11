@@ -2,6 +2,7 @@ import { FC } from "react";
 import { FaPlayCircle, FaLock } from "react-icons/fa";
 import { GoGoal } from "react-icons/go";
 import { FaCheckDouble } from "react-icons/fa6";
+import { HiQuestionMarkCircle } from "react-icons/hi";
 
 interface VideoListItemProps {
   label: string;
@@ -9,8 +10,8 @@ interface VideoListItemProps {
   identifier?: string;
   onPlay: () => void;
   active?: boolean;
-  locked: boolean | undefined;
   status?: string;
+  type?: string;
 }
 
 const VideoListItem: FC<VideoListItemProps> = ({
@@ -19,8 +20,8 @@ const VideoListItem: FC<VideoListItemProps> = ({
   identifier,
   onPlay,
   active,
-  locked,
   status,
+  type,
 }) => {
   return (
     <div
@@ -38,7 +39,7 @@ const VideoListItem: FC<VideoListItemProps> = ({
           <p className="text-xs">{duration} Min</p>
         </div>
       </div>
-      {locked ? (
+      {status === "locked" ? (
         <FaLock size={24} />
       ) : status === "completed" ? (
         <FaCheckDouble
@@ -46,8 +47,14 @@ const VideoListItem: FC<VideoListItemProps> = ({
           size={24}
           style={{ cursor: "pointer" }}
         />
-      ) : (
+      ) : type !== "quiz" ? (
         <FaPlayCircle
+          className="text-[#ff9328]"
+          size={24}
+          style={{ cursor: "pointer" }}
+        />
+      ) : (
+        <HiQuestionMarkCircle
           className="text-[#ff9328]"
           size={24}
           style={{ cursor: "pointer" }}

@@ -39,6 +39,7 @@ import InitialAssessment from "./components/Assessment/InitialAssessment.tsx";
 import { SocketProvider } from "./context/SocketContext.tsx";
 import ResetPassword from "./components/auth/ResetPassword.tsx";
 import PasswordFormComponent from "./components/auth/PasswordForm.tsx";
+import Learn from "./NewLearn.tsx";
 
 const router = createBrowserRouter([
   {
@@ -114,10 +115,10 @@ const router = createBrowserRouter([
         children: [
           {
             path: "course",
-            element: <NewLearn />,
+            element: <Learn />,
           },
           {
-            path: "course/:course_id",
+            path: "course/:course_id/:week_id",
             element: <CourseDetail />,
           },
           {

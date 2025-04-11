@@ -15,11 +15,16 @@ import { Review } from "./Review";
 import VideoListItem from "./VideoListItem";
 import CourseDetailSkeleton from "./CourseDetailSkeleton";
 import { ContentLayout } from "../Sidebar/contenet-layout";
-import { Module } from "@/types/course.types";
+import { Module, Week } from "@/types/course.types";
+import { useEffect, useState } from "react";
 
 function CourseDetail() {
   const navigate = useNavigate();
-  const { course_id } = useParams<{ course_id: string }>();
+  const { course_id, week_id } = useParams<{
+    course_id: string;
+    week_id: string;
+  }>();
+  const [selectedWeek, setSelectedWeek] = useState<Week | undefined>(undefined);
 
   const {
     data: selectedCourse,
@@ -30,6 +35,11 @@ function CourseDetail() {
     queryFn: () => getUserCoursesById(course_id!),
     enabled: !!course_id,
   });
+
+  useEffect(() => {
+    const selectedWeek = selectedCourse?.weeks.find((w) => w._id === week_id);
+    setSelectedWeek(selectedWeek);
+  }, [isLoading, selectedCourse]);
 
   const reviews = [
     {
@@ -62,6 +72,7 @@ function CourseDetail() {
     { stars: 2, value: 10 },
     { stars: 1, value: 5 },
   ];
+  let videoCounter = 1;
 
   if (isLoading || isError) {
     return <CourseDetailSkeleton />;
@@ -154,53 +165,41 @@ function CourseDetail() {
             </div>
           </div>
           <div className="hidden md:block col-span-2 p-2 bg-[#F8F9FA] rounded-lg">
-            {selectedCourse?.weeks.map((week) => (
-              <div key={week._id}>
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="w-8 h-8 flex items-center justify-center rounded-full text-white font-semibold bg-[#ff9328]">
-                    {week.weekNumber.toString().padStart(2, "0")}
-                  </div>
-                  <p className="text-[#152946] text-xl font-semibold">
-                    {week.title}
-                  </p>
-                </div>
+            {selectedWeek?.contentItems.map((item, index) => {
+              let identifier;
 
-                {week.contentItems.map((item, index) => {
-                  const identifier =
-                    item.type === "video" ? "0" + (index + 1) : undefined;
-
-                  return (
-                    <div key={item._id}>
-                      <VideoListItem
-                        label={item.title}
-                        duration={item.duration}
-                        identifier={identifier}
-                        locked={
-                          item.progress?.status === "locked" || item.order !== 1
+              if (item.type === "video") {
+                identifier = "0" + videoCounter;
+                videoCounter++;
+              }
+              return (
+                <div key={item._id}>
+                  <VideoListItem
+                    label={item.title}
+                    duration={item.duration}
+                    identifier={identifier}
+                    status={item.progress?.status}
+                    type={item.type}
+                    onPlay={() => {
+                      if (
+                        item.progress?.status !== "locked" ||
+                        item.order === 1
+                      ) {
+                        if (item.type === "video") {
+                          navigate(
+                            `/course/${course_id}/${week_id}/video/${item._id}`
+                          );
+                        } else if (item.type === "quiz") {
+                          navigate(
+                            `/course/${course_id}/${week_id}/assessment/${item._id}`
+                          );
                         }
-                        status={item.progress?.status}
-                        onPlay={() => {
-                          if (
-                            item.progress?.status !== "locked" ||
-                            item.order === 1
-                          ) {
-                            if (item.type === "video") {
-                              navigate(
-                                `/course/${course_id}/${week._id}/video/${item._id}`
-                              );
-                            } else if (item.type === "quiz") {
-                              navigate(
-                                `/course/${course_id}/${week._id}/assessment/${item._id}`
-                              );
-                            }
-                          }
-                        }}
-                      />
-                    </div>
-                  );
-                })}
-              </div>
-            ))}
+                      }
+                    }}
+                  />
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>

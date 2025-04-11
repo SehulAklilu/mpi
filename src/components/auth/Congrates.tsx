@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import logo from "../../assets/logo/new-logo.svg";
+import logo from "../../assets/logo/mpi_logo.png";
 import congrats from "../../assets/svg/congrats.svg";
 import { Button } from "../ui/button";
 import { useRole } from "@/RoleContext";

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { heroLinks, MobileNavbar, Navbar } from "../Navbar/NavbarNew";
 import { FiArrowUpRight } from "react-icons/fi";
-import logo from "../../assets/logo/new-logo.svg";
+import logo from "../../assets/logo/mpi_logo.png";
 import Cookies from "js-cookie";
 
 import { motion, AnimatePresence } from "framer-motion";

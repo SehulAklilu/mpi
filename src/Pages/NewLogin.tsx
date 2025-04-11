@@ -1,5 +1,5 @@
 import AuthWrapper from "@/components/auth/AuthWrapper";
-import logo from "../assets/logo/new-logo.svg";
+import logo from "../assets/logo/mpi_logo.png";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { FcGoogle } from "react-icons/fc";
