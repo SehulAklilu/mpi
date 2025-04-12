@@ -192,6 +192,7 @@ function LessonDetail() {
               <ReadMore
                 text={selectedItem?.description ?? ""}
                 previewLength={300}
+                initialValue={true}
               />
             </div>
             {/* resources */}

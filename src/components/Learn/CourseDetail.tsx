@@ -109,7 +109,7 @@ function CourseDetail() {
                 )
               }
             >
-              {selectedCourse?.title}
+              {selectedWeek?.title}
             </h1>
             {/* instructor */}
             <InstructorCard
@@ -123,7 +123,7 @@ function CourseDetail() {
             {/* containt */}
             <div className="pt-2 ">
               <h1 className="text-lg font-semibold">Introduction</h1>
-              <ReadMore text={selectedCourse?.description ?? ""} />
+              <ReadMore text={selectedWeek?.description ?? ""} />
             </div>
             {/* Detail */}
             <DetailCard title="Details" details={details} />

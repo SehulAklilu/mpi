@@ -3,10 +3,15 @@ import React, { useState } from "react";
 interface ReadMoreProps {
   text: string;
   previewLength?: number;
+  initialValue?: boolean;
 }
 
-const ReadMore: React.FC<ReadMoreProps> = ({ text, previewLength = 150 }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+const ReadMore: React.FC<ReadMoreProps> = ({
+  text,
+  previewLength = 150,
+  initialValue = false,
+}) => {
+  const [isExpanded, setIsExpanded] = useState(initialValue);
 
   const toggleReadMore = () => {
     setIsExpanded((prev) => !prev);
