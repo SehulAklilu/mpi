@@ -1,10 +1,10 @@
 import { useQuery } from "react-query";
-import tennisBall from "./assets/tennis-ball.svg";
 import { ContentLayout } from "./components/Sidebar/contenet-layout";
 import { MdLockOutline } from "react-icons/md";
 import { ModuleResponse } from "./types/course.types";
 import { getUserCoursesNew } from "./api/course.api";
 import { useNavigate } from "react-router-dom";
+import { BiSolidTennisBall } from "react-icons/bi";
 
 const TennisCourtLayout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -96,10 +96,8 @@ export default function ModuleRoadmap() {
                         }
                       }}
                     >
-                      <div
-                        className="relative w-20 h-20 bg-center bg-no-repeat bg-contain"
-                        style={{ backgroundImage: `url(${tennisBall})` }}
-                      >
+                      <div className="relative w-20 h-20 md:w-24 md:h-24 bg-center bg-no-repeat bg-contain">
+                        <BiSolidTennisBall className="w-20 h-20 md:w-24 md:h-24 text-[#D1E62C]" />
                         {week.progress.status === "locked" && (
                           <div className="absolute inset-0 flex items-center justify-center">
                             <MdLockOutline
