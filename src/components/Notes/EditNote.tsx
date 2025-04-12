@@ -94,7 +94,11 @@ const EditNote = ({ note }: { note: JournalCardProps }) => {
 
   const handleSave = () => {
     const newColor = hexToInt(color);
-    mutate({ title, content, color: newColor?.toString() });
+    if (title && title !== "" && content && content !== "") {
+      mutate({ title, content, color: newColor?.toString() });
+    } else {
+      toast.error("Please provide a title and description.");
+    }
   };
   return (
     <AlertDialog open={open}>
