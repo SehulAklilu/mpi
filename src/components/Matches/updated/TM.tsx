@@ -1,128 +1,128 @@
-import ProfileCard from "@/components/PendingMatch/ProfileCard";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import React, { useEffect, useState } from "react";
-import { FaFlag, FaInfoCircle } from "react-icons/fa";
-import { FaBalanceScaleLeft } from "react-icons/fa";
-import { FaBaseball, FaMinus, FaPlus, FaTrophy } from "react-icons/fa6";
-import { IoTime } from "react-icons/io5";
-import { FaRegCalendarPlus } from "react-icons/fa";
-import { MdOutlineWaves } from "react-icons/md";
-import { ContentLayout } from "@/components/Sidebar/contenet-layout";
-import { FiInfo } from "react-icons/fi";
-import profile_img from "../../assets/user.jpeg";
-import Report from "../Report";
-import MatchProfile from "../MatchProfile";
-import { Button } from "../../ui/button";
-import { BsArrow90DegLeft, BsArrow90DegRight } from "react-icons/bs";
-import { useMutation, useQuery } from "react-query";
-import { toast } from "react-toastify";
-import axios from "@/api/axios.ts";
-import OneGame from "./TOneGame";
-import { useParams } from "react-router-dom";
-import { formatDateTime } from "@/lib/utils";
-import { Match, Player as MatchPlayer, Status } from "@/types/match.type";
+import ProfileCard from "@/components/PendingMatch/ProfileCard"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import React, { useEffect, useState } from "react"
+import { FaFlag, FaInfoCircle } from "react-icons/fa"
+import { FaBalanceScaleLeft } from "react-icons/fa"
+import { FaBaseball, FaMinus, FaPlus, FaTrophy } from "react-icons/fa6"
+import { IoTime } from "react-icons/io5"
+import { FaRegCalendarPlus } from "react-icons/fa"
+import { MdOutlineWaves } from "react-icons/md"
+import { ContentLayout } from "@/components/Sidebar/contenet-layout"
+import { FiInfo } from "react-icons/fi"
+import profile_img from "../../assets/user.jpeg"
+import Report from "../Report"
+import MatchProfile from "../MatchProfile"
+import { Button } from "../../ui/button"
+import { BsArrow90DegLeft, BsArrow90DegRight } from "react-icons/bs"
+import { useMutation, useQuery } from "react-query"
+import { toast } from "react-toastify"
+import axios from "@/api/axios.ts"
+import OneGame from "./TOneGame"
+import { useParams } from "react-router-dom"
+import { formatDateTime } from "@/lib/utils"
+import { Match, Player as MatchPlayer, Status } from "@/types/match.type"
 
 interface TennisMatch {
-  totalGameTime: number;
-  sets: Set[];
+  totalGameTime: number
+  sets: Set[]
 }
 
 interface Set {
-  p1TotalScore: number;
-  p2TotalScore: number;
-  games: Game[];
-  tieBreak?: TieBreak | null;
+  p1TotalScore: number
+  p2TotalScore: number
+  games: Game[]
+  tieBreak?: TieBreak | null
 }
 
 interface Game {
-  gameNumber: number;
-  server: "playerOne" | "playerTwo";
-  scores: Score[];
-  changeoverDuration: number;
+  gameNumber: number
+  server: "playerOne" | "playerTwo"
+  scores: Score[]
+  changeoverDuration: number
 }
 
 interface Score {
-  p1Score: string; // Changed from string to string
-  p2Score: string; // Changed from string to string
-  isSecondService: boolean;
-  p1Reaction: string; // Example: "negativeResponse"
-  p2Reaction: string; // Example: "negativeResponse"
-  missedShot?: string; // Example: "net"
-  placement?: string; // Example: "downTheLine"
-  missedShotWay?: string; // Example: "forehand"
-  betweenPointDuration: number;
-  type: string; // Example: "ace"
-  rallies: string; // Example: "oneToFour"
-  servePlacement: string; // Example: "t"
-  server? : string | null,
+  p1Score: string // Changed from string to string
+  p2Score: string // Changed from string to string
+  isSecondService: boolean
+  p1Reaction: string // Example: "negativeResponse"
+  p2Reaction: string // Example: "negativeResponse"
+  missedShot?: string // Example: "net"
+  placement?: string // Example: "downTheLine"
+  missedShotWay?: string // Example: "forehand"
+  betweenPointDuration: number
+  type: string // Example: "ace"
+  rallies: string // Example: "oneToFour"
+  servePlacement: string // Example: "t"
+  server?: string | null
 }
 
 interface TieBreak {
-  winner: "playerOne" | "playerTwo" | null;
-  scores: TieBreakScore[];
+  winner: "playerOne" | "playerTwo" | null
+  scores: TieBreakScore[]
 }
 
 interface TieBreakScore {
-  playerOnePoints: number;
-  playerTwoPoints: number;
+  playerOnePoints: number
+  playerTwoPoints: number
 }
 // --------------------------------------------
 
 interface Player {
-  id: number; // Unique identifier for the player
-  name: string; // Player's name
-  scores: number[]; // Array to track scores for each set
-  matchScore: number; // Total match score
+  id: number // Unique identifier for the player
+  name: string // Player's name
+  scores: number[] // Array to track scores for each set
+  matchScore: number // Total match score
 }
 
 interface Events {
-  rallyCount: number; // Current rally count
-  aces: number; // Total number of aces
-  faults: number; // Total number of faults
+  rallyCount: number // Current rally count
+  aces: number // Total number of aces
+  faults: number // Total number of faults
   serveReturns: {
-    wins: number; // Number of serve return wins
-    losses: number; // Number of serve return losses
-  };
+    wins: number // Number of serve return wins
+    losses: number // Number of serve return losses
+  }
   hitTypes: {
-    groundstroke: number; // Number of groundstroke hits
-    approach: number; // Number of approach hits
-    volley: number; // Number of volley hits
-  };
+    groundstroke: number // Number of groundstroke hits
+    approach: number // Number of approach hits
+    volley: number // Number of volley hits
+  }
   errors: {
-    forced: number; // Number of forced errors
-    unforced: number; // Number of unforced errors
-  };
+    forced: number // Number of forced errors
+    unforced: number // Number of unforced errors
+  }
   ballPosition: {
-    net: number; // Errors at the net
-    backcourt: number; // Errors in the backcourt
-    alley: number; // Errors in the alley
-  };
+    net: number // Errors at the net
+    backcourt: number // Errors in the backcourt
+    alley: number // Errors in the alley
+  }
 }
 
 interface GameState {
-  players: Player[]; // List of players
-  currentSet: number; // Current set number
-  events: Events; // Tracks game events
+  players: Player[] // List of players
+  currentSet: number // Current set number
+  events: Events // Tracks game events
 }
 
-type PointInf = number | "A";
+type PointInf = number | "A"
 interface ScoreInf {
   gameScore: {
-    player1: PointInf;
-    player2: PointInf;
-  };
+    player1: PointInf
+    player2: PointInf
+  }
   setScore: {
-    player1: number;
-    player2: number;
-  };
+    player1: number
+    player2: number
+  }
   matchScore: {
-    player1: number;
-    player2: number;
-  };
+    player1: number
+    player2: number
+  }
 
-  setScoreCur: number;
-  matchScoreCur: number;
-  serve: "player1" | "player2" | null;
+  setScoreCur: number
+  matchScoreCur: number
+  serve: "player1" | "player2" | null
 }
 
 type scoreTrackType =
@@ -131,19 +131,19 @@ type scoreTrackType =
   | "scoreByServer"
   | "fault"
   | "serveReturnLoss"
-  | "score";
+  | "score"
 
 interface dataTrackerType {
-  goalType: scoreTrackType | "";
-  serve: "player1" | "player2" | "";
-  winner: "player1" | "player2" | "";
-  handPosition: "Backhand" | "Forehand" | "";
-  hitType: "Groundstroke" | "Approach" | "Volley" | "";
-  errorType: "Forced" | "Unforced" | "";
-  ballPosition: "Net" | "Backcourt" | "Alley" | "";
-  rallyCount: number;
+  goalType: scoreTrackType | ""
+  serve: "player1" | "player2" | ""
+  winner: "player1" | "player2" | ""
+  handPosition: "Backhand" | "Forehand" | ""
+  hitType: "Groundstroke" | "Approach" | "Volley" | ""
+  errorType: "Forced" | "Unforced" | ""
+  ballPosition: "Net" | "Backcourt" | "Alley" | ""
+  rallyCount: number
 
-  missedShot: "net" | "long" | "wide" | "";
+  missedShot: "net" | "long" | "wide" | ""
   missedShotWay:
     | "forehand"
     | "backhand"
@@ -156,7 +156,7 @@ interface dataTrackerType {
     | "overhead"
     | "forehandDropShot"
     | "backhandDropShot"
-    | "";
+    | ""
 }
 
 // {
@@ -190,46 +190,46 @@ interface dataTrackerType {
 const getAgainest = (
   player: "player1" | "player2" | null
 ): "player1" | "player2" => {
-  return player == "player1" ? "player2" : "player1";
-};
+  return player == "player1" ? "player2" : "player1"
+}
 
 function TrackingMatch() {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams<{ id: string }>()
 
   const { isLoading, mutate } = useMutation(
     (data: any) => axios.post("/api/v1/matches/" + id + "/submit", data),
     {
       onSuccess(data) {
-        toast.success("Added Successfuly");
+        toast.success("Added Successfuly")
       },
       onError(err: any) {
         toast.error(
           typeof err.response.data === "string"
             ? err.response.data
             : "Something goes wrong!"
-        );
+        )
       },
     }
-  );
+  )
   const [apiData, setApiData] = useState<TennisMatch>({
     totalGameTime: 0,
     sets: [],
-  });
+  })
   const apiSetDataInitial: Set = {
     p1TotalScore: 0,
     p2TotalScore: 0,
     games: [],
     tieBreak: null,
-  };
-  const [apiSetData, setApiSetData] = useState<Set>(apiSetDataInitial);
+  }
+  const [apiSetData, setApiSetData] = useState<Set>(apiSetDataInitial)
 
   const apiGameDataInitial: Game = {
     gameNumber: 1,
     server: "playerOne",
     scores: [],
     changeoverDuration: 0,
-  };
-  const [apiGameData, setApiGameData] = useState<Game>(apiGameDataInitial);
+  }
+  const [apiGameData, setApiGameData] = useState<Game>(apiGameDataInitial)
   const apiScoreDataInitial = {
     p1Score: "0",
     p2Score: "0",
@@ -243,15 +243,15 @@ function TrackingMatch() {
     type: "ace",
     rallies: "oneToFour",
     servePlacement: "t",
-  };
-  const [apiScoreData, setApiScoreData] = useState<Score>(apiScoreDataInitial);
-  const [tieBreakSetData, setTieBreakSetData] = useState<Score[]>([]);
+  }
+  const [apiScoreData, setApiScoreData] = useState<Score>(apiScoreDataInitial)
+  const [tieBreakSetData, setTieBreakSetData] = useState<Score[]>([])
 
-  const [dataTracker, setDataTracker] = useState<dataTrackerType[]>([]);
-  const [isTieBreak, setIsTieBreak] = useState(false);
+  const [dataTracker, setDataTracker] = useState<dataTrackerType[]>([])
+  const [isTieBreak, setIsTieBreak] = useState(false)
   const [rules, setRules] = useState({
     matchType: 3,
-  });
+  })
   const [score, setScore] = useState<ScoreInf>({
     matchScore: {
       player1: 0,
@@ -268,38 +268,38 @@ function TrackingMatch() {
     serve: null,
     setScoreCur: 0,
     matchScoreCur: 0,
-  });
+  })
 
   const getNextPoint = (score: PointInf): PointInf => {
-    if (score == 0) return 15;
-    if (score == 15) return 30;
-    if (score == 30) return 40;
-    return "A";
-  };
+    if (score == 0) return 15
+    if (score == 15) return 30
+    if (score == 30) return 40
+    return "A"
+  }
 
   const getPrevPoint = (score: PointInf): PointInf => {
-    if (score == 0) return 0;
-    if (score == 15) return 0;
-    if (score == 30) return 15;
-    if (score == 40) return 30;
-    if (score == "A") return 40;
-    return "A";
-  };
+    if (score == 0) return 0
+    if (score == 15) return 0
+    if (score == 30) return 15
+    if (score == 40) return 30
+    if (score == "A") return 40
+    return "A"
+  }
 
   const matchEndMapper: any = {
     1: 1,
     3: 2,
     5: 3,
-  };
+  }
 
   const updateMatch = (
     winner: "player1" | "player2",
     getTimers: Function,
     tieBreak?: any
   ) => {
-    const winnerMatchPoint = score.matchScore[winner];
-    const otherMatchPoint = score.matchScore[getAgainest(winner)];
-    const newPoint = winnerMatchPoint + 1;
+    const winnerMatchPoint = score.matchScore[winner]
+    const otherMatchPoint = score.matchScore[getAgainest(winner)]
+    const newPoint = winnerMatchPoint + 1
 
     setApiData((d) => {
       const x: TennisMatch = {
@@ -314,21 +314,21 @@ function TrackingMatch() {
             tieBreak: tieBreak ?? null,
           },
         ],
-      };
-      console.log("IIIII-I-IIIIIII", x);
-      if (newPoint == matchEndMapper[rules.matchType]) {
-        mutate(x);
       }
-      return x;
-    });
+      console.log("IIIII-I-IIIIIII", x)
+      if (newPoint == matchEndMapper[rules.matchType]) {
+        mutate(x)
+      }
+      return x
+    })
 
-    setApiSetData(apiSetDataInitial);
+    setApiSetData(apiSetDataInitial)
 
     setScore((data) => {
       const a = {
         ...data,
         matchScore: { ...data["matchScore"], [winner]: newPoint },
-      };
+      }
       console.log(
         "Check it",
         a,
@@ -337,17 +337,17 @@ function TrackingMatch() {
         winnerMatchPoint,
         newPoint,
         otherMatchPoint
-      );
-      return a;
-    });
+      )
+      return a
+    })
 
     if (newPoint == matchEndMapper[rules.matchType]) {
       setScore((data) => ({
         ...data,
         serve: null,
-      }));
+      }))
     }
-  };
+  }
 
   const updateSet = (
     winner: "player1" | "player2",
@@ -355,11 +355,11 @@ function TrackingMatch() {
     getTimers: Function,
     tieBreak?: any
   ) => {
-    const winnerSetPoint = score.setScore[winner];
-    const againest = getAgainest(winner);
-    const againestSetPoint = score.setScore[againest];
-    const newPoint = winnerSetPoint + 1;
-    tieBreak && console.log(tieBreak, "Not null Tie Breaker");
+    const winnerSetPoint = score.setScore[winner]
+    const againest = getAgainest(winner)
+    const againestSetPoint = score.setScore[againest]
+    const newPoint = winnerSetPoint + 1
+    tieBreak && console.log(tieBreak, "Not null Tie Breaker")
     const newApiSetData: Set = {
       ...apiSetData,
       games: [
@@ -370,61 +370,61 @@ function TrackingMatch() {
           changeoverDuration: getTimers().lastCOT,
         },
       ],
-    };
-    console.log("Current number of sets", newApiSetData);
-    setApiSetData(newApiSetData);
-    setApiGameData(apiGameDataInitial);
+    }
+    console.log("Current number of sets", newApiSetData)
+    setApiSetData(newApiSetData)
+    setApiGameData(apiGameDataInitial)
     if (isTieBreak) {
-      resetScore("setScore");
-      setIsTieBreak(false);
-      updateMatch(winner, getTimers, tieBreak);
-      return;
+      resetScore("setScore")
+      setIsTieBreak(false)
+      updateMatch(winner, getTimers, tieBreak)
+      return
     }
     setScore((data) => ({
       ...data,
       setScore: { ...data["setScore"], [winner]: newPoint, serve: againest },
       serve: getAgainest(data.serve!),
-    }));
+    }))
     if (newPoint == 6 && 6 == againestSetPoint) {
-      setIsTieBreak(true);
+      setIsTieBreak(true)
     }
     if (newPoint > 5 && newPoint - againestSetPoint > 1) {
-      resetScore("setScore");
-      updateMatch(winner, getTimers);
+      resetScore("setScore")
+      updateMatch(winner, getTimers)
     }
-  };
+  }
 
   const addPoint = (
     winner: "player1" | "player2",
     singleScoreData: Score,
     getTimers: Function
   ) => {
-    const winnerPoint = score.gameScore[winner];
-    const againest = getAgainest(winner);
-    const againestPoint = score.gameScore[againest];
+    const winnerPoint = score.gameScore[winner]
+    const againest = getAgainest(winner)
+    const againestPoint = score.gameScore[againest]
     let newApiScoreData: Score = {
       ...singleScoreData,
       missedShot: "net",
       rallies:
         singleScoreData.rallies == "" ? "oneToFour" : singleScoreData.rallies,
       type: singleScoreData.type == "" ? "doubleFault" : singleScoreData.type,
-    };
+    }
 
-    if (newApiScoreData.missedShot == "") delete newApiScoreData["missedShot"];
+    if (newApiScoreData.missedShot == "") delete newApiScoreData["missedShot"]
     if (newApiScoreData.missedShotWay == "")
-      delete newApiScoreData["missedShotWay"];
-    if (newApiScoreData.placement == "") delete newApiScoreData["placement"];
+      delete newApiScoreData["missedShotWay"]
+    if (newApiScoreData.placement == "") delete newApiScoreData["placement"]
 
     if (isTieBreak && winnerPoint != "A" && againestPoint != "A") {
-      const nextpoint = winnerPoint + 1;
+      const nextpoint = winnerPoint + 1
       newApiScoreData = {
         ...newApiScoreData,
         p1Score: nextpoint.toString(),
         p2Score: againestPoint.toString(),
-        server: score.serve == "player1" ? "playerOne" : "playerTwo"
-      };
-      console.log("Tie Break Switch");
-      console.log(score.serve, getAgainest(score.serve!));
+        server: score.serve == "player1" ? "playerOne" : "playerTwo",
+      }
+      console.log("Tie Break Switch")
+      console.log(score.serve, getAgainest(score.serve!))
       setScore((data) => ({
         ...data,
         gameScore: {
@@ -432,33 +432,33 @@ function TrackingMatch() {
           [winner]: nextpoint,
         },
         serve: getAgainest(score.serve!),
-      }));
+      }))
       const tiebreaks = {
         scores: [...tieBreakSetData, newApiScoreData],
         winner: winner == "player1" ? "playerOne" : "playerTwo",
-      };
-      if (nextpoint > 6 && nextpoint - againestPoint > 1) {
-        resetScore("gameScore");
-        updateSet(winner, newApiScoreData, getTimers, tiebreaks);
-      } else {
-        setTieBreakSetData((d) => [...d, newApiScoreData]);
       }
-      return;
+      if (nextpoint > 6 && nextpoint - againestPoint > 1) {
+        resetScore("gameScore")
+        updateSet(winner, newApiScoreData, getTimers, tiebreaks)
+      } else {
+        setTieBreakSetData((d) => [...d, newApiScoreData])
+      }
+      return
     }
 
     if (winnerPoint != 40 && winnerPoint != "A") {
-      const nextpoint = getNextPoint(winnerPoint);
+      const nextpoint = getNextPoint(winnerPoint)
       newApiScoreData = {
         ...newApiScoreData,
         p1Score: nextpoint.toString(),
         p2Score: againestPoint.toString(),
-      };
-      setApiGameData((d) => ({ ...d, scores: [...d.scores, newApiScoreData] }));
+      }
+      setApiGameData((d) => ({ ...d, scores: [...d.scores, newApiScoreData] }))
       setScore((data) => ({
         ...data,
         gameScore: { ...data.gameScore, [winner]: nextpoint },
-      }));
-      return;
+      }))
+      return
     }
 
     if (winnerPoint == 40) {
@@ -467,122 +467,122 @@ function TrackingMatch() {
           ...newApiScoreData,
           p1Score: "40",
           p2Score: "40",
-        };
+        }
         setApiGameData((d) => ({
           ...d,
           scores: [...d.scores, newApiScoreData],
-        }));
+        }))
         setScore((data) => ({
           ...data,
           gameScore: { ...data.gameScore, [againest]: 40 },
-        }));
-        return;
+        }))
+        return
       }
       if (againestPoint == 40) {
         newApiScoreData = {
           ...newApiScoreData,
           p1Score: "A",
           p2Score: "40",
-        };
+        }
         setApiGameData((d) => ({
           ...d,
           scores: [...d.scores, newApiScoreData],
-        }));
-        const nextpoint = getNextPoint(winnerPoint);
+        }))
+        const nextpoint = getNextPoint(winnerPoint)
         setScore((data) => ({
           ...data,
           gameScore: { ...data.gameScore, [winner]: nextpoint },
-        }));
+        }))
       } else {
         newApiScoreData = {
           ...newApiScoreData,
           p1Score: winnerPoint.toString(),
           p2Score: "40",
-        };
+        }
         setApiGameData((d) => ({
           ...d,
           scores: [...d.scores, newApiScoreData],
-        }));
-        resetScore("gameScore");
-        updateSet(winner, newApiScoreData, getTimers);
+        }))
+        resetScore("gameScore")
+        updateSet(winner, newApiScoreData, getTimers)
       }
-      return;
+      return
     }
     if (winnerPoint == "A") {
       newApiScoreData = {
         ...newApiScoreData,
         p1Score: "A",
         p2Score: againestPoint.toString(),
-      };
+      }
       setApiGameData((d) => ({
         ...d,
         scores: [...d.scores, newApiScoreData],
-      }));
-      resetScore("gameScore");
-      updateSet(winner, newApiScoreData, getTimers);
+      }))
+      resetScore("gameScore")
+      updateSet(winner, newApiScoreData, getTimers)
     }
-  };
+  }
 
   const undoPoint = (losser: "player1" | "player2") => {
-    const losserPoint = score.gameScore[losser];
-    const againest = getAgainest(losser);
-    const againestPoint = score.gameScore[againest];
+    const losserPoint = score.gameScore[losser]
+    const againest = getAgainest(losser)
+    const againestPoint = score.gameScore[againest]
     if (losserPoint == "A" || losserPoint > 0) {
       setScore((data) => ({
         ...data,
         gameScore: { ...data.gameScore, [losser]: getPrevPoint(losserPoint) },
-      }));
+      }))
     } else {
-      undoSet(losser);
+      undoSet(losser)
     }
-  };
+  }
 
   const undoSet = (losser: "player1" | "player2") => {
-    const losserSetPoint = score.setScore[losser];
-    const againest = getAgainest(losser);
-    const againestSetPoint = score.setScore[againest];
-    const newPoint = losserSetPoint - 1;
+    const losserSetPoint = score.setScore[losser]
+    const againest = getAgainest(losser)
+    const againestSetPoint = score.setScore[againest]
+    const newPoint = losserSetPoint - 1
     setScore((data) => ({
       ...data,
       setScore: { ...data["setScore"], [losser]: newPoint, serve: againest },
       serve: getAgainest(data.serve!),
-    }));
-  };
+    }))
+  }
 
   const resetScore = (type: "gameScore" | "setScore") => {
     setScore((data) => ({
       ...data,
       [type]: { player1: 0, player2: 0 },
-    }));
-  };
+    }))
+  }
 
-  const [matchData, setMatchData] = useState<Match | null>(null);
+  const [matchData, setMatchData] = useState<Match | null>(null)
   const mapper: any = {
     one: 1,
     three: 3,
     five: 5,
-  };
+  }
   const {
     isLoading: loadingMatch,
     data: result,
     error: errorMatch,
   } = useQuery("match:" + id, () => axios.get("/api/v1/matches/" + id), {
     onSuccess(data) {
-      console.log(data.data, "Matches");
+      console.log(data.data, "Matches")
       setRules((d) => ({
         ...d,
         matchType: mapper[data.data["matchType"]] ?? 3,
-      }));
-      setMatchData(data.data || null);
+      }))
+      setMatchData(data.data || null)
     },
     onError(err: any) {
       toast.error(
         typeof err.response.data === "string"
           ? err.response.data
           : "Error loading journals"
-      );
+      )
     },
-  });
+  })
 
   return (
     <ContentLayout name="Tracking Match">
@@ -642,7 +642,7 @@ function TrackingMatch() {
         )
       )}
     </ContentLayout>
-  );
+  )
 }
 
 const Table = ({ score, matchData }: { score: ScoreInf; matchData: Match }) => {
@@ -713,10 +713,10 @@ const Table = ({ score, matchData }: { score: ScoreInf; matchData: Match }) => {
         </tbody>
       </table>
     </div>
-  );
-};
+  )
+}
 
-export default TrackingMatch;
+export default TrackingMatch
 
 const PendingMatch = ({ match }: { match: Match }) => {
   return (
@@ -742,17 +742,17 @@ const PendingMatch = ({ match }: { match: Match }) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
 const PersonPending = ({
   isObject,
   name,
   player,
 }: {
-  isObject: boolean;
-  name?: string;
-  player?: MatchPlayer;
+  isObject: boolean
+  name?: string
+  player?: MatchPlayer
 }) => {
   //   const user =
   return (
@@ -779,5 +779,5 @@ const PersonPending = ({
         </div>
       )}
     </div>
-  );
-};
+  )
+}

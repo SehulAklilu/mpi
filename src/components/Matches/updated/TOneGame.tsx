@@ -1,119 +1,120 @@
-import ProfileCard from "@/components/PendingMatch/ProfileCard";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import React, { useEffect, useState } from "react";
-import { FaFlag, FaInfoCircle } from "react-icons/fa";
-import { FaBalanceScaleLeft } from "react-icons/fa";
-import { FaBaseball, FaMinus, FaPlus, FaTrophy } from "react-icons/fa6";
-import { IoTime } from "react-icons/io5";
-import { FaRegCalendarPlus } from "react-icons/fa";
-import { MdOutlineWaves } from "react-icons/md";
-import { ContentLayout } from "@/components/Sidebar/contenet-layout";
-import { FiInfo } from "react-icons/fi";
-import profile_img from "../../assets/user.jpeg";
-import Report from "../Report";
-import MatchProfile from "../MatchProfile";
-import { Button } from "../../ui/button";
-import { BsArrow90DegLeft, BsArrow90DegRight } from "react-icons/bs";
+import ProfileCard from "@/components/PendingMatch/ProfileCard"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import React, { useEffect, useState } from "react"
+import { FaFlag, FaInfoCircle } from "react-icons/fa"
+import { FaBalanceScaleLeft } from "react-icons/fa"
+import { FaBaseball, FaMinus, FaPlus, FaTrophy } from "react-icons/fa6"
+import { IoTime } from "react-icons/io5"
+import { FaRegCalendarPlus } from "react-icons/fa"
+import { MdOutlineWaves } from "react-icons/md"
+import { ContentLayout } from "@/components/Sidebar/contenet-layout"
+import { FiInfo } from "react-icons/fi"
+import profile_img from "../../assets/user.jpeg"
+import Report from "../Report"
+import MatchProfile from "../MatchProfile"
+import { Button } from "../../ui/button"
+import { BsArrow90DegLeft, BsArrow90DegRight } from "react-icons/bs"
+import TennisCourt from "./TennisCourt"
 
 interface TennisMatch {
-  totalGameTime: number;
-  sets: Set[];
+  totalGameTime: number
+  sets: Set[]
 }
 
 interface Set {
-  p1TotalScore: number;
-  p2TotalScore: number;
-  games: Game[];
-  tieBreak?: TieBreak | null;
+  p1TotalScore: number
+  p2TotalScore: number
+  games: Game[]
+  tieBreak?: TieBreak | null
 }
 
 interface Game {
-  gameNumber: number;
-  server: "playerOne" | "playerTwo";
-  scores: Score[];
+  gameNumber: number
+  server: "playerOne" | "playerTwo"
+  scores: Score[]
 }
 
 interface Score {
-  p1Score: string; // Changed from string to string
-  p2Score: string; // Changed from string to string
-  isSecondService: boolean;
-  p1Reaction: string; // Example: "negativeResponse"
-  p2Reaction: string; // Example: "negativeResponse"
-  missedShot?: string; // Example: "net"
-  placement?: string; // Example: "downTheLine"
-  missedShotWay?: string; // Example: "forehand"
-  betweenPointDuration: number;
-  type: string; // Example: "ace"
-  rallies: string; // Example: "oneToFour"
-  servePlacement: string; // Example: "t"
+  p1Score: string // Changed from string to string
+  p2Score: string // Changed from string to string
+  isSecondService: boolean
+  p1Reaction: string // Example: "negativeResponse"
+  p2Reaction: string // Example: "negativeResponse"
+  missedShot?: string // Example: "net"
+  placement?: string // Example: "downTheLine"
+  missedShotWay?: string // Example: "forehand"
+  betweenPointDuration: number
+  type: string // Example: "ace"
+  rallies: string // Example: "oneToFour"
+  servePlacement: string // Example: "t"
 }
 
 interface TieBreak {
-  winner: "playerOne" | "playerTwo" | null;
-  scores: TieBreakScore[];
+  winner: "playerOne" | "playerTwo" | null
+  scores: TieBreakScore[]
 }
 
 interface TieBreakScore {
-  playerOnePoints: number;
-  playerTwoPoints: number;
+  playerOnePoints: number
+  playerTwoPoints: number
 }
 // --------------------------------------------
 
 interface Player {
-  id: number; // Unique identifier for the player
-  name: string; // Player's name
-  scores: number[]; // Array to track scores for each set
-  matchScore: number; // Total match score
+  id: number // Unique identifier for the player
+  name: string // Player's name
+  scores: number[] // Array to track scores for each set
+  matchScore: number // Total match score
 }
 
 interface Events {
-  rallyCount: number; // Current rally count
-  aces: number; // Total number of aces
-  faults: number; // Total number of faults
+  rallyCount: number // Current rally count
+  aces: number // Total number of aces
+  faults: number // Total number of faults
   serveReturns: {
-    wins: number; // Number of serve return wins
-    losses: number; // Number of serve return losses
-  };
+    wins: number // Number of serve return wins
+    losses: number // Number of serve return losses
+  }
   hitTypes: {
-    groundstroke: number; // Number of groundstroke hits
-    approach: number; // Number of approach hits
-    volley: number; // Number of volley hits
-  };
+    groundstroke: number // Number of groundstroke hits
+    approach: number // Number of approach hits
+    volley: number // Number of volley hits
+  }
   errors: {
-    forced: number; // Number of forced errors
-    unforced: number; // Number of unforced errors
-  };
+    forced: number // Number of forced errors
+    unforced: number // Number of unforced errors
+  }
   ballPosition: {
-    net: number; // Errors at the net
-    backcourt: number; // Errors in the backcourt
-    alley: number; // Errors in the alley
-  };
+    net: number // Errors at the net
+    backcourt: number // Errors in the backcourt
+    alley: number // Errors in the alley
+  }
 }
 
 interface GameState {
-  players: Player[]; // List of players
-  currentSet: number; // Current set number
-  events: Events; // Tracks game events
+  players: Player[] // List of players
+  currentSet: number // Current set number
+  events: Events // Tracks game events
 }
 
-type PointInf = number | "A";
+type PointInf = number | "A"
 interface ScoreInf {
   gameScore: {
-    player1: PointInf;
-    player2: PointInf;
-  };
+    player1: PointInf
+    player2: PointInf
+  }
   setScore: {
-    player1: number;
-    player2: number;
-  };
+    player1: number
+    player2: number
+  }
   matchScore: {
-    player1: number;
-    player2: number;
-  };
+    player1: number
+    player2: number
+  }
 
-  setScoreCur: number;
-  matchScoreCur: number;
-  serve: "player1" | "player2" | null;
+  setScoreCur: number
+  matchScoreCur: number
+  serve: "player1" | "player2" | null
 }
 
 type scoreTrackType =
@@ -122,19 +123,19 @@ type scoreTrackType =
   | "scoreByServer"
   | "fault"
   | "serveReturnLoss"
-  | "score";
+  | "score"
 
 interface dataTrackerType {
-  goalType: scoreTrackType | "";
-  serve: "player1" | "player2" | "";
-  winner: "player1" | "player2" | "";
-  handPosition: "Backhand" | "Forehand" | "";
-  hitType: "Groundstroke" | "Approach" | "Volley" | "";
-  errorType: "Forced" | "Unforced" | "";
-  ballPosition: "Net" | "Backcourt" | "Alley" | "";
-  rallyCount: number;
+  goalType: scoreTrackType | ""
+  serve: "player1" | "player2" | ""
+  winner: "player1" | "player2" | ""
+  handPosition: "Backhand" | "Forehand" | ""
+  hitType: "Groundstroke" | "Approach" | "Volley" | ""
+  errorType: "Forced" | "Unforced" | ""
+  ballPosition: "Net" | "Backcourt" | "Alley" | ""
+  rallyCount: number
 
-  missedShot: "net" | "long" | "wide" | "";
+  missedShot: "net" | "long" | "wide" | ""
   missedShotWay:
     | "forehand"
     | "backhand"
@@ -147,7 +148,7 @@ interface dataTrackerType {
     | "overhead"
     | "forehandDropShot"
     | "backhandDropShot"
-    | "";
+    | ""
 }
 
 // {
@@ -181,8 +182,8 @@ interface dataTrackerType {
 const getAgainest = (
   player: "player1" | "player2" | null
 ): "player1" | "player2" => {
-  return player == "player1" ? "player2" : "player1";
-};
+  return player == "player1" ? "player2" : "player1"
+}
 
 const OneGame = ({
   addPoint,
@@ -190,10 +191,10 @@ const OneGame = ({
   score,
   undoPoint,
 }: {
-  addPoint: Function;
-  setDataTracker: Function;
-  score: ScoreInf;
-  undoPoint: Function;
+  addPoint: Function
+  setDataTracker: Function
+  score: ScoreInf
+  undoPoint: Function
 }) => {
   const initialData: dataTrackerType = {
     goalType: "",
@@ -206,7 +207,7 @@ const OneGame = ({
     rallyCount: 1,
     missedShot: "",
     missedShotWay: "",
-  };
+  }
 
   const iniTempScore: Score = {
     p1Score: "",
@@ -221,18 +222,18 @@ const OneGame = ({
     missedShotWay: "",
     missedShot: "",
     servePlacement: "",
-  };
+  }
 
-  const [tempScore, setTempScore] = useState<Score>(iniTempScore);
-  const [singleData, setSingleData] = useState<dataTrackerType>(initialData);
+  const [tempScore, setTempScore] = useState<Score>(iniTempScore)
+  const [singleData, setSingleData] = useState<dataTrackerType>(initialData)
 
   const reset = () => {
-    setTempScore({ ...iniTempScore });
-    setDataTracker((d: any) => [...d, singleData]);
-    setSingleData({ ...initialData });
-  };
-  const againest = getAgainest(score.serve);
-  const [isOnFault, setIsOnFault] = useState(false);
+    setTempScore({ ...iniTempScore })
+    setDataTracker((d: any) => [...d, singleData])
+    setSingleData({ ...initialData })
+  }
+  const againest = getAgainest(score.serve)
+  const [isOnFault, setIsOnFault] = useState(false)
   const typeData = [
     {
       name: "Ace",
@@ -260,7 +261,7 @@ const OneGame = ({
       value: "ballInCourt",
       isActive: false,
     },
-  ];
+  ]
   const winner1Data = [
     {
       name: "Winner",
@@ -283,7 +284,7 @@ const OneGame = ({
       disabled: false,
       isActive: score.serve != "player1",
     },
-  ];
+  ]
   const winner2Data = [
     {
       name: "Winner",
@@ -306,7 +307,7 @@ const OneGame = ({
       disabled: false,
       isActive: score.serve == "player1",
     },
-  ];
+  ]
 
   useEffect(() => {
     const func = () => {
@@ -314,90 +315,90 @@ const OneGame = ({
         singleData.rallyCount > 1 &&
         (singleData.goalType == "ace" || singleData.goalType == "fault")
       ) {
-        setSingleData((d) => ({ ...d, goalType: "" }));
+        setSingleData((d) => ({ ...d, goalType: "" }))
       }
-    };
-    func();
-  }, [singleData.goalType, singleData.rallyCount]);
+    }
+    func()
+  }, [singleData.goalType, singleData.rallyCount])
 
   interface Stack {
-    fault: boolean | null;
-    winner: "player1" | "player2" | null;
+    fault: boolean | null
+    winner: "player1" | "player2" | null
   }
-  const [undoStack, setUndoStack] = useState<Stack[]>([]);
+  const [undoStack, setUndoStack] = useState<Stack[]>([])
   // const [redoStack, setUndoStack] = useState<Stack[]>([]);
-  const [lastServer, setLastServer] = useState(score.serve);
+  const [lastServer, setLastServer] = useState(score.serve)
   const undoLastAction = () => {
-    if (undoStack.length === 0) return;
-    const lastAction = undoStack.pop();
+    if (undoStack.length === 0) return
+    const lastAction = undoStack.pop()
     if (lastAction?.fault) {
-      setIsOnFault((prev) => !prev);
+      setIsOnFault((prev) => !prev)
     }
     if (lastAction?.winner) {
-      undoPoint(lastAction.winner);
+      undoPoint(lastAction.winner)
     }
-  };
+  }
 
   const registerScore = (finalData: Score, updatedCheck: dataTrackerType) => {
-    console.log(timers, "TT", lastBPT);
+    console.log(timers, "TT", lastBPT)
 
     if (updatedCheck.goalType == "") {
-      return;
+      return
     }
-    let updatedFinalData = { ...finalData, betweenPointDuration: lastBPT };
+    let updatedFinalData = { ...finalData, betweenPointDuration: lastBPT }
 
     if (updatedCheck.goalType == "fault") {
       if (isOnFault) {
-        setStartedServing(true);
-        setIsFirstServe(true);
-        setShowServe(false);
-        addPoint(updatedCheck.winner, updatedFinalData, getTimers);
+        setStartedServing(true)
+        setIsFirstServe(true)
+        setShowServe(false)
+        addPoint(updatedCheck.winner, updatedFinalData, getTimers)
       }
-      setIsOnFault((d) => !d);
+      setIsOnFault((d) => !d)
     } else {
-      setStartedServing(true);
-      setIsFirstServe(true);
-      setShowServe(false);
-      isOnFault && setIsOnFault(false);
-      addPoint(updatedCheck.winner, updatedFinalData, getTimers);
+      setStartedServing(true)
+      setIsFirstServe(true)
+      setShowServe(false)
+      isOnFault && setIsOnFault(false)
+      addPoint(updatedCheck.winner, updatedFinalData, getTimers)
     }
-    console.log(updatedFinalData, updatedCheck);
-    reset();
-  };
+    console.log(updatedFinalData, updatedCheck)
+    reset()
+  }
 
-  const [startedServing, setStartedServing] = useState(false);
-  const [firstServing, setFirstServing] = useState(false);
-  const [showServe, setShowServe] = useState(false);
-  const [isFirstServe, setIsFirstServe] = useState(false);
-  const [showChangeOverTimer, setShowChangeOverTimer] = useState(false);
-  const [lastBPT, setLastBPT] = useState(0);
-  const [lastCOT, setLastCOT] = useState(0);
+  const [startedServing, setStartedServing] = useState(false)
+  const [firstServing, setFirstServing] = useState(false)
+  const [showServe, setShowServe] = useState(false)
+  const [isFirstServe, setIsFirstServe] = useState(false)
+  const [showChangeOverTimer, setShowChangeOverTimer] = useState(false)
+  const [lastBPT, setLastBPT] = useState(0)
+  const [lastCOT, setLastCOT] = useState(0)
 
   const [timers, setTimers] = useState({
     mainTimer: 0,
     betweenPointTimer: 0,
     changeOverTimer: 0,
-  });
+  })
 
   useEffect(() => {
     const func = () => {
       if (score.serve != lastServer) {
-        setStartedServing(false);
-        setShowChangeOverTimer(true);
-        setLastServer(score.serve);
+        setStartedServing(false)
+        setShowChangeOverTimer(true)
+        setLastServer(score.serve)
       }
-    };
+    }
 
-    func();
-  }, [score.serve]);
+    func()
+  }, [score.serve])
 
   const getTimers = () => {
-    return { timers, lastCOT, lastBPT };
-  };
+    return { timers, lastCOT, lastBPT }
+  }
 
   const resetTempScore = (name: keyof Score, value = "") => {
-    setTempScore((d) => ({ ...d, [name]: value }));
-  };
+    setTempScore((d) => ({ ...d, [name]: value }))
+  }
 
   return (
     <div className="flex flex-col">
@@ -439,16 +440,16 @@ const OneGame = ({
             className="px-7 py-4 mt-5 rounded-lg border bg-white"
             onClick={() => {
               if (firstServing) {
-                setLastBPT(timers.betweenPointTimer);
-                console.log(timers.betweenPointTimer, "Last");
-                setStartedServing(false);
+                setLastBPT(timers.betweenPointTimer)
+                console.log(timers.betweenPointTimer, "Last")
+                setStartedServing(false)
               } else {
-                setFirstServing(true);
+                setFirstServing(true)
               }
-              setShowServe(true);
+              setShowServe(true)
               if (showChangeOverTimer) {
-                setLastCOT(timers.changeOverTimer);
-                setShowChangeOverTimer(false);
+                setLastCOT(timers.changeOverTimer)
+                setShowChangeOverTimer(false)
               }
             }}
           >
@@ -465,6 +466,7 @@ const OneGame = ({
             setTempScore={setTempScore}
             setSingleData={setSingleData}
             registerScore={registerScore}
+            server={score.serve}
           />
         ) : tempScore.servePlacement == "net" ||
           tempScore.servePlacement == "fault" ? (
@@ -472,7 +474,7 @@ const OneGame = ({
             <PlayerReaction
               reset={reset}
               back={() => {
-                resetTempScore("servePlacement");
+                resetTempScore("servePlacement")
               }}
               tempScore={tempScore}
               singleData={singleData}
@@ -491,7 +493,7 @@ const OneGame = ({
                 <GamePointButtons
                   key={data.name}
                   onClick={() => {
-                    setTempScore((d) => ({ ...d, type: data.value }));
+                    setTempScore((d) => ({ ...d, type: data.value }))
                   }}
                   name={data.name}
                   isActive={data.isActive}
@@ -528,8 +530,8 @@ const OneGame = ({
               <PlayerReaction
                 reset={reset}
                 back={() => {
-                  resetTempScore("placement");
-                  resetTempScore("missedShotWay");
+                  resetTempScore("placement")
+                  resetTempScore("missedShotWay")
                 }}
                 tempScore={tempScore}
                 singleData={singleData}
@@ -551,8 +553,8 @@ const OneGame = ({
                       setSingleData((d) => ({
                         ...d,
                         winner: data.winner as any,
-                      }));
-                      setTempScore((d) => ({ ...d, type: data.value }));
+                      }))
+                      setTempScore((d) => ({ ...d, type: data.value }))
                     }}
                     isActive={score.serve != "player1"}
                     disabled={data.disabled}
@@ -565,8 +567,8 @@ const OneGame = ({
                   <GamePointButtons
                     key={data.name}
                     onClick={() => {
-                      setSingleData((d) => ({ ...d, winner: data.winner }));
-                      setTempScore((d) => ({ ...d, type: data.value }));
+                      setSingleData((d) => ({ ...d, winner: data.winner }))
+                      setTempScore((d) => ({ ...d, type: data.value }))
                     }}
                     isActive={score.serve == "player1"}
                     disabled={data.disabled}
@@ -580,7 +582,7 @@ const OneGame = ({
           <ChooseRally
             reset={reset}
             back={() => {
-              resetTempScore("type", "ballInCourt");
+              resetTempScore("type", "ballInCourt")
             }}
             tempScore={tempScore}
             singleData={singleData}
@@ -601,8 +603,8 @@ const OneGame = ({
             <PlayerReaction
               reset={reset}
               back={() => {
-                resetTempScore("rallies");
-                resetTempScore("missedShotWay");
+                resetTempScore("rallies")
+                resetTempScore("missedShotWay")
               }}
               tempScore={tempScore}
               singleData={singleData}
@@ -614,86 +616,86 @@ const OneGame = ({
         )}
       </div>
     </div>
-  );
-};
+  )
+}
 
 const MainTimer = ({
   start,
   mainTimer,
   setTimers,
 }: {
-  start: boolean;
-  mainTimer: number;
-  setTimers: Function;
+  start: boolean
+  mainTimer: number
+  setTimers: Function
 }) => {
   useEffect(() => {
-    let timer: NodeJS.Timeout | any;
+    let timer: NodeJS.Timeout | any
     if (start) {
       timer = setInterval(() => {
         setTimers((prevTime: any) => ({
           ...prevTime,
           mainTimer: prevTime.mainTimer + 1,
-        }));
-      }, 1000);
+        }))
+      }, 1000)
     } else {
-      timer && clearInterval(timer);
+      timer && clearInterval(timer)
     }
-    return () => clearInterval(timer);
-  }, [start]);
+    return () => clearInterval(timer)
+  }, [start])
 
   const formatTime = (time: number) => {
-    const minutes = Math.floor(time / 60);
-    const seconds = time % 60;
+    const minutes = Math.floor(time / 60)
+    const seconds = time % 60
     return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(
       2,
       "0"
-    )}`;
-  };
+    )}`
+  }
 
   return (
     <div className=" py-4 flex flex-col items-center justify-center">
       <div>Main Timer</div>
       <div>{formatTime(mainTimer)}</div>
     </div>
-  );
-};
+  )
+}
 
 const BetweenPointTimer = ({
   start,
   betweenPointTimer,
   setTimers,
 }: {
-  start: boolean;
-  betweenPointTimer: number;
-  setTimers: Function;
+  start: boolean
+  betweenPointTimer: number
+  setTimers: Function
 }) => {
   useEffect(() => {
-    let timer: NodeJS.Timeout | any;
+    let timer: NodeJS.Timeout | any
     if (start) {
       timer = setInterval(() => {
         setTimers((prevTime: any) => ({
           ...prevTime,
           betweenPointTimer: prevTime.betweenPointTimer + 1,
-        }));
-      }, 1000);
+        }))
+      }, 1000)
     } else {
-      timer && clearInterval(timer);
+      timer && clearInterval(timer)
       setTimers((prevTime: any) => ({
         ...prevTime,
         betweenPointTimer: 0,
-      }));
+      }))
     }
-    return () => clearInterval(timer);
-  }, [start]);
+    return () => clearInterval(timer)
+  }, [start])
 
   const formatTime = (time: number) => {
-    const minutes = Math.floor(time / 60);
-    const seconds = time % 60;
+    const minutes = Math.floor(time / 60)
+    const seconds = time % 60
     return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(
       2,
       "0"
-    )}`;
-  };
+    )}`
+  }
 
   return start ? (
     <div className=" py-2 border border-primary w-fit px-4 my-2  flex justify-center">
@@ -704,45 +706,45 @@ const BetweenPointTimer = ({
     </div>
   ) : (
     <></>
-  );
-};
+  )
+}
 
 const ChangeOverTimer = ({
   start,
   changeOverTimer,
   setTimers,
 }: {
-  start: boolean;
-  changeOverTimer: number;
-  setTimers: Function;
+  start: boolean
+  changeOverTimer: number
+  setTimers: Function
 }) => {
   useEffect(() => {
-    let timer: NodeJS.Timeout | any;
+    let timer: NodeJS.Timeout | any
     if (start) {
       timer = setInterval(() => {
         setTimers((prevTime: any) => ({
           ...prevTime,
           changeOverTimer: prevTime.changeOverTimer + 1,
-        }));
-      }, 1000);
+        }))
+      }, 1000)
     } else {
-      timer && clearInterval(timer);
+      timer && clearInterval(timer)
       setTimers((prevTime: any) => ({
         ...prevTime,
         changeOverTimer: 0,
-      }));
+      }))
     }
-    return () => clearInterval(timer);
-  }, [start]);
+    return () => clearInterval(timer)
+  }, [start])
 
   const formatTime = (time: number) => {
-    const minutes = Math.floor(time / 60);
-    const seconds = time % 60;
+    const minutes = Math.floor(time / 60)
+    const seconds = time % 60
     return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(
       2,
       "0"
-    )}`;
-  };
+    )}`
+  }
 
   return start ? (
     <div className=" py-2 border border-primary w-fit px-4 my-2  flex justify-center">
@@ -753,8 +755,8 @@ const ChangeOverTimer = ({
     </div>
   ) : (
     <></>
-  );
-};
+  )
+}
 
 const ServePlacementBody = ({
   setTempScore,
@@ -766,16 +768,18 @@ const ServePlacementBody = ({
   score,
   reset,
   back,
+  server,
 }: {
-  setTempScore: Function;
-  setSingleData: Function;
-  registerScore: Function;
-  tempScore: Score;
-  singleData: dataTrackerType;
-  isOnFault: boolean;
-  score: ScoreInf;
-  reset: Function;
-  back: Function;
+  setTempScore: Function
+  setSingleData: Function
+  registerScore: Function
+  tempScore: Score
+  singleData: dataTrackerType
+  isOnFault: boolean
+  score: ScoreInf
+  reset: Function
+  back: Function
+  server: string | null
 }) => {
   const servePlacements = [
     {
@@ -796,20 +800,35 @@ const ServePlacementBody = ({
       winner: score.serve,
       isActive: score.serve != "player1",
     },
-    {
-      name: !isOnFault ? "Fault" : "Double Fault",
-      value: "net",
-      winner: getAgainest(score.serve),
-      isActive: score.serve == "player1",
-    },
-  ];
+    // {
+    //   name: !isOnFault ? "Fault" : "Double Fault",
+    //   value: "net",
+    //   winner: getAgainest(score.serve),
+    //   isActive: score.serve == "player1",
+    // },
+  ]
+
+  const handleFault = () => {
+    if (!isOnFault) {
+      // First fault, just register it
+      registerScore(tempScore, { ...singleData, goalType: "fault" })
+    } else {
+      // Double fault, opponent gets a point
+      registerScore(tempScore, {
+        ...singleData,
+        goalType: "double fault",
+        winner: getAgainest(score.serve),
+      })
+    }
+  }
+
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-4 items-center justify-center w-[50%]">
       <div className="flex w-fit mx-auto gap-5 mb-4">
         <Button
           className="bg-primary text-white py-1 px-4 text-sm rounded-lg w-fit mx-auto"
           onClick={() => {
-            reset();
+            reset()
           }}
         >
           Clear
@@ -817,40 +836,72 @@ const ServePlacementBody = ({
         <Button
           className="bg-primary text-white py-1 px-4 text-sm rounded-lg w-fit mx-auto"
           onClick={() => {
-            back();
+            back()
           }}
         >
           Back
         </Button>
       </div>
       <div className="grid grid-cols-3 justify-center items-center gap-5 mx-auto">
-        {servePlacements.map((data) => (
+        {/* {servePlacements.map((data) => (
           <GamePointButtons
             key={data.name}
             onClick={() => {
               if (!isOnFault && data.value == "net") {
-                registerScore(tempScore, { ...singleData, goalType: "fault" });
-                return;
+                registerScore(tempScore, { ...singleData, goalType: "fault" })
+                return
               }
               setTempScore((d: Score) => ({
                 ...d,
                 servePlacement: data.value as any,
-              }));
+              }))
               setSingleData((d: dataTrackerType) => ({
                 ...d,
                 winner: data.winner,
                 goalType: data.value == "net" ? "fault" : "pass",
-              }));
+              }))
             }}
             isActive={data.isActive}
             wf={data.value == "net" ? " col-span-3 w-full mx-auto " : ""}
             name={data.name}
           />
-        ))}
+        ))} */}
       </div>
+      <TennisCourt
+        handleFault={handleFault}
+        handleNet={() => {}}
+        isOnFault={isOnFault}
+        server={server || ""}
+      >
+        <>
+          {servePlacements.map((data) => (
+            <GamePointButtons
+              key={data.name}
+              onClick={() => {
+                if (!isOnFault && data.value == "net") {
+                  registerScore(tempScore, { ...singleData, goalType: "fault" })
+                  return
+                }
+                setTempScore((d: Score) => ({
+                  ...d,
+                  servePlacement: data.value as any,
+                }))
+                setSingleData((d: dataTrackerType) => ({
+                  ...d,
+                  winner: data.winner,
+                  goalType: data.value == "net" ? "fault" : "pass",
+                }))
+              }}
+              isActive={data.isActive}
+              wf={data.value == "net" ? " col-span-3 w-full mx-auto " : ""}
+              name={data.name}
+            />
+          ))}
+        </>
+      </TennisCourt>
     </div>
-  );
-};
+  )
+}
 
 const PlayerReaction = ({
   setTempScore,
@@ -861,13 +912,13 @@ const PlayerReaction = ({
   reset,
   back,
 }: {
-  setTempScore: Function;
-  tempScore: Score;
-  singleData: dataTrackerType;
-  setSingleData: Function;
-  registerScore: Function;
-  reset: Function;
-  back: Function;
+  setTempScore: Function
+  tempScore: Score
+  singleData: dataTrackerType
+  setSingleData: Function
+  registerScore: Function
+  reset: Function
+  back: Function
 }) => {
   const reactions = [
     { value: "negativeResponse", label: "Negative Response" },
@@ -875,20 +926,20 @@ const PlayerReaction = ({
     { value: "negativeSelfTalk", label: "Negative Self Talk" },
     { value: "positiveSelfTalk", label: "Positive Self Talk" },
     { value: "noResponse", label: "No Response" },
-  ];
+  ]
 
-  const [p1Reaction, setP1Reaction] = useState<string>("noResponse");
-  const [p2Reaction, setP2Reaction] = useState<string>("noResponse");
+  const [p1Reaction, setP1Reaction] = useState<string>("noResponse")
+  const [p2Reaction, setP2Reaction] = useState<string>("noResponse")
 
   const handleNextClick = () => {
     if (p1Reaction && p2Reaction) {
-      const updatedScore = { ...tempScore, p1Reaction, p2Reaction };
-      const updatedCheck = { ...singleData, goalType: "pass" };
-      registerScore(updatedScore, updatedCheck);
+      const updatedScore = { ...tempScore, p1Reaction, p2Reaction }
+      const updatedCheck = { ...singleData, goalType: "pass" }
+      registerScore(updatedScore, updatedCheck)
     } else {
-      alert("Please select reactions for both players.");
+      alert("Please select reactions for both players.")
     }
-  };
+  }
 
   return (
     <div className="flex flex-col">
@@ -896,7 +947,7 @@ const PlayerReaction = ({
         <Button
           className="bg-primary text-white py-1 px-4 text-sm rounded-lg w-fit mx-auto"
           onClick={() => {
-            reset();
+            reset()
           }}
         >
           Clear
@@ -904,7 +955,7 @@ const PlayerReaction = ({
         <Button
           className="bg-primary text-white py-1 px-4 text-sm rounded-lg w-fit mx-auto"
           onClick={() => {
-            back();
+            back()
           }}
         >
           Back
@@ -955,8 +1006,8 @@ const PlayerReaction = ({
         Next
       </Button>
     </div>
-  );
-};
+  )
+}
 
 const Shots = ({
   setTempScore,
@@ -965,13 +1016,13 @@ const Shots = ({
   reset,
   back,
 }: {
-  setTempScore: Function;
-  setSingleData: Function;
-  registerScore: Function;
-  reset: Function;
-  back: Function;
+  setTempScore: Function
+  setSingleData: Function
+  registerScore: Function
+  reset: Function
+  back: Function
 }) => {
-  const placements = ["downTheLine", "crossCourt", "dropShot"];
+  const placements = ["downTheLine", "crossCourt", "dropShot"]
   const shotTypes = [
     "forehand",
     "backhand",
@@ -984,19 +1035,19 @@ const Shots = ({
     "overhead",
     "forehandDropShot",
     "backhandDropShot",
-  ];
+  ]
 
-  const [placement, setPlacement] = useState<string>("downTheLine");
-  const [shotType, setShotType] = useState<string>("forehand");
+  const [placement, setPlacement] = useState<string>("downTheLine")
+  const [shotType, setShotType] = useState<string>("forehand")
 
   const handleNextClick = () => {
     if (placement && shotType) {
-      setTempScore((d: any) => ({ ...d, placement, missedShotWay: shotType }));
+      setTempScore((d: any) => ({ ...d, placement, missedShotWay: shotType }))
       // registerScore();
     } else {
-      alert("Please select both placement and shot type.");
+      alert("Please select both placement and shot type.")
     }
-  };
+  }
 
   return (
     <div className="flex flex-col">
@@ -1056,8 +1107,8 @@ const Shots = ({
         Next
       </Button>
     </div>
-  );
-};
+  )
+}
 
 const ChooseRally = ({
   setTempScore,
@@ -1068,31 +1119,31 @@ const ChooseRally = ({
   reset,
   back,
 }: {
-  setTempScore: Function;
-  tempScore: Score;
-  singleData: dataTrackerType;
-  setSingleData: Function;
-  registerScore: Function;
-  reset: Function;
-  back: Function;
+  setTempScore: Function
+  tempScore: Score
+  singleData: dataTrackerType
+  setSingleData: Function
+  registerScore: Function
+  reset: Function
+  back: Function
 }) => {
-  const [rallies, setRallies] = useState("oneToFour");
+  const [rallies, setRallies] = useState("oneToFour")
   const rallyChoices = [
     "oneToFour",
     "fiveToEight",
     "nineToTwelve",
     "thirteenToTwenty",
     "twentyOnePlus",
-  ];
+  ]
 
   const handleNextClick = () => {
     if (rallies) {
-      setTempScore((d: any) => ({ ...d, rallies }));
+      setTempScore((d: any) => ({ ...d, rallies }))
       // registerScore();
     } else {
-      alert("Please Select Rally Count.");
+      alert("Please Select Rally Count.")
     }
-  };
+  }
   return (
     <div>
       <ClearDivs back={back} reset={reset} />
@@ -1122,8 +1173,8 @@ const ChooseRally = ({
         Next
       </Button>
     </div>
-  );
-};
+  )
+}
 
 const InnerButton = ({
   name,
@@ -1131,10 +1182,10 @@ const InnerButton = ({
   disabled = false,
   onClick = () => {},
 }: {
-  name: string;
-  isActive?: boolean;
-  disabled?: boolean;
-  onClick?: Function;
+  name: string
+  isActive?: boolean
+  disabled?: boolean
+  onClick?: Function
 }) => {
   return (
     <Button
@@ -1150,8 +1201,8 @@ const InnerButton = ({
     >
       {name}
     </Button>
-  );
-};
+  )
+}
 
 const GamePointButtons = ({
   name,
@@ -1161,35 +1212,43 @@ const GamePointButtons = ({
   disabled = false,
   wf,
 }: {
-  name: string;
-  isActive?: boolean;
-  disabled?: boolean;
-  onClick?: Function;
-  type?: "server" | "againest";
-  wf?: string | null;
+  name: string
+  isActive?: boolean
+  disabled?: boolean
+  onClick?: Function
+  type?: "server" | "againest"
+  wf?: string | null
 }) => {
   const css = isActive
     ? "bg-primary text-white border-2 border-[#FDB332FF]"
     : type == "againest"
     ? "text-white bg-primary "
-    : "";
+    : ""
 
   return (
     <Button
       disabled={disabled}
       onClick={() => onClick()}
-      className={`px-1 capitalize w-40 h-24  shadow rounded-xl  ${css} ${
+      className={` ${
+        name === "wide"
+          ? "bg-[#abb265]"
+          : name === "body"
+          ? "bg-[#6b5580]"
+          : name === "t"
+          ? "bg-[#3e8e6e]"
+          : "bg-white"
+      } px-1 capitalize w-40 h-24  shadow rounded-xl  ${css} ${
         disabled
-          ? "cursor-not-allowed bg-white text-gray-400 border border-gray-300 "
+          ? "cursor-not-allowed  text-gray-400 border border-gray-300 "
           : "shadow-primary"
       } ${wf}`}
     >
       {name} {disabled}
     </Button>
-  );
-};
+  )
+}
 
-export default OneGame;
+export default OneGame
 
 const ClearDivs = ({ reset, back }: { reset: Function; back: Function }) => {
   return (
@@ -1197,7 +1256,7 @@ const ClearDivs = ({ reset, back }: { reset: Function; back: Function }) => {
       <Button
         className="bg-primary text-white py-1 px-4 text-sm rounded-lg w-fit mx-auto"
         onClick={() => {
-          reset();
+          reset()
         }}
       >
         Clear
@@ -1205,11 +1264,11 @@ const ClearDivs = ({ reset, back }: { reset: Function; back: Function }) => {
       <Button
         className="bg-primary text-white py-1 px-4 text-sm rounded-lg w-fit mx-auto"
         onClick={() => {
-          back();
+          back()
         }}
       >
         Back
       </Button>
     </div>
-  );
-};
+  )
+}
