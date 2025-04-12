@@ -14,6 +14,7 @@ import Report from "../Report";
 import MatchProfile from "../MatchProfile";
 import { Button } from "../../ui/button";
 import { BsArrow90DegLeft, BsArrow90DegRight } from "react-icons/bs";
+import TennisCourt from "./TennisCourt";
 
 interface TennisMatch {
   totalGameTime: number;
@@ -465,6 +466,7 @@ const OneGame = ({
             setTempScore={setTempScore}
             setSingleData={setSingleData}
             registerScore={registerScore}
+            server={score.serve}
           />
         ) : tempScore.servePlacement == "net" ||
           tempScore.servePlacement == "fault" ? (
@@ -766,6 +768,7 @@ const ServePlacementBody = ({
   score,
   reset,
   back,
+  server,
 }: {
   setTempScore: Function;
   setSingleData: Function;
@@ -776,6 +779,7 @@ const ServePlacementBody = ({
   score: ScoreInf;
   reset: Function;
   back: Function;
+  server: string | null;
 }) => {
   const servePlacements = [
     {
@@ -796,15 +800,30 @@ const ServePlacementBody = ({
       winner: score.serve,
       isActive: score.serve != "player1",
     },
-    {
-      name: !isOnFault ? "Fault" : "Double Fault",
-      value: "net",
-      winner: getAgainest(score.serve),
-      isActive: score.serve == "player1",
-    },
+    // {
+    //   name: !isOnFault ? "Fault" : "Double Fault",
+    //   value: "net",
+    //   winner: getAgainest(score.serve),
+    //   isActive: score.serve == "player1",
+    // },
   ];
+
+  const handleFault = () => {
+    if (!isOnFault) {
+      // First fault, just register it
+      registerScore(tempScore, { ...singleData, goalType: "fault" });
+    } else {
+      // Double fault, opponent gets a point
+      registerScore(tempScore, {
+        ...singleData,
+        goalType: "double fault",
+        winner: getAgainest(score.serve),
+      });
+    }
+  };
+
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-4 items-center justify-center w-[50%]">
       <div className="flex w-fit mx-auto gap-5 mb-4">
         <Button
           className="bg-primary text-white py-1 px-4 text-sm rounded-lg w-fit mx-auto"
@@ -824,30 +843,65 @@ const ServePlacementBody = ({
         </Button>
       </div>
       <div className="grid grid-cols-3 justify-center items-center gap-5 mx-auto">
-        {servePlacements.map((data) => (
+        {/* {servePlacements.map((data) => (
           <GamePointButtons
             key={data.name}
             onClick={() => {
               if (!isOnFault && data.value == "net") {
-                registerScore(tempScore, { ...singleData, goalType: "fault" });
-                return;
+                registerScore(tempScore, { ...singleData, goalType: "fault" })
+                return
               }
               setTempScore((d: Score) => ({
                 ...d,
                 servePlacement: data.value as any,
-              }));
+              }))
               setSingleData((d: dataTrackerType) => ({
                 ...d,
                 winner: data.winner,
                 goalType: data.value == "net" ? "fault" : "pass",
-              }));
+              }))
             }}
             isActive={data.isActive}
             wf={data.value == "net" ? " col-span-3 w-full mx-auto " : ""}
             name={data.name}
           />
-        ))}
+        ))} */}
       </div>
+      <TennisCourt
+        handleFault={handleFault}
+        handleNet={() => {}}
+        isOnFault={isOnFault}
+        server={server || ""}
+      >
+        <>
+          {servePlacements.map((data) => (
+            <GamePointButtons
+              key={data.name}
+              onClick={() => {
+                if (!isOnFault && data.value == "net") {
+                  registerScore(tempScore, {
+                    ...singleData,
+                    goalType: "fault",
+                  });
+                  return;
+                }
+                setTempScore((d: Score) => ({
+                  ...d,
+                  servePlacement: data.value as any,
+                }));
+                setSingleData((d: dataTrackerType) => ({
+                  ...d,
+                  winner: data.winner,
+                  goalType: data.value == "net" ? "fault" : "pass",
+                }));
+              }}
+              isActive={data.isActive}
+              wf={data.value == "net" ? " col-span-3 w-full mx-auto " : ""}
+              name={data.name}
+            />
+          ))}
+        </>
+      </TennisCourt>
     </div>
   );
 };
@@ -1210,9 +1264,17 @@ const GamePointButtons = ({
     <Button
       disabled={disabled}
       onClick={() => onClick()}
-      className={`px-1 capitalize w-40 h-24  shadow rounded-xl  ${css} ${
+      className={` ${
+        name === "wide"
+          ? "bg-[#abb265]"
+          : name === "body"
+          ? "bg-[#6b5580]"
+          : name === "t"
+          ? "bg-[#3e8e6e]"
+          : "bg-white"
+      } px-1 capitalize w-40 h-24  shadow rounded-xl  ${css} ${
         disabled
-          ? "cursor-not-allowed bg-white text-gray-400 border border-gray-300 "
+          ? "cursor-not-allowed  text-gray-400 border border-gray-300 "
           : "shadow-primary"
       } ${wf}`}
     >
