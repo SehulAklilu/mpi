@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import Menu from "./menu";
 import { useSidebarToggle } from "@/context/SidebarToggleContext";
 import { SidebarToggle } from "./sidebar-toggler";
-import new_logo from "../../assets/logo/new-logo.svg";
+import new_logo from "../../assets/logo/mpi_logo.png";
 import { FaArrowLeft } from "react-icons/fa6";
 import { useState } from "react";
 import NotificationAlert from "../Notification/NotificationAlert";

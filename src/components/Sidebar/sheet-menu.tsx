@@ -1,5 +1,5 @@
 import { MenuIcon, PanelsTopLeft } from "lucide-react";
-import new_logo from "../../assets/logo/new-logo.svg";
+import new_logo from "../../assets/logo/mpi_logo.png";
 
 import { Button } from "@/components/ui/button";
 import Menu from "./menu";

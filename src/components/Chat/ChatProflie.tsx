@@ -185,7 +185,7 @@ function ChatProflie() {
                           <div className="text mt-1 text-3xl max-md:text-lg font-bold">
                             1.5K
                           </div>
-                          <div className="text-sm">Followers</div>
+                          <div className="text-sm">Connected</div>
                         </div>
 
                         <div className="border border-primary"></div>

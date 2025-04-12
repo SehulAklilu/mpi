@@ -152,14 +152,14 @@ export interface ContentItem {
 
 // Week Progress Interface
 interface WeekProgress {
-  status: "not_started" | "in_progress" | "completed";
+  status: "not_started" | "in_progress" | "completed" | "locked";
   completedItems: number;
   totalItems: number;
   percentageCompleted: number;
 }
 
 // Week Interface
-interface Week {
+export interface Week {
   _id: string;
   contentItems: ContentItem[];
   deleted: boolean;

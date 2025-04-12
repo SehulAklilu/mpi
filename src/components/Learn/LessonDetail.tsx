@@ -4,7 +4,7 @@ import {
   UpdateVideoPayload,
   updateVideoStatus,
 } from "@/api/course.api";
-import { ContentItem, Module } from "@/types/course.types";
+import { ContentItem, Module, Week } from "@/types/course.types";
 import { useEffect, useState } from "react";
 import ReactPlayer from "react-player";
 import { useMutation, useQuery, useQueryClient } from "react-query";
@@ -33,6 +33,13 @@ function LessonDetail() {
     queryFn: () => getUserCoursesById(course_id!),
     enabled: !!course_id,
   });
+  let videoCounter = 1;
+
+  const [selectedWeek, setSelectedWeek] = useState<Week | undefined>(undefined);
+  useEffect(() => {
+    const selectedWeek = selectedCourse?.weeks.find((w) => w._id === week_id);
+    setSelectedWeek(selectedWeek);
+  }, [isLoading, selectedCourse, week_id]);
 
   const {
     mutate: update_video_status,
@@ -80,7 +87,14 @@ function LessonDetail() {
       );
       selectedItem && setSelectedItem(selectedItem);
     }
-  }, [isLoading, selectedCourse, selectedItem, setSelectedItem]);
+  }, [
+    isLoading,
+    selectedCourse,
+    selectedItem,
+    setSelectedItem,
+    week_id,
+    video_id,
+  ]);
 
   function handleNext() {
     if (!selectedCourse || !course_id || !week_id || !currentItemId) return;
@@ -147,7 +161,7 @@ function LessonDetail() {
           />
         </div>
         <div className="grid  grid-cols-6 py-2 p-2 text-[#1c1d47] gap-10">
-          <div className="col-span-6 lg:col-span-4 order-2 lg:order-1">
+          <div className=" hidden md:block col-span-6 lg:col-span-4 order-2 lg:order-1">
             <h1 className="text-2xl font-semibold">{selectedItem?.title}</h1>
             {/* instructor */}
             <InstructorCard
@@ -159,7 +173,7 @@ function LessonDetail() {
               duration="2 Hrs 15Min"
             />
             {/* course summary */}
-            <div className="pt-2 ">
+            {/* <div className="pt-2 ">
               <h1 className="text-lg">Summary</h1>
               <div className="grid grid-cols-2 gap-x-10 my-2 gap-y-4">
                 {videoSummarys.map((videoSummary) => (
@@ -173,7 +187,7 @@ function LessonDetail() {
                   </div>
                 ))}
               </div>
-            </div>
+            </div> */}
             <div className="pt-2 ">
               <ReadMore
                 text={selectedItem?.description ?? ""}
@@ -207,56 +221,48 @@ function LessonDetail() {
             </div>
           </div>
           <div className="col-span-6 lg:col-span-2 order-1 lg:order-2 p-2 bg-[#F8F9FA] rounded-lg">
-            <div className="hidden md:block col-span-2 p-2 bg-[#F8F9FA] rounded-lg">
-              {selectedCourse?.weeks.map((week) => (
-                <div key={week._id}>
-                  <div className="flex items-center gap-2 mb-4">
-                    <div className="w-8 h-8 flex items-center justify-center rounded-full text-white font-semibold bg-[#ff9328]">
-                      {week.weekNumber.toString().padStart(2, "0")}
-                    </div>
-                    <p className="text-[#152946] text-xl font-semibold">
-                      {week.title}
-                    </p>
-                  </div>
+            <h1 className="text-2xl block md:hidden font-semibold">
+              {selectedItem?.title}
+            </h1>
 
-                  {week.contentItems.map((item, index) => {
-                    const identifier =
-                      item.type === "video" ? "0" + (index + 1) : undefined;
+            <div className="col-span-2 p-0 md:p-2 bg-[#F8F9FA] rounded-lg">
+              {selectedWeek?.contentItems.map((item) => {
+                let identifier;
 
-                    return (
-                      <div key={item._id}>
-                        <VideoListItem
-                          label={item.title}
-                          duration={item.duration}
-                          identifier={identifier}
-                          active={item._id === video_id}
-                          status={item.progress?.status}
-                          locked={
-                            item.progress?.status === "locked" ||
-                            (item.type === "video" && item.order !== 1)
+                if (item.type === "video") {
+                  identifier = "0" + videoCounter;
+                  videoCounter++;
+                }
+
+                return (
+                  <div key={item._id}>
+                    <VideoListItem
+                      label={item.title}
+                      duration={item.duration}
+                      identifier={identifier}
+                      active={item._id === video_id}
+                      status={item.progress?.status}
+                      type={item.type}
+                      onPlay={() => {
+                        if (
+                          item.progress?.status !== "locked" ||
+                          (item.type === "video" && item.order !== 1)
+                        ) {
+                          if (item.type === "video") {
+                            navigate(
+                              `/course/${course_id}/${week_id}/video/${item._id}`
+                            );
+                          } else if (item.type === "quiz") {
+                            navigate(
+                              `/course/${course_id}/${week_id}/assessment/${item._id}`
+                            );
                           }
-                          onPlay={() => {
-                            if (
-                              item.progress?.status !== "locked" ||
-                              (item.type === "video" && item.order !== 1)
-                            ) {
-                              if (item.type === "video") {
-                                navigate(
-                                  `/course/${course_id}/${week._id}/video/${item._id}`
-                                );
-                              } else if (item.type === "quiz") {
-                                navigate(
-                                  `/course/${course_id}/${week._id}/assessment/${item._id}`
-                                );
-                              }
-                            }
-                          }}
-                        />
-                      </div>
-                    );
-                  })}
-                </div>
-              ))}
+                        }
+                      }}
+                    />
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>

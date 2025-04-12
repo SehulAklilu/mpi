@@ -23,7 +23,7 @@ import { getAxiosErrorMessage, getAxiosSuccessMessage } from "@/api/axios";
 import { toast } from "react-toastify";
 import { LoaderCircle } from "lucide-react";
 import AuthWrapper from "./AuthWrapper";
-import logo from "../../assets/logo/new-logo.svg";
+import logo from "../../assets/logo/mpi_logo.png";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useState } from "react";
 

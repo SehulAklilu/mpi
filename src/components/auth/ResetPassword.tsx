@@ -18,7 +18,7 @@ import { getAxiosErrorMessage, getAxiosSuccessMessage } from "@/api/axios";
 import { toast } from "react-toastify";
 import { LoaderCircle } from "lucide-react";
 import AuthWrapper from "./AuthWrapper";
-import logo from "../../assets/logo/new-logo.svg";
+import logo from "../../assets/logo/mpi_logo.png";
 
 const FormSchema = z.object({
   email: z.string({ required_error: "Email is required" }).email(),

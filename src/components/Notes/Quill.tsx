@@ -80,7 +80,7 @@ const QuillEditor = () => {
   );
   const handleSave = async () => {
     const intColor = hexToInt(color);
-    if (title && content) {
+    if (title && title !== "" && content && content !== "") {
       mutate({
         title,
         content,

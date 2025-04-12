@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import logo from "../../assets/logo/new-logo.svg";
+import logo from "../../assets/logo/mpi_logo.png";
 import {
   Form,
   FormControl,
